@@ -1,0 +1,52 @@
+
+/* background: */
+.topic_progress_input_bar .progress-container progress::-webkit-progress-bar {
+    background-color: #fff; width: 100%;
+    border: 1px solid #dddddd;
+    border-radius: 10px;
+    height: 10px;
+}
+.topic_progress_input_bar .progress-container progress {
+    background-color: #fff; width: 100%;
+    border: 1px solid #dddddd;
+    border-radius: 10px;
+    height: 10px;
+}
+
+/* value: */
+.topic_progress_input_bar .progress-container progress::-webkit-progress-value {background-color: #13a9f6 !important;
+    border-radius: 10px;
+    height: 10px;
+}
+.topic_progress_input_bar .progress-container progress::-moz-progress-bar {background-color: #13a9f6 !important;
+    border-radius: 10px;
+}
+.topic_progress_input_bar .progress-container progress {color: #13a9f6;
+    border-radius: 10px;
+}
+
+
+/* background: */
+.topic_progress_data .progress-container progress::-webkit-progress-bar {
+    background-color: #fff; width: 100%;
+    border: 1px solid #dddddd;
+    border-radius: 10px;
+    height: 12px;
+}
+.topic_progress_data .progress-container progress {
+    background-color: #fff; width: 100%;
+    border: 1px solid #dddddd;
+    border-radius: 6px;
+    height: 12px;
+}
+
+/* value: */
+.topic_progress_data .progress-container progress::-webkit-progress-value {background-color: #13a9f6 !important;
+    border-radius: 6px;
+}
+.topic_progress_data .progress-container progress::-moz-progress-bar {background-color: #13a9f6 !important;
+    border-radius: 6px;
+}
+.topic_progress_data .progress-container progress {color: #13a9f6;
+    border-radius: 6px;
+}
