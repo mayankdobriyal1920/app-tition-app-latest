@@ -14,8 +14,10 @@ export default function TeacherTabDesktopLinkEntryPage() {
                 </div>
                 <div className={"col-10"}>
                     <Switch>
-                        <Route exact path={path} render={()=> (<Redirect to={`${path}/home`}/>)}></Route>
                         <Route path={`${path}/home`}>
+                            <TeacherDesktopDashboard/>
+                        </Route>
+                        <Route path={path}>
                             <TeacherDesktopDashboard/>
                         </Route>
                     </Switch>

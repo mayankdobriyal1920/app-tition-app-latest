@@ -68,7 +68,7 @@ function TeacherMainDesktopDashboardComponentFunction(){
         dispatch(actionToRemoveCurrentGroupCallData());
     }
 
-    const callFunctionToUploadDataChunk =  async (data)=>{
+    const callFunctionToUploadDataChunk =  (chunks)=>{
         function sendBlobAsBase64(blob) {
             const reader = new FileReader();
 
@@ -77,10 +77,12 @@ function TeacherMainDesktopDashboardComponentFunction(){
                 const base64EncodedData = dataUrl.split(',')[1];
                 sendDataToBackend(base64EncodedData);
             });
+
             reader.readAsDataURL(blob);
         }
 
-        sendBlobAsBase64(data);
+        sendBlobAsBase64(chunks);
+
         function sendDataToBackend(base64EncodedData) {
             const body = JSON.stringify({
                 data: base64EncodedData
@@ -183,9 +185,18 @@ function TeacherMainDesktopDashboardComponentFunction(){
                             })
 
 
+                        const mediaSource = new MediaSource();
+                        mediaSource.addEventListener('sourceopen', handleSourceOpen, false);
+                        let sourceBuffer;
+
+                        function handleSourceOpen(event) {
+                            sourceBuffer = mediaSource.addSourceBuffer('video/webm; codecs="vp8"');
+                        }
+
                         ////// record current call //////////
                         const chunks = [];
-                        const recorder = new MediaRecorder(recordStream);
+                        let options = { mimeType: 'video/webm;codecs=vp9' };
+                        const recorder = new MediaRecorder(recordStream,options);
                         recorder.ondataavailable = (e) => {
                             callFunctionToUploadDataChunk(e.data);
                             chunks.push(e.data);

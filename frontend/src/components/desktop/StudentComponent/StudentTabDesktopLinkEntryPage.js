@@ -22,11 +22,10 @@ export default function StudentTabDesktopLinkEntryPage() {
                 </div>
                 <div className={"col-10"}>
                     <Switch>
-                        <Route exact path={path} render={()=> (<Redirect to={`${path}/home`}/>)}></Route>
-                        <Route path={`${path}/home`}>
+                        <Route exact path={`${path}`}>
                             <StudentDesktopDashboard/>
                         </Route>
-                        <Route path={`${path}/student-scheduled-classes`}>
+                        <Route exact path={`${path}/student-scheduled-classes`}>
                             <StudentDesktopScheduledClasses/>
                         </Route>
                     </Switch>

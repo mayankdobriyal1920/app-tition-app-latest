@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {isStudentLogin, isTeacherMasterLogin} from "../middlewear/auth";
+import {isStudentLogin, isSuperAdminLogin, isTeacherMasterLogin} from "../middlewear/auth";
 import {IonReactRouter} from "@ionic/react-router";
 import {Redirect, Route} from "react-router-dom";
 
@@ -11,7 +11,8 @@ import {IonRouterOutlet} from "@ionic/react";
 import StudentTabCommonLinkEntryPage from "./StudentPage/StudentTabCommonLinkPage";
 import {getWebsocketConnectedMessage} from "../helper/WebSocketHelper";
 import {actionToGetAllSchoolBoardDataList, actionToGetAllSubjectDataList} from "../actions/CommonAction";
-import TeacherTabCommonLinkEntryPage from "../components/desktop/TeacherComponent/TeacherTabCommonLinkEntryPage";
+import TeacherTabCommonLinkEntryPage from "./TeacherPages/TeacherTabCommonLinkEntryPage";
+import SuperAdminTabCommonLinkEntryPage from "./SuperAdminPages/SuperAdminTabCommonLinkEntryPage";
 
 
 export const AppEnterMainPage = ()=>{
@@ -23,6 +24,17 @@ export const AppEnterMainPage = ()=>{
             <IonReactRouter>
                 <IonRouterOutlet>
                     <Route path="/dashboard"  component={StudentTabCommonLinkEntryPage} />
+                    <Redirect exact from="/" to="/dashboard" />
+                    <Route render={() => <Redirect to="/dashboard" />} />
+                </IonRouterOutlet>
+            </IonReactRouter>
+        );
+    }
+    const SuperAdminPrivateRoutes = () => {
+        return (
+            <IonReactRouter>
+                <IonRouterOutlet>
+                    <Route path="/dashboard"  component={SuperAdminTabCommonLinkEntryPage} />
                     <Redirect exact from="/" to="/dashboard" />
                     <Route render={() => <Redirect to="/dashboard" />} />
                 </IonRouterOutlet>
@@ -49,6 +61,6 @@ export const AppEnterMainPage = ()=>{
     }, []);
 
     return(
-        (isStudentLogin()) ? <StudentPrivateRoutes/> : (isTeacherMasterLogin())  ? <TeacherPrivateRoutes/> :''
+        (isStudentLogin()) ? <StudentPrivateRoutes/> : (isTeacherMasterLogin())  ? <TeacherPrivateRoutes/> :(isSuperAdminLogin()) ? <SuperAdminPrivateRoutes/> : ''
     )
 }
