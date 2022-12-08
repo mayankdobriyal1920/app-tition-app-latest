@@ -11,9 +11,9 @@ export default function SuperAdminTabCommonLinkEntryPage() {
 
 
     const dispatch = useDispatch();
-    useEffect(()=>{
-        dispatch(actionToGetTeacherAllClasses());
-    },[])
+    // useEffect(()=>{
+    //     dispatch(actionToGetTeacherAllClasses());
+    // },[])
     return (
         <>
             {(windowResizeCount >= 1200) ?
