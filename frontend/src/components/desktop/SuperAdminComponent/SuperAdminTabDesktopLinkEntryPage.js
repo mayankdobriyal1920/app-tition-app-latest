@@ -21,22 +21,22 @@ export default function SuperAdminTabDesktopLinkEntryPage() {
                 <div className="container-xxl position-relative bg-white d-flex p-0">
                     <SuperAdminLeftSideBarComponent/>
                     <Switch>
+                        <Redirect exact from="/dashboard" to={`${path}/home`} />
                         <Route exact path={`${path}/home`}>
                             <SuperAdminDesktopDashboard/>
                         </Route>
-                        <Route path={`${path}/teacher-datatable`}>
+                        <Route exact path={`${path}/teacher-datatable`}>
                             <AllTeacherDataTableComponent/>
                         </Route>
-                        <Route path={`${path}/student-datatable`}>
+                        <Route exact path={`${path}/student-datatable`}>
                             <AllStudentDataTableComponent/>
                         </Route>
-                        <Route path={`${path}/new-student-profile-datatable`}>
+                        <Route exact path={`${path}/new-student-profile-datatable`}>
                             <NewStudentProfileComponent/>
                         </Route>
-                        <Route path={`${path}/all-subscribed-classes`}>
+                        <Route exact path={`${path}/all-subscribed-classes`}>
                             <AllSubscribedClassesComponent/>
                         </Route>
-                        <Redirect exact from="/dashboard" to={`${path}/home`} />
                     </Switch>
                 </div>
             </IonContent>
