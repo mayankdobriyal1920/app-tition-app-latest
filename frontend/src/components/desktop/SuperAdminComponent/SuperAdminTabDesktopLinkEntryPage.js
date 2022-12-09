@@ -1,5 +1,5 @@
 import React from "react";
-import {Route,useRouteMatch,Switch} from "react-router-dom";
+import {Route, useRouteMatch, Switch, Redirect} from "react-router-dom";
 import {useDispatch} from "react-redux";
 import SuperAdminLeftSideBarComponent from "./SuperAdminLeftSideBarComponent";
 import SuperAdminDesktopDashboard from "./SuperAdminDesktopDashboard";
@@ -21,9 +21,6 @@ export default function SuperAdminTabDesktopLinkEntryPage() {
                 <div className="container-xxl position-relative bg-white d-flex p-0">
                     <SuperAdminLeftSideBarComponent/>
                     <Switch>
-                        <Route exact path={`${path}`}>
-                            <SuperAdminDesktopDashboard/>
-                        </Route>
                         <Route exact path={`${path}/home`}>
                             <SuperAdminDesktopDashboard/>
                         </Route>
@@ -39,6 +36,7 @@ export default function SuperAdminTabDesktopLinkEntryPage() {
                         <Route path={`${path}/all-subscribed-classes`}>
                             <AllSubscribedClassesComponent/>
                         </Route>
+                        <Redirect exact from="/dashboard" to={`${path}/home`} />
                     </Switch>
                 </div>
             </IonContent>
