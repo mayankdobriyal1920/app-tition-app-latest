@@ -28,7 +28,7 @@ export const actionToGetUserAllClassesQuery = (userId)=>{
                        ) AS profile_data from student_profile
                                                   LEFT JOIN school_board ON student_profile.school_board = school_board.id
                                                   LEFT JOIN (SELECT profile_subject_with_batch.profile_id, 
-                                                                    json_arrayagg(
+                                                                    json_arrayagg( 
                                                                             json_object(
                                                                                     'id',profile_subject_with_batch.id,
                                                                                     'subject_id',profile_subject_with_batch.subject_id,

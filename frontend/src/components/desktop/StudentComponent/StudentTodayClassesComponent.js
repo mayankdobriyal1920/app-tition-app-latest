@@ -240,8 +240,8 @@ export default function StudentTodayClassesComponent(){
                                                             </>
                                                             : 'Not confirm'
                                                         }
-                                                    </div>f
-                                                    <div className={"col-3 body"}>
+                                                    </div>
+                                                    <div data-date={classData?.subscription_end_date} className={"col-3 body"}>
                                                         {(classData?.subscription_end_date) ?
                                                             <>
                                                                 {_getTodayTomorrowDateFormat(classData?.subscription_end_date)},
