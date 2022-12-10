@@ -1,8 +1,8 @@
 export const actionToGetAllSubjectDataListQuery = ()=>{
     return `SELECT id,name from subject`;
 }
-export const actionToGetAllSubjectDataListQuery = ()=>{
-    return `SELECT id,name from subject`;
+export const actionToGetAllStudentDataListQuery = ()=>{
+    return `SELECT id,name from student_profile`;
 }
 
 export const actionToGetAllShoolBoardDataListQuery = ()=>{

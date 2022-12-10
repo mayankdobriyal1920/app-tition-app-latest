@@ -3,7 +3,7 @@ import fs from 'fs';
 import expressAsyncHandler from 'express-async-handler';
 
 import {
-    actionToGetAllSchoolBoardDataListApiCall,
+    actionToGetAllSchoolBoardDataListApiCall, actionToGetAllStudentDataListApiCall,
     actionToGetAllSubjectDataListApiCall,
     actionToGetTeacherAllClassesApiCall,
     actionToGetUserAllClassesApiCall, actionToInitializePaymentGatewayApiCall,
@@ -67,9 +67,10 @@ commonRouter.post(
 commonRouter.post(
     '/actionToGetAllStudenttDataListApiCall',
     expressAsyncHandler(async (req, res) => {
-        actionToGetAllSubjectDataListApiCall(req.body).then((data) => {
+        actionToGetAllStudentDataListApiCall(req.body).then((data) => {
             res.status(200).send({
                 response: data,
+
             });
         })
             .catch(error => {

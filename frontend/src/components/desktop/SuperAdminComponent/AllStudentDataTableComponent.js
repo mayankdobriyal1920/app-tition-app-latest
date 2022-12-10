@@ -36,6 +36,8 @@ export default function AllStudentDataTableComponent() {
         setFilterSubject(result);
     }, [search]);
     return (
+        <div className={"container-fluid pt-4 px-4"}>
+        <div className={"bg-light rounded h-100 p-4"}>
         <DataTable
             title="Student List"
             columns={tableColumns}
@@ -51,5 +53,7 @@ export default function AllStudentDataTableComponent() {
             subHeaderComponent={<input type="text" placeholder="Search here" className="w-25 form-control"
                                        value={search} onChange={(e) => setSearch(e.target.value)}/>}
         />
+            </div>
+        </div>
     )
 }
