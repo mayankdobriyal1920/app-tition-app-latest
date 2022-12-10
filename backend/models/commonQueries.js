@@ -4,7 +4,9 @@ export const actionToGetAllSubjectDataListQuery = ()=>{
 export const actionToGetAllStudentDataListQuery = ()=>{
     return `select student_profile.*,school_board.name as school_board_name from student_profile left join  school_board on student_profile.school_board = school_board.id `;
 }
-
+export const actionToGetAllTeacherDataListQuery = ()=>{
+    return `select student_profile.*,school_board.name as school_board_name from student_profile left join  school_board on student_profile.school_board = school_board.id `;
+}
 export const actionToGetAllShoolBoardDataListQuery = ()=>{
     return `SELECT id,name from school_board`;
 }

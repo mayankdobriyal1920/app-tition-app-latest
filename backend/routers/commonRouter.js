@@ -8,6 +8,7 @@ import {
     actionToGetTeacherAllClassesApiCall,
     actionToGetUserAllClassesApiCall, actionToInitializePaymentGatewayApiCall,
     actionToValidateMobileNumberApiCall,
+    actionToGetAllTeacherDataListApiCall,
     deleteCommonApiCall,
     insertCommonApiCall,
     updateCommonApiCall
@@ -65,9 +66,23 @@ commonRouter.post(
     })
 );
 commonRouter.post(
-    '/actionToGetAllStudenttDataListApiCall',
+    '/actionToGetAllStudentDataListApiCall',
     expressAsyncHandler(async (req, res) => {
         actionToGetAllStudentDataListApiCall(req.body).then((data) => {
+            res.status(200).send({
+                response: data,
+
+            });
+        })
+            .catch(error => {
+                res.status(500).send(error);
+            })
+    })
+);
+commonRouter.post(
+    '/actionToGetAllTeacherDataListApiCall',
+    expressAsyncHandler(async (req, res) => {
+        actionToGetAllTeacherDataListApiCall(req.body).then((data) => {
             res.status(200).send({
                 response: data,
 

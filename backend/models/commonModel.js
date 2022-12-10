@@ -1,7 +1,7 @@
 import pool from './connection.js';
 import {
     actionToGetAllShoolBoardDataListQuery, actionToGetAllStudentDataListQuery,
-    actionToGetAllSubjectDataListQuery, actionToGetTeacherAllClassesQuery,
+    actionToGetAllSubjectDataListQuery, actionToGetAllTeacherDataListQuery, actionToGetTeacherAllClassesQuery,
     actionToGetUserAllClassesQuery
 } from "./commonQueries.js";
 import PaytmChecksum from 'paytmchecksum';
@@ -60,6 +60,17 @@ export const actionToGetAllSubjectDataListApiCall = () => {
 export const actionToGetAllStudentDataListApiCall = () => {
     return new Promise(function(resolve, reject) {
         const query = actionToGetAllStudentDataListQuery();
+        pool.query(query, (error, results) => {
+            if (error) {
+                reject(error)
+            }
+            resolve(results);
+        })
+    })
+}
+export const actionToGetAllTeacherDataListApiCall = () => {
+    return new Promise(function(resolve, reject) {
+        const query = actionToGetAllTeacherDataListQuery();
         pool.query(query, (error, results) => {
             if (error) {
                 reject(error)

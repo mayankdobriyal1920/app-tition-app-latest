@@ -1,11 +1,12 @@
 import React, {useEffect, useState} from 'react';
-// import {actionToGetAllSubjectDataList} from "../../../actions/CommonAction";
+import { actionToGetAllTeacherDataList} from "../../../actions/CommonAction";
 import {useDispatch, useSelector} from "react-redux";
 import DataTable from 'react-data-table-component';
+import {useEffectOnce} from "../../../helper/UseEffectOnce";
 
 export default function AllTeacherDataTableComponent(){
     const dispatch = useDispatch();
-    const teacherListArray = useSelector((state) => state.allSubjectDataList);
+    const teacherListArray = useSelector((state) => state.allTeacherDataList);
     const [search,setSearch] = useState("")
     const [FilterSubject,setFilterSubject] = useState([])
     const tableColumns = [
@@ -29,8 +30,11 @@ export default function AllTeacherDataTableComponent(){
     //     console.log(teacherListArray);
     //     // getTeachers();
     // });
+    useEffectOnce(() =>{
+        dispatch(actionToGetAllTeacherDataList());
+    },[]);
     useEffect(() =>{
-        const result = teacherListArray.subjectData.filter((teacher) => {
+        const result = teacherListArray.teacherData.filter((teacher) => {
         return teacher.name.toLowerCase().match(search.toLowerCase());
         });
         setFilterSubject(result);
@@ -39,7 +43,7 @@ export default function AllTeacherDataTableComponent(){
      <div className={"container-fluid pt-4 px-4"}>
          <div className={"bg-light rounded h-100 p-4"}>
               <DataTable
-                  title="Subject List"
+                  title="Teacher List"
                   columns={tableColumns}
                   data={FilterSubject}
                   pagination

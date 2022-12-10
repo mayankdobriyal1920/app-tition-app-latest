@@ -15,6 +15,8 @@ import {
     STUDENT_ALL_CLASS_LIST_REQUEST,
     STUDENT_ALL_CLASS_LIST_SUCCESS,
     STUDENT_ALL_TODAY_CLASS_LIST_SUCCESS,
+    ALL_TEACHER_DATA_LIST_REQUEST,
+    ALL_TEACHER_DATA_LIST_SUCCESS,
     TEACHER_ALL_CLASS_LIST_REQUEST,
     TEACHER_ALL_DEMO_CLASS_LIST_SUCCESS,
     TEACHER_ALL_CLASS_LIST_SUCCESS,
@@ -153,8 +155,13 @@ export const actionToGetAllSchoolBoardDataList = () => async (dispatch) => {
 }
 export const actionToGetAllStudentDataList = () => async (dispatch) => {
     dispatch({type: ALL_STUDENT_DATA_LIST_REQUEST});
-    const {data} = await api.post(`common/actionToGetAllStudenttDataListApiCall `);
+    const {data} = await api.post(`common/actionToGetAllStudentDataListApiCall `);
     dispatch({type: ALL_STUDENT_DATA_LIST_SUCCESS, payload:[...data?.response]});
+}
+export const actionToGetAllTeacherDataList = () => async (dispatch) => {
+    dispatch({type: ALL_TEACHER_DATA_LIST_REQUEST});
+    const {data} = await api.post(`common/actionToGetAllTeacherDataListApiCall `);
+    dispatch({type: ALL_TEACHER_DATA_LIST_SUCCESS, payload:[...data?.response]});
 }
 export const actionToGetUserAllClasses = () => async (dispatch,getState) => {
     const userInfo = getState().userSignin.userInfo;

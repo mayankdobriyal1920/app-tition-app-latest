@@ -20,6 +20,8 @@ import {
     STUDENT_ALL_CLASS_LIST_REQUEST,
     STUDENT_ALL_CLASS_LIST_SUCCESS, STUDENT_ALL_TIME_CLASS_LIST_SUCCESS,
     STUDENT_ALL_TODAY_CLASS_LIST_SUCCESS,
+    ALL_TEACHER_DATA_LIST_REQUEST,
+    ALL_TEACHER_DATA_LIST_SUCCESS,
     TEACHER_ALL_CLASS_LIST_REQUEST,
     TEACHER_ALL_CLASS_LIST_SUCCESS,
     TEACHER_ALL_DEMO_CLASS_LIST_SUCCESS,
@@ -60,6 +62,16 @@ export const allStudentDataListReducer = (state = {}, action) => {
             return { loading: true,studentData:[] ,prevId:action.payload};
         case ALL_STUDENT_DATA_LIST_SUCCESS:
             return { loading: false,studentData:action.payload ,prevId:state.prevId};
+        default:
+            return state;
+    }
+};
+export const allTeacherDataListReducer = (state = {}, action) => {
+    switch (action.type) {
+        case ALL_TEACHER_DATA_LIST_REQUEST:
+            return { loading: true,teacherData:[] ,prevId:action.payload};
+        case ALL_TEACHER_DATA_LIST_SUCCESS:
+            return { loading: false,teacherData:action.payload ,prevId:state.prevId};
         default:
             return state;
     }
