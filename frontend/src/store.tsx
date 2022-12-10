@@ -34,7 +34,7 @@ const initialState = {
     openCloseLoginPopup: {isOpen:false},
     windowResizeCount: 0,
     allSubjectDataList:{prevId:'',loading:true,subjectData:[]},
-    allStudentDataList:{prevId:'',loading:true,subjectData:[]},
+    allStudentDataList:{prevId:'',loading:true,studentData:[]},
     allSchoolBoardDataList:{prevId:'',loading:true,boardData:[]},
     studentAllClassesList:{prevId:'',loading:true,classData:[]},
     teacherAllClassesList:{prevId:'',loading:true,classData:[]},

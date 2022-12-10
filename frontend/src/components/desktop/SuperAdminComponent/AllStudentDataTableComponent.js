@@ -2,21 +2,67 @@ import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import DataTable from "react-data-table-component";
 import {actionToGetAllStudentDataList} from "../../../actions/CommonAction";
+import {useEffectOnce} from "../../../helper/UseEffectOnce";
 
 export default function AllStudentDataTableComponent() {
     const dispatch = useDispatch();
-    const teacherListArray = useSelector((state) => state.allStudentDataList);
+    const studentListArray = useSelector((state) => state.allStudentDataList);
     const [search, setSearch] = useState("")
     const [FilterSubject, setFilterSubject] = useState([])
     const tableColumns = [
         {
-            name: "Subject Id",
+            name: "Student Id",
             selector: (row) => row.id,
             sortable: true,
         },
         {
-            name: "Subject Name",
+            name: "Name",
             selector: (row) => row.name,
+            sortable: true,
+        },
+        {
+            name: "Email",
+            selector: (row) => row.email,
+            sortable: true,
+        },
+        {
+            name: "Father Name",
+            selector: (row) => row.father_name,
+            sortable: true,
+        },
+        {
+            name: "Mother Name",
+            selector: (row) => row.mother_name,
+            sortable: true,
+        },
+        {
+            name: "School Name",
+            selector: (row) => row.school_name,
+            sortable: true,
+        },
+        {
+            name: "Board",
+            selector: (row) => row.school_board_name,
+            sortable: true,
+        },
+        {
+            name: "Class",
+            selector: (row) => row.student_class,
+            sortable: true,
+        },
+        {
+            name: "State",
+            selector: (row) => row.state,
+            sortable: true,
+        },
+        {
+            name: "City",
+            selector: (row) => row.city,
+            sortable: true,
+        },
+        {
+            name: "Active",
+            selector: (row) => (row.is_active=='1') ? 'Active' :'Inactive',
             sortable: true,
         },
         {
@@ -24,16 +70,15 @@ export default function AllStudentDataTableComponent() {
             cell: (row) => <button class='btn btn-primary' onClick={() => alert(row.id)}> Edit</button>,
         }
     ]
-    useEffect(() =>{
-        // dispatch(actionToGetAllStudentDataList());
-        // console.log(teacherListArray);
-        // // getTeachers();
+    useEffectOnce(() =>{
+        dispatch(actionToGetAllStudentDataList());
     },[]);
     useEffect(() => {
-        const result = teacherListArray.subjectData.filter((teacher) => {
-            return teacher.name.toLowerCase().match(search.toLowerCase());
+        const resultName = studentListArray.studentData.filter((student) => {
+            return student.name.toLowerCase().match(search.toLowerCase());
         });
-        setFilterSubject(result);
+        setFilterSubject(resultName);
+
     }, [search]);
     return (
         <div className={"container-fluid pt-4 px-4"}>

@@ -153,7 +153,7 @@ export const actionToGetAllSchoolBoardDataList = () => async (dispatch) => {
 }
 export const actionToGetAllStudentDataList = () => async (dispatch) => {
     dispatch({type: ALL_STUDENT_DATA_LIST_REQUEST});
-    const {data} = await api.post(`common/actionToGetAllSubjectDataListApiCall`);
+    const {data} = await api.post(`common/actionToGetAllStudenttDataListApiCall `);
     dispatch({type: ALL_STUDENT_DATA_LIST_SUCCESS, payload:[...data?.response]});
 }
 export const actionToGetUserAllClasses = () => async (dispatch,getState) => {

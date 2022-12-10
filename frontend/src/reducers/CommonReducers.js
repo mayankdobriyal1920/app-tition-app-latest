@@ -57,9 +57,9 @@ export const allSubjectDataListReducer = (state = {}, action) => {
 export const allStudentDataListReducer = (state = {}, action) => {
     switch (action.type) {
         case ALL_STUDENT_DATA_LIST_REQUEST:
-            return { loading: true,subjectData:[] ,prevId:action.payload};
+            return { loading: true,studentData:[] ,prevId:action.payload};
         case ALL_STUDENT_DATA_LIST_SUCCESS:
-            return { loading: false,subjectData:action.payload ,prevId:state.prevId};
+            return { loading: false,studentData:action.payload ,prevId:state.prevId};
         default:
             return state;
     }
