@@ -13,6 +13,7 @@ import {sendWebsocketRequest} from "../../../helper/WebSocketHelper";
 import Peer from 'peerjs';
 import TeacherStudentVideoCallComponent from "../TeacherComponent/TeacherStudentVideoCallComponent";
 import StudentPayForSubscriptionComponent from "./StudentPayForSubscriptionComponent";
+import moment from "moment";
 
 const iceServers= [
     {
@@ -152,7 +153,8 @@ export default function StudentTodayClassesComponent(){
                                                         </div>
                                                         <div className={"col-4"}>
                                                             <div className={"class_time_date_demo"}>
-                                                                {_getTodayTomorrowDateFormat(myClasses?.starting_from_date)}
+                                                                {_getTodayTomorrowDateFormat(myClasses?.classes_assigned_to_teacher?.starting_from_date)},
+                                                                {moment(new Date(myClasses?.classes_assigned_to_teacher?.starting_from_date)).format('hh:mm a')}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -163,7 +165,7 @@ export default function StudentTodayClassesComponent(){
                                                                     <i className={"fa fa-info-circle"}/>
                                                                 </div>
                                                                 <div className={"teacher_name_section"}>
-                                                                    {myClasses?.teacher_name} ({myClasses?.subject_name} Teacher)
+                                                                    {myClasses?.classes_assigned_to_teacher?.teacher_name} ({myClasses?.subject_name} Teacher)
                                                                 </div>
                                                             </div>
                                                             <div className={"teacher_detail_section"}>
@@ -175,7 +177,7 @@ export default function StudentTodayClassesComponent(){
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div className={"col-4"}>
+                                                        <div data-id={myClasses?.id} data-cur-class={chatModuleCurrentCallGroupData?.id} className={"col-4"}>
                                                             {(chatModuleCurrentCallGroupData?.id === myClasses?.classes_assigned_to_teacher_id) ?
                                                                 <div
                                                                     onClick={(e) => pickCallInGroup(e,myClasses, chatModuleCurrentCallGroupData)}
@@ -227,13 +229,26 @@ export default function StudentTodayClassesComponent(){
                                                         </div>
                                                     </div>
                                                     <div className={"col-3 body"}>
-                                                        Not Assigned
+                                                        {myClasses?.classes_assigned_to_teacher?.teacher_name ? myClasses?.classes_assigned_to_teacher?.teacher_name : 'Not Assigned' }
                                                     </div>
                                                     <div className={"col-3 body"}>
-                                                        Not confirm
-                                                    </div>
+
+                                                        {(myClasses?.classes_assigned_to_teacher?.starting_from_date) ?
+                                                            <>
+                                                                {_getTodayTomorrowDateFormat(myClasses?.classes_assigned_to_teacher?.starting_from_date)},
+                                                                {moment(new Date(myClasses?.classes_assigned_to_teacher?.starting_from_date)).format('hh:mm a')}
+                                                            </>
+                                                            : 'Not confirm'
+                                                        }
+                                                    </div>f
                                                     <div className={"col-3 body"}>
-                                                        -
+                                                        {(classData?.subscription_end_date) ?
+                                                            <>
+                                                                {_getTodayTomorrowDateFormat(classData?.subscription_end_date)},
+                                                                {moment(new Date(classData?.subscription_end_date)).format('hh:mm a')}
+                                                            </>
+                                                            : 'No subscription'
+                                                        }
                                                     </div>
                                                 </div>
                                             )))}

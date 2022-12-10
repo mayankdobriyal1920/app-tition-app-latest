@@ -162,7 +162,7 @@ export const actionToGetUserAllClasses = () => async (dispatch,getState) => {
     const {data} = await api.post(`common/actionToGetUserAllClassesApiCall`,{userId:userInfo?.id});
     let todayClasses = [];
     data?.response?.profile_subject_with_batch?.map((classData)=>{
-        if(classData?.starting_from_date){
+        if(classData?.classes_assigned_to_teacher){
             todayClasses.push(classData);
         }
     })
@@ -188,7 +188,6 @@ export const actionToGetUserAllClasses = () => async (dispatch,getState) => {
             i--;
         }while(i > 0)
     })
-    console.log(eventData)
     dispatch({type: STUDENT_ALL_TIME_CLASS_LIST_SUCCESS, payload:[...eventData]});
 }
 export const actionToSendFabricDataToOtherUser = (jsonObject) => async ()=> {

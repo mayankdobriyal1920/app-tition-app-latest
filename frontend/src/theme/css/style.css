@@ -644,7 +644,7 @@ div#teacher_video_class_container {
 }
 
 .demo_classes_main_section_div .demo_classes_section_loop .class_time_date_demo {
-    font-size: 17px;
+    font-size: 15px;
     font-weight: 600;
     color: #ff723a;
 }
@@ -674,7 +674,7 @@ div#teacher_video_class_container {
     right: 10px;
     top: 0px;
     height: 100vh;
-    width: 458px;
+    width: 417px;
     background-image: linear-gradient(180deg, #ff804d, #ffe9e0);
 }
 

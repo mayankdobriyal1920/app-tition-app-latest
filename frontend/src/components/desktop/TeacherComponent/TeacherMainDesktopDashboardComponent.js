@@ -214,7 +214,6 @@ function TeacherMainDesktopDashboardComponentFunction(){
     }
 
     React.useEffect(()=>{
-        console.log('chatModuleNewUserAddedInCurrentCall',chatModuleNewUserAddedInCurrentCall)
         if(chatModuleNewUserAddedInCurrentCall?.id){
             connectToNewUser(chatModuleNewUserAddedInCurrentCall,myStream,myPeer);
         }
@@ -277,7 +276,7 @@ function TeacherMainDesktopDashboardComponentFunction(){
                                                         </div>
                                                     </div>
                                                     <div className={"col-4"}>
-                                                        {(moment(myClasses?.demo_class_date_time).format('YYYY-MM-DD HH:MM A') <= moment().format('YYYY-MM-DD HH:MM A')) ?
+                                                        {(moment(myClasses?.starting_from_date).format('YYYY-MM-DD HH:MM A') <= moment().format('YYYY-MM-DD HH:MM A')) ?
                                                             <div onClick={(e)=>startCallInGroup(e,myClasses)} className={"take_demo_button"}>
                                                                 <button className={"theme_btn"}>Start Demo</button>
                                                             </div>

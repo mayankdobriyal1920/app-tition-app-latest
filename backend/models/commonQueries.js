@@ -27,31 +27,34 @@ export const actionToGetUserAllClassesQuery = (userId)=>{
                                'profile_subject_with_batch',profile_subject_with_batch.jsdata
                        ) AS profile_data from student_profile
                                                   LEFT JOIN school_board ON student_profile.school_board = school_board.id
-                                                  LEFT JOIN (SELECT profile_subject_with_batch.profile_id,
+                                                  LEFT JOIN (SELECT profile_subject_with_batch.profile_id, 
                                                                     json_arrayagg(
                                                                             json_object(
                                                                                     'id',profile_subject_with_batch.id,
                                                                                     'subject_id',profile_subject_with_batch.subject_id,
                                                                                     'has_taken_demo',profile_subject_with_batch.has_taken_demo,
-                                                                                    'class_time',profile_subject_with_batch.class_time,
                                                                                     'classes_assigned_to_teacher_id',profile_subject_with_batch.classes_assigned_to_teacher_id,
-                                                                                    'demo_class_date_time',profile_subject_with_batch.demo_class_date_time,
-                                                                                    'starting_from_date',profile_subject_with_batch.starting_from_date,
-                                                                                    'teacher_id',profile_subject_with_batch.teacher_id,
-                                                                                    'is_paid',profile_subject_with_batch.is_paid,
                                                                                     'batch',profile_subject_with_batch.batch,
-                                                                                    'total_amount',profile_subject_with_batch.total_amount,
-                                                                                    'subscription_end',profile_subject_with_batch.subscription_end,
-                                                                                    'teacher_name',app_user.name,
+                                                                                    'classes_assigned_to_teacher',classes_assigned_to_teacher.jsdata,
                                                                                     'subject_name',subject.name
                                                                                 )
                                                                         ) jsdata
                                                              FROM profile_subject_with_batch
                                                                       LEFT JOIN subject ON profile_subject_with_batch.subject_id = subject.id
-                                                                      LEFT JOIN app_user ON profile_subject_with_batch.teacher_id = app_user.id
-
+                                                                      LEFT JOIN (SELECT classes_assigned_to_teacher.id,
+                                                                                        json_object(
+                                                                                                'id',classes_assigned_to_teacher.id,
+                                                                                                'teacher_id',classes_assigned_to_teacher.teacher_id,
+                                                                                                'teacher_name',app_user.name,
+                                                                                                'starting_from_date',classes_assigned_to_teacher.starting_from_date,
+                                                                                                'is_demo_class',classes_assigned_to_teacher.is_demo_class
+                                                                                            ) jsdata
+                                                                                 FROM classes_assigned_to_teacher
+                                                                                          LEFT JOIN app_user ON classes_assigned_to_teacher.teacher_id = app_user.id
+                                                                          ) classes_assigned_to_teacher ON classes_assigned_to_teacher.id = profile_subject_with_batch.classes_assigned_to_teacher_id
+                                                  
                                                              GROUP BY profile_subject_with_batch.profile_id) profile_subject_with_batch ON profile_subject_with_batch.profile_id = student_profile.id
-            WHERE student_profile.created_by = '${userId}'`;
+                                                  WHERE student_profile.created_by = '${userId}'`;
 }
 
 export const actionToGetTeacherAllClassesQuery = (userId)=>{
