@@ -11,9 +11,11 @@ import {actionToGetUserAllClasses} from "../../../actions/CommonAction";
 export default function StudentTabDesktopLinkEntryPage() {
     const { path } = useRouteMatch();
     const dispatch = useDispatch();
+
     useEffectOnce(()=>{
         dispatch(actionToGetUserAllClasses());
     },[])
+
     return (
         <IonPage className={"main_padding_main_page dashboard_container"}>
             <div className={"row"}>

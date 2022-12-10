@@ -113,16 +113,16 @@ export const actionToCreateUserProfile = (payload) => async (dispatch,getState) 
     let dataToSend = {column: setData, value: [1], whereCondition: whereCondition, tableName: 'app_user'};
     dispatch(commonUpdateFunction(dataToSend));
 
-    let aliasArray = ['?','?','?','?','?','?','?','?','?','?','?','?','?'];
-    let columnArray = ['id','name','email','father_name','mother_name','school_name','school_board','state','city','created_by','student_class','batch','board'];
-    let valuesArray = [payload?.id,payload?.name,payload?.email,payload?.fatherName,payload?.motherName,payload?.schoolName,payload?.schoolBoard,payload?.state,payload?.city,userInfo?.id,payload?.studentClass,payload?.batch,payload?.board];
+    let aliasArray = ['?','?','?','?','?','?','?','?','?','?','?','?'];
+    let columnArray = ['id','name','email','father_name','mother_name','school_name','school_board','state','city','created_by','student_class','batch'];
+    let valuesArray = [payload?.id,payload?.name,payload?.email,payload?.fatherName,payload?.motherName,payload?.schoolName,payload?.schoolBoard,payload?.state,payload?.city,userInfo?.id,payload?.studentClass,payload?.batch];
     let insertData = {alias:aliasArray,column:columnArray,values:valuesArray,tableName:'student_profile'};
     await dispatch(callInsertDataFunction(insertData));
 
     payload?.subjects?.map(async (subject)=>{
-        let aliasArray = ['?','?','?','?'];
-        let columnArray = ['id','profile_id','subject_id','batch'];
-        let valuesArray = [_generateUniqueId(),payload?.id,subject?.id,payload?.batch];
+        let aliasArray = ['?','?','?','?','?'];
+        let columnArray = ['id','profile_id','subject_id','batch','board'];
+        let valuesArray = [_generateUniqueId(),payload?.id,subject?.id,payload?.batch,payload?.schoolBoard];
         let insertData = {alias:aliasArray,column:columnArray,values:valuesArray,tableName:'profile_subject_with_batch'};
         await dispatch(callInsertDataFunction(insertData));
     })
@@ -153,7 +153,7 @@ export const actionToGetAllSchoolBoardDataList = () => async (dispatch) => {
 }
 export const actionToGetAllStudentDataList = () => async (dispatch) => {
     dispatch({type: ALL_STUDENT_DATA_LIST_REQUEST});
-    const {data} = await api.post(`common/actionToGetAllStudentDataListApiCall`);
+    const {data} = await api.post(`common/actionToGetAllSubjectDataListApiCall`);
     dispatch({type: ALL_STUDENT_DATA_LIST_SUCCESS, payload:[...data?.response]});
 }
 export const actionToGetUserAllClasses = () => async (dispatch,getState) => {
