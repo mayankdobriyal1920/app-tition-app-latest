@@ -13,6 +13,7 @@ import {getWebsocketConnectedMessage} from "../helper/WebSocketHelper";
 import {actionToGetAllSchoolBoardDataList, actionToGetAllSubjectDataList} from "../actions/CommonAction";
 import TeacherTabCommonLinkEntryPage from "./TeacherPages/TeacherTabCommonLinkEntryPage";
 import SuperAdminTabCommonLinkEntryPage from "./SuperAdminPages/SuperAdminTabCommonLinkEntryPage";
+import {useEffectOnce} from "../helper/UseEffectOnce";
 
 
 export const AppEnterMainPage = ()=>{
@@ -54,11 +55,11 @@ export const AppEnterMainPage = ()=>{
     }
 
 
-    useEffect(() => {
+    useEffectOnce(() => {
         getWebsocketConnectedMessage(W3CWebSocket,dispatch,userInfo);
         dispatch(actionToGetAllSubjectDataList());
         dispatch(actionToGetAllSchoolBoardDataList());
-    }, []);
+    },[]);
 
     return(
         (isStudentLogin()) ? <StudentPrivateRoutes/> : (isTeacherMasterLogin())  ? <TeacherPrivateRoutes/> :(isSuperAdminLogin()) ? <SuperAdminPrivateRoutes/> : ''
