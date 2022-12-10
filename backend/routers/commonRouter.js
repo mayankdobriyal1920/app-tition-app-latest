@@ -65,6 +65,19 @@ commonRouter.post(
     })
 );
 commonRouter.post(
+    '/actionToGetAllStudenttDataListApiCall',
+    expressAsyncHandler(async (req, res) => {
+        actionToGetAllSubjectDataListApiCall(req.body).then((data) => {
+            res.status(200).send({
+                response: data,
+            });
+        })
+            .catch(error => {
+                res.status(500).send(error);
+            })
+    })
+);
+commonRouter.post(
     '/actionToGetAllSchoolBoardDataListApiCall',
     expressAsyncHandler(async (req, res) => {
         actionToGetAllSchoolBoardDataListApiCall(req.body).then((data) => {

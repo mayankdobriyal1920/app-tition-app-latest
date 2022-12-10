@@ -10,7 +10,7 @@ import {IonRouterOutlet} from "@ionic/react";
 
 import StudentTabCommonLinkEntryPage from "./StudentPage/StudentTabCommonLinkPage";
 import {getWebsocketConnectedMessage} from "../helper/WebSocketHelper";
-import {actionToGetAllSchoolBoardDataList, actionToGetAllSubjectDataList} from "../actions/CommonAction";
+import {actionToGetAllSchoolBoardDataList, actionToGetAllSubjectDataList,actionToGetAllStudentDataList} from "../actions/CommonAction";
 import TeacherTabCommonLinkEntryPage from "./TeacherPages/TeacherTabCommonLinkEntryPage";
 import SuperAdminTabCommonLinkEntryPage from "./SuperAdminPages/SuperAdminTabCommonLinkEntryPage";
 import {useEffectOnce} from "../helper/UseEffectOnce";

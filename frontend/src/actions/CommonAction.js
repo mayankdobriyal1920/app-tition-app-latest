@@ -10,6 +10,8 @@ import {
     ALL_SUBJECT_DATA_LIST_SUCCESS,
     ALL_SCHOOL_BOARD_DATA_LIST_REQUEST,
     ALL_SCHOOL_BOARD_DATA_LIST_SUCCESS,
+    ALL_STUDENT_DATA_LIST_REQUEST,
+    ALL_STUDENT_DATA_LIST_SUCCESS,
     STUDENT_ALL_CLASS_LIST_REQUEST,
     STUDENT_ALL_CLASS_LIST_SUCCESS,
     STUDENT_ALL_TODAY_CLASS_LIST_SUCCESS,
@@ -148,6 +150,11 @@ export const actionToGetAllSchoolBoardDataList = () => async (dispatch) => {
     dispatch({type: ALL_SCHOOL_BOARD_DATA_LIST_REQUEST});
     const {data} = await api.post(`common/actionToGetAllSchoolBoardDataListApiCall`);
     dispatch({type: ALL_SCHOOL_BOARD_DATA_LIST_SUCCESS, payload:[...data?.response]});
+}
+export const actionToGetAllStudentDataList = () => async (dispatch) => {
+    dispatch({type: ALL_STUDENT_DATA_LIST_REQUEST});
+    const {data} = await api.post(`common/actionToGetAllSubjectDataListApiCall`);
+    dispatch({type: ALL_STUDENT_DATA_LIST_SUCCESS, payload:[...data?.response]});
 }
 export const actionToGetUserAllClasses = () => async (dispatch,getState) => {
     const userInfo = getState().userSignin.userInfo;

@@ -57,6 +57,17 @@ export const actionToGetAllSubjectDataListApiCall = () => {
         })
     })
 }
+export const actionToGetAllStudentDataListApiCall = () => {
+    return new Promise(function(resolve, reject) {
+        const query = actionToGetAllSubjectDataListQuery();
+        pool.query(query, (error, results) => {
+            if (error) {
+                reject(error)
+            }
+            resolve(results);
+        })
+    })
+}
 export const actionToGetAllSchoolBoardDataListApiCall = () => {
     return new Promise(function(resolve, reject) {
         const query = actionToGetAllShoolBoardDataListQuery();
