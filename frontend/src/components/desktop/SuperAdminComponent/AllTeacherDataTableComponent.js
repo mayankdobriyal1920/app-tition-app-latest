@@ -36,19 +36,23 @@ export default function AllTeacherDataTableComponent(){
         setFilterSubject(result);
     },[search]);
  return (
-    <DataTable
-        title="Subject List"
-        columns={tableColumns}
-        data={FilterSubject}
-        pagination
-        fixedHeader
-        fixedHeaderScrollHeight="1400px;"
-        responsive
-        highlightOnHover
-        defaultSortAsc
-        subHeader
-        progressComponent
-        subHeaderComponent={<input type="text" placeholder="Search here" className="w-25 form-control"  value={search} onChange={(e)=>setSearch(e.target.value)}/>}
-    />
+     <div className={"container-fluid pt-4 px-4"}>
+         <div className={"bg-light rounded h-100 p-4"}>
+              <DataTable
+                  title="Subject List"
+                  columns={tableColumns}
+                  data={FilterSubject}
+                  pagination
+                  fixedHeader
+                  fixedHeaderScrollHeight="1400px"
+                  responsive
+                  highlightOnHover
+                  defaultSortAsc
+                  subHeader
+                  progressComponent
+                  subHeaderComponent={<input type="text" placeholder="Search here" className="w-25 form-control"  value={search} onChange={(e)=>setSearch(e.target.value)}/>}
+              />
+         </div>
+     </div>
  )
 }
