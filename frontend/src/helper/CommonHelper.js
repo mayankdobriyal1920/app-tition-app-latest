@@ -100,6 +100,47 @@ export function _getIconBySubjectKey(name){
     }
     return colorIcon;
 }
+export const _readableTimeFromSeconds = (sec) => {
+    /**
+     * Conditionally pads a number with "0"
+     */
+    const _padNumber = number =>  (number > 9) ? number : "" + number;
+    let timer = '';
+    let seconds = parseInt(sec);
+    if(seconds && seconds >= 0) {
+        seconds = Number(seconds);
+        const hours = 3600 > seconds ? 0 : parseInt(seconds / 3600, 10);
+        let h = _padNumber(hours);
+        if (h > 0){
+            if(h < 10)
+                timer += '0'+h+':';
+            else
+                timer += h+':';
+        }
+        let m = _padNumber(parseInt(seconds / 60, 10) % 60);
+        if(m > 0){
+            if(m < 10)
+                timer += '0'+m;
+            else timer += m;
+        }
+        else
+            timer += '00';
+        let s = _padNumber(seconds % 60);
+        if(s > 0) {
+            if(s < 10)
+                timer += ':0'+s;
+            else
+                timer += ':'+s;
+        }
+        else if (h > 0)
+            timer += '';
+        else
+            timer += ':00';
+    }else{
+        timer = '00:00';
+    }
+    return timer;
+}
 
 export const _getTodayTomorrowDateFormat = (date)=>{
     if(moment(new Date(date)).format('YYYY-MM-DD') === moment().format('YYYY-MM-DD')){

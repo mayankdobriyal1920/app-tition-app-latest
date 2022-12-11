@@ -11,7 +11,6 @@ import {
     connectToNewUser,
     myPeer,
     myStream,
-    removeClosePeerConnection,
     setMyMediaRecorder,
     setMyPeer,
     setMyPeerConnectionId, setMyShareScreenStream,
@@ -20,10 +19,9 @@ import {
 import {sendWebsocketRequest} from "../../../helper/WebSocketHelper";
 import Peer from 'peerjs';
 import {
-    actionToAddDataFromIncomingCall,
     actionToRemoveCurrentGroupCallData,
     actionToSendVideoChunkDataToServer, actionToSendVideoChunkDataToServerFinishProcess,
-    actionToSetCurrentCallDataGroupData, actionToStoreAndRemoveNewAddedCallInGroupData
+    actionToSetCurrentCallDataGroupData
 } from "../../../actions/CommonAction";
 import TeacherStudentVideoCallComponent from "./TeacherStudentVideoCallComponent";
 import {
@@ -55,7 +53,6 @@ const iceServers= [
 
 function TeacherMainDesktopDashboardComponentFunction(){
     const chatModuleNewUserAddedInCurrentCall = useSelector((state) => state.chatModuleNewUserAddedInCurrentCall);
-    const chatModuleNewUserLeaveUserInCallData = useSelector((state) => state.chatModuleNewUserLeaveUserInCallData);
     const chatModuleCurrentCallGroupData = useSelector((state) => state.chatModuleCurrentCallGroupData);
     const {loading,classData} = useSelector((state) => state.teacherAllClassesList);
     const {userInfo} = useSelector((state) => state.userSignin);
@@ -91,9 +88,9 @@ function TeacherMainDesktopDashboardComponentFunction(){
             dispatch(actionToSendVideoChunkDataToServer(chatModuleCurrentCallGroupData?.groupId,body));
         }
     }
-
     const startCallInGroup = (e,classGroupData)=>{
         e.preventDefault();
+        console.log(classGroupData)
 
         let getUserMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia).bind(navigator);
         if(getUserMedia) {
@@ -111,9 +108,10 @@ function TeacherMainDesktopDashboardComponentFunction(){
 
                             setInCallStatus('JOINING');
 
-                            let memberData = userInfo;
+                            let memberData = cloneDeep(userInfo);
+                            memberData.id = classGroupData?.id;
                             memberData.peer_connection_id = 'teacher_' + _generateUniqueId()+'_'+classGroupData?.id;
-                            memberData.audio = true;
+                            memberData.mute = false;
                             memberData.isTeacher = true;
 
                             let myPeer = new Peer(memberData.peer_connection_id, {
@@ -126,7 +124,7 @@ function TeacherMainDesktopDashboardComponentFunction(){
                             setMyPeer(myPeer);
 
                             dispatch(actionToSetCurrentCallDataGroupData(classGroupData));
-                            console.log('[ PEER JS CONNECTION INSTANCE ]', myPeer);
+                            console.log('[ PEER JS CONNECTION INSTANCE ]', myPeer,memberData.peer_connection_id);
 
                             myPeer?.on('open', id => {
                                 console.log('[PEER CONNECTION OPEN IN ID]', id);
@@ -145,26 +143,24 @@ function TeacherMainDesktopDashboardComponentFunction(){
                                                 console.log(sourceInfo)
                                             }
                                         }
-
-                                        console.log('[PEER CONNECTION USER STREAM]', stream);
-                                        addVideoStream(memberData.peer_connection_id, stream,true);
                                         setMyStream(stream);
 
-                                        setCallLoading(false);
+                                        console.log('[PEER CONNECTION USER STREAM]', stream);
                                         let finalClassGroupData = classGroupData;
-
                                         finalClassGroupData.started_at = new Date().toISOString();
-
-                                        let allMembersInCall = [];
+                                        let allMembersInCall = [memberData];
                                         classGroupData?.profile_subject_with_batch?.map((studentProfile) => {
                                             allMembersInCall.push({
                                                 id: studentProfile.student_id,
-                                                name: studentProfile.student_name
+                                                name: studentProfile.student_name,
+                                                mute:true,
+                                                isTeacher:false
                                             });
                                         })
 
-                                        dispatch(actionToStoreAndRemoveNewAddedCallInGroupData(classGroupData?.id));
-                                        dispatch(actionToAddDataFromIncomingCall(classGroupData,allMembersInCall));
+                                        console.log(allMembersInCall)
+
+                                        dispatch(actionToSetCurrentCallDataGroupData(classGroupData));
                                         dispatch({type: CHAT_MODULE_CURRENT_CALL_ALL_MEMBERS, payload: [...allMembersInCall]});
 
                                         sendWebsocketRequest(JSON.stringify({
@@ -175,7 +171,12 @@ function TeacherMainDesktopDashboardComponentFunction(){
                                             memberData: memberData,
                                             type: "startNewCallInGroupChannel"
                                         }));
-                                        setInCallStatus('INCALL');
+
+                                        setTimeout(function(){
+                                            addVideoStream(memberData.peer_connection_id, stream,true);
+                                            setCallLoading(false);
+                                            setInCallStatus('INCALL');
+                                        },1000)
 
                                         myPeer.on('call', call => {
                                             console.log('[PEER JS INCOMMING CALL]', call);
@@ -186,34 +187,35 @@ function TeacherMainDesktopDashboardComponentFunction(){
                             })
 
 
-                        const mediaSource = new MediaSource();
-                        mediaSource.addEventListener('sourceopen', handleSourceOpen, false);
-                        let sourceBuffer;
+                            const mediaSource = new MediaSource();
+                            mediaSource.addEventListener('sourceopen', handleSourceOpen, false);
+                            let sourceBuffer;
 
-                        function handleSourceOpen(event) {
-                            sourceBuffer = mediaSource.addSourceBuffer('video/webm; codecs="vp8"');
-                        }
+                            function handleSourceOpen(event) {
+                                sourceBuffer = mediaSource.addSourceBuffer('video/webm; codecs="vp8"');
+                            }
 
-                        ////// record current call //////////
-                        const chunks = [];
-                        let options = { mimeType: 'video/webm;codecs=vp9' };
-                        const recorder = new MediaRecorder(recordStream,options);
-                        recorder.ondataavailable = (e) => {
-                            callFunctionToUploadDataChunk(e.data);
-                            chunks.push(e.data);
-                        }
-                        recorder.onstop = e => callFunctionToExportRecordedVideo(new Blob(chunks));
-                        recorder.start(5000);
-                        setMyMediaRecorder(recorder);
-                        setMyShareScreenStream(recordStream);
-                    }, error => {
-                        console.log("Unable to acquire screen capture", error);
-                    });
-            })
+                            ////// record current call //////////
+                            const chunks = [];
+                            let options = { mimeType: 'video/webm;codecs=vp9' };
+                            const recorder = new MediaRecorder(recordStream,options);
+                            recorder.ondataavailable = (e) => {
+                                callFunctionToUploadDataChunk(e.data);
+                                chunks.push(e.data);
+                            }
+                            recorder.onstop = e => callFunctionToExportRecordedVideo(new Blob(chunks));
+                            recorder.start(5000);
+                            setMyMediaRecorder(recorder);
+                            setMyShareScreenStream(recordStream);
+                        }, error => {
+                            console.log("Unable to acquire screen capture", error);
+                        });
+                })
         }else{
             alert('Media Not Supported In Insecure Url');
         }
     }
+
 
     React.useEffect(()=>{
         if(chatModuleNewUserAddedInCurrentCall?.id){
@@ -221,11 +223,11 @@ function TeacherMainDesktopDashboardComponentFunction(){
         }
     },[chatModuleNewUserAddedInCurrentCall]);
 
-    React.useEffect(()=>{
-        if(chatModuleNewUserLeaveUserInCallData?.id){
-            removeClosePeerConnection(chatModuleNewUserLeaveUserInCallData?.peer_connection_id);
-        }
-    },[chatModuleNewUserLeaveUserInCallData]);
+    // React.useEffect(()=>{
+    //     if(chatModuleNewUserLeaveUserInCallData?.id){
+    //         removeClosePeerConnection(chatModuleNewUserLeaveUserInCallData?.peer_connection_id);
+    //     }
+    // },[chatModuleNewUserLeaveUserInCallData]);
 
     return (
         <div className={"main_body_content_section all_student_subject_main_container"}>
@@ -254,8 +256,14 @@ function TeacherMainDesktopDashboardComponentFunction(){
                                                     </div>
                                                     <div className={"col-4"}>
                                                         <div className={"class_time_date_demo"}>
-                                                            {_getTodayTomorrowDateFormat(myClasses?.starting_from_date)}, {moment(new Date(myClasses?.starting_from_date)).format('hh:mm a')}
+                                                            {moment(new Date(myClasses?.starting_from_date)).format('hh:mm a')}
                                                         </div>
+                                                        {(myClasses?.class_end_time) ?
+                                                            <div className={"class_time_date_demo mt-15"}>
+                                                                Class Taken
+                                                            </div>
+                                                            : ''
+                                                        }
                                                     </div>
                                                 </div>
                                                 <div className={"row"}>
@@ -278,7 +286,9 @@ function TeacherMainDesktopDashboardComponentFunction(){
                                                         </div>
                                                     </div>
                                                     <div className={"col-4"}>
-                                                        {(moment(myClasses?.starting_from_date).format('YYYY-MM-DD HH:MM A') <= moment().format('YYYY-MM-DD HH:MM A')) ?
+                                                        {(moment(myClasses?.starting_from_date).format('YYYY-MM-DD HH:MM A') <= moment().format('YYYY-MM-DD HH:MM A')
+                                                          && !myClasses?.class_end_time
+                                                        ) ?
                                                             <div onClick={(e)=>startCallInGroup(e,myClasses)} className={"take_demo_button"}>
                                                                 <button className={"theme_btn"}>Start Demo</button>
                                                             </div>
@@ -366,7 +376,7 @@ function TeacherMainDesktopDashboardComponentFunction(){
                 </div>
                 </>
                 :
-                <TeacherStudentVideoCallComponent inCallStatus={inCallStatus} setInCallStatus={setInCallStatus}/>
+                <TeacherStudentVideoCallComponent inCallStatus={inCallStatus} setInCallStatus={setInCallStatus} isTeacher={true}/>
            }
         </div>
     )

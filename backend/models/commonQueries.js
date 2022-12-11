@@ -33,6 +33,7 @@ export const actionToGetUserAllClassesQuery = (userId)=>{
                                                                     json_arrayagg( 
                                                                             json_object(
                                                                                     'id',profile_subject_with_batch.id,
+                                                                                    'student_id',profile_subject_with_batch.profile_id,
                                                                                     'subject_id',profile_subject_with_batch.subject_id,
                                                                                     'has_taken_demo',profile_subject_with_batch.has_taken_demo,
                                                                                     'classes_assigned_to_teacher_id',profile_subject_with_batch.classes_assigned_to_teacher_id,
@@ -47,6 +48,7 @@ export const actionToGetUserAllClassesQuery = (userId)=>{
                                                                                         json_object(
                                                                                                 'id',classes_assigned_to_teacher.id,
                                                                                                 'teacher_id',classes_assigned_to_teacher.teacher_id,
+                                                                                                'class_end_time',classes_assigned_to_teacher.class_end_time,
                                                                                                 'teacher_name',app_user.name,
                                                                                                 'starting_from_date',classes_assigned_to_teacher.starting_from_date,
                                                                                                 'is_demo_class',classes_assigned_to_teacher.is_demo_class
@@ -64,10 +66,12 @@ export const actionToGetTeacherAllClassesQuery = (userId)=>{
                            'subject_id', classes_assigned_to_teacher.subject_id,
                            'batch', classes_assigned_to_teacher.batch,
                            'starting_from_date', classes_assigned_to_teacher.starting_from_date,
+                           'class_end_time', classes_assigned_to_teacher.class_end_time,
                            'is_demo_class', classes_assigned_to_teacher.is_demo_class,
                            'profile_subject_with_batch', profile_subject_with_batch.jsdata,
                            'subject_name', subject.name,
                            'student_class', classes_assigned_to_teacher.student_class,
+                           'teacher_id', classes_assigned_to_teacher.teacher_id,
                            'school_board', school_board.name) AS teacher_classes_data
         from classes_assigned_to_teacher
                  LEFT JOIN school_board ON classes_assigned_to_teacher.school_board = school_board.id
@@ -75,9 +79,9 @@ export const actionToGetTeacherAllClassesQuery = (userId)=>{
                  LEFT JOIN (SELECT profile_subject_with_batch.classes_assigned_to_teacher_id,
                                    json_arrayagg(
                                            json_object(
-                                                   'id', profile_subject_with_batch.id, 
+                                                   'id', profile_subject_with_batch.id,
                                                    'student_name', student_profile.name,
-                                                   'student_id', student_profile.id
+                                                   'student_id', student_profile.id 
                                                )
                                        ) jsdata
                             FROM profile_subject_with_batch

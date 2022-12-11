@@ -1,7 +1,6 @@
 import express from 'express';
 import http from 'http';
 import WebSocket from 'ws';
-import multer from 'multer';
 import cors from 'cors';
 import dotenv  from 'dotenv';
 import commonRouter from "./routers/commonRouter.js";
@@ -14,6 +13,7 @@ const port = 4001;
 const peerServerPort = 4002;
 const server = http.createServer(app);
 import fs from 'fs';
+import {updateCommonApiCall} from "./models/commonModel.js";
 export let allChannelsInGroupCall = [];
 export let membersInChannelWithDetails = {};
 let currentUserIdInGroupCall = {};
@@ -75,83 +75,31 @@ function setupWebSocket() {
                     break;
                 case 'handleMuteUnmuteInCall':
                     if(membersInChannelWithDetails[dataToSend.groupId] != undefined){
-                        let membersInCall =  membersInChannelWithDetails[dataToSend.groupId]?.members;
-                        if(dataToSend?.users){
-                            dataToSend?.users?.map((id)=>{
-                                membersInCall?.map((user,key)=>{
-                                    if(user.id == id){
-                                        membersInCall[key].audio = dataToSend?.audio != 'MUTE' ? true : false;
-                                    }
-                                })
-                            })
-                        }
-                        membersInChannelWithDetails[dataToSend.groupId].members = membersInCall;
+                        membersInChannelWithDetails[dataToSend.groupId].members = dataToSend?.users;
                         dataToSend = {
                             clientId: dataToSend.clientId,
-                            classGroupData: membersInChannelWithDetails[dataToSend.groupId],
-                            data: {users:dataToSend?.users,audio:dataToSend?.audio},
+                            userId:dataToSend?.userId,
                             groupId:dataToSend.groupId,
                             type: 'handleMuteUnmuteInCall'
                         }
                     }
                     break;
-                case 'leaveCurrentRunningCall':
+                case 'actionToEndCurrentCurrentCall':
                     if(membersInChannelWithDetails[dataToSend.groupId] !== undefined && membersInChannelWithDetails[dataToSend.groupId].length){
-                        let index = null;
-                        let members = membersInChannelWithDetails[dataToSend.groupId];
-                        members?.map((user,key)=>{
-                            if(user?.id === dataToSend?.userId){
-                                index = key;
-                            }
-                        })
-                        if(index !== null)
-                            members.splice(index,1);
-
                         if(currentUserIdInGroupCall[userID] !== undefined)
                             delete currentUserIdInGroupCall[userID];
-
-                        if(members?.length > 1) {
-                            membersInChannelWithDetails[dataToSend.groupId] = [...members];
-                        }else{
                             if(allChannelsInGroupCall?.length && allChannelsInGroupCall.includes(dataToSend.groupId))
                                 allChannelsInGroupCall.splice(allChannelsInGroupCall.indexOf(dataToSend.groupId),1);
-
                             if(membersInChannelWithDetails[dataToSend.groupId] !== undefined) {
-                                // let aliasArray = ['$1', '$2', '$3', '$4', '$5', '$6','$7','$8','$9'];
-                                // let columnArray = ['id', 'message_text', 'message_html', 'parent_id', 'group_id', 'created_by','type','message_snap','message_type'];
-                                // const generateUniqueIdForBlock =()=> {
-                                //     let str = 'abcdefghijklmnopqrstuvwxyz0123456789';
-                                //     let char = '',
-                                //         genID = '';
-                                //
-                                //     while(genID.length < 5) {
-                                //         char = str.charAt(Math.floor(Math.random() * str.length));
-                                //         genID += char;
-                                //     }
-                                //     return genID;
-                                // }
-                                // let id = generateUniqueIdForBlock()+'-'+generateUniqueIdForBlock()+'-'+generateUniqueIdForBlock();
-                                // let valuesArray = [id, '', '', '',dataToSend.groupId,dataToSend?.userId,'CALL','','call_ended'];
-                                // let insertData = {
-                                //     alias: aliasArray,
-                                //     column: columnArray,
-                                //     values: valuesArray,
-                                //     tableName: 'chat_module_messages_data'
-                                // }
-                                // insertCommonApiCall(insertData);
-
                                 if (membersInChannelWithDetails[dataToSend.groupId] !== undefined)
                                     delete membersInChannelWithDetails[dataToSend.groupId];
-                            }
 
-
-                            dataToSend = {
-                                groupId:dataToSend.groupId,
-                                type: 'endOfCurrentCallRemoveAllInstances'
-                            }
+                                let setData = `class_end_time = ?`;
+                                let whereCondition = `id = '${dataToSend.groupId}'`;
+                                let updateData = {column: setData, value: [dataToSend?.classEndTime], whereCondition: whereCondition, tableName: 'classes_assigned_to_teacher'};
+                                updateCommonApiCall(updateData);
                         }
                     }
-
                     break;
             }
             sendMessage(dataToSend);
@@ -185,11 +133,9 @@ app.post('/api-call-tutor/recording-video-chuncks', (req, res) => {
     res.status(200).send({message:`success ${port}`});
 });
 app.post('/api-call-tutor/recording-video-finish', (req, res) => {
-    console.log('Combinig the files',chunks.length);
     let buf = Buffer.concat(chunks);
-    console.log(buf) //empty buff
     fs.writeFile(`${uploadPath}/RecordingVideo_${new Date().getTime()}.webm`, buf, (err) => {
-        console.log('Ahh....', err)
+
     });
     res.json({save:true})
 });

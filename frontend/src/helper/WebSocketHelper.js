@@ -1,14 +1,13 @@
 import {
-    actionToAddDataFromIncomingCall,
-    actionToMuteUnmuteUserCallLocally,
+    actionToMuteUnmuteUserCallLocally, actionToOpenRatingModalPopup,
     actionToRemoveUserFromCurrentCallLocally,
-    actionToSetCallBroadcastMessage,
     actionToSetCaptureAnnotatorJSONData,
     actionToSetCurrentCallDataGroupData,
     actionToSetMemberInGroupCall,
-    actionToStoreAndRemoveNewAddedCallInGroupData,
     handleWebSocketEventCall
 } from "../actions/CommonAction";
+import {CHAT_MODULE_CURRENT_CALL_ALL_MEMBERS} from "../constants/CommonConstants";
+import {cloneDeep} from "lodash";
 
 
 let timeInterval = null;
@@ -132,11 +131,9 @@ export function handleWebSocketEvent(dispatch,state,data){
                     userFound = true;
                 }
             })
-
             if(userFound){
-                dispatch(actionToStoreAndRemoveNewAddedCallInGroupData(data.groupId));
-                dispatch(actionToAddDataFromIncomingCall(data.classGroupData,data.members));
                 dispatch(actionToSetCurrentCallDataGroupData(data.classGroupData));
+                dispatch({type: CHAT_MODULE_CURRENT_CALL_ALL_MEMBERS, payload: [...data?.members]});
             }
             break;
         }
@@ -147,16 +144,13 @@ export function handleWebSocketEvent(dispatch,state,data){
              dispatch(actionToSetCaptureAnnotatorJSONData(data.jsonObject, data.type));
             break;
         }
-        case 'leaveCurrentRunningCall':
-            dispatch(actionToRemoveUserFromCurrentCallLocally(data.userId));
+        case 'actionToEndCurrentCurrentCall':
+            if(chatModuleCurrentCallGroupData?.id === data?.groupId) {
+                dispatch(actionToOpenRatingModalPopup(true,cloneDeep(chatModuleCurrentCallGroupData)));
+            }
             break;
         case 'handleMuteUnmuteInCall': {
-            if(data?.classGroupData?.groupId === chatModuleCurrentCallGroupData?.id){
-                console.log('[ HANDLE MUTE ]',data?.classGroupData);
-                dispatch(actionToMuteUnmuteUserCallLocally(data.data));
-                dispatch(actionToSetCurrentCallDataGroupData(data.classGroupData));
-                dispatch(actionToSetCallBroadcastMessage('participant-updated'));
-            }
+            dispatch(actionToMuteUnmuteUserCallLocally(data?.userId));
             break;
         }
     }

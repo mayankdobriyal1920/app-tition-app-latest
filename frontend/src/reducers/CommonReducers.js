@@ -29,7 +29,7 @@ import {
     USER_SIGNIN_REQUEST,
     USER_SIGNIN_SUCCESS,
     USER_SIGNOUT,
-    WINDOW_RESIZE_COUNT
+    WINDOW_RESIZE_COUNT, OPEN_CLOSE_TEACHER_RATING_POPUP
 } from "../constants/CommonConstants";
 
 export const userSigninReducer = (state = {}, action) => {
@@ -173,6 +173,14 @@ export const windowResizeCountReducer = (state = {}, action) => {
 export const openCloseSignupPopupReducer = (state = {}, action) => {
     switch (action.type) {
         case OPEN_CLOSE_SIGNUP_POPUP:
+            return action.payload;
+        default:
+            return state;
+    }
+};
+export const openCloseTeacherRatingPopupReducer = (state = {}, action) => {
+    switch (action.type) {
+        case OPEN_CLOSE_TEACHER_RATING_POPUP:
             return action.payload;
         default:
             return state;

@@ -27,7 +27,7 @@ import {
     CHAT_MODULE_CURRENT_CALL_GROUP_DATA,
     CHAT_MODULE_NEW_USER_ADDED_IN_CURRENT_CALL,
     CHAT_MODULE_CURRENT_CALL_ALL_MEMBERS,
-    CALL_SOCKET_MESSAGE_BROADCAST, STUDENT_ALL_TIME_CLASS_LIST_SUCCESS
+    CALL_SOCKET_MESSAGE_BROADCAST, STUDENT_ALL_TIME_CLASS_LIST_SUCCESS, OPEN_CLOSE_TEACHER_RATING_POPUP
 } from "../constants/CommonConstants";
 
 import Axios from "axios";
@@ -208,7 +208,12 @@ export const actionToSendFabricDataToOtherUser = (jsonObject) => async ()=> {
         jsonObject: JSON.stringify(jsonObject)
     }));
 }
-export const actionToSetCaptureAnnotatorJSONData = (jsonObject) => (dispatch,getState) => {
+export const actionToOpenRatingModalPopup = (action,payload) => (dispatch) => {
+    let data = {isOpen:action,dropdownData:payload}
+    dispatch({type:OPEN_CLOSE_TEACHER_RATING_POPUP,payload:data});
+    dispatch(actionToEndCurrentCurrentCallLocally(payload?.id));
+}
+export const actionToSetCaptureAnnotatorJSONData = (jsonObject) => (dispatch) => {
     let annotatorData = JSON.parse(jsonObject);
     let annotatorJSONData = {userId:annotatorData.userId,canvasJson:annotatorData.canvasJson,custom_editor_id:annotatorData.custom_editor_id,
         type:annotatorData.type,userPointer:annotatorData.userPointer,sizeArray:annotatorData.sizeArray,
@@ -247,37 +252,27 @@ export const actionToGetTeacherAllClasses = () => async (dispatch,getState) => {
 export const actionToSetCurrentCallDataGroupData = (groupData) => async (dispatch) => {
     dispatch({ type: CHAT_MODULE_CURRENT_CALL_GROUP_DATA, payload: groupData});
 }
-export const actionToRemoveDataFromIncomingCall = () => async (dispatch) => {
-    dispatch({ type: CHAT_MODULE_INCOMING_CALL_GROUP_DATA, payload: {}});
-}
-export const actionToRemoveInGroupData = (groupId) => async (dispatch,getState) => {
-    const chatModuleAllGroupStartedCall = getState().chatModuleAllGroupStartedCall;
-    if(chatModuleAllGroupStartedCall.includes(groupId)){
-        chatModuleAllGroupStartedCall.splice(chatModuleAllGroupStartedCall.indexOf(groupId),1);
-    }
-    dispatch({ type: CHAT_MODULE_ALL_STARTED_CALL, payload: [...chatModuleAllGroupStartedCall]});
-}
-export const actionToMuteUnmuteUserCallLocally = (payload) => async (dispatch) => {
-    payload?.users?.map((id)=>{
-        let audio = document.getElementById(`VIDEO-${id}`);
-        if(audio != null && audio) {
-            audio.muted = payload?.audio === 'MUTE' ? true : false;
-        }
+
+export const actionToMuteUnmuteUserCallLocally = (id) => async (dispatch,getState) => {
+   const chatModuleCurrentCallGroupMembers = getState().chatModuleCurrentCallGroupMembers;
+   let allMembersInCall = [];
+    chatModuleCurrentCallGroupMembers?.map((users)=>{
+        if(users?.id === id)
+            users.mute = !users.mute;
+        allMembersInCall.push(users);
     })
+    dispatch({type: CHAT_MODULE_CURRENT_CALL_ALL_MEMBERS, payload: [...allMembersInCall]});
+    return allMembersInCall;
 }
-export const actionToMuteUnmuteUserCall = (users,audio,groupId) => async (dispatch) => {
-    dispatch(actionToMuteUnmuteUserCallLocally({users,audio}));
+export const actionToMuteUnmuteUserCall = (id,groupId) => async (dispatch) => {
+    let allUsers = await dispatch(actionToMuteUnmuteUserCallLocally(id,true));
     sendWebsocketRequest(JSON.stringify({
         clientId:localStorage.getItem('clientId'),
-        users:users,
-        audio:audio,
+        users:allUsers,
+        userId:id,
         groupId:groupId,
         type: "handleMuteUnmuteInCall"
     }));
-}
-export const actionToSetCallBroadcastMessage = (message) => async (dispatch) => {
-    dispatch({type: CALL_SOCKET_MESSAGE_BROADCAST, payload:''});
-    dispatch({type: CALL_SOCKET_MESSAGE_BROADCAST, payload:message});
 }
 export const actionToSendVideoChunkDataToServer = (groupId,videoData) => async (dispatch) => {
     const {data} = await api.post(`recording-video-chuncks`,videoData,{
@@ -293,42 +288,34 @@ export const actionToRemoveCurrentGroupCallData = () => async (dispatch) => {
     dispatch({ type: CHAT_MODULE_CURRENT_CALL_GROUP_DATA, payload: {}});
     dispatch({type: CHAT_MODULE_CURRENT_CALL_ALL_MEMBERS, payload: []});
 }
-export const actionToRemoveUserFromCurrentCallAndEndCall = (userId,groupId) => async (dispatch) => {
 
-    let setData = `class_end_time = ?`;
-    let whereCondition = `id = '${groupId}'`;
-    let dataToSend = {column: setData, value: [moment().format('YYYY-MM-DD hh:mm:ss')], whereCondition: whereCondition, tableName: 'classes_assigned_to_teacher'};
-    dispatch(commonUpdateFunction(dataToSend));
-
-    sendWebsocketRequest(JSON.stringify({
-        clientId:localStorage.getItem('clientId'),
-        userId:userId,
-        groupId:groupId,
-        type: "leaveCurrentRunningCall"
-    }));
-}
-export const actionToEndCurrentCurrentCall = (groupId) => async (dispatch,getState) => {
-    dispatch(actionToRemoveDataFromIncomingCall());
-    dispatch(actionToRemoveInGroupData(groupId));
+export const actionToEndCurrentCurrentCallLocally = (groupId) => async (dispatch,getState) =>{
     const chatModuleCurrentCallGroupData = getState().chatModuleCurrentCallGroupData;
     if(chatModuleCurrentCallGroupData?.id === groupId){
         dispatch({ type: CHAT_MODULE_CURRENT_CALL_GROUP_DATA, payload: {}});
         dispatch({type: CHAT_MODULE_CURRENT_CALL_ALL_MEMBERS, payload: []});
     }
 }
-export const actionToRemoveUserFromCurrentCallLocally = (userId) => async (dispatch,getState) => {
-    // let chatModuleCurrentCallGroupMembers = getState().chatModuleCurrentCallGroupMembers;
-    // let index = null;
-    // chatModuleCurrentCallGroupMembers?.map((user,key)=>{
-    //     if(user.id === userId){
-    //         index = key;
-    //     }
-    // })
-    // chatModuleCurrentCallGroupMembers.splice(index,1);
-    // if(index !== null){
-    //     dispatch({type: CHAT_MODULE_CURRENT_CALL_ALL_MEMBERS, payload: cloneDeep(chatModuleCurrentCallGroupMembers)});
-    // }
+
+export const actionToRateCurrentClass = (rating,classData) => async (dispatch,getState) => {
+    let userInfo = getState().userSignin.userInfo;
+    const aliasArray = ['?','?','?','?'];
+    const columnArray = ['id','rating','user_id','classes_assigned_to_teacher_id'];
+    const valuesArray = [_generateUniqueId(),rating,userInfo?.id,classData?.id];
+    const insertData = {alias:aliasArray,column:columnArray,values:valuesArray,tableName:'classes_rating'};
+    await dispatch(callInsertDataFunction(insertData));
+    dispatch(actionToOpenRatingModalPopup(false,{}));
 }
+export const actionToEndCurrentCurrentCall = (groupId) => async (dispatch) => {
+    dispatch(actionToEndCurrentCurrentCallLocally(groupId));
+    sendWebsocketRequest(JSON.stringify({
+        clientId: localStorage.getItem('clientId'),
+        type: 'actionToEndCurrentCurrentCall',
+        classEndTime:moment().format('YYYY-MM-DD HH:mm:ss'),
+        groupId:groupId
+    }));
+}
+
 export const actionToSetMemberInGroupCall = (groupId,allMembersArray,memberData) => async (dispatch,getState) => {
     if(getState()?.chatModuleCurrentCallGroupData?.id === groupId) {
         dispatch({type: CHAT_MODULE_CURRENT_CALL_ALL_MEMBERS, payload: [...allMembersArray]});
@@ -345,17 +332,6 @@ export const actionToCreateUserSignupRequest = (payload) => async (dispatch) => 
     localStorage.setItem('userInfo',JSON.stringify(payload));
     setAuthSignInByRole(payload);
     window.location.reload();
-}
-export const actionToStoreAndRemoveNewAddedCallInGroupData = (groupId) => async (dispatch,getState) => {
-    const chatModuleAllGroupStartedCall = getState().chatModuleAllGroupStartedCall;
-    if(!chatModuleAllGroupStartedCall.includes(groupId)){
-        chatModuleAllGroupStartedCall.push(groupId);
-    }
-    dispatch({ type: CHAT_MODULE_ALL_STARTED_CALL, payload: [...chatModuleAllGroupStartedCall]});
-}
-export const actionToAddDataFromIncomingCall = (groupData,members) => async (dispatch,getState) => {
-    if(members?.includes(getState()?.userSignin?.userInfo?.id))
-        dispatch({ type: CHAT_MODULE_INCOMING_CALL_GROUP_DATA, payload: cloneDeep(groupData)});
 }
 
 export const signout = () => (dispatch) => {

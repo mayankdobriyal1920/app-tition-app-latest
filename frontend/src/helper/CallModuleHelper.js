@@ -42,7 +42,6 @@ export const addVideoStream=(id,stream,isMe)=> {
             teacherVideo.srcObject = stream;
             teacherVideo.setAttribute('autoPlay','true');
             teacherVideo.setAttribute('playsInline','true');
-
             if(isMe)
                 teacherVideo.muted = true;
         }else{
@@ -51,24 +50,22 @@ export const addVideoStream=(id,stream,isMe)=> {
             studentVideo.srcObject = stream;
             studentVideo.setAttribute('autoPlay','true');
             studentVideo.setAttribute('playsInline','true');
-
-            if(isMe)
-                studentVideo.muted = true;
+            studentVideo.muted = true;
         }
     }
 }
 export const addCallSubscriptionEvents = (call) => {
-    call.on('stream', userStream => {
+    call?.on('stream', userStream => {
         addVideoStream(call.peer, userStream,false)
     })
-    call.on('close', () => {
-        console.log(call.peer);
+    call?.on('close', () => {
+        console.log('Close');
     })
-    call.on('track', stream => {
+    call?.on('track', stream => {
         console.log('[PEER JS INCOMING CALL TRACK]', stream);
     })
-    if(!peers[call.peer])
-        peers[call.peer] = call;
+    if(!peers[call?.peer])
+        peers[call?.peer] = call;
 }
 export const connectToNewUser=(user,stream,myPeer)=> {
     console.log('[ NEW USER CONNECTED TO CALL]',user.peer_connection_id);
