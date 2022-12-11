@@ -14,15 +14,16 @@ import {
     removeClosePeerConnection,
     setMyMediaRecorder,
     setMyPeer,
-    setMyPeerConnectionId,
+    setMyPeerConnectionId, setMyShareScreenStream,
     setMyStream
 } from "../../../helper/CallModuleHelper.js";
 import {sendWebsocketRequest} from "../../../helper/WebSocketHelper";
 import Peer from 'peerjs';
 import {
+    actionToAddDataFromIncomingCall,
     actionToRemoveCurrentGroupCallData,
     actionToSendVideoChunkDataToServer, actionToSendVideoChunkDataToServerFinishProcess,
-    actionToSetCurrentCallDataGroupData
+    actionToSetCurrentCallDataGroupData, actionToStoreAndRemoveNewAddedCallInGroupData
 } from "../../../actions/CommonAction";
 import TeacherStudentVideoCallComponent from "./TeacherStudentVideoCallComponent";
 import {
@@ -111,7 +112,7 @@ function TeacherMainDesktopDashboardComponentFunction(){
                             setInCallStatus('JOINING');
 
                             let memberData = userInfo;
-                            memberData.peer_connection_id = 'teacher_' + _generateUniqueId();
+                            memberData.peer_connection_id = 'teacher_' + _generateUniqueId()+'_'+classGroupData?.id;
                             memberData.audio = true;
                             memberData.isTeacher = true;
 
@@ -146,16 +147,13 @@ function TeacherMainDesktopDashboardComponentFunction(){
                                         }
 
                                         console.log('[PEER CONNECTION USER STREAM]', stream);
-                                        const video = document.createElement('video');
-                                        video.id = `VIDEO-${memberData.peer_connection_id}`;
-                                        video.muted = true;
-                                        addVideoStream(video, stream)
+                                        addVideoStream(memberData.peer_connection_id, stream,true);
                                         setMyStream(stream);
+
                                         setCallLoading(false);
+                                        let finalClassGroupData = classGroupData;
 
-                                        let finalclassGroupData = classGroupData;
-
-                                        finalclassGroupData.started_at = new Date().toISOString();
+                                        finalClassGroupData.started_at = new Date().toISOString();
 
                                         let allMembersInCall = [];
                                         classGroupData?.profile_subject_with_batch?.map((studentProfile) => {
@@ -165,10 +163,14 @@ function TeacherMainDesktopDashboardComponentFunction(){
                                             });
                                         })
 
+                                        dispatch(actionToStoreAndRemoveNewAddedCallInGroupData(classGroupData?.id));
+                                        dispatch(actionToAddDataFromIncomingCall(classGroupData,allMembersInCall));
+                                        dispatch({type: CHAT_MODULE_CURRENT_CALL_ALL_MEMBERS, payload: [...allMembersInCall]});
+
                                         sendWebsocketRequest(JSON.stringify({
                                             clientId: localStorage.getItem('clientId'),
                                             groupId: classGroupData?.id,
-                                            classGroupData: finalclassGroupData,
+                                            classGroupData: finalClassGroupData,
                                             members: allMembersInCall,
                                             memberData: memberData,
                                             type: "startNewCallInGroupChannel"
@@ -178,8 +180,7 @@ function TeacherMainDesktopDashboardComponentFunction(){
                                         myPeer.on('call', call => {
                                             console.log('[PEER JS INCOMMING CALL]', call);
                                             call.answer(stream);
-                                            const video = document.createElement('video')
-                                            addCallSubscriptionEvents(call, video);
+                                            addCallSubscriptionEvents(call);
                                         })
                                     })
                             })
@@ -204,6 +205,7 @@ function TeacherMainDesktopDashboardComponentFunction(){
                         recorder.onstop = e => callFunctionToExportRecordedVideo(new Blob(chunks));
                         recorder.start(5000);
                         setMyMediaRecorder(recorder);
+                        setMyShareScreenStream(recordStream);
                     }, error => {
                         console.log("Unable to acquire screen capture", error);
                     });

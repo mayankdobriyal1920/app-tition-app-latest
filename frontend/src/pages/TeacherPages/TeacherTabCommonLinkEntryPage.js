@@ -8,9 +8,11 @@ import {useEffectOnce} from "../../helper/UseEffectOnce";
 export default function TeacherTabCommonLinkEntryPage() {
     const windowResizeCount = useSelector((state) => state.windowResizeCount);
     const dispatch = useDispatch();
+
     useEffectOnce(()=>{
         dispatch(actionToGetTeacherAllClasses());
     },[])
+
     return (
         <>
             {(windowResizeCount >= 1200) ?

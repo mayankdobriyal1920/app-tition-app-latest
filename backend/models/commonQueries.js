@@ -75,15 +75,13 @@ export const actionToGetTeacherAllClassesQuery = (userId)=>{
                  LEFT JOIN (SELECT profile_subject_with_batch.classes_assigned_to_teacher_id,
                                    json_arrayagg(
                                            json_object(
-                                                   'id', profile_subject_with_batch.id,
+                                                   'id', profile_subject_with_batch.id, 
                                                    'student_name', student_profile.name,
                                                    'student_id', student_profile.id
                                                )
                                        ) jsdata
                             FROM profile_subject_with_batch
-                                     LEFT JOIN student_profile
-                                               ON profile_subject_with_batch.profile_id = student_profile.id
-                                     LEFT JOIN app_user ON profile_subject_with_batch.teacher_id = app_user.id
+                                LEFT JOIN student_profile ON profile_subject_with_batch.profile_id = student_profile.id
 
                             GROUP BY profile_subject_with_batch.classes_assigned_to_teacher_id) profile_subject_with_batch
                            ON profile_subject_with_batch.classes_assigned_to_teacher_id = classes_assigned_to_teacher.id

@@ -62,7 +62,7 @@ export default function StudentTodayClassesComponent(){
                 function(stream){
                     setInCallStatus('JOINING');
                     let memberData = userInfo;
-                    memberData.peer_connection_id = 'student_'+_generateUniqueId();
+                    memberData.peer_connection_id = 'student_'+_generateUniqueId()+'_'+studentAllTodayClassList?.classData?.id;
                     memberData.audio = true;
 
                     setMyPeerConnectionId(memberData.peer_connection_id);
@@ -76,13 +76,9 @@ export default function StudentTodayClassesComponent(){
 
                     setMyPeer(myPeer);
                     console.log('[PEER CONNECTION USER STREAM]', stream);
-                    const video = document.createElement('video');
-                    video.id = `VIDEO-${memberData.peer_connection_id}`;
-                    video.muted  = true;
-
                     setTimeout(function() {
-                        addVideoStream(video, stream)
-                    },1500)
+                        addVideoStream(memberData.peer_connection_id, stream,true)
+                    })
 
                     console.log('[ PEER JS CONNECTION INSTANCE ]',myPeer)
 
@@ -101,8 +97,7 @@ export default function StudentTodayClassesComponent(){
                         myPeer.on('call', call => {
                             console.log('[PEER JS INCOMING CALL]', call);
                             call.answer(stream);
-                            const video = document.createElement('video');
-                            addCallSubscriptionEvents(call, video);
+                            addCallSubscriptionEvents(call);
                         })
 
                     })

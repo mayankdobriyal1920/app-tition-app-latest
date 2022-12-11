@@ -27,12 +27,8 @@ export const removeClosePeerConnection=(id)=> {
 
     if(peers[id])
         peers[id].close();
-
-    if($(`#VIDEO-${id}`).length) {
-        $(`#VIDEO-${id}`).remove();
-    }
 }
-export const addVideoStream=(video,stream)=> {
+export const addVideoStream=(id,stream,isMe)=> {
 
     console.log('[ USER STREAM ]',stream);
     const videoTracks = stream?.getVideoTracks();
@@ -40,29 +36,33 @@ export const addVideoStream=(video,stream)=> {
 
 
     if(videoTracks && videoTracks?.length){
-        video.srcObject = stream;
-        video.setAttribute('autoPlay',true);
-        video.setAttribute('playsInline',true);
-        video.play();
-        if($(`#${video.id}`).length){
-            $(`#${video.id}`).remove();
-        }
-        if(video?.id?.indexOf('teacher') >= 0) {
-            document.getElementById('main_user_video_call_video_section').append(video);
-            video.classList = 'my_video_peer_connection';
+        if(id?.indexOf('teacher') >= 0) {
+            let teacher_class_assign_id = id?.split("_")[2];
+            let teacherVideo = document.getElementById(teacher_class_assign_id);
+            teacherVideo.srcObject = stream;
+            teacherVideo.setAttribute('autoPlay','true');
+            teacherVideo.setAttribute('playsInline','true');
+
+            if(isMe)
+                teacherVideo.muted = true;
         }else{
-            video.classList = 'other_video_peer_connection';
-            document.getElementById('student_all_class_group_data_videos_section').append(video);
+            let student_profile_id = id?.split("_")[2];
+            let studentVideo = document.getElementById(student_profile_id);
+            studentVideo.srcObject = stream;
+            studentVideo.setAttribute('autoPlay','true');
+            studentVideo.setAttribute('playsInline','true');
+
+            if(isMe)
+                studentVideo.muted = true;
         }
     }
 }
-export const addCallSubscriptionEvents = (call,video) => {
+export const addCallSubscriptionEvents = (call) => {
     call.on('stream', userStream => {
-        video.id = `VIDEO-${call.peer}`;
-        addVideoStream(video, userStream)
+        addVideoStream(call.peer, userStream,false)
     })
     call.on('close', () => {
-        video.remove();
+        console.log(call.peer);
     })
     call.on('track', stream => {
         console.log('[PEER JS INCOMING CALL TRACK]', stream);
@@ -74,6 +74,5 @@ export const connectToNewUser=(user,stream,myPeer)=> {
     console.log('[ NEW USER CONNECTED TO CALL]',user.peer_connection_id);
     const call = myPeer.call(user.peer_connection_id,stream);
     console.log('[ CALL USER ]',myPeer,user,call);
-    const video = document.createElement('video');
-    addCallSubscriptionEvents(call,video);
+    addCallSubscriptionEvents(call);
 }

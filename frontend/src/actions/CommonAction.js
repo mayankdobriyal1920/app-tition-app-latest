@@ -229,13 +229,19 @@ export const actionToGetTeacherAllClasses = () => async (dispatch,getState) => {
     dispatch({type: TEACHER_ALL_CLASS_LIST_REQUEST});
     const {data} = await api.post(`common/actionToGetTeacherAllClassesApiCall`,{userId:userInfo?.id});
     let todayClasses = [];
+    let otherClasses = [];
 
     data?.response?.map((classData)=>{
         if(classData?.is_demo_class){
             todayClasses.push(classData);
         }
     })
-    dispatch({type: TEACHER_ALL_CLASS_LIST_SUCCESS, payload:cloneDeep(data?.response)});
+    data?.response?.map((classData)=>{
+        if(!classData?.is_demo_class){
+            otherClasses.push(classData);
+        }
+    })
+    dispatch({type: TEACHER_ALL_CLASS_LIST_SUCCESS, payload:[...otherClasses]});
     dispatch({type: TEACHER_ALL_DEMO_CLASS_LIST_SUCCESS, payload:[...todayClasses]});
 }
 export const actionToSetCurrentCallDataGroupData = (groupData) => async (dispatch) => {
@@ -311,17 +317,17 @@ export const actionToEndCurrentCurrentCall = (groupId) => async (dispatch,getSta
     }
 }
 export const actionToRemoveUserFromCurrentCallLocally = (userId) => async (dispatch,getState) => {
-    let chatModuleCurrentCallGroupMembers = getState().chatModuleCurrentCallGroupMembers;
-    let index = null;
-    chatModuleCurrentCallGroupMembers?.map((user,key)=>{
-        if(user.id === userId){
-            index = key;
-        }
-    })
-    chatModuleCurrentCallGroupMembers.splice(index,1);
-    if(index !== null){
-        dispatch({type: CHAT_MODULE_CURRENT_CALL_ALL_MEMBERS, payload: cloneDeep(chatModuleCurrentCallGroupMembers)});
-    }
+    // let chatModuleCurrentCallGroupMembers = getState().chatModuleCurrentCallGroupMembers;
+    // let index = null;
+    // chatModuleCurrentCallGroupMembers?.map((user,key)=>{
+    //     if(user.id === userId){
+    //         index = key;
+    //     }
+    // })
+    // chatModuleCurrentCallGroupMembers.splice(index,1);
+    // if(index !== null){
+    //     dispatch({type: CHAT_MODULE_CURRENT_CALL_ALL_MEMBERS, payload: cloneDeep(chatModuleCurrentCallGroupMembers)});
+    // }
 }
 export const actionToSetMemberInGroupCall = (groupId,allMembersArray,memberData) => async (dispatch,getState) => {
     if(getState()?.chatModuleCurrentCallGroupData?.id === groupId) {

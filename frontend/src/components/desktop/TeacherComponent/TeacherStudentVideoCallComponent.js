@@ -13,6 +13,7 @@ import $ from 'jquery';
 
 export default function TeacherStudentVideoCallComponent({inCallStatus,setInCallStatus}){
     const chatModuleCurrentCallGroupData = useSelector((state) => state.chatModuleCurrentCallGroupData);
+    const chatModuleCurrentCallGroupMembers = useSelector((state) => state.chatModuleCurrentCallGroupMembers);
     const callSocketMessageBroadcast = useSelector((state) => state.callSocketMessageBroadcast);
     const userInfo = useSelector((state) => state.userSignin.userInfo);
     const dispatch = useDispatch();
@@ -89,9 +90,9 @@ export default function TeacherStudentVideoCallComponent({inCallStatus,setInCall
                 <div className={"col-3 side_my_video_with_details"}>
                     {/*Important div for call*/}
                     <div id={"main_user_video_call_video_section"} className="main_user_video_call_video_section">
-                        {/*<video loop={true} playsInline={true} autoPlay={true} className={'my_video_peer_connection'}>*/}
-                        {/*    <source src="http://techslides.com/demos/sample-videos/small.webm" />*/}
-                        {/*</video>*/}
+                        <video loop={true} playsInline={true}
+                               id={chatModuleCurrentCallGroupData?.id}
+                               autoPlay={true} className={'my_video_peer_connection'}></video>
                     </div>
                     {/*Important div for call*/}
                     <div className={"video_class_description mt-15"}>
@@ -147,9 +148,12 @@ export default function TeacherStudentVideoCallComponent({inCallStatus,setInCall
                     </div>
                 </div>
                 <div className={"col-2 side_other_video_with_details"} id={"student_all_class_group_data_videos_section"}>
-                    {/*<video playsInline={true} autoPlay={true} className={'other_video_peer_connection'}>*/}
-                    {/*    <source src="http://techslides.com/demos/sample-videos/small.webm" />*/}
-                    {/*</video>*/}
+                    {(chatModuleCurrentCallGroupMembers?.map((callGroupMembers,key)=>(
+                        <span key={key}>
+                            <video key={key} playsInline={true} autoPlay={true} id={"video_call_"+callGroupMembers?.id} className={'other_video_peer_connection'}></video>
+                            <div className={"member_name_section"}>{callGroupMembers?.name}</div>
+                        </span>
+                    )))}
                 </div>
             </div>
             {inCallStatus === 'JOINING' ?

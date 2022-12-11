@@ -155,7 +155,7 @@ export const actionToGetTeacherAllClassesApiCall = (body) => {
 
         pool.query(query, (error, results) => {
             if (error) {
-                reject(error)
+                reject(query)
             }
             resolve(results);
         })
