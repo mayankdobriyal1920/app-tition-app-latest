@@ -4,6 +4,9 @@ export const actionToGetAllSubjectDataListQuery = ()=>{
 export const actionToGetAllStudentDataListQuery = ()=>{
     return `select student_profile.*,school_board.name as school_board_name from student_profile left join  school_board on student_profile.school_board = school_board.id `;
 }
+export const actionToGetAllNewStudentProfileDataListQuery = ()=>{
+    return `select student_profile.*,school_board.name as school_board_name from student_profile left join  school_board on student_profile.school_board = school_board.id `;
+}
 export const actionToGetAllStudentSubscriptionDataListQuery = ()=>{
     return `select student_profile.id as student_id, student_profile.name as student_name,student_profile.email as student_email, student_profile.student_class,student_profile.batch as student_batch,
                    student_profile.subscription_end_date as student_subscription_end_date,subject.id as subject_id, subject.name as subject_name, profile_subject_with_batch.id as profile_subject_with_batch_id,

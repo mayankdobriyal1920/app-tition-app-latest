@@ -3,15 +3,19 @@ import fs from 'fs';
 import expressAsyncHandler from 'express-async-handler';
 
 import {
-    actionToGetAllSchoolBoardDataListApiCall, actionToGetAllStudentDataListApiCall,
+    actionToGetAllSchoolBoardDataListApiCall,
+    actionToGetAllStudentDataListApiCall,
     actionToGetAllSubjectDataListApiCall,
     actionToGetTeacherAllClassesApiCall,
-    actionToGetUserAllClassesApiCall, actionToInitializePaymentGatewayApiCall,
+    actionToGetUserAllClassesApiCall,
+    actionToInitializePaymentGatewayApiCall,
     actionToValidateMobileNumberApiCall,
     actionToGetAllTeacherDataListApiCall,
     deleteCommonApiCall,
     insertCommonApiCall,
-    updateCommonApiCall, actionToGetAllStudentSubscriptionDataListApiCall
+    updateCommonApiCall,
+    actionToGetAllStudentSubscriptionDataListApiCall,
+    actionToGetAllNewStudentProfileDataListApiCall
 } from "../models/commonModel.js";
 const commonRouter = express.Router();
 
@@ -69,6 +73,20 @@ commonRouter.post(
     '/actionToGetAllStudentDataListApiCall',
     expressAsyncHandler(async (req, res) => {
         actionToGetAllStudentDataListApiCall(req.body).then((data) => {
+            res.status(200).send({
+                response: data,
+
+            });
+        })
+            .catch(error => {
+                res.status(500).send(error);
+            })
+    })
+);
+commonRouter.post(
+    '/actionToGetAllNewStudentProfileDataListApiCall',
+    expressAsyncHandler(async (req, res) => {
+        actionToGetAllNewStudentProfileDataListApiCall(req.body).then((data) => {
             res.status(200).send({
                 response: data,
 

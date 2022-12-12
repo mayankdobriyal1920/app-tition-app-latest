@@ -25,11 +25,6 @@ export default function AllTeacherDataTableComponent(){
             cell:(row) => <button class='btn btn-primary' onClick={() => alert(row.id)}> Edit</button>  ,
         }
     ]
-    // useEffect(() =>{
-    //     // dispatch(actionToGetAllSubjectDataList());
-    //     console.log(teacherListArray);
-    //     // getTeachers();
-    // });
     useEffectOnce(() =>{
         dispatch(actionToGetAllTeacherDataList());
     },[]);

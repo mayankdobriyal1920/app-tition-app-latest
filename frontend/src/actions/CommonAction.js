@@ -30,7 +30,9 @@ import {
     CALL_SOCKET_MESSAGE_BROADCAST,
     STUDENT_ALL_TIME_CLASS_LIST_SUCCESS,
     OPEN_CLOSE_TEACHER_RATING_POPUP,
-    ALL_STUDENT_SUBSCRIPTION_DATA_LIST_REQUEST, ALL_STUDENT_SUBSCRIPTION_DATA_LIST_SUCCESS
+    ALL_STUDENT_SUBSCRIPTION_DATA_LIST_REQUEST,
+    ALL_STUDENT_SUBSCRIPTION_DATA_LIST_SUCCESS,
+    ALL_NEW_STUDENT_PROFILE_DATA_LIST_REQUEST, ALL_NEW_STUDENT_PROFILE_DATA_LIST_SUCCESS
 } from "../constants/CommonConstants";
 
 import Axios from "axios";
@@ -160,6 +162,11 @@ export const actionToGetAllStudentDataList = () => async (dispatch) => {
     dispatch({type: ALL_STUDENT_DATA_LIST_REQUEST});
     const {data} = await api.post(`common/actionToGetAllStudentDataListApiCall `);
     dispatch({type: ALL_STUDENT_DATA_LIST_SUCCESS, payload:[...data?.response]});
+}
+export const actionToGetAllNewStudentProfileDataList = () => async (dispatch) => {
+    dispatch({type: ALL_NEW_STUDENT_PROFILE_DATA_LIST_REQUEST});
+    const {data} = await api.post(`common/actionToGetAllNewStudentProfileDataListApiCall `);
+    dispatch({type: ALL_NEW_STUDENT_PROFILE_DATA_LIST_SUCCESS, payload:[...data?.response]});
 }
 export const actionToGetAllStudentSubscriptionDataList = () => async (dispatch) => {
     dispatch({type: ALL_STUDENT_SUBSCRIPTION_DATA_LIST_REQUEST});

@@ -4,7 +4,8 @@ import {
     ALL_SUBJECT_DATA_LIST_REQUEST,
     ALL_SUBJECT_DATA_LIST_SUCCESS,
     ANNOTATOR_UNDO_REDO_CAPTURE,
-    ANNOTATOR_USER_ON_CAPTURE, CALL_SOCKET_MESSAGE_BROADCAST,
+    ANNOTATOR_USER_ON_CAPTURE,
+    CALL_SOCKET_MESSAGE_BROADCAST,
     CAPTURE_ANNOTATOR_JSON_DATA,
     CHAT_MODULE_ALL_STARTED_CALL,
     CHAT_MODULE_CURRENT_CALL_ALL_MEMBERS,
@@ -20,7 +21,8 @@ import {
     ALL_STUDENT_DATA_LIST_REQUEST,
     ALL_STUDENT_DATA_LIST_SUCCESS,
     STUDENT_ALL_CLASS_LIST_REQUEST,
-    STUDENT_ALL_CLASS_LIST_SUCCESS, STUDENT_ALL_TIME_CLASS_LIST_SUCCESS,
+    STUDENT_ALL_CLASS_LIST_SUCCESS,
+    STUDENT_ALL_TIME_CLASS_LIST_SUCCESS,
     STUDENT_ALL_TODAY_CLASS_LIST_SUCCESS,
     ALL_TEACHER_DATA_LIST_REQUEST,
     ALL_TEACHER_DATA_LIST_SUCCESS,
@@ -31,7 +33,10 @@ import {
     USER_SIGNIN_REQUEST,
     USER_SIGNIN_SUCCESS,
     USER_SIGNOUT,
-    WINDOW_RESIZE_COUNT, OPEN_CLOSE_TEACHER_RATING_POPUP
+    WINDOW_RESIZE_COUNT,
+    OPEN_CLOSE_TEACHER_RATING_POPUP,
+    ALL_NEW_STUDENT_PROFILE_DATA_LIST_SUCCESS,
+    ALL_NEW_STUDENT_PROFILE_DATA_LIST_REQUEST
 } from "../constants/CommonConstants";
 
 export const userSigninReducer = (state = {}, action) => {
@@ -63,6 +68,16 @@ export const allStudentDataListReducer = (state = {}, action) => {
         case ALL_STUDENT_DATA_LIST_REQUEST:
             return { loading: true,studentData:[] ,prevId:action.payload};
         case ALL_STUDENT_DATA_LIST_SUCCESS:
+            return { loading: false,studentData:action.payload ,prevId:state.prevId};
+        default:
+            return state;
+    }
+};
+export const allNewStudentProfileDataListReducer = (state = {}, action) => {
+    switch (action.type) {
+        case ALL_NEW_STUDENT_PROFILE_DATA_LIST_REQUEST:
+            return { loading: true,studentData:[] ,prevId:action.payload};
+        case ALL_NEW_STUDENT_PROFILE_DATA_LIST_SUCCESS:
             return { loading: false,studentData:action.payload ,prevId:state.prevId};
         default:
             return state;
