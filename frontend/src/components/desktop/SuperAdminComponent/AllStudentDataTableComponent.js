@@ -72,6 +72,7 @@ export default function AllStudentDataTableComponent() {
     ]
     useEffectOnce(() =>{
         dispatch(actionToGetAllStudentDataList());
+        console.log(studentListArray);
     },[]);
     useEffect(() => {
         const resultName = studentListArray.studentData.filter((student) => {
@@ -83,6 +84,12 @@ export default function AllStudentDataTableComponent() {
     return (
         <div className={"container-fluid pt-4 px-4"}>
         <div className={"bg-light rounded h-100 p-4"}>
+            {(studentListArray.loading ) ?
+                <div className={"d-flex justify-content-center h-100"}>
+                    <div className={"spinner-border"} role={"status"}>
+                        <span className={"sr-only"}>Loading...</span>
+                    </div>
+                </div> :
         <DataTable
             title="Student List"
             columns={tableColumns}
@@ -98,6 +105,7 @@ export default function AllStudentDataTableComponent() {
             subHeaderComponent={<input type="text" placeholder="Search here" className="w-25 form-control"
                                        value={search} onChange={(e) => setSearch(e.target.value)}/>}
         />
+            }
             </div>
         </div>
     )

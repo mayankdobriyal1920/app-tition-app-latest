@@ -15,6 +15,8 @@ import {
     GET_IP_ADDRESS,
     OPEN_CLOSE_LOGIN_POPUP,
     OPEN_CLOSE_SIGNUP_POPUP,
+    ALL_STUDENT_SUBSCRIPTION_DATA_LIST_REQUEST,
+    ALL_STUDENT_SUBSCRIPTION_DATA_LIST_SUCCESS,
     ALL_STUDENT_DATA_LIST_REQUEST,
     ALL_STUDENT_DATA_LIST_SUCCESS,
     STUDENT_ALL_CLASS_LIST_REQUEST,
@@ -61,6 +63,16 @@ export const allStudentDataListReducer = (state = {}, action) => {
         case ALL_STUDENT_DATA_LIST_REQUEST:
             return { loading: true,studentData:[] ,prevId:action.payload};
         case ALL_STUDENT_DATA_LIST_SUCCESS:
+            return { loading: false,studentData:action.payload ,prevId:state.prevId};
+        default:
+            return state;
+    }
+};
+export const allStudentSubscriptionDataListReducer = (state = {}, action) => {
+    switch (action.type) {
+        case ALL_STUDENT_SUBSCRIPTION_DATA_LIST_REQUEST:
+            return { loading: true,studentData:[] ,prevId:action.payload};
+        case ALL_STUDENT_SUBSCRIPTION_DATA_LIST_SUCCESS:
             return { loading: false,studentData:action.payload ,prevId:state.prevId};
         default:
             return state;

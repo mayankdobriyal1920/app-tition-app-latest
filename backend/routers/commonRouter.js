@@ -11,7 +11,7 @@ import {
     actionToGetAllTeacherDataListApiCall,
     deleteCommonApiCall,
     insertCommonApiCall,
-    updateCommonApiCall
+    updateCommonApiCall, actionToGetAllStudentSubscriptionDataListApiCall
 } from "../models/commonModel.js";
 const commonRouter = express.Router();
 
@@ -69,6 +69,20 @@ commonRouter.post(
     '/actionToGetAllStudentDataListApiCall',
     expressAsyncHandler(async (req, res) => {
         actionToGetAllStudentDataListApiCall(req.body).then((data) => {
+            res.status(200).send({
+                response: data,
+
+            });
+        })
+            .catch(error => {
+                res.status(500).send(error);
+            })
+    })
+);
+commonRouter.post(
+    '/actionToGetAllStudentSubscriptionDataListApiCall',
+    expressAsyncHandler(async (req, res) => {
+        actionToGetAllStudentSubscriptionDataListApiCall(req.body).then((data) => {
             res.status(200).send({
                 response: data,
 

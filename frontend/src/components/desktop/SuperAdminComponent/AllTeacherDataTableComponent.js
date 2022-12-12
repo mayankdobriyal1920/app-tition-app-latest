@@ -42,6 +42,12 @@ export default function AllTeacherDataTableComponent(){
  return (
      <div className={"container-fluid pt-4 px-4"}>
          <div className={"bg-light rounded h-100 p-4"}>
+             {(teacherListArray.loading) ?
+                 <div className={"d-flex justify-content-center h-100"}>
+                     <div className={"spinner-border"} role={"status"}>
+                         <span className={"sr-only"}>Loading...</span>
+                     </div>
+                 </div> :
               <DataTable
                   title="Teacher List"
                   columns={tableColumns}
@@ -56,6 +62,7 @@ export default function AllTeacherDataTableComponent(){
                   progressComponent
                   subHeaderComponent={<input type="text" placeholder="Search here" className="w-25 form-control"  value={search} onChange={(e)=>setSearch(e.target.value)}/>}
               />
+             }
          </div>
      </div>
  )
