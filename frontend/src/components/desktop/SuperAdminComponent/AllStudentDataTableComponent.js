@@ -67,7 +67,7 @@ export default function AllStudentDataTableComponent() {
         },
         {
             name: "Action",
-            cell: (row) => <button class='btn btn-primary' onClick={() => alert(row.id)}> Edit</button>,
+            cell: (row) => <button className='btn btn-primary' onClick={() => alert(row.id)}> Edit</button>,
         }
     ]
     useEffectOnce(() =>{

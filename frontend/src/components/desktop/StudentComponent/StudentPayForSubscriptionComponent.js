@@ -2,9 +2,19 @@ import React, {useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {useEffectOnce} from "../../../helper/UseEffectOnce";
 import {actionToInitializePaymentGateway} from "../../../actions/CommonAction";
+import {Elements} from '@stripe/react-stripe-js';
+import {loadStripe} from '@stripe/stripe-js';
+
+// Make sure to call `loadStripe` outside of a component’s render to avoid
+// recreating the `Stripe` object on every render.
+const stripePromise = loadStripe('pk_test_51ME77cSIFtW1VSPuewmIrcC2SSgHZi0ad2OuqicbcRiVpBRkRyVByCFEaIyb067eFhQL0GXaWVakkkZt5TuLFo6J005HlqBOck');
 
 
 export default function StudentPayForSubscriptionComponent(){
+    const options = {
+        // passing the client secret obtained from the server
+        clientSecret: 'sk_test_51ME77cSIFtW1VSPuJqLQWVmK1vmdptG6j457wJlQv98NeRnB2eAdwkbQYWwlNfVIrtuRbNFPZsbKyafCQwdZuT1300SgcSS7AB',
+    };
     const {classData} = useSelector((state) => state.studentAllClassesList);
     const userInfo = useSelector((state) => state.userSignin.userInfo);
     const [paymentData,setPaymentData] = useState(null);

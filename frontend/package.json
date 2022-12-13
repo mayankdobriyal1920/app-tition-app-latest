@@ -15,6 +15,8 @@
     "@ionic/react": "^6.0.0",
     "@ionic/react-router": "^6.0.0",
     "@mui/material": "^5.10.15",
+    "@stripe/react-stripe-js": "^1.16.1",
+    "@stripe/stripe-js": "^1.46.0",
     "@testing-library/jest-dom": "^5.11.9",
     "@testing-library/react": "^13.3.0",
     "@testing-library/user-event": "^12.6.3",

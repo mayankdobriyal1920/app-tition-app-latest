@@ -22,7 +22,7 @@ export default function AllTeacherDataTableComponent(){
         },
         {
             name:"Action",
-            cell:(row) => <button class='btn btn-primary' onClick={() => alert(row.id)}> Edit</button>  ,
+            cell:(row) => <button className='btn btn-primary' onClick={() => alert(row.id)}> Edit</button>  ,
         }
     ]
     useEffectOnce(() =>{
