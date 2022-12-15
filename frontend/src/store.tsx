@@ -24,7 +24,7 @@ import {
     teacherAllClassesListReducer,
     teacherAllDemoClassListReducer,
     userSigninReducer,
-    windowResizeCountReducer, openCloseTeacherRatingPopupReducer,
+    windowResizeCountReducer, openCloseTeacherRatingPopupReducer, allAttendanceAndAssignmentReducer,
 } from "./reducers/CommonReducers";
 
 const initialState = {
@@ -59,8 +59,10 @@ const initialState = {
     chatModuleNewUserAddedInCurrentCall:{},
     chatModuleNewUserLeaveUserInCallData:{},
     callSocketMessageBroadcast:'',
+    allAttendanceAndAssignment:{prevId:'',loading:true,attendanceData:[]},
 };
 export const rootReducer = combineReducers({
+    allAttendanceAndAssignment: allAttendanceAndAssignmentReducer,
     studentAllTimeClassList: studentAllTimeClassListReducer,
     openCloseTeacherRatingPopup: openCloseTeacherRatingPopupReducer,
     callSocketMessageBroadcast: callSocketMessageBroadcastReducer,

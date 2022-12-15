@@ -93,7 +93,7 @@ function LeftSideBarComponentFunction({isTeacherLeftSideBar}){
                         </NavLink>
                     </div>
                     <div className={"menu_loop_section"}>
-                        <NavLink to={`${path}/student-history-topic-page`} activeClassName={"active"}
+                        <NavLink to={`${path}/student-attendance-assignment`} activeClassName={"active"}
                                  className={"menu_loop_section_inner_section"}>
                             <div className={"left_menu_item"}>
                                 <div className={"left_menu_item_1"}>

@@ -32,7 +32,9 @@ import {
     OPEN_CLOSE_TEACHER_RATING_POPUP,
     ALL_STUDENT_SUBSCRIPTION_DATA_LIST_REQUEST,
     ALL_STUDENT_SUBSCRIPTION_DATA_LIST_SUCCESS,
-    ALL_NEW_STUDENT_PROFILE_DATA_LIST_REQUEST, ALL_NEW_STUDENT_PROFILE_DATA_LIST_SUCCESS
+    ALL_NEW_STUDENT_PROFILE_DATA_LIST_REQUEST,
+    ALL_NEW_STUDENT_PROFILE_DATA_LIST_SUCCESS,
+    ALL_ATTENDANCE_AND_ASSIGNMENT_REQUEST, ALL_ATTENDANCE_AND_ASSIGNMENT_SUCCESS
 } from "../constants/CommonConstants";
 
 import Axios from "axios";
@@ -41,6 +43,7 @@ import {setAuthSignInByRole} from "./helper/CommonActionHelper";
 import {cloneDeep} from "lodash";
 import {_generateUniqueId} from "../helper/CommonHelper";
 import moment from "moment";
+import { loadStripe } from "@stripe/stripe-js";
 
 const api = Axios.create({
     baseURL: `https://apnafinances.com/api-call-tutor/`
@@ -72,23 +75,6 @@ export const callDeleteDataFunction = (payload) => async () => {
     }
 }
 
-
-export const actionToSignInUserIntoApp = () => async (dispatch) => {
-    dispatch({ type: USER_SIGNIN_REQUEST });
-    try {
-         let userData = {
-              id:1,
-              name:'Mayank'
-         }
-         dispatch({ type: USER_SIGNIN_SUCCESS, payload: userData});
-    } catch (error) {
-        dispatch({
-            type: USER_SIGNIN_FAIL,
-            payload:
-                'Error',
-        });
-    }
-};
 export const handleWebSocketEventCall = (data) => async (dispatch,getState) => {
     handleWebSocketEvent(dispatch,getState(),data);
 }
@@ -111,6 +97,32 @@ export const actionToInitializePaymentGateway = (payload,setPaymentData) => asyn
     setPaymentData(data.response);
 };
 
+export const actionToUpdateAttendanceClassStatus = (profileData,classData,groupDataId) => async (dispatch) => {
+    if(!profileData?.taken_single_demo) {
+        let setData = `taken_single_demo = ?`;
+        let whereCondition = `id = '${profileData?.id}'`;
+        let dataToSend = {column: setData, value: [1], whereCondition: whereCondition, tableName: 'student_profile'};
+        dispatch(commonUpdateFunction(dataToSend));
+    }
+    if(!classData?.has_taken_demo) {
+        let setData = `has_taken_demo = ?`;
+        let whereCondition = `id = '${classData?.id}'`;
+        let dataToSend = {column: setData, value: [1], whereCondition: whereCondition, tableName: 'profile_subject_with_batch'};
+        dispatch(commonUpdateFunction(dataToSend));
+    }else{
+        let aliasArray = ['?','?','?','?'];
+        let columnArray = ['id','classes_assigned_to_teacher_id','student_profile_id','profile_subject_with_batch_id'];
+        let valuesArray = [_generateUniqueId(),groupDataId,profileData?.id,classData?.id];
+        let insertData = {alias:aliasArray,column:columnArray,values:valuesArray,tableName:'student_class_attend'};
+        await dispatch(callInsertDataFunction(insertData));
+    }
+}
+export const actionToUpdateSubscriptionPlanDetailForUser = (classDataId) => async (dispatch) => {
+    let setData = `subscription_end_date = ?`;
+    let whereCondition = `id = '${classDataId}'`;
+    let dataToSend = {column: setData, value: [moment().add(2,'months').format('YYYY-MM-DD HH:mm:ss')], whereCondition: whereCondition, tableName: 'student_profile'};
+    dispatch(commonUpdateFunction(dataToSend));
+}
 export const actionToCreateUserProfile = (payload) => async (dispatch,getState) => {
 
     let userInfo = getState().userSignin.userInfo;
@@ -153,10 +165,21 @@ export const actionToGetAllSubjectDataList = () => async (dispatch) => {
     const {data} = await api.post(`common/actionToGetAllSubjectDataListApiCall`);
     dispatch({type: ALL_SUBJECT_DATA_LIST_SUCCESS, payload:[...data?.response]});
 }
+export const actionToGetAllAttendClassWithAssignment = (profile_id) => async (dispatch) => {
+    dispatch({type: ALL_ATTENDANCE_AND_ASSIGNMENT_REQUEST});
+    const {data} = await api.post(`common/actionToGetAllAttendClassWithAssignmentApiCall`,{profile_id});
+    dispatch({type: ALL_ATTENDANCE_AND_ASSIGNMENT_SUCCESS, payload:[...data?.response]});
+}
 export const actionToGetAllSchoolBoardDataList = () => async (dispatch) => {
     dispatch({type: ALL_SCHOOL_BOARD_DATA_LIST_REQUEST});
     const {data} = await api.post(`common/actionToGetAllSchoolBoardDataListApiCall`);
     dispatch({type: ALL_SCHOOL_BOARD_DATA_LIST_SUCCESS, payload:[...data?.response]});
+}
+export const actionToGetUserFreshData = (id) => async (dispatch) => {
+    const {data} = await api.post(`common/actionToGetUserFreshDataApiCall`,{id});
+    dispatch({ type: USER_SIGNIN_SUCCESS, payload: cloneDeep(data?.response)});
+    localStorage.setItem('userInfo',JSON.stringify(data?.response));
+    setAuthSignInByRole(data?.response);
 }
 export const actionToGetAllStudentDataList = () => async (dispatch) => {
     dispatch({type: ALL_STUDENT_DATA_LIST_REQUEST});
@@ -177,6 +200,14 @@ export const actionToGetAllTeacherDataList = () => async (dispatch) => {
     dispatch({type: ALL_TEACHER_DATA_LIST_REQUEST});
     const {data} = await api.post(`common/actionToGetAllTeacherDataListApiCall `);
     dispatch({type: ALL_TEACHER_DATA_LIST_SUCCESS, payload:[...data?.response]});
+}
+export const actionToCreatePaymentIntend = (setClientSecret,amount) => async () => {
+    const {data} = await api.post(`common/actionToCreatePaymentIntendApiCall`, {amount});
+    setClientSecret(data.clientSecret)
+}
+export const actionToConfigStripeSetup = (setStripePromise) => async () => {
+    const {data} = await api.post(`common/actionToConfigStripeSetupApiCall`);
+    setStripePromise(loadStripe(data.publishableKey));
 }
 export const actionToGetUserAllClasses = () => async (dispatch,getState) => {
     const userInfo = getState().userSignin.userInfo;

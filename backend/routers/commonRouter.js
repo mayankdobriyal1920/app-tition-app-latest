@@ -1,6 +1,7 @@
 import express from 'express';
 import fs from 'fs';
 import expressAsyncHandler from 'express-async-handler';
+import Stripe from 'stripe';
 
 import {
     actionToGetAllSchoolBoardDataListApiCall,
@@ -15,9 +16,13 @@ import {
     insertCommonApiCall,
     updateCommonApiCall,
     actionToGetAllStudentSubscriptionDataListApiCall,
-    actionToGetAllNewStudentProfileDataListApiCall
+    actionToGetAllNewStudentProfileDataListApiCall,
+    actionToGetUserFreshDataApiCall,
+    actionToGetAllAttendClassWithAssignmentApiCall
 } from "../models/commonModel.js";
 const commonRouter = express.Router();
+
+const stripe = Stripe('sk_test_51ME77cSIFtW1VSPuJqLQWVmK1vmdptG6j457wJlQv98NeRnB2eAdwkbQYWwlNfVIrtuRbNFPZsbKyafCQwdZuT1300SgcSS7AB');
 
 commonRouter.post(
     '/insertCommonApiCall',
@@ -84,6 +89,51 @@ commonRouter.post(
     })
 );
 commonRouter.post(
+    '/actionToGetAllAttendClassWithAssignmentApiCall',
+    expressAsyncHandler(async (req, res) => {
+        actionToGetAllAttendClassWithAssignmentApiCall(req.body).then((data) => {
+            res.status(200).send({
+                response: data,
+
+            });
+        })
+            .catch(error => {
+                res.status(500).send(error);
+            })
+    })
+);
+commonRouter.post(
+    '/actionToCreatePaymentIntendApiCall',
+    expressAsyncHandler(async (req, res) => {
+        let {amount} = req.body;
+        try {
+            const paymentIntent = await stripe.paymentIntents.create({
+                currency: "INR",
+                amount: amount,
+                automatic_payment_methods: { enabled: true },
+            });
+            // Send publishable key and PaymentIntent details to client
+            res.send({
+                clientSecret: paymentIntent.client_secret,
+            });
+        } catch (e) {
+            return res.status(400).send({
+                error: {
+                    message: e.message,
+                },
+            });
+        }
+    })
+);
+commonRouter.post(
+    '/actionToConfigStripeSetupApiCall',
+    expressAsyncHandler(async (req, res) => {
+        res.send({
+            publishableKey: 'pk_test_51ME77cSIFtW1VSPuewmIrcC2SSgHZi0ad2OuqicbcRiVpBRkRyVByCFEaIyb067eFhQL0GXaWVakkkZt5TuLFo6J005HlqBOck',
+        });
+    })
+);
+commonRouter.post(
     '/actionToGetAllNewStudentProfileDataListApiCall',
     expressAsyncHandler(async (req, res) => {
         actionToGetAllNewStudentProfileDataListApiCall(req.body).then((data) => {
@@ -129,6 +179,19 @@ commonRouter.post(
     '/actionToGetAllSchoolBoardDataListApiCall',
     expressAsyncHandler(async (req, res) => {
         actionToGetAllSchoolBoardDataListApiCall(req.body).then((data) => {
+            res.status(200).send({
+                response: data,
+            });
+        })
+            .catch(error => {
+                res.status(500).send(error);
+            })
+    })
+);
+commonRouter.post(
+    '/actionToGetUserFreshDataApiCall',
+    expressAsyncHandler(async (req, res) => {
+        actionToGetUserFreshDataApiCall(req.body).then((data) => {
             res.status(200).send({
                 response: data,
             });

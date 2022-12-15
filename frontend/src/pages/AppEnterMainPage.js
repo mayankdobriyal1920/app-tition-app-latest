@@ -10,7 +10,12 @@ import {IonRouterOutlet} from "@ionic/react";
 
 import StudentTabCommonLinkEntryPage from "./StudentPage/StudentTabCommonLinkPage";
 import {getWebsocketConnectedMessage} from "../helper/WebSocketHelper";
-import {actionToGetAllSchoolBoardDataList, actionToGetAllSubjectDataList,actionToGetAllStudentDataList} from "../actions/CommonAction";
+import {
+    actionToGetAllSchoolBoardDataList,
+    actionToGetAllSubjectDataList,
+    actionToGetAllStudentDataList,
+    actionToGetUserFreshData, actionToGetUserAllClasses
+} from "../actions/CommonAction";
 import TeacherTabCommonLinkEntryPage from "./TeacherPages/TeacherTabCommonLinkEntryPage";
 import SuperAdminTabCommonLinkEntryPage from "./SuperAdminPages/SuperAdminTabCommonLinkEntryPage";
 import {useEffectOnce} from "../helper/UseEffectOnce";
@@ -21,6 +26,10 @@ export const AppEnterMainPage = ()=>{
     const dispatch = useDispatch();
 
     const StudentPrivateRoutes = () => {
+        const dispatch = useDispatch();
+        useEffectOnce(()=>{
+            dispatch(actionToGetUserAllClasses());
+        },[])
         return (
             <IonReactRouter>
                 <IonRouterOutlet>
@@ -59,6 +68,7 @@ export const AppEnterMainPage = ()=>{
         getWebsocketConnectedMessage(W3CWebSocket,dispatch,userInfo);
         dispatch(actionToGetAllSubjectDataList());
         dispatch(actionToGetAllSchoolBoardDataList());
+        dispatch(actionToGetUserFreshData(userInfo?.id));
     },[]);
 
     return(

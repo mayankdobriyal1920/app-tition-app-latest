@@ -1,117 +1,19 @@
 import React, {useState} from "react";
-import {useDispatch, useSelector} from "react-redux";
-import {useEffectOnce} from "../../../helper/UseEffectOnce";
-import {actionToInitializePaymentGateway} from "../../../actions/CommonAction";
-import {Elements} from '@stripe/react-stripe-js';
-import {loadStripe} from '@stripe/stripe-js';
-
-// Make sure to call `loadStripe` outside of a component’s render to avoid
-// recreating the `Stripe` object on every render.
-const stripePromise = loadStripe('pk_test_51ME77cSIFtW1VSPuewmIrcC2SSgHZi0ad2OuqicbcRiVpBRkRyVByCFEaIyb067eFhQL0GXaWVakkkZt5TuLFo6J005HlqBOck');
-
+import {useSelector} from "react-redux"
+import PaymentPopupComponent from "./PaymentPopupComponent";
 
 export default function StudentPayForSubscriptionComponent(){
-    const options = {
-        // passing the client secret obtained from the server
-        clientSecret: 'sk_test_51ME77cSIFtW1VSPuJqLQWVmK1vmdptG6j457wJlQv98NeRnB2eAdwkbQYWwlNfVIrtuRbNFPZsbKyafCQwdZuT1300SgcSS7AB',
-    };
     const {classData} = useSelector((state) => state.studentAllClassesList);
-    const userInfo = useSelector((state) => state.userSignin.userInfo);
-    const [paymentData,setPaymentData] = useState(null);
-    const dispatch = useDispatch();
+    const studentAllTodayClassList = useSelector((state) => state.studentAllTodayClassList);
+    const [openClosePaymentPopup,setOpenClosePaymentPopup] = useState(false);
+    const [amountToPay,setAmountToPay] = useState(false);
 
 
-    const initialize = () => {
-        let orderId = "Order_" + new Date().getTime();
+    const setAmountAndOpenPaymentPopup = (amount)=>{
+        setOpenClosePaymentPopup(true);
+        setAmountToPay(amount);
+    }
 
-        // Sandbox Credentials
-        let mid = "sadsadasdasdsadadffasf"; // Merchant ID
-        let payload = {
-            requestType: "Payment",
-            mid: mid,
-            websiteName: "WEBSTAGING",
-            orderId: orderId,
-            callbackUrl: "https://merchant.com/callback",
-            txnAmount: {
-                value: 100,
-                currency: "INR",
-            },
-            userInfo: {
-                custId: userInfo?.id,
-            },
-        };
-        dispatch(actionToInitializePaymentGateway(payload,setPaymentData))
-    };
-
-
-    const makePayment = () => {
-        let config = {
-            "root":"",
-            "style": {
-                "bodyBackgroundColor": "#fafafb",
-                "bodyColor": "",
-                "themeBackgroundColor": "#0FB8C9",
-                "themeColor": "#ffffff",
-                "headerBackgroundColor": "#284055",
-                "headerColor": "#ffffff",
-                "errorColor": "",
-                "successColor": "",
-                "card": {
-                    "padding": "",
-                    "backgroundColor": ""
-                }
-            },
-            "data": {
-                "orderId": paymentData.order,
-                "token": paymentData.token,
-                "tokenType": "TXN_TOKEN",
-                "amount": paymentData.amount /* update amount */
-            },
-            "payMode": {
-                "labels": {},
-                "filter": {
-                    "exclude": []
-                },
-                "order": [
-                    "CC",
-                    "DC",
-                    "NB",
-                    "UPI",
-                    "PPBL",
-                    "PPI",
-                    "BALANCE"
-                ]
-            },
-            "website": "WEBSTAGING",
-            "flow": "DEFAULT",
-            "merchant": {
-                "mid": paymentData.mid,
-                "redirect": false
-            },
-            "handler": {
-                "transactionStatus":
-                    function transactionStatus(paymentStatus){
-                        console.log(paymentStatus);
-                    },
-                "notifyMerchant":
-                    function notifyMerchant(eventName,data){
-                        console.log("Closed");
-                    }
-            }
-        };
-
-        if (window.Paytm && window.Paytm.CheckoutJS) {
-            window.Paytm.CheckoutJS.init(config).
-            then(function onSuccess() {
-                window.Paytm.CheckoutJS.invoke();
-            }).catch(function onError(error) {
-                console.log("Error => ", error);
-            });
-        }}
-
-    useEffectOnce(()=>{
-        //initialize();
-    },[])
 
     return (
         <div className={"student_pay_for_subscription_main_page"}>
@@ -120,24 +22,14 @@ export default function StudentPayForSubscriptionComponent(){
             <h2 className={"mb-10"}>Subscription details :-</h2>
             <h3 className={"mb-10"}>Total Classes(3)</h3>
             <div className={"classes_section"}>
-                <div className={"classes_section_loop"}>
-                    <p><span>Name : </span>Hindi</p>
-                    <p><span>Class : </span>6th</p>
-                    <p><span>Course fee : </span>Rs 3000</p>
-                    <p><span>Total classes : </span>150</p>
-                </div>
-                <div className={"classes_section_loop"}>
-                    <p><span>Name : </span>Maths</p>
-                    <p><span>Class : </span>6th</p>
-                    <p><span>Course fee : </span>Rs 3000</p>
-                    <p><span>Total classes : </span>150</p>
-                </div>
-                <div className={"classes_section_loop"}>
-                    <p><span>Name : </span>Science</p>
-                    <p><span>Class : </span></p>
-                    <p><span>Course fee : </span>Rs 3000</p>
-                    <p><span>Total classes : </span>150</p>
-                </div>
+                {(studentAllTodayClassList.map((userSubjectData,key)=>(
+                    <div key={key} className={"classes_section_loop"}>
+                        <p><span>Name : </span>{userSubjectData?.subject_name}</p>
+                        <p><span>Class : </span>{classData?.student_class}th</p>
+                        <p><span>Course fee : </span>Rs 3000</p>
+                        <p><span>Total classes : </span>150</p>
+                    </div>
+                )))}
             </div>
             <div className={"classes_section_total_payable"}>
                 <div className={"row"}>
@@ -145,12 +37,16 @@ export default function StudentPayForSubscriptionComponent(){
                         <h3>Total amount : Rs 12000</h3>
                     </div>
                     <div className={"col-4"}>
-                        <button
-                            onClick={makePayment}
-                            className={"theme_btn pay_button"}>Make Payment</button>
+                        <button onClick={()=>setAmountAndOpenPaymentPopup(1000)} className={"theme_btn pay_button"}>
+                            Make Payment
+                        </button>
                     </div>
                 </div>
             </div>
+            {(openClosePaymentPopup) ?
+                <PaymentPopupComponent amountToPay={amountToPay}/>
+                :''
+            }
         </div>
     )
 }

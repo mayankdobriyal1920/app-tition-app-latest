@@ -1,5 +1,6 @@
 import pool from './connection.js';
 import {
+    actionToGetAllAttendClassWithAssignmentQuery,
     actionToGetAllNewStudentProfileDataListQuery,
     actionToGetAllShoolBoardDataListQuery,
     actionToGetAllStudentDataListQuery,
@@ -98,6 +99,18 @@ export const actionToGetAllStudentSubscriptionDataListApiCall = () => {
 export const actionToGetAllTeacherDataListApiCall = () => {
     return new Promise(function(resolve, reject) {
         const query = actionToGetAllTeacherDataListQuery();
+        pool.query(query, (error, results) => {
+            if (error) {
+                reject(error)
+            }
+            resolve(results);
+        })
+    })
+}
+export const actionToGetAllAttendClassWithAssignmentApiCall = (body) => {
+    const {profile_id} = body;
+    return new Promise(function(resolve, reject) {
+        const query = actionToGetAllAttendClassWithAssignmentQuery(profile_id);
         pool.query(query, (error, results) => {
             if (error) {
                 reject(error)
@@ -205,6 +218,22 @@ export const actionToValidateMobileNumberApiCall = (body) => {
     const {mobileNumber} = body;
     return new Promise(function(resolve, reject) {
         const query = `SELECT id,name,address,email,mobile,is_active,has_profile,role from app_user where mobile = '${mobileNumber}'`;
+        pool.query(query, (error, results) => {
+            if (error) {
+                reject(error)
+            }
+            let data = {};
+            if(results?.length){
+                data = results[0];
+            }
+            resolve(data);
+        })
+    })
+}
+export const actionToGetUserFreshDataApiCall = (body) => {
+    const {id} = body;
+    return new Promise(function(resolve, reject) {
+        const query = `SELECT id,name,address,email,mobile,is_active,has_profile,role from app_user where id = '${id}'`;
         pool.query(query, (error, results) => {
             if (error) {
                 reject(error)

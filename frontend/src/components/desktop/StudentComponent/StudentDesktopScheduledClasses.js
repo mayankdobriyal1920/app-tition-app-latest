@@ -7,7 +7,7 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 
 
 export default function StudentDesktopScheduledClasses(){
-    const {loading,classData} = useSelector((state) => state.studentAllClassesList);
+    const {loading} = useSelector((state) => state.studentAllClassesList);
     const studentAllTimeClassList = useSelector((state) => state.studentAllTimeClassList);
 
     function renderEventContent(eventInfo) {

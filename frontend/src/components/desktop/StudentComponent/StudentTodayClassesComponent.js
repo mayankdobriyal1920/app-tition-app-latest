@@ -14,9 +14,9 @@ import Peer from 'peerjs';
 import TeacherStudentVideoCallComponent from "../TeacherComponent/TeacherStudentVideoCallComponent";
 import StudentPayForSubscriptionComponent from "./StudentPayForSubscriptionComponent";
 import moment from "moment";
-import {CHAT_MODULE_CURRENT_CALL_ALL_MEMBERS} from "../../../constants/CommonConstants";
 import {cloneDeep} from "lodash";
 import StarRatingOnEndCallComponent from "./StarRatingOnEndCallComponent";
+import {actionToUpdateAttendanceClassStatus} from "../../../actions/CommonAction";
 
 const iceServers= [
     {
@@ -43,7 +43,6 @@ const iceServers= [
 export default function StudentTodayClassesComponent(){
     const {loading,classData} = useSelector((state) => state.studentAllClassesList);
     const studentAllTodayClassList = useSelector((state) => state.studentAllTodayClassList);
-    const studentAllClassesList = useSelector((state) => state.studentAllClassesList);
     const openCloseTeacherRatingPopup = useSelector((state) => state.openCloseTeacherRatingPopup);
     const [inCallStatus,setInCallStatus] = React.useState('PREJOIN');
     const chatModuleCurrentCallGroupData = useSelector((state) => state.chatModuleCurrentCallGroupData);
@@ -56,7 +55,7 @@ export default function StudentTodayClassesComponent(){
     }
 
 
-    const pickCallInGroup = (e,myProfile,groupData)=>{
+    const pickCallInGroup = (e,myClasses,groupData)=>{
         e.preventDefault();
         let getUserMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia).bind(navigator);
 
@@ -67,10 +66,10 @@ export default function StudentTodayClassesComponent(){
                 },
                 function(stream){
                     setInCallStatus('JOINING');
-                    let memberData = cloneDeep(myProfile);
-                    memberData.id = studentAllClassesList?.classData?.id;
-                    memberData.name = studentAllClassesList?.classData?.name;
-                    memberData.peer_connection_id = 'student_'+_generateUniqueId()+'_'+studentAllClassesList?.classData?.id;
+                    let memberData = cloneDeep(myClasses);
+                    memberData.id = classData?.id;
+                    memberData.name = classData?.name;
+                    memberData.peer_connection_id = 'student_'+_generateUniqueId()+'_'+classData?.id;
                     memberData.audio = true;
 
                     setMyPeerConnectionId(memberData.peer_connection_id);
@@ -94,6 +93,7 @@ export default function StudentTodayClassesComponent(){
                         console.log('[PEER CONNECTION OPEN IN ID]', id);
                         setMyStream(stream);
                         setInCallStatus('INCALL');
+                        dispatch(actionToUpdateAttendanceClassStatus(classData,myClasses,groupData?.id))
                         sendWebsocketRequest(JSON.stringify({
                             clientId: localStorage.getItem('clientId'),
                             groupId: groupData?.id,
@@ -194,7 +194,7 @@ export default function StudentTodayClassesComponent(){
                                                                     <div
                                                                         onClick={(e) => pickCallInGroup(e,myClasses, chatModuleCurrentCallGroupData)}
                                                                         className={"take_demo_button"}>
-                                                                        <button className={"theme_btn"}>Join Demo</button>
+                                                                        <button className={"theme_btn"}>Join Class</button>
                                                                     </div>
                                                                     : ''
                                                                 }

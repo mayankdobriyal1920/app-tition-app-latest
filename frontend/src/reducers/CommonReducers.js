@@ -36,7 +36,9 @@ import {
     WINDOW_RESIZE_COUNT,
     OPEN_CLOSE_TEACHER_RATING_POPUP,
     ALL_NEW_STUDENT_PROFILE_DATA_LIST_SUCCESS,
-    ALL_NEW_STUDENT_PROFILE_DATA_LIST_REQUEST
+    ALL_NEW_STUDENT_PROFILE_DATA_LIST_REQUEST,
+    ALL_ATTENDANCE_AND_ASSIGNMENT_REQUEST,
+    ALL_ATTENDANCE_AND_ASSIGNMENT_SUCCESS
 } from "../constants/CommonConstants";
 
 export const userSigninReducer = (state = {}, action) => {
@@ -89,6 +91,16 @@ export const allStudentSubscriptionDataListReducer = (state = {}, action) => {
             return { loading: true,studentData:[] ,prevId:action.payload};
         case ALL_STUDENT_SUBSCRIPTION_DATA_LIST_SUCCESS:
             return { loading: false,studentData:action.payload ,prevId:state.prevId};
+        default:
+            return state;
+    }
+};
+export const allAttendanceAndAssignmentReducer = (state = {}, action) => {
+    switch (action.type) {
+        case ALL_ATTENDANCE_AND_ASSIGNMENT_REQUEST:
+            return { loading: true,attendanceData:[] ,prevId:action.payload};
+        case ALL_ATTENDANCE_AND_ASSIGNMENT_SUCCESS:
+            return { loading: false,attendanceData:action.payload ,prevId:state.prevId};
         default:
             return state;
     }

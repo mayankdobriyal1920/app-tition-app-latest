@@ -5,7 +5,6 @@ import StudentTabMobileLinkEntryPage from "../../components/mobile/StudentCompon
 
 export default function StudentTabCommonLinkEntryPage() {
     const windowResizeCount = useSelector((state) => state.windowResizeCount);
-
     return (
         <>
             {(windowResizeCount >= 1200) ?

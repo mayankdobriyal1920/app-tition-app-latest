@@ -79,7 +79,6 @@ export default function AllStudentDataTableComponent() {
             return student.name.toLowerCase().match(search.toLowerCase());
         });
         setFilterSubject(resultName);
-
     }, [search]);
     return (
         <div className={"container-fluid pt-4 px-4"}>
@@ -89,22 +88,23 @@ export default function AllStudentDataTableComponent() {
                     <div className={"spinner-border"} role={"status"}>
                         <span className={"sr-only"}>Loading...</span>
                     </div>
-                </div> :
-        <DataTable
-            title="Student List"
-            columns={tableColumns}
-            data={FilterSubject}
-            pagination
-            fixedHeader
-            fixedHeaderScrollHeight="1400px;"
-            responsive
-            highlightOnHover
-            defaultSortAsc
-            subHeader
-            progressComponent
-            subHeaderComponent={<input type="text" placeholder="Search here" className="w-25 form-control"
-                                       value={search} onChange={(e) => setSearch(e.target.value)}/>}
-        />
+                </div>
+                :
+                    <DataTable
+                        title="Student List"
+                        columns={tableColumns}
+                        data={FilterSubject}
+                        pagination
+                        fixedHeader
+                        fixedHeaderScrollHeight="1400px;"
+                        responsive
+                        highlightOnHover
+                        defaultSortAsc
+                        subHeader
+                        progressComponent
+                        subHeaderComponent={<input type="text" placeholder="Search here" className="w-25 form-control"
+                                                   value={search} onChange={(e) => setSearch(e.target.value)}/>}
+                    />
             }
             </div>
         </div>

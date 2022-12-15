@@ -4,17 +4,11 @@ import {Route,useRouteMatch,Redirect,Switch} from "react-router-dom";
 import {LeftSideBarComponent} from "./LeftSideBarComponent";
 import {StudentDesktopDashboard} from "./StudentDesktopDashboard";
 import StudentDesktopScheduledClasses from "./StudentDesktopScheduledClasses";
-import {useDispatch} from "react-redux";
-import {useEffectOnce} from "../../../helper/UseEffectOnce";
-import {actionToGetUserAllClasses} from "../../../actions/CommonAction";
+import StudentPaymentConfirmComponent from "./StudentPaymentConfirmComponent";
+import StudentAttendanceAndAssignmentComponent from "./StudentAttendanceAndAssignmentComponent";
 
 export default function StudentTabDesktopLinkEntryPage() {
     const { path } = useRouteMatch();
-    const dispatch = useDispatch();
-
-    useEffectOnce(()=>{
-        dispatch(actionToGetUserAllClasses());
-    },[])
 
     return (
         <IonPage className={"main_padding_main_page dashboard_container"}>
@@ -29,6 +23,12 @@ export default function StudentTabDesktopLinkEntryPage() {
                         </Route>
                         <Route exact path={`${path}/student-scheduled-classes`}>
                             <StudentDesktopScheduledClasses/>
+                        </Route>
+                        <Route path={`${path}/subscription-confirm`}>
+                            <StudentPaymentConfirmComponent/>
+                        </Route>
+                        <Route path={`${path}/student-attendance-assignment`}>
+                            <StudentAttendanceAndAssignmentComponent/>
                         </Route>
                         <Redirect exact from="/dashboard" to={`${path}/home`} />
                     </Switch>
