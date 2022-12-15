@@ -8,7 +8,7 @@ export default function AllStudentDataTableComponent() {
     const dispatch = useDispatch();
     const studentListArray = useSelector((state) => state.allStudentDataList);
     const [search, setSearch] = useState("")
-    const [FilterSubject, setFilterSubject] = useState([])
+    const [filterStudent, setFilterStudent] = useState([])
     const tableColumns = [
         {
             name: "Student Id",
@@ -78,8 +78,8 @@ export default function AllStudentDataTableComponent() {
         const resultName = studentListArray.studentData.filter((student) => {
             return student.name.toLowerCase().match(search.toLowerCase());
         });
-        setFilterSubject(resultName);
-    }, [search]);
+        setFilterStudent(resultName);
+    }, [search,studentListArray]);
     return (
         <div className={"container-fluid pt-4 px-4"}>
         <div className={"bg-light rounded h-100 p-4"}>
@@ -93,7 +93,7 @@ export default function AllStudentDataTableComponent() {
                     <DataTable
                         title="Student List"
                         columns={tableColumns}
-                        data={FilterSubject}
+                        data={filterStudent}
                         pagination
                         fixedHeader
                         fixedHeaderScrollHeight="1400px;"

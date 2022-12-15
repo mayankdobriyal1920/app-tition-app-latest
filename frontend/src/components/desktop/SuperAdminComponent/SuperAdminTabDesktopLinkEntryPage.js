@@ -7,6 +7,7 @@ import AllTeacherDataTableComponent from "./AllTeacherDataTableComponent";
 import AllStudentDataTableComponent from "./AllStudentDataTableComponent";
 import NewStudentProfileComponent from "./NewStudentProfileComponent";
 import AllSubscribedClassesComponent from "./AllSubscribedClassesComponent";
+import AddNewTeacherComponent from "./AddNewTeacherComponent";
 import {IonContent, IonPage} from "@ionic/react";
 
 export default function SuperAdminTabDesktopLinkEntryPage() {
@@ -37,6 +38,9 @@ export default function SuperAdminTabDesktopLinkEntryPage() {
                         <Route exact path={`${path}/all-subscribed-classes`}>
                             <AllSubscribedClassesComponent/>
                         </Route>
+                        <Route exact path={`${path}/add-new-teacher`}>
+                        <AddNewTeacherComponent/>
+                    </Route>
                     </Switch>
                 </div>
             </IonContent>

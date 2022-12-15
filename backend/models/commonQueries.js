@@ -8,17 +8,10 @@ export const actionToGetAllNewStudentProfileDataListQuery = ()=>{
     return `select student_profile.*,school_board.name as school_board_name from student_profile left join  school_board on student_profile.school_board = school_board.id `;
 }
 export const actionToGetAllStudentSubscriptionDataListQuery = ()=>{
-    return `select student_profile.id as student_id, student_profile.name as student_name,student_profile.email as student_email, student_profile.student_class,student_profile.batch as student_batch,
-                   student_profile.subscription_end_date as student_subscription_end_date,subject.id as subject_id, subject.name as subject_name, profile_subject_with_batch.id as profile_subject_with_batch_id,
-                   school_board.id as school_board_id,school_board.name as school_board_name,app_user.name as teacher_name,profile_subject_with_batch.classes_assigned_to_teacher_id as teacher_id
-            from profile_subject_with_batch join student_profile on student_profile.id= profile_subject_with_batch.profile_id
-                                            join subject on subject.id=profile_subject_with_batch.subject_id
-                                            join school_board on profile_subject_with_batch.board=school_board.id
-                                            left join app_user on profile_subject_with_batch.classes_assigned_to_teacher_id=app_user.id
-            order by profile_subject_with_batch.created_at desc`;
+    return `select * from student_profile where subscription_end_date is not NULL order by created_at desc`;
 }
 export const actionToGetAllTeacherDataListQuery = ()=>{
-    return `select student_profile.*,school_board.name as school_board_name from student_profile left join  school_board on student_profile.school_board = school_board.id `;
+    return `select * from app_user where app_user.role=2 order by id desc`;
 }
 export const actionToGetAllShoolBoardDataListQuery = ()=>{
     return `SELECT id,name from school_board`;

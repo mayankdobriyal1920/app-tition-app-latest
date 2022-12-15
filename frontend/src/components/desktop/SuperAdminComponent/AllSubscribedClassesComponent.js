@@ -8,46 +8,31 @@ export default function AllSubscribedClassesComponent(){
     const dispatch = useDispatch();
     const studentListArray = useSelector((state) => state.allStudentSubscriptionDataList);
     const [search, setSearch] = useState("")
-    const [FilterSubject, setFilterSubject] = useState([])
+    const [filterSubject, setFilterSubject] = useState([])
     const tableColumns = [
         {
             name: "Student Id",
-            selector: (row) => row.subject_id,
+            selector: (row) => row.id,
             sortable: true,
         },
         {
             name: "Student Name",
-            selector: (row) => row.student_name,
+            selector: (row) => row.name,
             sortable: true,
         },
         {
             name: "Student Email",
-            selector: (row) => row.student_email,
-            sortable: true,
-        },
-        {
-            name: "Subject Name",
-            selector: (row) => row.subject_name,
-            sortable: true,
-        },
-        {
-            name: "School Board",
-            selector: (row) => row.school_board_name,
+            selector: (row) => row.email,
             sortable: true,
         },
         {
             name: "Subscription End Date",
-            selector: (row) => row.student_subscription_end_date,
-            sortable: true,
-        },
-        {
-            name: " Assigned Teacher Name",
-            selector: (row) => (row.teacher_name==null) ?'N/A' : row.teacher_name,
+            selector: (row) => row.subscription_end_date,
             sortable: true,
         },
         {
             name: "Action",
-            cell: (row) => <button class='btn btn-primary' onClick={() => alert(row.subject_id)}> Edit</button>,
+            cell: (row) => <button class='btn btn-primary' onClick={() => alert(row.id)}> Edit</button>,
         }
     ]
     useEffectOnce(() =>{
@@ -55,11 +40,12 @@ export default function AllSubscribedClassesComponent(){
     },[]);
     useEffect(() => {
         const resultName = studentListArray.studentData.filter((student) => {
-            return student.student_name.toLowerCase().match(search.toLowerCase());
+            return student.name.toLowerCase().match(search.toLowerCase());
         });
         setFilterSubject(resultName);
 
-    }, [search]);
+    }, [search,studentListArray]);
+
     return (
         <div className={"container-fluid pt-4 px-4"}>
             <div className={"bg-light rounded h-100 p-4"}>
@@ -72,7 +58,7 @@ export default function AllSubscribedClassesComponent(){
                 <DataTable
                     title="Student Subscription"
                     columns={tableColumns}
-                    data={FilterSubject}
+                    data={filterSubject}
                     pagination
                     fixedHeader
                     fixedHeaderScrollHeight="1400px;"

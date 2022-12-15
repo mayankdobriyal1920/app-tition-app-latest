@@ -8,21 +8,31 @@ export default function AllTeacherDataTableComponent(){
     const dispatch = useDispatch();
     const teacherListArray = useSelector((state) => state.allTeacherDataList);
     const [search,setSearch] = useState("")
-    const [FilterSubject,setFilterSubject] = useState([])
+    const [filterTeacher,setFilterTeacher] = useState([])
     const tableColumns = [
         {
-            name:"Subject Id",
+            name:"Teacher Id",
             selector:(row) => row.id,
             sortable:true,
         },
         {
-            name:"Subject Name",
+            name:"Teacher Name",
             selector:(row) => row.name,
             sortable:true,
         },
         {
+            name:"Email Address",
+            selector:(row) => row.email,
+            sortable:true,
+        },
+        {
+            name:"Address",
+            selector:(row) => row.address,
+            sortable:true,
+        },
+        {
             name:"Action",
-            cell:(row) => <button className='btn btn-primary' onClick={() => alert(row.id)}> Edit</button>  ,
+            cell:(row) => <button className='btn btn-primary' onClick={() => alert(row.id)}> Assign Class</button>  ,
         }
     ]
     useEffectOnce(() =>{
@@ -32,8 +42,8 @@ export default function AllTeacherDataTableComponent(){
         const result = teacherListArray.teacherData.filter((teacher) => {
         return teacher.name.toLowerCase().match(search.toLowerCase());
         });
-        setFilterSubject(result);
-    },[search]);
+        setFilterTeacher(result);
+    },[search,teacherListArray]);
  return (
      <div className={"container-fluid pt-4 px-4"}>
          <div className={"bg-light rounded h-100 p-4"}>
@@ -46,7 +56,7 @@ export default function AllTeacherDataTableComponent(){
               <DataTable
                   title="Teacher List"
                   columns={tableColumns}
-                  data={FilterSubject}
+                  data={filterTeacher}
                   pagination
                   fixedHeader
                   fixedHeaderScrollHeight="1400px"

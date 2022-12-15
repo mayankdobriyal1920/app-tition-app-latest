@@ -8,7 +8,7 @@ export default function NewStudentProfileComponent(){
     const dispatch = useDispatch();
     const studentListArray = useSelector((state) => state.allNewStudentProfileDataList);
     const [search, setSearch] = useState("")
-    const [FilterSubject, setFilterSubject] = useState([])
+    const [filterStudent, setFilterStudent] = useState([])
     const tableColumns = [
         {
             name: "Student Id",
@@ -78,9 +78,9 @@ export default function NewStudentProfileComponent(){
         const resultName = studentListArray.studentData.filter((student) => {
             return student.name.toLowerCase().match(search.toLowerCase());
         });
-        setFilterSubject(resultName);
+        setFilterStudent(resultName);
 
-    }, [search]);
+    }, [search,studentListArray]);
     return (
         <div className={"container-fluid pt-4 px-4"}>
             <div className={"bg-light rounded h-100 p-4"}>
@@ -93,7 +93,7 @@ export default function NewStudentProfileComponent(){
                     <DataTable
                         title="New Profiles"
                         columns={tableColumns}
-                        data={FilterSubject}
+                        data={filterStudent}
                         pagination
                         fixedHeader
                         fixedHeaderScrollHeight="1400px;"

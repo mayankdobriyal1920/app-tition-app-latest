@@ -369,9 +369,9 @@ export const actionToSetMemberInGroupCall = (groupId,allMembersArray,memberData)
     }
 }
 export const actionToCreateUserSignupRequest = (payload) => async (dispatch) => {
-    const aliasArray = ['?','?','?','?','?','?','?','?'];
-    const columnArray = ['id','name','email','address','mobile','password','role','has_profile'];
-    const valuesArray = [payload?.id,payload?.name,payload?.email,payload?.address,payload?.mobile,payload?.password,payload?.role,payload?.has_profile];
+    const aliasArray = ['?','?','?','?','?','?','?','?','?','?','?'];
+    const columnArray = ['id','name','email','address','mobile','password','role','has_profile','highest_qualification','education_medium','experience'];
+    const valuesArray = [payload?.id,payload?.name,payload?.email,payload?.address,payload?.mobile,payload?.password,payload?.role,payload?.has_profile,payload?.highestQualification,payload?.educationMedium,payload?.experience];
     const insertData = {alias:aliasArray,column:columnArray,values:valuesArray,tableName:'app_user'};
     await dispatch(callInsertDataFunction(insertData));
     dispatch({ type: USER_SIGNIN_SUCCESS, payload: payload});

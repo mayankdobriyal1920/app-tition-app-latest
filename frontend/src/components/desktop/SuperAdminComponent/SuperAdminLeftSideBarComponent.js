@@ -64,7 +64,18 @@ export default function SuperAdminLeftSideBarComponent(){
                         <i className="fa fa-newspaper me-2"></i>
                         New Profiles
                     </NavLink>
-                    <a onClick={()=>setShowAlert(true)} style={{cursor:'pointer'}} className="nav-item nav-link">
+                    <NavLink to={`${path}/add-new-teacher`} activeClassName={"active"} className={"nav-item nav-link"}>
+                        <i className="fa  fa-user-plus me-2"></i>
+                        Add New Teacher
+                    </NavLink>
+                    <a onClick={()=>setShowAlert(true)} s
+
+
+
+
+
+
+                       tyle={{cursor:'pointer'}} className="nav-item nav-link">
                         <i className="fa fa-sign-out me-2"></i>
                         Logout
                     </a>
