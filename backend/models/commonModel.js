@@ -1,6 +1,6 @@
 import pool from './connection.js';
 import {
-    actionToGetAllAttendClassWithAssignmentQuery,
+    actionToGetAllAttendClassWithAssignmentQuery, actionToGetAllClassesDataListQuery,
     actionToGetAllNewStudentProfileDataListQuery,
     actionToGetAllShoolBoardDataListQuery,
     actionToGetAllStudentDataListQuery,
@@ -99,6 +99,17 @@ export const actionToGetAllStudentSubscriptionDataListApiCall = () => {
 export const actionToGetAllTeacherDataListApiCall = () => {
     return new Promise(function(resolve, reject) {
         const query = actionToGetAllTeacherDataListQuery();
+        pool.query(query, (error, results) => {
+            if (error) {
+                reject(error)
+            }
+            resolve(results);
+        })
+    })
+}
+export const actionToGetAllClassesDataListApiCall = () => {
+    return new Promise(function(resolve, reject) {
+        const query = actionToGetAllClassesDataListQuery();
         pool.query(query, (error, results) => {
             if (error) {
                 reject(error)

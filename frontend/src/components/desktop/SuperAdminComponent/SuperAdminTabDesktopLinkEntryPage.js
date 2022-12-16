@@ -9,6 +9,7 @@ import NewStudentProfileComponent from "./NewStudentProfileComponent";
 import AllSubscribedClassesComponent from "./AllSubscribedClassesComponent";
 import AddNewTeacherComponent from "./AddNewTeacherComponent";
 import {IonContent, IonPage} from "@ionic/react";
+import AllClassesDataTableComponent from "./AllClassesDataTableComponent";
 
 export default function SuperAdminTabDesktopLinkEntryPage() {
     const { path } = useRouteMatch();
@@ -37,6 +38,9 @@ export default function SuperAdminTabDesktopLinkEntryPage() {
                         </Route>
                         <Route exact path={`${path}/all-subscribed-classes`}>
                             <AllSubscribedClassesComponent/>
+                        </Route>
+                        <Route exact path={`${path}/all-unassigned-classes`}>
+                            <AllClassesDataTableComponent/>
                         </Route>
                         <Route exact path={`${path}/add-new-teacher`}>
                         <AddNewTeacherComponent/>

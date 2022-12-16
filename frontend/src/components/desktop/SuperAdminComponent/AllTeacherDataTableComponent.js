@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import { actionToGetAllTeacherDataList} from "../../../actions/CommonAction";
+import { actionToGetAllTeacherDataList,actionToOpenCloseLoginPopup} from "../../../actions/CommonAction";
 import {useDispatch, useSelector} from "react-redux";
 import DataTable from 'react-data-table-component';
 import {useEffectOnce} from "../../../helper/UseEffectOnce";
@@ -7,8 +7,16 @@ import {useEffectOnce} from "../../../helper/UseEffectOnce";
 export default function AllTeacherDataTableComponent(){
     const dispatch = useDispatch();
     const teacherListArray = useSelector((state) => state.allTeacherDataList);
+    const {isOpen} = useSelector((state) => state.openCloseLoginPopup);
     const [search,setSearch] = useState("")
     const [filterTeacher,setFilterTeacher] = useState([])
+    const callFunctionToOpenLoginPopup = ()=>{
+        dispatch(actionToOpenCloseLoginPopup(false));
+    }
+    const openClassAssignPopUp=(id)=>{
+        console.log(id)
+        dispatch(actionToOpenCloseLoginPopup(true));
+    }
     const tableColumns = [
         {
             name:"Teacher Id",
@@ -32,7 +40,7 @@ export default function AllTeacherDataTableComponent(){
         },
         {
             name:"Action",
-            cell:(row) => <button className='btn btn-primary' onClick={() => alert(row.id)}> Assign Class</button>  ,
+            cell:(row) => <button className='btn btn-primary' onClick={() => openClassAssignPopUp(row.id)}> Assign Class</button>  ,
         }
     ]
     useEffectOnce(() =>{
@@ -69,6 +77,17 @@ export default function AllTeacherDataTableComponent(){
               />
              }
          </div>
+         <div style={{display:isOpen ? 'flex' : 'none'}}
+              id={"main_signup_component"}
+              className={"main_signup_component"}>
+             <div className={"main_signup_component_body"} >
+                 <div className={"popup_header_style"}>
+                     <div className={"popup_heder_main_heading"}>Assign Class</div>
+                     <div onClick={callFunctionToOpenLoginPopup} className={"cancel_button"}><div>X</div></div>
+                 </div>
+             </div>
+         </div>
      </div>
+
  )
 }

@@ -60,6 +60,10 @@ export default function SuperAdminLeftSideBarComponent(){
                         <i className="fa fa-wallet me-2"></i>
                         All Subscriptions
                     </NavLink>
+                    <NavLink to={`${path}/all-unassigned-classes`} activeClassName={"active"} className={"nav-item nav-link"}>
+                        <i className="fa fa-wallet me-2"></i>
+                        All Classes
+                    </NavLink>
                     <NavLink to={`${path}/new-student-profile-datatable`} activeClassName={"active"} className={"nav-item nav-link"}>
                         <i className="fa fa-newspaper me-2"></i>
                         New Profiles

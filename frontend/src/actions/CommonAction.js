@@ -17,6 +17,8 @@ import {
     STUDENT_ALL_TODAY_CLASS_LIST_SUCCESS,
     ALL_TEACHER_DATA_LIST_REQUEST,
     ALL_TEACHER_DATA_LIST_SUCCESS,
+    ALL_CLASSES_DATA_LIST_REQUEST,
+    ALL_CLASSES_DATA_LIST_SUCCESS,
     TEACHER_ALL_CLASS_LIST_REQUEST,
     TEACHER_ALL_DEMO_CLASS_LIST_SUCCESS,
     TEACHER_ALL_CLASS_LIST_SUCCESS,
@@ -200,6 +202,11 @@ export const actionToGetAllTeacherDataList = () => async (dispatch) => {
     dispatch({type: ALL_TEACHER_DATA_LIST_REQUEST});
     const {data} = await api.post(`common/actionToGetAllTeacherDataListApiCall `);
     dispatch({type: ALL_TEACHER_DATA_LIST_SUCCESS, payload:[...data?.response]});
+}
+export const actionToGetAllClassesDataList = () => async (dispatch) => {
+    dispatch({type: ALL_CLASSES_DATA_LIST_REQUEST});
+    const {data} = await api.post(`common/actionToGetAllClassesDataListApiCall `);
+    dispatch({type: ALL_CLASSES_DATA_LIST_SUCCESS, payload:[...data?.response]});
 }
 export const actionToCreatePaymentIntend = (setClientSecret,amount) => async () => {
     const {data} = await api.post(`common/actionToCreatePaymentIntendApiCall`, {amount});
