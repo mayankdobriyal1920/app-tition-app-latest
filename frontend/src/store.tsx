@@ -87,7 +87,7 @@ export const rootReducer = combineReducers({
     allNewStudentProfileDataList: allNewStudentProfileDataListReducer,
     allStudentSubscriptionDataList: allStudentSubscriptionDataListReducer,
     allTeacherDataList: allTeacherDataListReducer,
-    allClassesDataList: allClassesDataListReducer,
+    allAdminClassesDataList: allClassesDataListReducer,
     windowResizeCount: windowResizeCountReducer,
     userSignin: userSigninReducer,
     openCloseSignupPopup: openCloseSignupPopupReducer,

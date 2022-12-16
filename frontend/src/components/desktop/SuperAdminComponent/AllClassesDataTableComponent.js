@@ -9,7 +9,7 @@ import {useEffectOnce} from "../../../helper/UseEffectOnce";
 
 export default function AllClassesDataTableComponent(){
     const dispatch = useDispatch();
-    const classesListArray = useSelector((state) => state.allClassesDataList);
+    const classesListArray = useSelector((state) => state.allAdminClassesDataList);
     const {isOpen} = useSelector((state) => state.openCloseLoginPopup);
     const [search,setSearch] = useState("")
     const [filterClass,setFilterClasses] = useState([])
