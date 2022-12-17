@@ -159,7 +159,12 @@ export default function StudentTodayClassesComponent(){
                                                                 </div>
                                                             </div>
                                                             <div className={"col-5"}>
-                                                                {(myClasses?.classes_assigned_to_teacher?.class_end_time) ?
+                                                                {(myClasses?.classes_assigned_to_teacher?.class_end_time
+                                                                    &&
+                                                                    moment(myClasses?.classes_assigned_to_teacher?.class_end_time).format('YYYYMMDD') === moment().format('YYYYMMDD')
+                                                                    &&
+                                                                    moment(myClasses?.classes_assigned_to_teacher?.class_end_time).format('HH:mm:ss') < moment().format('HH:mm:ss')
+                                                                ) ?
                                                                     <div className={"class_time_date_demo mt-15"}>
                                                                         Class End :- {moment(new Date(myClasses?.classes_assigned_to_teacher?.class_end_time)).format('hh:mm a')}
                                                                     </div>

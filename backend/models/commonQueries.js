@@ -52,7 +52,9 @@ export const actionToGetAllClassesDataListQuery = ()=>{
                      join student_profile on profile_subject_with_batch.profile_id =student_profile.id
                      join school_board on student_profile.school_board=school_board.id
                      join subject on subject.id=profile_subject_with_batch.subject_id
-                     left join  classes_assigned_to_teacher on classes_assigned_to_teacher.id = profile_subject_with_batch.classes_assigned_to_teacher_id `;
+                     left join  classes_assigned_to_teacher on classes_assigned_to_teacher.id = profile_subject_with_batch.classes_assigned_to_teacher_id 
+                     WHERE profile_subject_with_batch.has_taken_demo = 1
+                     `;
 }
 export const actionToGetAllShoolBoardDataListQuery = ()=>{
     return `SELECT id,name from school_board`;

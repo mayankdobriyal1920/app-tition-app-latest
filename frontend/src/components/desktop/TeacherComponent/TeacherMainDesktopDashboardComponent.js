@@ -245,7 +245,7 @@ function TeacherMainDesktopDashboardComponentFunction(){
                                         {(teacherAllDemoClassList?.map((myClasses,key)=>(
                                             <div key={key} className={"demo_classes_section_loop ml-15 mr-15 mb-10 mt-10"}>
                                                 <div className={"row"}>
-                                                    <div className={"col-8 demo_classes_section_subject_icon_name"}>
+                                                    <div className={"col-7 demo_classes_section_subject_icon_name"}>
                                                         <div className={"icon_sub"} style={{background:_getIconBySubjectKey(myClasses?.subject_name).color}}>
                                                             {_getIconBySubjectKey(myClasses?.subject_name).icon}
                                                         </div>
@@ -254,15 +254,20 @@ function TeacherMainDesktopDashboardComponentFunction(){
                                                             <div className={"name_section2"}>{myClasses?.school_board}</div>
                                                         </div>
                                                     </div>
-                                                    <div className={"col-4"}>
-                                                        <div className={"class_time_date_demo"}>
-                                                            {moment(new Date(myClasses?.starting_from_date)).format('hh:mm a')}
-                                                        </div>
-                                                        {(myClasses?.class_end_time) ?
+                                                    <div className={"col-5"}>
+                                                        {(myClasses?.class_end_time
+                                                            &&
+                                                            moment(myClasses?.class_end_time).format('YYYYMMDD') === moment().format('YYYYMMDD')
+                                                            &&
+                                                            moment(myClasses?.class_end_time).format('HH:mm:ss') < moment().format('HH:mm:ss')
+                                                        ) ?
                                                             <div className={"class_time_date_demo mt-15"}>
-                                                                Class Taken
+                                                                Class Taken :- {moment(new Date(myClasses?.class_end_time)).format('hh:mm a')}
                                                             </div>
-                                                            : ''
+                                                            :
+                                                            <div className={"class_time_date_demo"}>
+                                                                Start time :- {moment(new Date(myClasses?.starting_from_date)).format('hh:mm a')}
+                                                            </div>
                                                         }
                                                     </div>
                                                 </div>
@@ -273,7 +278,7 @@ function TeacherMainDesktopDashboardComponentFunction(){
                                                                 <i className={"fa fa-info-circle"}/>
                                                             </div>
                                                             <div className={"teacher_name_section"}>
-                                                                {myClasses?.student_name} (Student name)
+                                                                {myClasses?.is_demo_class ? 'YES' : 'NO'} (is demo class)
                                                             </div>
                                                         </div>
                                                         <div className={"teacher_detail_section"}>
@@ -286,14 +291,13 @@ function TeacherMainDesktopDashboardComponentFunction(){
                                                         </div>
                                                     </div>
                                                     <div className={"col-4"}>
-                                                        {(moment(myClasses?.starting_from_date).format('YYYY-MM-DD HH:MM A') <= moment().format('YYYY-MM-DD HH:MM A')
-                                                          && !myClasses?.class_end_time
-                                                        ) ?
+                                                        {/*{(moment(myClasses?.starting_from_date).format('YYYY-MM-DD HH:MM A') <= moment().format('YYYY-MM-DD HH:MM A') && !myClasses?.class_end_time*/}
+                                                        {/*) ?*/}
                                                             <div onClick={(e)=>startCallInGroup(e,myClasses)} className={"take_demo_button"}>
                                                                 <button className={"theme_btn"}>Start Demo</button>
                                                             </div>
-                                                            : ''
-                                                        }
+                                                        {/*    : ''*/}
+                                                        {/*}*/}
                                                     </div>
                                                 </div>
                                             </div>
@@ -311,56 +315,38 @@ function TeacherMainDesktopDashboardComponentFunction(){
                             {(loading) ?
                                 <FacebookLoader type={"facebookStyle"} item={2}/>
                                 : (classData?.length) ?
-                                    <div className={"demo_classes_main_section_div"}>
+                                    <div className={"class_data_main_table_section"}>
+                                        <div className={"row class_list_table header_row mb-15"}>
+                                            <div className={"col-3 header"}>
+                                                Subject name
+                                            </div>
+                                            <div className={"col-3 header"}>
+                                                Batch type
+                                            </div>
+                                            <div className={"col-3 header"}>
+                                                Start time
+                                            </div>
+                                        </div>
                                         {(classData?.map((myClasses,key)=>(
-                                            <div key={key} className={"demo_classes_section_loop ml-15 mr-15 mb-10 mt-10"}>
-                                                <div className={"row"}>
-                                                    <div className={"col-8 demo_classes_section_subject_icon_name"}>
-                                                        <div className={"icon_sub"} style={{background:_getIconBySubjectKey(myClasses?.subject_name).color}}>
-                                                            {_getIconBySubjectKey(myClasses?.subject_name).icon}
-                                                        </div>
-                                                        <div className={"name_section"}>
-                                                            <div className={"name_section1"}>{myClasses?.subject_name}</div>
-                                                            <div className={"name_section2"}>{myClasses?.school_board}</div>
-                                                        </div>
+                                            <div key={key} className={"row class_list_table mb-15"}>
+                                                <div className={"col-3 icon_main_col"}>
+                                                    <div className={"icon_setion"} style={{background:_getIconBySubjectKey(myClasses?.subject_name).color}}>
+                                                        {_getIconBySubjectKey(myClasses?.subject_name).icon}
                                                     </div>
-                                                    <div className={"col-4"}>
-                                                        {(myClasses?.class_time) ?
-                                                            <div className={"class_time_date_demo"}>
-                                                                {_getTodayTomorrowDateFormat(myClasses?.starting_from_date)}, {moment(new Date(myClasses?.starting_from_date)).format('hh:mm a')}
-                                                            </div> :
-                                                            <div className={"class_time_date_demo"}>
-                                                                Not Set
-                                                            </div>
-                                                        }
+                                                    <div className={"name_section"}>
+                                                        {myClasses?.subject_name}
                                                     </div>
                                                 </div>
-                                                <div className={"row"}>
-                                                    <div className={"col-8 demo_classes_section_teacher_icon_name"}>
-                                                        <div className={"teacher_detail_section"}>
-                                                            <div className={"teacher_font_icon"}>
-                                                                <i className={"fa fa-info-circle"}/>
-                                                            </div>
-                                                            <div className={"teacher_name_section"}>
-                                                                {myClasses?.student_name} (Student name)
-                                                            </div>
-                                                        </div>
-                                                        <div className={"teacher_detail_section"}>
-                                                            <div className={"teacher_font_icon"}>
-                                                                <i className={"fa fa-clapperboard"}/>
-                                                            </div>
-                                                            <div className={"teacher_name_section"}>
-                                                                {myClasses?.student_class}th (Student class)
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div className={"col-4"}>
-                                                        {(moment(myClasses?.class_time).format('YYYY-MM-DD HH:MM A') <= moment().format('YYYY-MM-DD HH:MM A')) ?
-                                                            <div className={"take_demo_button"}>
-                                                                <button className={"theme_btn"}>Start Class</button>
-                                                            </div> : ''
-                                                        }
-                                                    </div>
+                                                <div className={"col-3 body"}>
+                                                    {myClasses?.batch === 1 ? '1 to 1' : (myClasses?.batch === 2) ? '1 to 3' :(myClasses?.batch === 3) ? '1 to 5' : ''}
+                                                </div>
+                                                <div className={"col-3 body"}>
+                                                    {(myClasses?.starting_from_date) ?
+                                                        <>
+                                                            {moment(new Date(myClasses?.starting_from_date)).format('ddd MMM D, hh:mm a')}
+                                                        </>
+                                                        : 'Not confirm'
+                                                    }
                                                 </div>
                                             </div>
                                         )))}

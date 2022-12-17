@@ -650,7 +650,7 @@ span.sapater_otp {
     border-radius: 18px;
     padding: 15px;
     overflow: hidden;
-    width: 485px;
+    /*width: 485px;*/
 }
 div#teacher_video_class_container {
     top: 0px;
@@ -668,7 +668,7 @@ div#teacher_video_class_container {
 
 .demo_classes_section_subject_icon_name .icon_sub {
     width: 58px;
-    height: 50px;
+    height: 55px;
     border-radius: 100%;
     overflow: hidden;
     padding: 10px;

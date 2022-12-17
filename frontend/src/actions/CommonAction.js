@@ -153,7 +153,8 @@ export const actionToUpdateSubscriptionPlanDetailForUser = (classDataId) => asyn
     let setData = `subscription_end_date = ?`;
     let whereCondition = `id = '${classDataId}'`;
     let dataToSend = {column: setData, value: [moment().add(2,'months').format('YYYY-MM-DD HH:mm:ss')], whereCondition: whereCondition, tableName: 'student_profile'};
-    dispatch(commonUpdateFunction(dataToSend));
+    await dispatch(commonUpdateFunction(dataToSend));
+    dispatch(actionToGetUserAllClasses(true));
 }
 export const actionToCreateTeacherProfile = (payload) => async (dispatch) => {
     const aliasArray = ['?','?','?','?','?','?','?','?','?','?'];
@@ -327,21 +328,23 @@ export const actionToGetUserAllClasses = (isLoaderDisable = false) => async (dis
 
     let eventData = [];
     data?.response?.profile_subject_with_batch?.map((allUserClasses)=>{
-        let nowDate = moment(allUserClasses?.starting_from_date).format('YYYY-MM-DD');
-        let i = 30;
-        do{
-            eventData.push({
-                    title:JSON.stringify({
-                        subject_name: allUserClasses?.subject_name,
-                        teacher_name: allUserClasses?.teacher_name,
-                        time: moment(allUserClasses?.starting_from_date).format('hh:mm a')
-                    }),
-                   date: nowDate,
-                }
-            )
-            nowDate = moment(nowDate).add(1,'days').format('YYYY-MM-DD');
-            i--;
-        }while(i > 0)
+        if(allUserClasses?.has_taken_demo !== 0) {
+            let nowDate = moment(allUserClasses?.starting_from_date).format('YYYY-MM-DD');
+            let i = 30;
+            do {
+                eventData.push({
+                        title: JSON.stringify({
+                            subject_name: allUserClasses?.subject_name,
+                            teacher_name: allUserClasses?.teacher_name,
+                            time: moment(allUserClasses?.starting_from_date).format('hh:mm a')
+                        }),
+                        date: nowDate,
+                    }
+                )
+                nowDate = moment(nowDate).add(1, 'days').format('YYYY-MM-DD');
+                i--;
+            } while (i > 0)
+        }
     })
     dispatch({type: STUDENT_ALL_TIME_CLASS_LIST_SUCCESS, payload:[...eventData]});
 }
@@ -384,19 +387,13 @@ export const actionToGetTeacherAllClasses = (isLoaderDisable = false) => async (
 
     const {data} = await api.post(`common/actionToGetTeacherAllClassesApiCall`,{userId:userInfo?.id});
     let todayClasses = [];
-    let otherClasses = [];
 
     data?.response?.map((classData)=>{
         if(classData?.is_demo_class){
             todayClasses.push(classData);
         }
     })
-    data?.response?.map((classData)=>{
-        if(!classData?.is_demo_class){
-            otherClasses.push(classData);
-        }
-    })
-    dispatch({type: TEACHER_ALL_CLASS_LIST_SUCCESS, payload:[...otherClasses]});
+    dispatch({type: TEACHER_ALL_CLASS_LIST_SUCCESS, payload:[...data?.response]});
     dispatch({type: TEACHER_ALL_DEMO_CLASS_LIST_SUCCESS, payload:[...todayClasses]});
 }
 export const actionToSetCurrentCallDataGroupData = (groupData) => async (dispatch) => {
