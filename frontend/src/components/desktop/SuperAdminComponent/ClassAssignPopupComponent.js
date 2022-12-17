@@ -49,11 +49,18 @@ export default function ClassAssignPopupComponent(){
                                     <select className="form-select" id="floatingSelect"
                                             onChange={(e) => setSelectedTeacherId(e.target.value)}
                                             aria-label="Floating label select example">
-                                        <option selected="">{allTeacherDataToAssignClass?.loading ? 'Loading...' : 'Select teacher'}</option>
-                                        {(allTeacherDataToAssignClass?.teacherData?.map((teacher, key) => (
-                                            <option key={key}
-                                                    value={teacher?.teacher_id}>{teacher?.teacher_name}</option>
-                                        )))}
+                                            {(allTeacherDataToAssignClass?.loading) ?
+                                                <option selected="">{'Loading...'}</option>
+                                                : (allTeacherDataToAssignClass?.teacherData?.length) ?
+                                                    <>
+                                                        <option selected="">{'Select teacher'}</option>
+                                                        {(allTeacherDataToAssignClass?.teacherData?.map((teacherData, key) => (
+                                                            <option key={key} value={teacherData?.teacher_id}>{teacherData?.teacher_name}</option>
+                                                        )))}
+                                                    </>
+                                                    :
+                                                    <option selected="">{'No teacher found'}</option>
+                                            }
                                     </select>
                                     <label htmlFor="floatingSelect">Teacher</label>
                                 </div>
@@ -85,10 +92,13 @@ export default function ClassAssignPopupComponent(){
                                                     {(allClassToAssignClass?.loading) ?
                                                         <option selected="">{'Loading...'}</option>
                                                         : (allClassToAssignClass?.classData?.length) ?
-                                                            (allClassToAssignClass?.classData?.map((classData, key) => (
-                                                                <option key={key}
-                                                                        value={classData?.id}>{classData?.id}</option>
-                                                            )))
+                                                            <>
+                                                                <option selected="">{'Select class'}</option>
+                                                                {(allClassToAssignClass?.classData?.map((classData, key) => (
+                                                                    <option key={key}
+                                                                            value={classData?.id}>{classData?.id}</option>
+                                                                )))}
+                                                            </>
                                                             :
                                                             <option selected="">{'No class found'}</option>
                                                     }
@@ -133,9 +143,12 @@ export default function ClassAssignPopupComponent(){
                                                 {(allTeacherDataToAssignClass?.loading) ?
                                                     <option selected="">{'Loading...'}</option>
                                                     : (allTeacherDataToAssignClass?.teacherData?.length) ?
-                                                        (allTeacherDataToAssignClass?.teacherData?.map((teacherData, key) => (
-                                                            <option key={key} value={teacherData?.teacher_id}>{teacherData?.teacher_name}</option>
-                                                        )))
+                                                        <>
+                                                            <option selected="">{'Select teacher'}</option>
+                                                            {(allTeacherDataToAssignClass?.teacherData?.map((teacherData, key) => (
+                                                                <option key={key} value={teacherData?.teacher_id}>{teacherData?.teacher_name}</option>
+                                                            )))}
+                                                        </>
                                                         :
                                                         <option selected="">{'No teacher found'}</option>
                                                 }

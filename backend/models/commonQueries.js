@@ -44,17 +44,26 @@ export const actionToGetLatestTeacherDataListQuery = ()=>{
     return `select app_user.*,school_board.name as school_board_name from app_user join school_board on app_user.board=school_board.id where app_user.role=2 order by created_at desc limit 5`;
 }
 export const actionToGetAllClassesDataListQuery = ()=>{
-    return `select profile_subject_with_batch.id as  profile_subject_with_batch_id, profile_subject_with_batch.batch as  profile_subject_with_batch_batch_type, profile_subject_with_batch.has_taken_demo as  profile_subject_with_batch_has_taken_demo,
-                   profile_subject_with_batch.classes_assigned_to_teacher_id as classes_assigned_to_teacher_id,student_profile.id as student_id,student_profile.name as student_name,student_profile.email as student_email
-                    ,subject.id as subject_id, subject.name as subject_name,classes_assigned_to_teacher.is_demo_class as is_demo_class,school_board.name as school_board_name,student_profile.student_class as student_class,
-                   student_profile.subscription_end_date as subscription_end_date
-                    from profile_subject_with_batch
+    return `select profile_subject_with_batch.id as  profile_subject_with_batch_id,
+                   profile_subject_with_batch.batch as  profile_subject_with_batch_batch_type,
+                   profile_subject_with_batch.has_taken_demo as  profile_subject_with_batch_has_taken_demo,
+                   profile_subject_with_batch.classes_assigned_to_teacher_id as  classes_assigned_to_teacher_id,
+                   classes_assigned_to_teacher.is_demo_class as  is_demo_class,
+                   student_profile.id as student_id,
+                   student_profile.name as student_name,
+                   student_profile.email as student_email,
+                   subject.id as subject_id,
+                   subject.name as subject_name,
+                   school_board.name as school_board_name,
+                   school_board.id as school_board_id,
+                   student_profile.student_class as student_class
+
+            from profile_subject_with_batch
                      join student_profile on profile_subject_with_batch.profile_id =student_profile.id
+                     join classes_assigned_to_teacher on profile_subject_with_batch.classes_assigned_to_teacher_id = classes_assigned_to_teacher.id
                      join school_board on student_profile.school_board=school_board.id
                      join subject on subject.id=profile_subject_with_batch.subject_id
-                     left join  classes_assigned_to_teacher on classes_assigned_to_teacher.id = profile_subject_with_batch.classes_assigned_to_teacher_id 
-                     WHERE profile_subject_with_batch.has_taken_demo = 1
-                     `;
+            WHERE profile_subject_with_batch.has_taken_demo = 1`;
 }
 export const actionToGetAllShoolBoardDataListQuery = ()=>{
     return `SELECT id,name from school_board`;
@@ -76,7 +85,8 @@ export const actionToGetAllDemoClassesDetailsQuery = ()=>{
      from profile_subject_with_batch
      join student_profile on profile_subject_with_batch.profile_id =student_profile.id
      join school_board on student_profile.school_board=school_board.id
-     join subject on subject.id=profile_subject_with_batch.subject_id`;
+     join subject on subject.id=profile_subject_with_batch.subject_id 
+WHERE profile_subject_with_batch.has_taken_demo = 0`;
 }
 export const actionToGetAllAttendClassWithAssignmentQuery = (profileId)=>{
     return `SELECT JSON_OBJECT(

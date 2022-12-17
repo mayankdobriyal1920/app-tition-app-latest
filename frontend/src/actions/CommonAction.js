@@ -44,7 +44,7 @@ import {
     ALL_DEMO_CLASSES_SUCCESS, LATEST_STUDENT_PROFILE_DATA_LIST_REQUEST, LATEST_STUDENT_PROFILE_DATA_LIST_SUCCESS,
     OPEN_CLOSE_CLASS_ASSIGN_POPUP,
     ALL_TEACHER_DATA_TO_ASSIGN_CLASS_REQUEST,
-    ALL_TEACHER_DATA_TO_ASSIGN_CLASS_SUCCESS
+    ALL_TEACHER_DATA_TO_ASSIGN_CLASS_SUCCESS, ALL_CLASS_TO_ASSIGN_CLASS_REQUEST, ALL_CLASS_TO_ASSIGN_CLASS_SUCCESS
 } from "../constants/CommonConstants";
 
 import Axios from "axios";
@@ -117,6 +117,7 @@ export const actionToCreateAndAssignClassData = (payload) => async (dispatch) =>
     let dataToSend = {column: setData, value: [classAssignId], whereCondition: whereCondition, tableName: 'profile_subject_with_batch'};
     await dispatch(commonUpdateFunction(dataToSend));
     dispatch(actionToGetAllDemoClassesDetails(true));
+    dispatch(actionToGetAllClassesDataList(true));
     sendWebsocketRequest(JSON.stringify({
         clientId: localStorage.getItem('clientId'),
         type: 'refreshClassListDataForUser',
@@ -224,7 +225,7 @@ export const actionToSearchTeacherAccordingToTheCondition = (payload) => async (
     dispatch({type: ALL_TEACHER_DATA_TO_ASSIGN_CLASS_SUCCESS, payload:[...data?.response]});
 }
 export const actionToAlreadyCreatedClassAccordingToTheCondition = (payload) => async (dispatch) => {
-    dispatch({type: ALL_TEACHER_DATA_TO_ASSIGN_CLASS_REQUEST});
+    dispatch({type: ALL_CLASS_TO_ASSIGN_CLASS_REQUEST});
     const {data} = await api.post(`common/actionToAlreadyCreatedClassAccordingToTheConditionApiCall`, {
         subject_id: payload?.subject_id,
         school_board: payload?.school_board,
@@ -241,7 +242,7 @@ export const actionToAlreadyCreatedClassAccordingToTheCondition = (payload) => a
             }
         })
     }
-    dispatch({type: ALL_TEACHER_DATA_TO_ASSIGN_CLASS_SUCCESS, payload:[...finalData]});
+    dispatch({type: ALL_CLASS_TO_ASSIGN_CLASS_SUCCESS, payload:[...finalData]});
 }
 export const actionToGetAllDemoClassesDetails = (idLoaderDisable = false) => async (dispatch) => {
     if(!idLoaderDisable)
@@ -296,8 +297,10 @@ export const actionToGetLatestTeachersDataList = () => async (dispatch) => {
     const {data} = await api.post(`common/actionToGetLatestTeacherDataListApiCall `);
     dispatch({type: LATEST_TEACHER_DATA_LIST_SUCCESS, payload:[...data?.response]});
 }
-export const actionToGetAllClassesDataList = () => async (dispatch) => {
-    dispatch({type: ALL_CLASSES_DATA_LIST_REQUEST});
+export const actionToGetAllClassesDataList = (idLoaderDisable = false) => async (dispatch) => {
+    if(!idLoaderDisable)
+        dispatch({type: ALL_CLASSES_DATA_LIST_REQUEST});
+
     const {data} = await api.post(`common/actionToGetAllClassesDataListApiCall`);
     dispatch({type: ALL_CLASSES_DATA_LIST_SUCCESS, payload:[...data?.response]});
 }
@@ -328,7 +331,8 @@ export const actionToGetUserAllClasses = (isLoaderDisable = false) => async (dis
 
     let eventData = [];
     data?.response?.profile_subject_with_batch?.map((allUserClasses)=>{
-        if(allUserClasses?.has_taken_demo !== 0) {
+        console.log(allUserClasses?.classes_assigned_to_teacher)
+        if(allUserClasses?.classes_assigned_to_teacher?.is_demo_class === 0) {
             let nowDate = moment(allUserClasses?.starting_from_date).format('YYYY-MM-DD');
             let i = 30;
             do {

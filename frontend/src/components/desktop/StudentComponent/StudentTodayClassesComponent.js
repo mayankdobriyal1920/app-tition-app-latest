@@ -187,10 +187,10 @@ export default function StudentTodayClassesComponent(){
                                                                 </div>
                                                                 <div className={"teacher_detail_section"}>
                                                                     <div className={"teacher_font_icon"}>
-                                                                        <i className={"fa fa-star"}/>
+                                                                        <i className={"fa fa-clapperboard"}/>
                                                                     </div>
                                                                     <div className={"teacher_name_section"}>
-                                                                        4.0 Star (1024k Rating)
+                                                                        {myClasses?.batch === 1 ? '1 to 1' : (myClasses?.batch === 2) ? '1 to 3' :(myClasses?.batch === 3) ? '1 to 5' : ''} (Batch type)
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -260,8 +260,7 @@ export default function StudentTodayClassesComponent(){
                                                         <div data-date={classData?.subscription_end_date} className={"col-3 body"}>
                                                             {(classData?.subscription_end_date) ?
                                                                 <>
-                                                                    {_getTodayTomorrowDateFormat(classData?.subscription_end_date)},
-                                                                    {moment(new Date(classData?.subscription_end_date)).format('hh:mm a')}
+                                                                    {moment(new Date(classData?.subscription_end_date)).format('DD ddd MMM, YYYY')}
                                                                 </>
                                                                 : 'No subscription'
                                                             }

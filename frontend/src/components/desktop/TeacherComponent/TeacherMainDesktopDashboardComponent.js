@@ -291,13 +291,18 @@ function TeacherMainDesktopDashboardComponentFunction(){
                                                         </div>
                                                     </div>
                                                     <div className={"col-4"}>
-                                                        {/*{(moment(myClasses?.starting_from_date).format('YYYY-MM-DD HH:MM A') <= moment().format('YYYY-MM-DD HH:MM A') && !myClasses?.class_end_time*/}
-                                                        {/*) ?*/}
+                                                        {(myClasses?.class_end_time
+                                                            &&
+                                                            moment(myClasses?.class_end_time).format('YYYYMMDD') === moment().format('YYYYMMDD')
+                                                            &&
+                                                            moment(myClasses?.class_end_time).format('HH:mm:ss') < moment().format('HH:mm:ss')
+                                                        ) ?
+                                                            ''
+                                                            :
                                                             <div onClick={(e)=>startCallInGroup(e,myClasses)} className={"take_demo_button"}>
                                                                 <button className={"theme_btn"}>Start Demo</button>
                                                             </div>
-                                                        {/*    : ''*/}
-                                                        {/*}*/}
+                                                        }
                                                     </div>
                                                 </div>
                                             </div>

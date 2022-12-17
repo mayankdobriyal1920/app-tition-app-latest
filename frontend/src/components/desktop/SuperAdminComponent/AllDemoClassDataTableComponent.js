@@ -59,7 +59,7 @@ export default function AllDemoClassDataTableComponent(){
             cell:(row) => (row.classes_assigned_to_teacher_id) ?
                 <div className={"btn btn-success"}>Class assigned</div>
                  :
-                <button className='btn btn-warning' onClick={() => openClassAssignPopUp(row)}>Assign Class</button>
+                <button className='btn btn-primary' onClick={() => openClassAssignPopUp(row)}>Assign Class</button>
 
         }
     ]
