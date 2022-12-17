@@ -30,7 +30,10 @@ import {
     windowResizeCountReducer,
     openCloseTeacherRatingPopupReducer,
     allAttendanceAndAssignmentReducer,
-    allDemoClassesReducer, allTeacherDataToAssignClassReducer,
+    allDemoClassesReducer,
+    allTeacherDataToAssignClassReducer,
+    openCloseClassAssignPopupReducer,
+    allClassToAssignClassReducer,
 } from "./reducers/CommonReducers";
 
 const initialState = {
@@ -42,6 +45,7 @@ const initialState = {
     openCloseSignupPopup: {isOpen:false},
     openCloseLoginPopup: {isOpen:false},
     openCloseTeacherRatingPopup: {isOpen:false,dropdownData:{}},
+    openCloseClassAssignPopup: {isOpen:false,dropdownData:{}},
     windowResizeCount: 0,
     allSubjectDataList:{prevId:'',loading:true,subjectData:[]},
     allStudentDataList:{prevId:'',loading:true,studentData:[]},
@@ -68,8 +72,11 @@ const initialState = {
     callSocketMessageBroadcast:'',
     allAttendanceAndAssignment:{prevId:'',loading:true,attendanceData:[]},
     allTeacherDataToAssignClass:{prevId:'',loading:true,teacherData:[]},
+    allClassToAssignClass:{prevId:'',loading:true,classData:[]},
 };
 export const rootReducer = combineReducers({
+    allClassToAssignClass: allClassToAssignClassReducer,
+    openCloseClassAssignPopup: openCloseClassAssignPopupReducer,
     allTeacherDataToAssignClass: allTeacherDataToAssignClassReducer,
     allDemoClasses: allDemoClassesReducer,
     allAttendanceAndAssignment: allAttendanceAndAssignmentReducer,

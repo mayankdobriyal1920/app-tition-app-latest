@@ -1,5 +1,6 @@
 import pool from './connection.js';
 import {
+    actionToAlreadyCreatedClassAccordingToTheConditionQuery,
     actionToGetAllAttendClassWithAssignmentQuery,
     actionToGetAllClassesDataListQuery,
     actionToGetAllDemoClassesDetailsQuery,
@@ -10,7 +11,7 @@ import {
     actionToGetAllSubjectDataListQuery,
     actionToGetAllTeacherDataListQuery,
     actionToGetTeacherAllClassesQuery,
-    actionToGetUserAllClassesQuery
+    actionToGetUserAllClassesQuery, actionToSearchTeacherAccordingToTheConditionQuery
 } from "./commonQueries.js";
 import PaytmChecksum from 'paytmchecksum';
 import request from 'request';
@@ -57,6 +58,30 @@ export const deleteCommonApiCall = (body) => {
 export const actionToGetAllSubjectDataListApiCall = () => {
     return new Promise(function(resolve, reject) {
         const query = actionToGetAllSubjectDataListQuery();
+        pool.query(query, (error, results) => {
+            if (error) {
+                reject(error)
+            }
+            resolve(results);
+        })
+    })
+}
+export const actionToSearchTeacherAccordingToTheConditionApiCall = (body) => {
+    let {subject_id,student_class,school_board} = body;
+    return new Promise(function(resolve, reject) {
+        const query = actionToSearchTeacherAccordingToTheConditionQuery(subject_id,student_class,school_board);
+        pool.query(query, (error, results) => {
+            if (error) {
+                reject(error)
+            }
+            resolve(results);
+        })
+    })
+}
+export const actionToAlreadyCreatedClassAccordingToTheConditionApiCall = (body) => {
+    let {subject_id,student_class,school_board,batch} = body;
+    return new Promise(function(resolve, reject) {
+        const query = actionToAlreadyCreatedClassAccordingToTheConditionQuery(subject_id,student_class,school_board,batch);
         pool.query(query, (error, results) => {
             if (error) {
                 reject(error)

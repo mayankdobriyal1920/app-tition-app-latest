@@ -13,6 +13,24 @@ export const actionToGetAllStudentSubscriptionDataListQuery = ()=>{
 export const actionToGetAllTeacherDataListQuery = ()=>{
     return `select * from app_user where app_user.role=2 order by id desc`;
 }
+export const actionToSearchTeacherAccordingToTheConditionQuery = (subject_id,student_class,school_board)=>{
+    return `SELECT app_user.name AS teacher_name,app_user.id AS teacher_id
+            FROM teacher_subject_and_class
+                     INNER JOIN app_user ON app_user.id = teacher_subject_and_class.teacher_id
+            WHERE  app_user.role = 2 AND app_user.board = '${school_board}' AND
+                teacher_subject_and_class.teacher_class = ${student_class} AND teacher_subject_and_class.subject_id = '${subject_id}'
+            GROUP BY app_user.id
+    `;
+}
+export const actionToAlreadyCreatedClassAccordingToTheConditionQuery = (subject_id,student_class,school_board,batch)=>{
+    return `SELECT app_user.name AS teacher_name,app_user.id AS teacher_id
+            FROM teacher_subject_and_class
+                     INNER JOIN app_user ON app_user.id = teacher_subject_and_class.teacher_id
+            WHERE  app_user.role = 2 AND app_user.board = '${school_board}' AND
+                teacher_subject_and_class.teacher_class = ${student_class} AND teacher_subject_and_class.subject_id = '${subject_id}'
+            GROUP BY app_user.id
+    `;
+}
 export const actionToGetAllClassesDataListQuery = ()=>{
     return `select profile_subject_with_batch.id as  profile_subject_with_batch_id, profile_subject_with_batch.batch as  profile_subject_with_batch_batch_type, profile_subject_with_batch.has_taken_demo as  profile_subject_with_batch_has_taken_demo,
                    profile_subject_with_batch.classes_assigned_to_teacher_id as classes_assigned_to_teacher_id,student_profile.id as student_id,student_profile.name as student_name,student_profile.email as student_email
@@ -37,6 +55,7 @@ export const actionToGetAllDemoClassesDetailsQuery = ()=>{
                    subject.id as subject_id,
                    subject.name as subject_name,
                    school_board.name as school_board_name,
+                   school_board.id as school_board_id,
                    student_profile.student_class as student_class
 
      from profile_subject_with_batch

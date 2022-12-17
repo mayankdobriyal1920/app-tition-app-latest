@@ -1,7 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {
-    actionToGetAllClassesDataList, actionToGetAllDemoClassesDetails,
-    actionToOpenCloseLoginPopup
+    actionToAlreadyCreatedClassAccordingToTheCondition,
+    actionToGetAllDemoClassesDetails, actionToOpenCloseClassAssignPopup,
+    actionToSearchTeacherAccordingToTheCondition
 } from "../../../actions/CommonAction";
 import {useDispatch, useSelector} from "react-redux";
 import DataTable from 'react-data-table-component';
@@ -10,14 +11,22 @@ import {useEffectOnce} from "../../../helper/UseEffectOnce";
 export default function AllDemoClassDataTableComponent(){
     const dispatch = useDispatch();
     const allDemoClasses = useSelector((state) => state.allDemoClasses);
-    const {isOpen} = useSelector((state) => state.openCloseLoginPopup);
     const [search,setSearch] = useState("")
     const [filterClass,setFilterClasses] = useState([])
-    const callFunctionToOpenLoginPopup = ()=>{
-        dispatch(actionToOpenCloseLoginPopup(false));
-    }
-    const openClassAssignPopUp=(id)=>{
-        dispatch(actionToOpenCloseLoginPopup(true));
+
+    const openClassAssignPopUp=(data)=>{
+        let payload = {
+            profile_subject_with_batch_id:data.profile_subject_with_batch_id,
+            subject_id:data.subject_id,
+            school_board:data.school_board_id,
+            student_class:data.student_class,
+            batch:data.batch,
+            has_taken_demo:0,
+        }
+
+        dispatch(actionToSearchTeacherAccordingToTheCondition(payload));
+        dispatch(actionToAlreadyCreatedClassAccordingToTheCondition(payload));
+        dispatch(actionToOpenCloseClassAssignPopup(true,payload));
     }
     const tableColumns = [
         {
@@ -48,7 +57,7 @@ export default function AllDemoClassDataTableComponent(){
         {
             name:"Action",
             cell:(row) => (row.profile_subject_with_batch_has_taken_demo !== 1) ?
-                <button className='btn btn-warning' onClick={() => openClassAssignPopUp(row.id)}>Assign Class</button> :
+                <button className='btn btn-warning' onClick={() => openClassAssignPopUp(row)}>Assign Class</button> :
                 <div className={"class_assigned"}>Class assigned</div>
         }
     ]
@@ -89,16 +98,6 @@ export default function AllDemoClassDataTableComponent(){
                         subHeaderComponent={<input type="text" placeholder="Search here" className="w-25 form-control"  value={search} onChange={(e)=>setSearch(e.target.value)}/>}
                     />
                 }
-            </div>
-            <div style={{display:isOpen ? 'flex' : 'none'}}
-                 id={"main_signup_component"}
-                 className={"main_signup_component"}>
-                <div className={"main_signup_component_body"} >
-                    <div className={"popup_header_style"}>
-                        <div className={"popup_heder_main_heading"}>Assign Class</div>
-                        <div onClick={callFunctionToOpenLoginPopup} className={"cancel_button"}><div>X</div></div>
-                    </div>
-                </div>
             </div>
         </div>
 

@@ -43,7 +43,10 @@ import {
     ALL_ATTENDANCE_AND_ASSIGNMENT_SUCCESS,
     ALL_DEMO_CLASSES_REQUEST,
     ALL_DEMO_CLASSES_SUCCESS,
-    ALL_TEACHER_DATA_TO_ASSIGN_CLASS_REQUEST, ALL_TEACHER_DATA_TO_ASSIGN_CLASS_SUCCESS
+    ALL_TEACHER_DATA_TO_ASSIGN_CLASS_REQUEST,
+    ALL_TEACHER_DATA_TO_ASSIGN_CLASS_SUCCESS,
+    OPEN_CLOSE_CLASS_ASSIGN_POPUP,
+    ALL_CLASS_TO_ASSIGN_CLASS_REQUEST, ALL_CLASS_TO_ASSIGN_CLASS_SUCCESS
 } from "../constants/CommonConstants";
 
 export const userSigninReducer = (state = {}, action) => {
@@ -160,6 +163,16 @@ export const allSchoolBoardDataListReducer = (state = {}, action) => {
             return state;
     }
 };
+export const allClassToAssignClassReducer = (state = {}, action) => {
+    switch (action.type) {
+        case ALL_CLASS_TO_ASSIGN_CLASS_REQUEST:
+            return { loading: true,classData:[] ,prevId:action.payload};
+        case ALL_CLASS_TO_ASSIGN_CLASS_SUCCESS:
+            return { loading: false,classData:action.payload ,prevId:state.prevId};
+        default:
+            return state;
+    }
+};
 export const studentAllClassesListReducer = (state = {}, action) => {
     switch (action.type) {
         case STUDENT_ALL_CLASS_LIST_REQUEST:
@@ -247,6 +260,14 @@ export const windowResizeCountReducer = (state = {}, action) => {
 export const openCloseSignupPopupReducer = (state = {}, action) => {
     switch (action.type) {
         case OPEN_CLOSE_SIGNUP_POPUP:
+            return action.payload;
+        default:
+            return state;
+    }
+};
+export const openCloseClassAssignPopupReducer = (state = {}, action) => {
+    switch (action.type) {
+        case OPEN_CLOSE_CLASS_ASSIGN_POPUP:
             return action.payload;
         default:
             return state;

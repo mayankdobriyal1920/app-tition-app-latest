@@ -39,7 +39,10 @@ import {
     ALL_ATTENDANCE_AND_ASSIGNMENT_REQUEST,
     ALL_ATTENDANCE_AND_ASSIGNMENT_SUCCESS,
     ALL_DEMO_CLASSES_REQUEST,
-    ALL_DEMO_CLASSES_SUCCESS
+    ALL_DEMO_CLASSES_SUCCESS,
+    OPEN_CLOSE_CLASS_ASSIGN_POPUP,
+    ALL_TEACHER_DATA_TO_ASSIGN_CLASS_REQUEST,
+    ALL_TEACHER_DATA_TO_ASSIGN_CLASS_SUCCESS
 } from "../constants/CommonConstants";
 
 import Axios from "axios";
@@ -92,14 +95,30 @@ export const actionToOpenCloseSignupPopup = (action) => async (dispatch) => {
 export const actionToOpenCloseLoginPopup = (action) => async (dispatch) => {
     dispatch({ type: OPEN_CLOSE_LOGIN_POPUP, payload: {isOpen:action}});
 };
+export const actionToOpenCloseClassAssignPopup = (action,data) => async (dispatch) => {
+    let payload = {isOpen:action,dropdownData:data};
+    dispatch({ type: OPEN_CLOSE_CLASS_ASSIGN_POPUP, payload: cloneDeep(payload)});
+};
+export const actionToCreateAndAssignClassData = (payload) => async (dispatch) => {
+    let classAssignId = _generateUniqueId();
+    if(payload?.class_assign_id){
+        classAssignId = payload?.class_assign_id
+    }else{
+        let aliasArray = ['?','?','?','?','?','?','?','?'];
+        let columnArray = ['id','teacher_id','starting_from_date','batch','is_demo_class','subject_id','school_board','student_class'];
+        let valuesArray = [classAssignId,payload?.teacher_id,payload?.starting_from_date,payload?.batch,payload?.is_demo_class,payload?.subject_id,payload?.school_board,payload?.student_class];
+        let insertData = {alias:aliasArray,column:columnArray,values:valuesArray,tableName:'classes_assigned_to_teacher'};
+        await dispatch(callInsertDataFunction(insertData));
+    }
+    let setData = `classes_assigned_to_teacher_id = ?`;
+    let whereCondition = `id = '${payload?.profile_subject_with_batch_id}'`;
+    let dataToSend = {column: setData, value: [classAssignId], whereCondition: whereCondition, tableName: 'profile_subject_with_batch'};
+    dispatch(commonUpdateFunction(dataToSend));
+};
+
 export const actionToGetUserByMobileNumber = (mobileNumber) => async () => {
     const {data} = await api.post(`common/actionToValidateMobileNumberApiCall`,{mobileNumber});
     return data.response;
-};
-
-export const actionToInitializePaymentGateway = (payload,setPaymentData) => async () => {
-    const {data} = await api.post(`common/actionToInitializePaymentGatewayApiCall`,payload);
-    setPaymentData(data.response);
 };
 
 export const actionToUpdateAttendanceClassStatus = (profileData,classData,groupDataId) => async (dispatch) => {
@@ -185,6 +204,25 @@ export const actionToGetAllSubjectDataList = () => async (dispatch) => {
     dispatch({type: ALL_SUBJECT_DATA_LIST_REQUEST});
     const {data} = await api.post(`common/actionToGetAllSubjectDataListApiCall`);
     dispatch({type: ALL_SUBJECT_DATA_LIST_SUCCESS, payload:[...data?.response]});
+}
+export const actionToSearchTeacherAccordingToTheCondition = (payload) => async (dispatch) => {
+    dispatch({type: ALL_TEACHER_DATA_TO_ASSIGN_CLASS_REQUEST});
+    const {data} = await api.post(`common/actionToSearchTeacherAccordingToTheConditionApiCall`, {
+        subject_id: payload?.subject_id,
+        school_board: payload?.school_board,
+        student_class: payload?.student_class,
+    })
+    dispatch({type: ALL_TEACHER_DATA_TO_ASSIGN_CLASS_SUCCESS, payload:[...data?.response]});
+}
+export const actionToAlreadyCreatedClassAccordingToTheCondition = (payload) => async (dispatch) => {
+    dispatch({type: ALL_TEACHER_DATA_TO_ASSIGN_CLASS_REQUEST});
+    const {data} = await api.post(`common/actionToAlreadyCreatedClassAccordingToTheConditionApiCall`, {
+        subject_id: payload?.subject_id,
+        school_board: payload?.school_board,
+        student_class: payload?.student_class,
+        batch: payload?.batch,
+    })
+    dispatch({type: ALL_TEACHER_DATA_TO_ASSIGN_CLASS_SUCCESS, payload:[...data?.response]});
 }
 export const actionToGetAllDemoClassesDetails = () => async (dispatch) => {
     dispatch({type: ALL_DEMO_CLASSES_REQUEST});
@@ -275,7 +313,6 @@ export const actionToGetUserAllClasses = () => async (dispatch,getState) => {
     dispatch({type: STUDENT_ALL_TIME_CLASS_LIST_SUCCESS, payload:[...eventData]});
 }
 export const actionToSendFabricDataToOtherUser = (jsonObject) => async ()=> {
-    console.log('actionToSendFabricDataToOtherUser',jsonObject)
     sendWebsocketRequest(JSON.stringify({
         clientId: localStorage.getItem('clientId'),
         type: 'annotatorImageJson',
