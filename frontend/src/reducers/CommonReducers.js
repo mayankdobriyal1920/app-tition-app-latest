@@ -45,6 +45,8 @@ import {
     ALL_DEMO_CLASSES_SUCCESS,
     ALL_TEACHER_DATA_TO_ASSIGN_CLASS_REQUEST,
     ALL_TEACHER_DATA_TO_ASSIGN_CLASS_SUCCESS,
+    LATEST_TEACHER_DATA_LIST_REQUEST,
+    LATEST_TEACHER_DATA_LIST_SUCCESS, LATEST_STUDENT_PROFILE_DATA_LIST_REQUEST, LATEST_STUDENT_PROFILE_DATA_LIST_SUCCESS,
     OPEN_CLOSE_CLASS_ASSIGN_POPUP,
     ALL_CLASS_TO_ASSIGN_CLASS_REQUEST, ALL_CLASS_TO_ASSIGN_CLASS_SUCCESS
 } from "../constants/CommonConstants";
@@ -119,6 +121,26 @@ export const allTeacherDataListReducer = (state = {}, action) => {
             return { loading: true,teacherData:[] ,prevId:action.payload};
         case ALL_TEACHER_DATA_LIST_SUCCESS:
             return { loading: false,teacherData:action.payload ,prevId:state.prevId};
+        default:
+            return state;
+    }
+};
+export const latestTeachersDataListReducer = (state = {}, action) => {
+    switch (action.type) {
+        case LATEST_TEACHER_DATA_LIST_REQUEST:
+            return { loading: true,teacherData:[] ,prevId:action.payload};
+        case LATEST_TEACHER_DATA_LIST_SUCCESS:
+            return { loading: false,teacherData:action.payload ,prevId:state.prevId};
+        default:
+            return state;
+    }
+};
+export const latestStudentsDataListReducer = (state = {}, action) => {
+    switch (action.type) {
+        case LATEST_STUDENT_PROFILE_DATA_LIST_REQUEST:
+            return { loading: true,studentData:[] ,prevId:action.payload};
+        case LATEST_STUDENT_PROFILE_DATA_LIST_SUCCESS:
+            return { loading: false,studentData:action.payload ,prevId:state.prevId};
         default:
             return state;
     }

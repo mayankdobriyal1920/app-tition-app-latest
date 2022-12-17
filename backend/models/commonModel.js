@@ -10,6 +10,8 @@ import {
     actionToGetAllStudentSubscriptionDataListQuery,
     actionToGetAllSubjectDataListQuery,
     actionToGetAllTeacherDataListQuery,
+    actionToGetLatestStudentProfileDataListQuery,
+    actionToGetLatestTeacherDataListQuery,
     actionToGetTeacherAllClassesQuery,
     actionToGetUserAllClassesQuery, actionToSearchTeacherAccordingToTheConditionQuery
 } from "./commonQueries.js";
@@ -101,6 +103,17 @@ export const actionToGetAllDemoClassesDetailsApiCall = () => {
         })
     })
 }
+export const actionToGetLatestStudentProfileDataListApiCall = () => {
+    return new Promise(function(resolve, reject) {
+        const query = actionToGetLatestStudentProfileDataListQuery();
+        pool.query(query, (error, results) => {
+            if (error) {
+                reject(error)
+            }
+            resolve(results);
+        })
+    })
+}
 export const actionToGetAllStudentDataListApiCall = () => {
     return new Promise(function(resolve, reject) {
         const query = actionToGetAllStudentDataListQuery();
@@ -115,6 +128,17 @@ export const actionToGetAllStudentDataListApiCall = () => {
 export const actionToGetAllNewStudentProfileDataListApiCall = () => {
     return new Promise(function(resolve, reject) {
         const query = actionToGetAllNewStudentProfileDataListQuery();
+        pool.query(query, (error, results) => {
+            if (error) {
+                reject(error)
+            }
+            resolve(results);
+        })
+    })
+}
+export const actionToGetLatestTeacherDataListApiCall = () => {
+    return new Promise(function(resolve, reject) {
+        const query = actionToGetLatestTeacherDataListQuery();
         pool.query(query, (error, results) => {
             if (error) {
                 reject(error)

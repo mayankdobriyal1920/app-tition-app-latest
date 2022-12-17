@@ -7,6 +7,9 @@ export const actionToGetAllStudentDataListQuery = ()=>{
 export const actionToGetAllNewStudentProfileDataListQuery = ()=>{
     return `select student_profile.*,school_board.name as school_board_name from student_profile left join  school_board on student_profile.school_board = school_board.id `;
 }
+export const actionToGetLatestStudentProfileDataListQuery = ()=>{
+    return `select student_profile.*,school_board.name as school_board_name from student_profile left join  school_board on student_profile.school_board = school_board.id order by student_profile.created_at desc limit 5`;
+}
 export const actionToGetAllStudentSubscriptionDataListQuery = ()=>{
     return `select * from student_profile where subscription_end_date is not NULL order by created_at desc`;
 }
@@ -30,6 +33,9 @@ export const actionToAlreadyCreatedClassAccordingToTheConditionQuery = (subject_
                 teacher_subject_and_class.teacher_class = ${student_class} AND teacher_subject_and_class.subject_id = '${subject_id}'
             GROUP BY app_user.id
     `;
+}
+export const actionToGetLatestTeacherDataListQuery = ()=>{
+    return `select app_user.*,school_board.name as school_board_name from app_user join school_board on app_user.board=school_board.id where app_user.role=2 order by created_at desc limit 5`;
 }
 export const actionToGetAllClassesDataListQuery = ()=>{
     return `select profile_subject_with_batch.id as  profile_subject_with_batch_id, profile_subject_with_batch.batch as  profile_subject_with_batch_batch_type, profile_subject_with_batch.has_taken_demo as  profile_subject_with_batch_has_taken_demo,

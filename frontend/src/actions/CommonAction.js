@@ -19,6 +19,8 @@ import {
     ALL_TEACHER_DATA_LIST_SUCCESS,
     ALL_CLASSES_DATA_LIST_REQUEST,
     ALL_CLASSES_DATA_LIST_SUCCESS,
+    LATEST_TEACHER_DATA_LIST_SUCCESS,
+    LATEST_TEACHER_DATA_LIST_REQUEST,
     TEACHER_ALL_CLASS_LIST_REQUEST,
     TEACHER_ALL_DEMO_CLASS_LIST_SUCCESS,
     TEACHER_ALL_CLASS_LIST_SUCCESS,
@@ -39,7 +41,7 @@ import {
     ALL_ATTENDANCE_AND_ASSIGNMENT_REQUEST,
     ALL_ATTENDANCE_AND_ASSIGNMENT_SUCCESS,
     ALL_DEMO_CLASSES_REQUEST,
-    ALL_DEMO_CLASSES_SUCCESS,
+    ALL_DEMO_CLASSES_SUCCESS, LATEST_STUDENT_PROFILE_DATA_LIST_REQUEST, LATEST_STUDENT_PROFILE_DATA_LIST_SUCCESS,
     OPEN_CLOSE_CLASS_ASSIGN_POPUP,
     ALL_TEACHER_DATA_TO_ASSIGN_CLASS_REQUEST,
     ALL_TEACHER_DATA_TO_ASSIGN_CLASS_SUCCESS
@@ -255,6 +257,11 @@ export const actionToGetAllNewStudentProfileDataList = () => async (dispatch) =>
     const {data} = await api.post(`common/actionToGetAllNewStudentProfileDataListApiCall `);
     dispatch({type: ALL_NEW_STUDENT_PROFILE_DATA_LIST_SUCCESS, payload:[...data?.response]});
 }
+export const actionToGetLatestStudentProfileDataList = () => async (dispatch) => {
+    dispatch({type: LATEST_STUDENT_PROFILE_DATA_LIST_REQUEST});
+    const {data} = await api.post(`common/actionToGetLatestStudentProfileDataListApiCall `);
+    dispatch({type: LATEST_STUDENT_PROFILE_DATA_LIST_SUCCESS, payload:[...data?.response]});
+}
 export const actionToGetAllStudentSubscriptionDataList = () => async (dispatch) => {
     dispatch({type: ALL_STUDENT_SUBSCRIPTION_DATA_LIST_REQUEST});
     const {data} = await api.post(`common/actionToGetAllStudentSubscriptionDataListApiCall `);
@@ -264,6 +271,11 @@ export const actionToGetAllTeacherDataList = () => async (dispatch) => {
     dispatch({type: ALL_TEACHER_DATA_LIST_REQUEST});
     const {data} = await api.post(`common/actionToGetAllTeacherDataListApiCall `);
     dispatch({type: ALL_TEACHER_DATA_LIST_SUCCESS, payload:[...data?.response]});
+}
+export const actionToGetLatestTeachersDataList = () => async (dispatch) => {
+    dispatch({type: LATEST_TEACHER_DATA_LIST_REQUEST});
+    const {data} = await api.post(`common/actionToGetLatestTeacherDataListApiCall `);
+    dispatch({type: LATEST_TEACHER_DATA_LIST_SUCCESS, payload:[...data?.response]});
 }
 export const actionToGetAllClassesDataList = () => async (dispatch) => {
     dispatch({type: ALL_CLASSES_DATA_LIST_REQUEST});

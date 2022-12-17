@@ -20,6 +20,8 @@ import {
     actionToGetUserFreshDataApiCall,
     actionToGetAllAttendClassWithAssignmentApiCall,
     actionToGetAllClassesDataListApiCall,
+    actionToGetLatestTeacherDataListApiCall,
+    actionToGetLatestStudentProfileDataListApiCall,
     actionToGetAllDemoClassesDetailsApiCall,
     actionToSearchTeacherAccordingToTheConditionApiCall,
     actionToAlreadyCreatedClassAccordingToTheConditionApiCall
@@ -191,6 +193,20 @@ commonRouter.post(
     })
 );
 commonRouter.post(
+    '/actionToGetLatestStudentProfileDataListApiCall',
+    expressAsyncHandler(async (req, res) => {
+        actionToGetLatestStudentProfileDataListApiCall(req.body).then((data) => {
+            res.status(200).send({
+                response: data,
+
+            });
+        })
+            .catch(error => {
+                res.status(500).send(error);
+            })
+    })
+);
+commonRouter.post(
     '/actionToGetAllStudentSubscriptionDataListApiCall',
     expressAsyncHandler(async (req, res) => {
         actionToGetAllStudentSubscriptionDataListApiCall(req.body).then((data) => {
@@ -208,6 +224,20 @@ commonRouter.post(
     '/actionToGetAllTeacherDataListApiCall',
     expressAsyncHandler(async (req, res) => {
         actionToGetAllTeacherDataListApiCall(req.body).then((data) => {
+            res.status(200).send({
+                response: data,
+
+            });
+        })
+            .catch(error => {
+                res.status(500).send(error);
+            })
+    })
+);
+commonRouter.post(
+    '/actionToGetLatestTeacherDataListApiCall',
+    expressAsyncHandler(async (req, res) => {
+        actionToGetLatestTeacherDataListApiCall(req.body).then((data) => {
             res.status(200).send({
                 response: data,
 

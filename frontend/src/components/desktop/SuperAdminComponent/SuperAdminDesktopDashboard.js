@@ -1,6 +1,20 @@
-import React from "react";
-
+import React, {useEffect, useState} from 'react';
+import {useDispatch, useSelector} from "react-redux";
+import {useEffectOnce} from "../../../helper/UseEffectOnce";
+import {
+    actionToGetAllStudentDataList, actionToGetLatestStudentProfileDataList,
+    actionToGetLatestTeachersDataList
+} from "../../../actions/CommonAction";
+import moment from "moment/moment";
+import {_getFirstLatterOfName} from "../../../helper/CommonHelper";
 export default function SuperAdminDesktopDashboard() {
+    const dispatch = useDispatch();
+    const teacherListArray = useSelector((state) => state.latestTeacherDataList);
+    const studentListArray = useSelector((state) => state.latestStudentDataList);
+    useEffectOnce(() =>{
+        dispatch(actionToGetLatestTeachersDataList());
+        dispatch(actionToGetLatestStudentProfileDataList());
+    },[]);
     return (
         <div className="content">
             {/*-- Sale & Revenue Start --*/}
@@ -119,123 +133,47 @@ export default function SuperAdminDesktopDashboard() {
             {/*-- Widgets Start --*/}
             <div className="container-fluid pt-4 px-4">
                 <div className="row g-4">
-                    <div className="col-sm-12 col-md-6 col-xl-4">
+                    <div className="col-sm-12 col-md-6 col-xl-6">
                         <div className="h-100 bg-light rounded p-4">
                             <div className="d-flex align-items-center justify-content-between mb-2">
-                                <h6 className="mb-0">Messages</h6>
-                                <a href="">Show All</a>
+                                <h6 className="mb-0">Teachers</h6>
+                                <a href="/dashboard/teacher-datatable">Show All</a>
                             </div>
-                            <div className="d-flex align-items-center border-bottom py-3">
-                                <img className="rounded-circle flex-shrink-0" src="img/user.jpg" alt=""
-                                     style={{width: "40px", height:" 40px"}}/>
-                                <div className="w-100 ms-3">
-                                    <div className="d-flex w-100 justify-content-between">
-                                        <h6 className="mb-0">Jhon Doe</h6>
-                                        <small>15 minutes ago</small>
+                            {(teacherListArray?.teacherData?.map((teacherData,index)=>(
+                                <div className="d-flex align-items-center border-bottom py-3">
+                                    <div className={"name_initial rounded-circle flex-shrink-0"}>{_getFirstLatterOfName(teacherData?.name)}
                                     </div>
-                                    <span>Short message goes here...</span>
-                                </div>
-                            </div>
-                            <div className="d-flex align-items-center border-bottom py-3">
-                                <img className="rounded-circle flex-shrink-0" src="img/user.jpg" alt=""
-                                     style={{width: "40px", height:" 40px"}}/>
-                                <div className="w-100 ms-3">
-                                    <div className="d-flex w-100 justify-content-between">
-                                        <h6 className="mb-0">Jhon Doe</h6>
-                                        <small>15 minutes ago</small>
+                                    <div className="w-100 ms-3">
+                                        <div className="d-flex w-100 justify-content-between">
+                                            <h6 className="mb-0">{teacherData?.name}</h6>
+                                            <small>{moment(teacherData?.created_at).format('LLL')}</small>
+                                        </div>
+                                        <span>{teacherData?.highest_qualification},{teacherData?.school_board_name}</span>
                                     </div>
-                                    <span>Short message goes here...</span>
                                 </div>
-                            </div>
-                            <div className="d-flex align-items-center border-bottom py-3">
-                                <img className="rounded-circle flex-shrink-0" src="img/user.jpg" alt=""
-                                     style={{width: "40px", height:" 40px"}}/>
-                                <div className="w-100 ms-3">
-                                    <div className="d-flex w-100 justify-content-between">
-                                        <h6 className="mb-0">Jhon Doe</h6>
-                                        <small>15 minutes ago</small>
-                                    </div>
-                                    <span>Short message goes here...</span>
-                                </div>
-                            </div>
-                            <div className="d-flex align-items-center pt-3">
-                                <img className="rounded-circle flex-shrink-0" src="img/user.jpg" alt=""
-                                     style={{width: "40px", height:" 40px"}}/>
-                                <div className="w-100 ms-3">
-                                    <div className="d-flex w-100 justify-content-between">
-                                        <h6 className="mb-0">Jhon Doe</h6>
-                                        <small>15 minutes ago</small>
-                                    </div>
-                                    <span>Short message goes here...</span>
-                                </div>
-                            </div>
+                                )))}
                         </div>
                     </div>
-                    <div className="col-sm-12 col-md-6 col-xl-4">
+                    <div className="col-sm-12 col-md-6 col-xl-6">
                         <div className="h-100 bg-light rounded p-4">
-                            <div className="d-flex align-items-center justify-content-between mb-4">
-                                <h6 className="mb-0">Calender</h6>
-                                <a href="">Show All</a>
+                            <div className="d-flex align-items-center justify-content-between mb-2">
+                                <h6 className="mb-0">Students</h6>
+                                <a href="/dashboard/student-datatable">Show All</a>
                             </div>
-                            <div id="calender"></div>
-                        </div>
-                    </div>
-                    <div className="col-sm-12 col-md-6 col-xl-4">
-                        <div className="h-100 bg-light rounded p-4">
-                            <div className="d-flex align-items-center justify-content-between mb-4">
-                                <h6 className="mb-0">To Do List</h6>
-                                <a href="">Show All</a>
-                            </div>
-                            <div className="d-flex mb-2">
-                                <input className="form-control bg-transparent" type="text" placeholder="Enter task"/>
-                                <button type="button" className="btn btn-primary ms-2">Add</button>
-                            </div>
-                            <div className="d-flex align-items-center border-bottom py-2">
-                                <input className="form-check-input m-0" type="checkbox"/>
-                                <div className="w-100 ms-3">
-                                    <div className="d-flex w-100 align-items-center justify-content-between">
-                                        <span>Short task goes here...</span>
-                                        <button className="btn btn-sm"><i className="fa fa-times"></i></button>
+                            {(studentListArray?.studentData?.map((studentData,index)=>(
+                                <div className="d-flex align-items-center border-bottom py-3">
+
+                                    <div className={"name_initial name_initial rounded-circle flex-shrink-0"}>{_getFirstLatterOfName(studentData?.name)}
+                                    </div>
+                                    <div className="w-100 ms-3">
+                                        <div className="d-flex w-100 justify-content-between">
+                                            <h6 className="mb-0">{studentData?.name}</h6>
+                                            <small>{moment(studentData?.created_at).format('LLL')}</small>
+                                        </div>
+                                        <span>{studentData?.student_class},{studentData?.school_board_name}</span>
                                     </div>
                                 </div>
-                            </div>
-                            <div className="d-flex align-items-center border-bottom py-2">
-                                <input className="form-check-input m-0" type="checkbox"/>
-                                <div className="w-100 ms-3">
-                                    <div className="d-flex w-100 align-items-center justify-content-between">
-                                        <span>Short task goes here...</span>
-                                        <button className="btn btn-sm"><i className="fa fa-times"></i></button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="d-flex align-items-center border-bottom py-2">
-                                <input className="form-check-input m-0" type="checkbox" checked/>
-                                <div className="w-100 ms-3">
-                                    <div className="d-flex w-100 align-items-center justify-content-between">
-                                        <span><del>Short task goes here...</del></span>
-                                        <button className="btn btn-sm text-primary"><i
-                                            className="fa fa-times"></i></button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="d-flex align-items-center border-bottom py-2">
-                                <input className="form-check-input m-0" type="checkbox"/>
-                                <div className="w-100 ms-3">
-                                    <div className="d-flex w-100 align-items-center justify-content-between">
-                                        <span>Short task goes here...</span>
-                                        <button className="btn btn-sm"><i className="fa fa-times"></i></button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="d-flex align-items-center pt-2">
-                                <input className="form-check-input m-0" type="checkbox"/>
-                                <div className="w-100 ms-3">
-                                    <div className="d-flex w-100 align-items-center justify-content-between">
-                                        <span>Short task goes here...</span>
-                                        <button className="btn btn-sm"><i className="fa fa-times"></i></button>
-                                    </div>
-                                </div>
-                            </div>
+                            )))}
                         </div>
                     </div>
                 </div>
