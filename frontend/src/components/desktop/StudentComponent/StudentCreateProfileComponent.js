@@ -157,7 +157,7 @@ function StudentCreateProfileComponentFunction(){
                                         <option value={""}>Select school board</option>
 
                                         {(schoolBoardData?.map((board,key)=>(
-                                            <option value={board?.id}>{board?.name}</option>
+                                            <option key={key} value={board?.id}>{board?.name}</option>
                                         )))}
                                     </select>
                                 </div>

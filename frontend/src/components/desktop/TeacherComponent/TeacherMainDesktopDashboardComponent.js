@@ -236,7 +236,7 @@ function TeacherMainDesktopDashboardComponentFunction(){
                 <StudentDashHeaderComponent type={"StudentMainDesktopDashboardComponent"}/>
                 <div className={"student_dash_all_courses_main_section mt-60"}>
                     <div className={"student_demo_classes_main_page"}>
-                        <h2>Demo Classes</h2>
+                        <h2>Today's Classes</h2>
                         <div className={"mt-15 demo_classes_main_section"}>
                             {(loading) ?
                                 <FacebookLoader type={"facebookStyle"} item={2}/>

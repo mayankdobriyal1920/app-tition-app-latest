@@ -22,10 +22,6 @@ export default function TeacherStudentVideoCallComponent({inCallStatus,setInCall
     let [isMutedCall,setIsMutedCall] = useState(isTeacher ? false : true);
 
 
-    useEffect(()=>{
-        console.log(chatModuleCurrentCallGroupMembers)
-    },[chatModuleCurrentCallGroupMembers])
-
     const endMyStreamTrackOnEndCall = ()=>{
         if(myStream != null) {
             myStream.getTracks().forEach(function (track) {

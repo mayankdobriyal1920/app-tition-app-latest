@@ -11,11 +11,6 @@ export default function NewStudentProfileComponent(){
     const [filterStudent, setFilterStudent] = useState([])
     const tableColumns = [
         {
-            name: "Student Id",
-            selector: (row) => row.id,
-            sortable: true,
-        },
-        {
             name: "Name",
             selector: (row) => row.name,
             sortable: true,
@@ -64,10 +59,6 @@ export default function NewStudentProfileComponent(){
             name: "Active",
             selector: (row) => (row.is_active=='1') ? 'Active' :'Inactive',
             sortable: true,
-        },
-        {
-            name: "Action",
-            cell: (row) => <button class='btn btn-primary' onClick={() => alert(row.id)}> Edit</button>,
         }
     ]
     useEffectOnce(() =>{
@@ -82,7 +73,7 @@ export default function NewStudentProfileComponent(){
 
     }, [search,studentListArray]);
     return (
-        <div className={"container-fluid pt-4 px-4"}>
+        <div className={"container-fluid pt-4 px-4 datatable_container_main_div_section"}>
             <div className={"bg-light rounded h-100 p-4"}>
                 {(studentListArray.loading ) ?
                     <div className={"d-flex justify-content-center h-100"}>

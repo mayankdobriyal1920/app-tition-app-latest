@@ -1,6 +1,8 @@
 import pool from './connection.js';
 import {
-    actionToGetAllAttendClassWithAssignmentQuery, actionToGetAllClassesDataListQuery,
+    actionToGetAllAttendClassWithAssignmentQuery,
+    actionToGetAllClassesDataListQuery,
+    actionToGetAllDemoClassesDetailsQuery,
     actionToGetAllNewStudentProfileDataListQuery,
     actionToGetAllShoolBoardDataListQuery,
     actionToGetAllStudentDataListQuery,
@@ -55,6 +57,17 @@ export const deleteCommonApiCall = (body) => {
 export const actionToGetAllSubjectDataListApiCall = () => {
     return new Promise(function(resolve, reject) {
         const query = actionToGetAllSubjectDataListQuery();
+        pool.query(query, (error, results) => {
+            if (error) {
+                reject(error)
+            }
+            resolve(results);
+        })
+    })
+}
+export const actionToGetAllDemoClassesDetailsApiCall = () => {
+    return new Promise(function(resolve, reject) {
+        const query = actionToGetAllDemoClassesDetailsQuery();
         pool.query(query, (error, results) => {
             if (error) {
                 reject(error)

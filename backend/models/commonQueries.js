@@ -27,6 +27,23 @@ export const actionToGetAllClassesDataListQuery = ()=>{
 export const actionToGetAllShoolBoardDataListQuery = ()=>{
     return `SELECT id,name from school_board`;
 }
+export const actionToGetAllDemoClassesDetailsQuery = ()=>{
+    return `select profile_subject_with_batch.id as  profile_subject_with_batch_id,
+                   profile_subject_with_batch.batch as  profile_subject_with_batch_batch_type,
+                   profile_subject_with_batch.has_taken_demo as  profile_subject_with_batch_has_taken_demo,
+                   student_profile.id as student_id,
+                   student_profile.name as student_name,
+                   student_profile.email as student_email,
+                   subject.id as subject_id,
+                   subject.name as subject_name,
+                   school_board.name as school_board_name,
+                   student_profile.student_class as student_class
+
+     from profile_subject_with_batch
+     join student_profile on profile_subject_with_batch.profile_id =student_profile.id
+     join school_board on student_profile.school_board=school_board.id
+     join subject on subject.id=profile_subject_with_batch.subject_id`;
+}
 export const actionToGetAllAttendClassWithAssignmentQuery = (profileId)=>{
     return `SELECT JSON_OBJECT(
                            'classes_assigned_to_teacher', classes_assigned_to_teacher.jsdata,

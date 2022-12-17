@@ -3,7 +3,8 @@ import thunk from 'redux-thunk';
 import {
     allSchoolBoardDataListReducer,
     allSubjectDataListReducer,
-    annotatorUserOnCaptureReducer, callSocketMessageBroadcastReducer,
+    annotatorUserOnCaptureReducer,
+    callSocketMessageBroadcastReducer,
     captureAnnotatorJSONDataReducer,
     chatModuleAllGroupStartedCallReducer,
     chatModuleCurrentCallGroupDataReducer,
@@ -18,14 +19,18 @@ import {
     allStudentDataListReducer,
     allNewStudentProfileDataListReducer,
     allStudentSubscriptionDataListReducer,
-    studentAllClassesListReducer, studentAllTimeClassListReducer,
+    studentAllClassesListReducer,
+    studentAllTimeClassListReducer,
     studentAllTodayClassListReducer,
     allTeacherDataListReducer,
     allClassesDataListReducer,
     teacherAllClassesListReducer,
     teacherAllDemoClassListReducer,
     userSigninReducer,
-    windowResizeCountReducer, openCloseTeacherRatingPopupReducer, allAttendanceAndAssignmentReducer,
+    windowResizeCountReducer,
+    openCloseTeacherRatingPopupReducer,
+    allAttendanceAndAssignmentReducer,
+    allDemoClassesReducer, allTeacherDataToAssignClassReducer,
 } from "./reducers/CommonReducers";
 
 const initialState = {
@@ -46,6 +51,7 @@ const initialState = {
     allSchoolBoardDataList:{prevId:'',loading:true,boardData:[]},
     studentAllClassesList:{prevId:'',loading:true,classData:[]},
     teacherAllClassesList:{prevId:'',loading:true,classData:[]},
+    allDemoClasses:{prevId:'',loading:true,classData:[]},
     teacherAllDemoClassList:[],
     studentAllTodayClassList:[],
     studentAllTimeClassList:[],
@@ -61,8 +67,11 @@ const initialState = {
     chatModuleNewUserLeaveUserInCallData:{},
     callSocketMessageBroadcast:'',
     allAttendanceAndAssignment:{prevId:'',loading:true,attendanceData:[]},
+    allTeacherDataToAssignClass:{prevId:'',loading:true,teacherData:[]},
 };
 export const rootReducer = combineReducers({
+    allTeacherDataToAssignClass: allTeacherDataToAssignClassReducer,
+    allDemoClasses: allDemoClassesReducer,
     allAttendanceAndAssignment: allAttendanceAndAssignmentReducer,
     studentAllTimeClassList: studentAllTimeClassListReducer,
     openCloseTeacherRatingPopup: openCloseTeacherRatingPopupReducer,

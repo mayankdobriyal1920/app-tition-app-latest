@@ -36,7 +36,10 @@ import {
     ALL_STUDENT_SUBSCRIPTION_DATA_LIST_SUCCESS,
     ALL_NEW_STUDENT_PROFILE_DATA_LIST_REQUEST,
     ALL_NEW_STUDENT_PROFILE_DATA_LIST_SUCCESS,
-    ALL_ATTENDANCE_AND_ASSIGNMENT_REQUEST, ALL_ATTENDANCE_AND_ASSIGNMENT_SUCCESS
+    ALL_ATTENDANCE_AND_ASSIGNMENT_REQUEST,
+    ALL_ATTENDANCE_AND_ASSIGNMENT_SUCCESS,
+    ALL_DEMO_CLASSES_REQUEST,
+    ALL_DEMO_CLASSES_SUCCESS
 } from "../constants/CommonConstants";
 
 import Axios from "axios";
@@ -125,10 +128,26 @@ export const actionToUpdateSubscriptionPlanDetailForUser = (classDataId) => asyn
     let dataToSend = {column: setData, value: [moment().add(2,'months').format('YYYY-MM-DD HH:mm:ss')], whereCondition: whereCondition, tableName: 'student_profile'};
     dispatch(commonUpdateFunction(dataToSend));
 }
+export const actionToCreateTeacherProfile = (payload) => async (dispatch) => {
+    const aliasArray = ['?','?','?','?','?','?','?','?','?','?'];
+    const columnArray = ['id','name','email','address','mobile','password','role','has_profile','highest_qualification','board'];
+    const valuesArray = [payload?.id,payload?.name,payload?.email,payload?.address,payload?.mobile,payload?.password,payload?.role,payload?.has_profile,payload?.highest_qualification,payload?.board];
+    const insertData = {alias:aliasArray,column:columnArray,values:valuesArray,tableName:'app_user'};
+    await dispatch(callInsertDataFunction(insertData));
+
+    payload?.subjects?.map(async (subject)=>{
+        await payload?.teacherClass?.map(async (teacherClass)=> {
+            let aliasArray = ['?', '?', '?', '?'];
+            let columnArray = ['id', 'teacher_id', 'subject_id', 'teacher_class'];
+            let valuesArray = [_generateUniqueId(), payload?.id, subject?.id, teacherClass?.id];
+            let insertData = {alias: aliasArray, column: columnArray, values: valuesArray, tableName: 'teacher_subject_and_class'};
+            await dispatch(callInsertDataFunction(insertData));
+        })
+    })
+}
 export const actionToCreateUserProfile = (payload) => async (dispatch,getState) => {
 
     let userInfo = getState().userSignin.userInfo;
-
     let setData = `has_profile = ?`;
     let whereCondition = `id = '${userInfo?.id}'`;
     let dataToSend = {column: setData, value: [1], whereCondition: whereCondition, tableName: 'app_user'};
@@ -166,6 +185,11 @@ export const actionToGetAllSubjectDataList = () => async (dispatch) => {
     dispatch({type: ALL_SUBJECT_DATA_LIST_REQUEST});
     const {data} = await api.post(`common/actionToGetAllSubjectDataListApiCall`);
     dispatch({type: ALL_SUBJECT_DATA_LIST_SUCCESS, payload:[...data?.response]});
+}
+export const actionToGetAllDemoClassesDetails = () => async (dispatch) => {
+    dispatch({type: ALL_DEMO_CLASSES_REQUEST});
+    const {data} = await api.post(`common/actionToGetAllDemoClassesDetailsApiCall`);
+    dispatch({type: ALL_DEMO_CLASSES_SUCCESS, payload:[...data?.response]});
 }
 export const actionToGetAllAttendClassWithAssignment = (profile_id) => async (dispatch) => {
     dispatch({type: ALL_ATTENDANCE_AND_ASSIGNMENT_REQUEST});
@@ -205,7 +229,7 @@ export const actionToGetAllTeacherDataList = () => async (dispatch) => {
 }
 export const actionToGetAllClassesDataList = () => async (dispatch) => {
     dispatch({type: ALL_CLASSES_DATA_LIST_REQUEST});
-    const {data} = await api.post(`common/actionToGetAllClassesDataListApiCall `);
+    const {data} = await api.post(`common/actionToGetAllClassesDataListApiCall`);
     dispatch({type: ALL_CLASSES_DATA_LIST_SUCCESS, payload:[...data?.response]});
 }
 export const actionToCreatePaymentIntend = (setClientSecret,amount) => async () => {
@@ -376,9 +400,9 @@ export const actionToSetMemberInGroupCall = (groupId,allMembersArray,memberData)
     }
 }
 export const actionToCreateUserSignupRequest = (payload) => async (dispatch) => {
-    const aliasArray = ['?','?','?','?','?','?','?','?','?','?','?'];
-    const columnArray = ['id','name','email','address','mobile','password','role','has_profile','highest_qualification','education_medium','experience'];
-    const valuesArray = [payload?.id,payload?.name,payload?.email,payload?.address,payload?.mobile,payload?.password,payload?.role,payload?.has_profile,payload?.highestQualification,payload?.educationMedium,payload?.experience];
+    const aliasArray = ['?','?','?','?','?','?','?','?'];
+    const columnArray = ['id','name','email','address','mobile','password','role','has_profile'];
+    const valuesArray = [payload?.id,payload?.name,payload?.email,payload?.address,payload?.mobile,payload?.password,payload?.role,payload?.has_profile];
     const insertData = {alias:aliasArray,column:columnArray,values:valuesArray,tableName:'app_user'};
     await dispatch(callInsertDataFunction(insertData));
     dispatch({ type: USER_SIGNIN_SUCCESS, payload: payload});

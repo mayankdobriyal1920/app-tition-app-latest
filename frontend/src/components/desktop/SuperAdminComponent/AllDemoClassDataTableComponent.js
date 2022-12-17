@@ -1,15 +1,15 @@
 import React, {useEffect, useState} from 'react';
 import {
-    actionToGetAllClassesDataList,
+    actionToGetAllClassesDataList, actionToGetAllDemoClassesDetails,
     actionToOpenCloseLoginPopup
 } from "../../../actions/CommonAction";
 import {useDispatch, useSelector} from "react-redux";
 import DataTable from 'react-data-table-component';
 import {useEffectOnce} from "../../../helper/UseEffectOnce";
 
-export default function AllClassesDataTableComponent(){
+export default function AllDemoClassDataTableComponent(){
     const dispatch = useDispatch();
-    const classesListArray = useSelector((state) => state.allAdminClassesDataList);
+    const allDemoClasses = useSelector((state) => state.allDemoClasses);
     const {isOpen} = useSelector((state) => state.openCloseLoginPopup);
     const [search,setSearch] = useState("")
     const [filterClass,setFilterClasses] = useState([])
@@ -46,34 +46,29 @@ export default function AllClassesDataTableComponent(){
             sortable:true,
         },
         {
-            name:"Student Email",
-            selector:(row) => row.student_email,
-            sortable:true,
-        },
-        {
             name:"Action",
-            cell:(row) => (row.classes_assigned_to_teacher_id) ? "Class Assigned" : (row.profile_subject_with_batch_has_taken_demo==1) ? <button className='btn btn-primary' onClick={() => openClassAssignPopUp(row.id)}> Assign Main Class</button> : <button className='btn btn-warning' onClick={() => openClassAssignPopUp(row.id)}> Assign Demo Class</button> ,
+            cell:(row) => (row.profile_subject_with_batch_has_taken_demo !== 1) ?
+                <button className='btn btn-warning' onClick={() => openClassAssignPopUp(row.id)}>Assign Class</button> :
+                <div className={"class_assigned"}>Class assigned</div>
         }
     ]
-
-
     useEffect(() =>{
-        if(classesListArray?.classesData) {
-            const result = classesListArray?.classesData?.filter((classes) => {
-                return classes?.subject_name?.toLowerCase()?.match(search?.toLowerCase());
+        if(allDemoClasses?.classesData) {
+            const result = allDemoClasses?.classesData?.filter((classes) => {
+                return classes.subject_name.toLowerCase().match(search.toLowerCase());
             });
             setFilterClasses(result);
         }
-    },[search,classesListArray]);
+    },[search,allDemoClasses]);
 
     useEffectOnce(() =>{
-        dispatch(actionToGetAllClassesDataList());
+        dispatch(actionToGetAllDemoClassesDetails());
     },[]);
 
     return (
-        <div className={"container-fluid pt-4 px-4"}>
+        <div className={"container-fluid pt-4 px-4 datatable_container_main_div_section"}>
             <div className={"bg-light rounded h-100 p-4"}>
-                {(classesListArray.loading) ?
+                {(allDemoClasses.loading) ?
                     <div className={"d-flex justify-content-center h-100"}>
                         <div className={"spinner-border"} role={"status"}>
                             <span className={"sr-only"}>Loading...</span>

@@ -40,7 +40,10 @@ import {
     ALL_NEW_STUDENT_PROFILE_DATA_LIST_SUCCESS,
     ALL_NEW_STUDENT_PROFILE_DATA_LIST_REQUEST,
     ALL_ATTENDANCE_AND_ASSIGNMENT_REQUEST,
-    ALL_ATTENDANCE_AND_ASSIGNMENT_SUCCESS
+    ALL_ATTENDANCE_AND_ASSIGNMENT_SUCCESS,
+    ALL_DEMO_CLASSES_REQUEST,
+    ALL_DEMO_CLASSES_SUCCESS,
+    ALL_TEACHER_DATA_TO_ASSIGN_CLASS_REQUEST, ALL_TEACHER_DATA_TO_ASSIGN_CLASS_SUCCESS
 } from "../constants/CommonConstants";
 
 export const userSigninReducer = (state = {}, action) => {
@@ -122,6 +125,26 @@ export const allClassesDataListReducer = (state = {}, action) => {
         case ALL_CLASSES_DATA_LIST_REQUEST:
             return { loading: true,classesData:[] ,prevId:action.payload};
         case ALL_CLASSES_DATA_LIST_SUCCESS:
+            return { loading: false,classesData:action.payload ,prevId:state.prevId};
+        default:
+            return state;
+    }
+};
+export const allTeacherDataToAssignClassReducer = (state = {}, action) => {
+    switch (action.type) {
+        case ALL_TEACHER_DATA_TO_ASSIGN_CLASS_REQUEST:
+            return { loading: true,teacherData:[] ,prevId:action.payload};
+        case ALL_TEACHER_DATA_TO_ASSIGN_CLASS_SUCCESS:
+            return { loading: false,teacherData:action.payload ,prevId:state.prevId};
+        default:
+            return state;
+    }
+};
+export const allDemoClassesReducer = (state = {}, action) => {
+    switch (action.type) {
+        case ALL_DEMO_CLASSES_REQUEST:
+            return { loading: true,classesData:[] ,prevId:action.payload};
+        case ALL_DEMO_CLASSES_SUCCESS:
             return { loading: false,classesData:action.payload ,prevId:state.prevId};
         default:
             return state;
