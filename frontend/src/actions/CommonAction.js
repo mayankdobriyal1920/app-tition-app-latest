@@ -175,7 +175,7 @@ export const actionToCreateTeacherProfile = (payload) => async (dispatch) => {
     })
 }
 export const actionToCreateUserProfile = (payload) => async (dispatch,getState) => {
-
+console.log('actionToCreateUserProfile')
     let userInfo = getState().userSignin.userInfo;
     let setData = `has_profile = ?`;
     let whereCondition = `id = '${userInfo?.id}'`;
