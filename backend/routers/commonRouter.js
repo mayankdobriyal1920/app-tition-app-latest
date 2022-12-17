@@ -24,7 +24,9 @@ import {
     actionToGetLatestStudentProfileDataListApiCall,
     actionToGetAllDemoClassesDetailsApiCall,
     actionToSearchTeacherAccordingToTheConditionApiCall,
-    actionToAlreadyCreatedClassAccordingToTheConditionApiCall
+    actionToAlreadyCreatedClassAccordingToTheConditionApiCall,
+    actionToGetLatestSubscriptionsDataListApiCall,
+    actionToGetLatestDemoClassesDetailsApiCall
 } from "../models/commonModel.js";
 const commonRouter = express.Router();
 
@@ -110,6 +112,19 @@ commonRouter.post(
     '/actionToGetAllDemoClassesDetailsApiCall',
     expressAsyncHandler(async (req, res) => {
         actionToGetAllDemoClassesDetailsApiCall(req.body).then((data) => {
+            res.status(200).send({
+                response: data,
+            });
+        })
+            .catch(error => {
+                res.status(500).send(error);
+            })
+    })
+);
+commonRouter.post(
+    '/actionToGetLatestDemoClassesDetailsApiCall',
+    expressAsyncHandler(async (req, res) => {
+        actionToGetLatestDemoClassesDetailsApiCall(req.body).then((data) => {
             res.status(200).send({
                 response: data,
             });
@@ -238,6 +253,20 @@ commonRouter.post(
     '/actionToGetLatestTeacherDataListApiCall',
     expressAsyncHandler(async (req, res) => {
         actionToGetLatestTeacherDataListApiCall(req.body).then((data) => {
+            res.status(200).send({
+                response: data,
+
+            });
+        })
+            .catch(error => {
+                res.status(500).send(error);
+            })
+    })
+);
+commonRouter.post(
+    '/actionToGetLatestSubscriptionsDataListApiCall',
+    expressAsyncHandler(async (req, res) => {
+        actionToGetLatestSubscriptionsDataListApiCall(req.body).then((data) => {
             res.status(200).send({
                 response: data,
 

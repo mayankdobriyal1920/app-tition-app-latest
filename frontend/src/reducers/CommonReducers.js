@@ -46,9 +46,16 @@ import {
     ALL_TEACHER_DATA_TO_ASSIGN_CLASS_REQUEST,
     ALL_TEACHER_DATA_TO_ASSIGN_CLASS_SUCCESS,
     LATEST_TEACHER_DATA_LIST_REQUEST,
-    LATEST_TEACHER_DATA_LIST_SUCCESS, LATEST_STUDENT_PROFILE_DATA_LIST_REQUEST, LATEST_STUDENT_PROFILE_DATA_LIST_SUCCESS,
+    LATEST_TEACHER_DATA_LIST_SUCCESS,
+    LATEST_STUDENT_PROFILE_DATA_LIST_REQUEST,
+    LATEST_STUDENT_PROFILE_DATA_LIST_SUCCESS,
     OPEN_CLOSE_CLASS_ASSIGN_POPUP,
-    ALL_CLASS_TO_ASSIGN_CLASS_REQUEST, ALL_CLASS_TO_ASSIGN_CLASS_SUCCESS
+    ALL_CLASS_TO_ASSIGN_CLASS_REQUEST,
+    ALL_CLASS_TO_ASSIGN_CLASS_SUCCESS,
+    LATEST_SUBSCRIPTION_DATA_LIST_REQUEST,
+    LATEST_SUBSCRIPTION_DATA_LIST_SUCCESS,
+    LATEST_DEMO_CLASSES_REQUEST,
+    LATEST_DEMO_CLASSES_SUCCESS
 } from "../constants/CommonConstants";
 
 export const userSigninReducer = (state = {}, action) => {
@@ -135,6 +142,16 @@ export const latestTeachersDataListReducer = (state = {}, action) => {
             return state;
     }
 };
+export const latestSubscriptionsDataListReducer = (state = {}, action) => {
+    switch (action.type) {
+        case LATEST_SUBSCRIPTION_DATA_LIST_REQUEST:
+            return { loading: true,subscriptionData:[] ,prevId:action.payload};
+        case LATEST_SUBSCRIPTION_DATA_LIST_SUCCESS:
+            return { loading: false,subscriptionData:action.payload ,prevId:state.prevId};
+        default:
+            return state;
+    }
+};
 export const latestStudentsDataListReducer = (state = {}, action) => {
     switch (action.type) {
         case LATEST_STUDENT_PROFILE_DATA_LIST_REQUEST:
@@ -170,6 +187,16 @@ export const allDemoClassesReducer = (state = {}, action) => {
         case ALL_DEMO_CLASSES_REQUEST:
             return { loading: true,classesData:[] ,prevId:action.payload};
         case ALL_DEMO_CLASSES_SUCCESS:
+            return { loading: false,classesData:action.payload ,prevId:state.prevId};
+        default:
+            return state;
+    }
+};
+export const latestDemoClassesReducer = (state = {}, action) => {
+    switch (action.type) {
+        case LATEST_DEMO_CLASSES_REQUEST:
+            return { loading: true,classesData:[] ,prevId:action.payload};
+        case LATEST_DEMO_CLASSES_SUCCESS:
             return { loading: false,classesData:action.payload ,prevId:state.prevId};
         default:
             return state;

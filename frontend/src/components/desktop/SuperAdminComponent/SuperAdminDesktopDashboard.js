@@ -1,19 +1,24 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {useEffectOnce} from "../../../helper/UseEffectOnce";
 import {
-    actionToGetAllStudentDataList, actionToGetLatestStudentProfileDataList,
+    actionToGetLatestDemoClassesDetails,
+    actionToGetLatestStudentProfileDataList, actionToGetLatestSubscriptionsDataList,
     actionToGetLatestTeachersDataList
 } from "../../../actions/CommonAction";
 import moment from "moment/moment";
-import {_getFirstLatterOfName} from "../../../helper/CommonHelper";
+// import {_getFirstLatterOfName} from "../../../helper/CommonHelper";
 export default function SuperAdminDesktopDashboard() {
     const dispatch = useDispatch();
     const teacherListArray = useSelector((state) => state.latestTeacherDataList);
     const studentListArray = useSelector((state) => state.latestStudentDataList);
+    const subscriptionListArray = useSelector((state) => state.latestSubscriptionDataList);
+    const demoClassListArray = useSelector((state) => state.latestDemoClassDataList);
     useEffectOnce(() =>{
         dispatch(actionToGetLatestTeachersDataList());
         dispatch(actionToGetLatestStudentProfileDataList());
+        dispatch(actionToGetLatestSubscriptionsDataList());
+        dispatch(actionToGetLatestDemoClassesDetails());
     },[]);
     return (
         <div className="content">
@@ -58,78 +63,109 @@ export default function SuperAdminDesktopDashboard() {
                     </div>
                 </div>
             </div>
-            {/*-- Recent Sales Start --*/}
+
             <div className="container-fluid pt-4 px-4">
                 <div className="bg-light text-center rounded p-4">
                     <div className="d-flex align-items-center justify-content-between mb-4">
-                        <h6 className="mb-0">Recent Salse</h6>
-                        <a href="">Show All</a>
+                        <h6 className="mb-0">Recent Profiles</h6>
+                        <a href="/dashboard/new-student-profile-datatable">Show All</a>
                     </div>
                     <div className="table-responsive">
                         <table className="table text-start align-middle table-bordered table-hover mb-0">
                             <thead>
                             <tr className="text-dark">
-                                <th scope="col"><input className="form-check-input" type="checkbox"/></th>
-                                <th scope="col">Date</th>
-                                <th scope="col">Invoice</th>
-                                <th scope="col">Customer</th>
-                                <th scope="col">Amount</th>
-                                <th scope="col">Status</th>
-                                <th scope="col">Action</th>
+                                <th scope="col">Student Name</th>
+                                <th scope="col">Student Email</th>
+                                <th scope="col">Student Class</th>
+                                <th scope="col">Board</th>
+                                <th scope="col">Subscription Start Date</th>
+                                <th scope="col">Subscription End Date</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr>
-                                <td><input className="form-check-input" type="checkbox"/></td>
-                                <td>01 Jan 2045</td>
-                                <td>INV-0123</td>
-                                <td>Jhon Doe</td>
-                                <td>$123</td>
-                                <td>Paid</td>
-                                <td><a className="btn btn-sm btn-primary" href="">Detail</a></td>
-                            </tr>
-                            <tr>
-                                <td><input className="form-check-input" type="checkbox"/></td>
-                                <td>01 Jan 2045</td>
-                                <td>INV-0123</td>
-                                <td>Jhon Doe</td>
-                                <td>$123</td>
-                                <td>Paid</td>
-                                <td><a className="btn btn-sm btn-primary" href="">Detail</a></td>
-                            </tr>
-                            <tr>
-                                <td><input className="form-check-input" type="checkbox"/></td>
-                                <td>01 Jan 2045</td>
-                                <td>INV-0123</td>
-                                <td>Jhon Doe</td>
-                                <td>$123</td>
-                                <td>Paid</td>
-                                <td><a className="btn btn-sm btn-primary" href="">Detail</a></td>
-                            </tr>
-                            <tr>
-                                <td><input className="form-check-input" type="checkbox"/></td>
-                                <td>01 Jan 2045</td>
-                                <td>INV-0123</td>
-                                <td>Jhon Doe</td>
-                                <td>$123</td>
-                                <td>Paid</td>
-                                <td><a className="btn btn-sm btn-primary" href="">Detail</a></td>
-                            </tr>
-                            <tr>
-                                <td><input className="form-check-input" type="checkbox"/></td>
-                                <td>01 Jan 2045</td>
-                                <td>INV-0123</td>
-                                <td>Jhon Doe</td>
-                                <td>$123</td>
-                                <td>Paid</td>
-                                <td><a className="btn btn-sm btn-primary" href="">Detail</a></td>
-                            </tr>
+                            {(subscriptionListArray?.subscriptionData?.map((subscriptionData,index)=>(
+                                <tr>
+                                    <td>{subscriptionData?.name}</td>
+                                    <td>{subscriptionData?.email}</td>
+                                    <td>{subscriptionData?.student_class}th</td>
+                                    <td>{subscriptionData?.school_board_name}</td>
+                                    <td>{moment(subscriptionData?.created_at).format('LLL')}</td>
+                                    <td>{moment(subscriptionData?.subscription_end_date).format('LLL')}</td>
+                                </tr>
+                            )))}
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
-            {/*-- Recent Sales end --*/}
+            <div className="container-fluid pt-4 px-4">
+                <div className="bg-light text-center rounded p-4">
+                    <div className="d-flex align-items-center justify-content-between mb-4">
+                        <h6 className="mb-0">Recent Subscriptions</h6>
+                        <a href="/dashboard/all-subscribed-classes">Show All</a>
+                    </div>
+                    <div className="table-responsive">
+                        <table className="table text-start align-middle table-bordered table-hover mb-0">
+                            <thead>
+                            <tr className="text-dark">
+                                <th scope="col">Student Name</th>
+                                <th scope="col">Student Email</th>
+                                <th scope="col">Student Class</th>
+                                <th scope="col">Board</th>
+                                <th scope="col">Subscription Start Date</th>
+                                <th scope="col">Subscription End Date</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {(subscriptionListArray?.subscriptionData?.map((subscriptionData,index)=>(
+                            <tr>
+                                <td>{subscriptionData?.name}</td>
+                                <td>{subscriptionData?.email}</td>
+                                <td>{subscriptionData?.student_class}th</td>
+                                <td>{subscriptionData?.school_board_name}</td>
+                                <td>{moment(subscriptionData?.created_at).format('LLL')}</td>
+                                <td>{moment(subscriptionData?.subscription_end_date).format('LLL')}</td>
+                            </tr>
+                            )))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div className="container-fluid pt-4 px-4">
+                <div className="bg-light text-center rounded p-4">
+                    <div className="d-flex align-items-center justify-content-between mb-4">
+                        <h6 className="mb-0">Latest Demo Classes</h6>
+                        <a href="/dashboard/all-demo-classes">Show All</a>
+                    </div>
+                    <div className="table-responsive">
+                        <table className="table text-start align-middle table-bordered table-hover mb-0">
+                            <thead>
+                            <tr className="text-dark">
+                                <th scope="col">Student Name</th>
+                                <th scope="col">Student Email</th>
+                                <th scope="col">Student Class</th>
+                                <th scope="col">Subject</th>
+                                <th scope="col">Board</th>
+
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {(demoClassListArray?.classesData?.map((classData,index)=>(
+                                <tr>
+                                    <td>{classData?.student_name}</td>
+                                    <td>{classData?.student_email}</td>
+                                    <td>{classData?.student_class}th</td>
+                                    <td>{classData?.subject_name}</td>
+                                    <td>{classData?.school_board_name}</td>
+
+                                </tr>
+                            )))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
             {/*-- Widgets Start --*/}
             <div className="container-fluid pt-4 px-4">
                 <div className="row g-4">
@@ -141,8 +177,7 @@ export default function SuperAdminDesktopDashboard() {
                             </div>
                             {(teacherListArray?.teacherData?.map((teacherData,index)=>(
                                 <div className="d-flex align-items-center border-bottom py-3">
-                                    <div className={"name_initial rounded-circle flex-shrink-0"}>{_getFirstLatterOfName(teacherData?.name)}
-                                    </div>
+                                    {/*<div className={"name_initial rounded-circle flex-shrink-0"}>{_getFirstLatterOfName(teacherData?.name)}</div>*/}
                                     <div className="w-100 ms-3">
                                         <div className="d-flex w-100 justify-content-between">
                                             <h6 className="mb-0">{teacherData?.name}</h6>
@@ -163,8 +198,8 @@ export default function SuperAdminDesktopDashboard() {
                             {(studentListArray?.studentData?.map((studentData,index)=>(
                                 <div className="d-flex align-items-center border-bottom py-3">
 
-                                    <div className={"name_initial name_initial rounded-circle flex-shrink-0"}>{_getFirstLatterOfName(studentData?.name)}
-                                    </div>
+                                    {/*<div className={"name_initial name_initial rounded-circle flex-shrink-0"}>{_getFirstLatterOfName(studentData?.name)}*/}
+                                    {/*</div>*/}
                                     <div className="w-100 ms-3">
                                         <div className="d-flex w-100 justify-content-between">
                                             <h6 className="mb-0">{studentData?.name}</h6>

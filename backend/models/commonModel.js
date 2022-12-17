@@ -9,8 +9,8 @@ import {
     actionToGetAllStudentDataListQuery,
     actionToGetAllStudentSubscriptionDataListQuery,
     actionToGetAllSubjectDataListQuery,
-    actionToGetAllTeacherDataListQuery,
-    actionToGetLatestStudentProfileDataListQuery,
+    actionToGetAllTeacherDataListQuery, actionToGetLatestDemoClassesDetailsQuery,
+    actionToGetLatestStudentProfileDataListQuery, actionToGetLatestSubscriptionDataListQuery,
     actionToGetLatestTeacherDataListQuery,
     actionToGetTeacherAllClassesQuery,
     actionToGetUserAllClassesQuery, actionToSearchTeacherAccordingToTheConditionQuery
@@ -103,6 +103,17 @@ export const actionToGetAllDemoClassesDetailsApiCall = () => {
         })
     })
 }
+export const actionToGetLatestDemoClassesDetailsApiCall = () => {
+    return new Promise(function(resolve, reject) {
+        const query = actionToGetLatestDemoClassesDetailsQuery();
+        pool.query(query, (error, results) => {
+            if (error) {
+                reject(error)
+            }
+            resolve(results);
+        })
+    })
+}
 export const actionToGetLatestStudentProfileDataListApiCall = () => {
     return new Promise(function(resolve, reject) {
         const query = actionToGetLatestStudentProfileDataListQuery();
@@ -139,6 +150,17 @@ export const actionToGetAllNewStudentProfileDataListApiCall = () => {
 export const actionToGetLatestTeacherDataListApiCall = () => {
     return new Promise(function(resolve, reject) {
         const query = actionToGetLatestTeacherDataListQuery();
+        pool.query(query, (error, results) => {
+            if (error) {
+                reject(error)
+            }
+            resolve(results);
+        })
+    })
+}
+export const actionToGetLatestSubscriptionsDataListApiCall = () => {
+    return new Promise(function(resolve, reject) {
+        const query = actionToGetLatestSubscriptionDataListQuery();
         pool.query(query, (error, results) => {
             if (error) {
                 reject(error)

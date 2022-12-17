@@ -25,6 +25,7 @@ import {
     allTeacherDataListReducer,
     latestTeachersDataListReducer,
     latestStudentsDataListReducer,
+    latestSubscriptionsDataListReducer,
     allClassesDataListReducer,
     teacherAllClassesListReducer,
     teacherAllDemoClassListReducer,
@@ -35,7 +36,7 @@ import {
     allDemoClassesReducer,
     allTeacherDataToAssignClassReducer,
     openCloseClassAssignPopupReducer,
-    allClassToAssignClassReducer,
+    allClassToAssignClassReducer, latestDemoClassesReducer,
 } from "./reducers/CommonReducers";
 
 const initialState = {
@@ -56,6 +57,8 @@ const initialState = {
     allTeacherDataList:{prevId:'',loading:true,teacherData:[]},
     latestTeacherDataList:{prevId:'',loading:true,teacherData:[]},
     latestStudentDataList:{prevId:'',loading:true,studentData:[]},
+    latestSubscriptionDataList:{prevId:'',loading:true,subscriptionData:[]},
+    latestDemoClassDataList:{prevId:'',loading:true,classData:[]},
     allSchoolBoardDataList:{prevId:'',loading:true,boardData:[]},
     studentAllClassesList:{prevId:'',loading:true,classData:[]},
     teacherAllClassesList:{prevId:'',loading:true,classData:[]},
@@ -109,6 +112,8 @@ export const rootReducer = combineReducers({
     allTeacherDataList: allTeacherDataListReducer,
     latestTeacherDataList: latestTeachersDataListReducer,
     latestStudentDataList: latestStudentsDataListReducer,
+    latestSubscriptionDataList: latestSubscriptionsDataListReducer,
+    latestDemoClassDataList: latestDemoClassesReducer,
     allAdminClassesDataList: allClassesDataListReducer,
     windowResizeCount: windowResizeCountReducer,
     userSignin: userSigninReducer,
