@@ -1,4 +1,6 @@
 import {
+    actionToGetTeacherAllClasses,
+    actionToGetUserAllClasses,
     actionToMuteUnmuteUserCallLocally, actionToOpenRatingModalPopup,
     actionToRemoveUserFromCurrentCallLocally,
     actionToSetCaptureAnnotatorJSONData,
@@ -151,6 +153,11 @@ export function handleWebSocketEvent(dispatch,state,data){
             break;
         case 'handleMuteUnmuteInCall': {
             dispatch(actionToMuteUnmuteUserCallLocally(data?.userId));
+            break;
+        }
+        case 'refreshClassListDataForUser': {
+            dispatch(actionToGetUserAllClasses(true));
+            dispatch(actionToGetTeacherAllClasses(true));
             break;
         }
     }

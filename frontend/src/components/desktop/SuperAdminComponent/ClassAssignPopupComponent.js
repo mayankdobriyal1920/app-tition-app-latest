@@ -29,6 +29,7 @@ export default function ClassAssignPopupComponent(){
                 student_class:dropdownData.student_class,
             }
             dispatch(actionToCreateAndAssignClassData(payload));
+            closeClassAssignPopup();
         }
     }
     const assignCreateButton = (type)=>{
@@ -41,7 +42,7 @@ export default function ClassAssignPopupComponent(){
                 <div className={"assign_class_main_popup_outer_container"}>
                     <div className={"assign_class_main_popup_inner_container"}>
                         <div onClick={closeClassAssignPopup} className={"close_popup_button"}><i className={"fa fa-times"}></i></div>
-                        {(dropdownData?.has_taken_demo) ?
+                        {(!dropdownData?.has_taken_demo) ?
                             <div className="bg-light rounded h-100 p-4">
                                 <h6 className="mb-4">Assign class</h6>
                                 <div className="form-floating mb-3">

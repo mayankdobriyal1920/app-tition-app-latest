@@ -26,13 +26,19 @@ export const actionToSearchTeacherAccordingToTheConditionQuery = (subject_id,stu
     `;
 }
 export const actionToAlreadyCreatedClassAccordingToTheConditionQuery = (subject_id,student_class,school_board,batch)=>{
-    return `SELECT app_user.name AS teacher_name,app_user.id AS teacher_id
-            FROM teacher_subject_and_class
-                     INNER JOIN app_user ON app_user.id = teacher_subject_and_class.teacher_id
-            WHERE  app_user.role = 2 AND app_user.board = '${school_board}' AND
-                teacher_subject_and_class.teacher_class = ${student_class} AND teacher_subject_and_class.subject_id = '${subject_id}'
-            GROUP BY app_user.id
-    `;
+    return `SELECT app_user.name AS teacher_name,
+                   COUNT(profile_subject_with_batch.id) AS class_count,
+                   classes_assigned_to_teacher.starting_from_date AS starting_from_date,
+                   classes_assigned_to_teacher.batch AS batch
+
+            FROM classes_assigned_to_teacher
+                     INNER JOIN app_user ON app_user.id = classes_assigned_to_teacher.teacher_id
+                     INNER JOIN profile_subject_with_batch ON classes_assigned_to_teacher.id = profile_subject_with_batch.classes_assigned_to_teacher_id
+            WHERE  classes_assigned_to_teacher.school_board = '${school_board}' AND
+                classes_assigned_to_teacher.student_class = '${student_class}' AND classes_assigned_to_teacher.subject_id = '${subject_id}'
+              AND classes_assigned_to_teacher.batch != 1
+              AND classes_assigned_to_teacher.batch = ${batch}
+            GROUP BY classes_assigned_to_teacher.id`;
 }
 export const actionToGetLatestTeacherDataListQuery = ()=>{
     return `select app_user.*,school_board.name as school_board_name from app_user join school_board on app_user.board=school_board.id where app_user.role=2 order by created_at desc limit 5`;
@@ -42,7 +48,7 @@ export const actionToGetAllClassesDataListQuery = ()=>{
                    profile_subject_with_batch.classes_assigned_to_teacher_id as classes_assigned_to_teacher_id,student_profile.id as student_id,student_profile.name as student_name,student_profile.email as student_email
                     ,subject.id as subject_id, subject.name as subject_name,classes_assigned_to_teacher.is_demo_class as is_demo_class,school_board.name as school_board_name,student_profile.student_class as student_class,
                    student_profile.subscription_end_date as subscription_end_date
-            from profile_subject_with_batch
+                    from profile_subject_with_batch
                      join student_profile on profile_subject_with_batch.profile_id =student_profile.id
                      join school_board on student_profile.school_board=school_board.id
                      join subject on subject.id=profile_subject_with_batch.subject_id
@@ -55,6 +61,7 @@ export const actionToGetAllDemoClassesDetailsQuery = ()=>{
     return `select profile_subject_with_batch.id as  profile_subject_with_batch_id,
                    profile_subject_with_batch.batch as  profile_subject_with_batch_batch_type,
                    profile_subject_with_batch.has_taken_demo as  profile_subject_with_batch_has_taken_demo,
+                   profile_subject_with_batch.classes_assigned_to_teacher_id as  classes_assigned_to_teacher_id,
                    student_profile.id as student_id,
                    student_profile.name as student_name,
                    student_profile.email as student_email,

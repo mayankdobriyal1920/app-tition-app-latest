@@ -115,7 +115,13 @@ export const actionToCreateAndAssignClassData = (payload) => async (dispatch) =>
     let setData = `classes_assigned_to_teacher_id = ?`;
     let whereCondition = `id = '${payload?.profile_subject_with_batch_id}'`;
     let dataToSend = {column: setData, value: [classAssignId], whereCondition: whereCondition, tableName: 'profile_subject_with_batch'};
-    dispatch(commonUpdateFunction(dataToSend));
+    await dispatch(commonUpdateFunction(dataToSend));
+    dispatch(actionToGetAllDemoClassesDetails(true));
+    sendWebsocketRequest(JSON.stringify({
+        clientId: localStorage.getItem('clientId'),
+        type: 'refreshClassListDataForUser',
+        profile_subject_with_batch_id:payload.profile_subject_with_batch_id
+    }));
 };
 
 export const actionToGetUserByMobileNumber = (mobileNumber) => async () => {
@@ -224,10 +230,22 @@ export const actionToAlreadyCreatedClassAccordingToTheCondition = (payload) => a
         student_class: payload?.student_class,
         batch: payload?.batch,
     })
-    dispatch({type: ALL_TEACHER_DATA_TO_ASSIGN_CLASS_SUCCESS, payload:[...data?.response]});
+    let finalData = [];
+    if(data?.response){
+        data?.response?.map((classData)=>{
+            if(classData?.batch === 2 && classData?.class_count < 3){
+                finalData.push(classData);
+            }else if(classData?.batch === 3 && classData?.class_count < 5) {
+                finalData.push(classData);
+            }
+        })
+    }
+    dispatch({type: ALL_TEACHER_DATA_TO_ASSIGN_CLASS_SUCCESS, payload:[...finalData]});
 }
-export const actionToGetAllDemoClassesDetails = () => async (dispatch) => {
-    dispatch({type: ALL_DEMO_CLASSES_REQUEST});
+export const actionToGetAllDemoClassesDetails = (idLoaderDisable = false) => async (dispatch) => {
+    if(!idLoaderDisable)
+       dispatch({type: ALL_DEMO_CLASSES_REQUEST});
+
     const {data} = await api.post(`common/actionToGetAllDemoClassesDetailsApiCall`);
     dispatch({type: ALL_DEMO_CLASSES_SUCCESS, payload:[...data?.response]});
 }
@@ -290,9 +308,12 @@ export const actionToConfigStripeSetup = (setStripePromise) => async () => {
     const {data} = await api.post(`common/actionToConfigStripeSetupApiCall`);
     setStripePromise(loadStripe(data.publishableKey));
 }
-export const actionToGetUserAllClasses = () => async (dispatch,getState) => {
+export const actionToGetUserAllClasses = (isLoaderDisable = false) => async (dispatch,getState) => {
     const userInfo = getState().userSignin.userInfo;
-    dispatch({type: STUDENT_ALL_CLASS_LIST_REQUEST});
+
+    if(!isLoaderDisable)
+      dispatch({type: STUDENT_ALL_CLASS_LIST_REQUEST});
+
     const {data} = await api.post(`common/actionToGetUserAllClassesApiCall`,{userId:userInfo?.id});
     let todayClasses = [];
     data?.response?.profile_subject_with_batch?.map((classData)=>{
@@ -355,9 +376,12 @@ export const actionToUpdateIpAddress = () => async(dispatch) =>{
         dispatch({type: GET_IP_ADDRESS, payload:'10.2.99.129'});
     }
 }
-export const actionToGetTeacherAllClasses = () => async (dispatch,getState) => {
+export const actionToGetTeacherAllClasses = (isLoaderDisable = false) => async (dispatch,getState) => {
     const userInfo = getState().userSignin.userInfo;
-    dispatch({type: TEACHER_ALL_CLASS_LIST_REQUEST});
+
+    if(!isLoaderDisable)
+       dispatch({type: TEACHER_ALL_CLASS_LIST_REQUEST});
+
     const {data} = await api.post(`common/actionToGetTeacherAllClassesApiCall`,{userId:userInfo?.id});
     let todayClasses = [];
     let otherClasses = [];

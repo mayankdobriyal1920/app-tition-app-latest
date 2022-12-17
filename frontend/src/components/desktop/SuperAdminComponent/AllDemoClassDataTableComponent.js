@@ -20,7 +20,7 @@ export default function AllDemoClassDataTableComponent(){
             subject_id:data.subject_id,
             school_board:data.school_board_id,
             student_class:data.student_class,
-            batch:data.batch,
+            batch:data.profile_subject_with_batch_batch_type,
             has_taken_demo:0,
         }
 
@@ -56,9 +56,11 @@ export default function AllDemoClassDataTableComponent(){
         },
         {
             name:"Action",
-            cell:(row) => (row.profile_subject_with_batch_has_taken_demo !== 1) ?
-                <button className='btn btn-warning' onClick={() => openClassAssignPopUp(row)}>Assign Class</button> :
-                <div className={"class_assigned"}>Class assigned</div>
+            cell:(row) => (row.classes_assigned_to_teacher_id) ?
+                <div className={"btn btn-success"}>Class assigned</div>
+                 :
+                <button className='btn btn-warning' onClick={() => openClassAssignPopUp(row)}>Assign Class</button>
+
         }
     ]
     useEffect(() =>{
