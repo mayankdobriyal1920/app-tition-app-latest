@@ -449,7 +449,7 @@ span.sapater_otp {
     display: flex;
 }
 
-.row.user_create_profile_main_row.mt-30 .col.personal_prof_form {
+.user_create_profile_main_row .personal_prof_form {
     background: #ffffff5c;
     height: calc(100vh - 449px);
     border-radius: 23px;
@@ -458,7 +458,7 @@ span.sapater_otp {
     margin: 0px 6px;
     padding: 29px;
 }
-.row.user_create_profile_main_row.mt-30 .col.personal_prof_form_2 {
+.user_create_profile_main_row .personal_prof_form_2 {
     height: calc(100vh - 449px);
     background: #c093ff;
     border-radius: 23px;
@@ -467,14 +467,14 @@ span.sapater_otp {
     margin: 0px 6px;
     padding: 29px;
 }
-.row.user_create_profile_main_row.mt-30 .profile_form_header {
+.user_create_profile_main_row .profile_form_header {
     color: #fff;
     font-size: 25px;
     text-align: center;
     width: 100%;
 }
 
-.row.user_create_profile_main_row.mt-30 .col.personal_prof_form img {
+.user_create_profile_main_row .personal_prof_form img {
     margin: auto;
 }
 
@@ -1400,6 +1400,11 @@ div#main_user_video_call_video_section video.my_video_peer_connection {
     padding: 0.625rem 1.25rem;
     /* 10px 20px */
 }
+.user_profile_edit_main_container {
+    display: flex;
+    height: 100vh;
+    width: calc(100vw - 372px);
+}
 
 .inputfile-6 + label span {
     width: 200px;
@@ -1410,7 +1415,19 @@ div#main_user_video_call_video_section video.my_video_peer_connection {
     overflow: hidden;
     vertical-align: top;
 }
-
+.user_profile_edit_main_container_inner_section .personal_prof_form_2 {
+    height: calc(100vh - 163px);
+    padding: 124px!important;
+}
+.user_profile_edit_main_container_inner_section .personal_prof_form_2  .profile_form_main_inner_body {line-height: 37px;}
+.user_profile_edit_main_container_inner_section .personal_prof_form_2 .profile_form_main_inner_body input.form-control
+, .user_profile_edit_main_container_inner_section .personal_prof_form_2 .profile_form_main_inner_body .form-group select {
+    font-size: 18px;
+    border-radius: 5px;
+    text-overflow: ellipsis;
+    color: #7a7a7a;
+    padding: 12px 10px;
+}
 .inputfile-6 + label strong {
     height: 100%;
     color: #f1e5e6;

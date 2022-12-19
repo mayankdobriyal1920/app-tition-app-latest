@@ -182,6 +182,17 @@ export const actionToCreateTeacherProfile = (payload) => async (dispatch) => {
         })
     })
 }
+export const actionToUpdateUserProfile = (payload,setUpdateProfileLoader) => async (dispatch) => {
+    let setData = `name = ?,email = ?,father_name = ?,mother_name = ?,school_name = ?,school_board = ?,state = ?,city = ?`;
+    let whereCondition = `id = '${payload?.id}'`;
+    let dataToSend = {column: setData, value: [payload?.name,payload?.email,payload?.father_name,payload?.mother_name,payload?.school_name,payload?.school_board,payload?.state,payload?.city], whereCondition: whereCondition, tableName: 'student_profile'};
+    await dispatch(commonUpdateFunction(dataToSend));
+    setTimeout(function(){
+        setUpdateProfileLoader(false);
+        dispatch(actionToGetUserAllClasses(true));
+    },2000)
+}
+
 export const actionToCreateUserProfile = (payload) => async (dispatch,getState) => {
 
     let userInfo = getState().userSignin.userInfo;

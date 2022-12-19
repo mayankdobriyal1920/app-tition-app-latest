@@ -166,6 +166,7 @@ export const actionToGetUserAllClassesQuery = (userId)=>{
                                'taken_single_demo',student_profile.taken_single_demo,
                                'subscription_end_date',student_profile.subscription_end_date,
                                'school_board',school_board.name,
+                               'school_board_id',school_board.id,
                                'student_class',student_profile.student_class,
                                'email',student_profile.email,
                                'profile_subject_with_batch',profile_subject_with_batch.jsdata

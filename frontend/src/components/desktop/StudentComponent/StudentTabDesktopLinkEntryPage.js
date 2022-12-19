@@ -6,6 +6,7 @@ import {StudentDesktopDashboard} from "./StudentDesktopDashboard";
 import StudentDesktopScheduledClasses from "./StudentDesktopScheduledClasses";
 import StudentPaymentConfirmComponent from "./StudentPaymentConfirmComponent";
 import StudentAttendanceAndAssignmentComponent from "./StudentAttendanceAndAssignmentComponent";
+import UserProfileEditComponent from "../UserProfileEditComponent";
 
 export default function StudentTabDesktopLinkEntryPage() {
     const { path } = useRouteMatch();
@@ -26,6 +27,9 @@ export default function StudentTabDesktopLinkEntryPage() {
                         </Route>
                         <Route path={`${path}/subscription-confirm`}>
                             <StudentPaymentConfirmComponent/>
+                        </Route>
+                        <Route path={`${path}/student-profile-page`}>
+                            <UserProfileEditComponent/>
                         </Route>
                         <Route path={`${path}/student-attendance-assignment`}>
                             <StudentAttendanceAndAssignmentComponent/>
