@@ -14,6 +14,7 @@ const peerServerPort = 4002;
 const server = http.createServer(app);
 import fs from 'fs';
 import {updateCommonApiCall} from "./models/commonModel.js";
+import upload from "./models/upload.js";
 export let allChannelsInGroupCall = [];
 export let membersInChannelWithDetails = {};
 let currentUserIdInGroupCall = {};
@@ -139,6 +140,15 @@ app.post('/api-call-tutor/recording-video-finish', (req, res) => {
     });
     res.json({save:true})
 });
+app.post("/api-call-tutor/uploadAssignmentApiCall", upload.single("file"), function (req, res) {
+    if (!req.file) {
+        //If the file is not uploaded, then throw custom error with message: FILE_MISSING
+        throw Error("FILE_MISSING")
+    } else {
+        //If the file is uploaded, then send a success response.
+        res.send({ status: "success" })
+    }
+})
 app.get('/api-call-tutor', (req, res) => {
     res.status(200).send({message:`Node Server is ready port ${port}`});
 });

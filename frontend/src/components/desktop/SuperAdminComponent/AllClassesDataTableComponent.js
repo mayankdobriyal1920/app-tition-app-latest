@@ -78,7 +78,7 @@ export default function AllClassesDataTableComponent(){
     },[]);
 
     return (
-        <div className={"container-fluid pt-4 px-4"}>
+        <div className={"container-fluid pt-4 px-4 datatable_container_main_div_section"}>
             <div className={"bg-light rounded h-100 p-4"}>
                 {(classesListArray.loading) ?
                     <div className={"d-flex justify-content-center h-100"}>

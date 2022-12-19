@@ -115,6 +115,7 @@ export const actionToGetAllAttendClassWithAssignmentQuery = (profileId)=>{
     return `SELECT JSON_OBJECT(
                            'classes_assigned_to_teacher', classes_assigned_to_teacher.jsdata,
                            'created_at', student_class_attend.created_at,
+                           'id',student_class_attend.id,
                            'student_class_attend_assignment', student_class_attend_assignment.jsdata
                        ) AS class_attend
             from student_class_attend
@@ -141,7 +142,8 @@ export const actionToGetAllAttendClassWithAssignmentQuery = (profileId)=>{
                                        json_arrayagg(
                                                json_object(
                                                        'id', student_class_attend_assignment.id,
-                                                       'path', student_class_attend_assignment.path
+                                                       'path', student_class_attend_assignment.path,
+                                                       'name', student_class_attend_assignment.name
                                                    )
                                            ) jsdata
                                 FROM student_class_attend_assignment
@@ -168,8 +170,8 @@ export const actionToGetUserAllClassesQuery = (userId)=>{
                                'email',student_profile.email,
                                'profile_subject_with_batch',profile_subject_with_batch.jsdata
                        ) AS profile_data from student_profile
-                                                  LEFT JOIN school_board ON student_profile.school_board = school_board.id
-                                                  LEFT JOIN (SELECT profile_subject_with_batch.profile_id, 
+                                                  INNER JOIN school_board ON student_profile.school_board = school_board.id
+                                                  INNER JOIN (SELECT profile_subject_with_batch.profile_id, 
                                                                     json_arrayagg( 
                                                                             json_object(
                                                                                     'id',profile_subject_with_batch.id,
@@ -183,7 +185,7 @@ export const actionToGetUserAllClassesQuery = (userId)=>{
                                                                                 )
                                                                         ) jsdata
                                                              FROM profile_subject_with_batch
-                                                                      LEFT JOIN subject ON profile_subject_with_batch.subject_id = subject.id
+                                                                      INNER JOIN subject ON profile_subject_with_batch.subject_id = subject.id
                                                                       LEFT JOIN (SELECT classes_assigned_to_teacher.id,
                                                                                         json_object(
                                                                                                 'id',classes_assigned_to_teacher.id,
@@ -214,9 +216,9 @@ export const actionToGetTeacherAllClassesQuery = (userId)=>{
                            'teacher_id', classes_assigned_to_teacher.teacher_id,
                            'school_board', school_board.name) AS teacher_classes_data
         from classes_assigned_to_teacher
-                 LEFT JOIN school_board ON classes_assigned_to_teacher.school_board = school_board.id
-                 LEFT JOIN subject ON classes_assigned_to_teacher.subject_id = subject.id
-                 LEFT JOIN (SELECT profile_subject_with_batch.classes_assigned_to_teacher_id,
+                 INNER JOIN school_board ON classes_assigned_to_teacher.school_board = school_board.id
+                 INNER JOIN subject ON classes_assigned_to_teacher.subject_id = subject.id
+                 INNER JOIN (SELECT profile_subject_with_batch.classes_assigned_to_teacher_id,
                                    json_arrayagg(
                                            json_object(
                                                    'id', profile_subject_with_batch.id,
@@ -225,8 +227,7 @@ export const actionToGetTeacherAllClassesQuery = (userId)=>{
                                                )
                                        ) jsdata
                             FROM profile_subject_with_batch
-                                LEFT JOIN student_profile ON profile_subject_with_batch.profile_id = student_profile.id
-
+                            INNER JOIN student_profile ON profile_subject_with_batch.profile_id = student_profile.id
                             GROUP BY profile_subject_with_batch.classes_assigned_to_teacher_id) profile_subject_with_batch
                            ON profile_subject_with_batch.classes_assigned_to_teacher_id = classes_assigned_to_teacher.id
         WHERE classes_assigned_to_teacher.teacher_id = '${userId}'`;

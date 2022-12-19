@@ -183,7 +183,7 @@ export const actionToCreateTeacherProfile = (payload) => async (dispatch) => {
     })
 }
 export const actionToCreateUserProfile = (payload) => async (dispatch,getState) => {
-console.log('actionToCreateUserProfile')
+
     let userInfo = getState().userSignin.userInfo;
     let setData = `has_profile = ?`;
     let whereCondition = `id = '${userInfo?.id}'`;
@@ -351,7 +351,6 @@ export const actionToGetUserAllClasses = (isLoaderDisable = false) => async (dis
 
     let eventData = [];
     data?.response?.profile_subject_with_batch?.map((allUserClasses)=>{
-        console.log(allUserClasses?.classes_assigned_to_teacher)
         if(allUserClasses?.classes_assigned_to_teacher?.is_demo_class === 0) {
             let nowDate = moment(allUserClasses?.starting_from_date).format('YYYY-MM-DD');
             let i = 30;
@@ -413,9 +412,7 @@ export const actionToGetTeacherAllClasses = (isLoaderDisable = false) => async (
     let todayClasses = [];
 
     data?.response?.map((classData)=>{
-        if(classData?.is_demo_class){
-            todayClasses.push(classData);
-        }
+        todayClasses.push(classData);
     })
     dispatch({type: TEACHER_ALL_CLASS_LIST_SUCCESS, payload:[...data?.response]});
     dispatch({type: TEACHER_ALL_DEMO_CLASS_LIST_SUCCESS, payload:[...todayClasses]});
@@ -476,6 +473,15 @@ export const actionToRateCurrentClass = (rating,classData) => async (dispatch,ge
     const insertData = {alias:aliasArray,column:columnArray,values:valuesArray,tableName:'classes_rating'};
     await dispatch(callInsertDataFunction(insertData));
     dispatch(actionToOpenRatingModalPopup(false,{}));
+}
+
+export const actionToStoreAssignmentData = (fileName,pathName,id,profileId) => async (dispatch,getState) => {
+    const aliasArray = ['?','?','?','?'];
+    const columnArray = ['id','student_class_attend_id','path','name'];
+    const valuesArray = [_generateUniqueId(),id,pathName,fileName];
+    const insertData = {alias:aliasArray,column:columnArray,values:valuesArray,tableName:'student_class_attend_assignment'};
+    await dispatch(callInsertDataFunction(insertData));
+    dispatch(actionToGetAllAttendClassWithAssignment(profileId))
 }
 export const actionToEndCurrentCurrentCall = (groupId) => async (dispatch) => {
     dispatch(actionToEndCurrentCurrentCallLocally(groupId));

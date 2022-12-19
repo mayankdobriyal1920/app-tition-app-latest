@@ -35,9 +35,6 @@ export default function SuperAdminTabDesktopLinkEntryPage() {
                         <Route exact path={`${path}/student-datatable`}>
                             <AllStudentDataTableComponent/>
                         </Route>
-                        <Route exact path={`${path}/new-student-profile-datatable`}>
-                            <NewStudentProfileComponent/>
-                        </Route>
                         <Route exact path={`${path}/all-subscribed-classes`}>
                             <AllSubscribedClassesComponent/>
                         </Route>

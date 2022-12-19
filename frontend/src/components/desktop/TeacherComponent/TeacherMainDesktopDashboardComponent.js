@@ -261,12 +261,17 @@ function TeacherMainDesktopDashboardComponentFunction(){
                                                             &&
                                                             moment(myClasses?.class_end_time).format('HH:mm:ss') < moment().format('HH:mm:ss')
                                                         ) ?
-                                                            <div className={"class_time_date_demo mt-15"}>
-                                                                Class Taken :- {moment(new Date(myClasses?.class_end_time)).format('hh:mm a')}
-                                                            </div>
+                                                            <>
+                                                                <div className={"class_time_date_demo mb-3"}>
+                                                                    Start time : {moment(new Date(myClasses?.starting_from_date)).format('hh:mm a')}
+                                                                </div>
+                                                                <div className={"class_time_date_demo"}>
+                                                                    Class Taken : {moment(new Date(myClasses?.class_end_time)).format('hh:mm a')}
+                                                                </div>
+                                                            </>
                                                             :
-                                                            <div className={"class_time_date_demo"}>
-                                                                Start time :- {moment(new Date(myClasses?.starting_from_date)).format('hh:mm a')}
+                                                            <div className={"class_time_date_demo mb-3"}>
+                                                                Start time : {moment(new Date(myClasses?.starting_from_date)).format('hh:mm a')}
                                                             </div>
                                                         }
                                                     </div>

@@ -165,12 +165,17 @@ export default function StudentTodayClassesComponent(){
                                                                     &&
                                                                     moment(myClasses?.classes_assigned_to_teacher?.class_end_time).format('HH:mm:ss') < moment().format('HH:mm:ss')
                                                                 ) ?
-                                                                    <div className={"class_time_date_demo mt-15"}>
-                                                                        Class End :- {moment(new Date(myClasses?.classes_assigned_to_teacher?.class_end_time)).format('hh:mm a')}
-                                                                    </div>
+                                                                    <>
+                                                                        <div className={"class_time_date_demo mb-3"}>
+                                                                            Start time : {moment(new Date(myClasses?.classes_assigned_to_teacher?.starting_from_date)).format('hh:mm a')}
+                                                                        </div>
+                                                                        <div className={"class_time_date_demo"}>
+                                                                            Class End : {moment(new Date(myClasses?.classes_assigned_to_teacher?.class_end_time)).format('hh:mm a')}
+                                                                        </div>
+                                                                    </>
                                                                     :
-                                                                    <div className={"class_time_date_demo"}>
-                                                                        Start time :- {moment(new Date(myClasses?.classes_assigned_to_teacher?.starting_from_date)).format('hh:mm a')}
+                                                                    <div className={"class_time_date_demo mb-3"}>
+                                                                        Start time : {moment(new Date(myClasses?.classes_assigned_to_teacher?.starting_from_date)).format('hh:mm a')}
                                                                     </div>
                                                                 }
                                                             </div>

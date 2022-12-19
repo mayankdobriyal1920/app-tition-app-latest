@@ -152,14 +152,24 @@ commonRouter.post(
     '/actionToGetAllAttendClassWithAssignmentApiCall',
     expressAsyncHandler(async (req, res) => {
         actionToGetAllAttendClassWithAssignmentApiCall(req.body).then((data) => {
+            let finalData = [];
+            if(data && data?.length){
+                data?.map((resData)=>{
+                    finalData.push(JSON.parse(resData.class_attend));
+                })
+            }
             res.status(200).send({
-                response: data,
-
+                response: finalData,
             });
-        })
-            .catch(error => {
+        }).catch(error => {
                 res.status(500).send(error);
-            })
+        })
+    })
+);
+commonRouter.post(
+    '/uploadAssignmentApiCall',
+    expressAsyncHandler(async (req, res) => {
+
     })
 );
 commonRouter.post(
@@ -241,7 +251,6 @@ commonRouter.post(
         actionToGetAllTeacherDataListApiCall(req.body).then((data) => {
             res.status(200).send({
                 response: data,
-
             });
         })
             .catch(error => {

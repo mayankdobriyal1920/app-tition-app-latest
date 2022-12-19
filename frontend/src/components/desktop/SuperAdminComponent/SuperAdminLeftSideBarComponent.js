@@ -57,33 +57,22 @@ export default function SuperAdminLeftSideBarComponent(){
                         All Teachers
                     </NavLink>
                     <NavLink to={`${path}/all-subscribed-classes`} activeClassName={"active"} className={"nav-item nav-link"}>
-                        <i className="fa fa-wallet me-2"></i>
+                        <i className="fa fa-credit-card me-2" aria-hidden="true"></i>
                         All Subscriptions
                     </NavLink>
                     <NavLink to={`${path}/all-unassigned-classes`} activeClassName={"active"} className={"nav-item nav-link"}>
-                        <i className="fa fa-wallet me-2"></i>
+                        <i className="fa fa-graduation-cap me-2" aria-hidden="true"></i>
                         All Classes
-                    </NavLink>
-                    <NavLink to={`${path}/new-student-profile-datatable`} activeClassName={"active"} className={"nav-item nav-link"}>
-                        <i className="fa fa-newspaper me-2"></i>
-                        New Profiles
                     </NavLink>
                     <NavLink to={`${path}/all-demo-classes`} activeClassName={"active"} className={"nav-item nav-link"}>
                         <i className="fa fa-newspaper me-2"></i>
                         All Classes (demo)
                     </NavLink>
                     <NavLink to={`${path}/add-new-teacher`} activeClassName={"active"} className={"nav-item nav-link"}>
-                        <i className="fa  fa-user-plus me-2"></i>
+                        <i className="fa fa-eye me-2" aria-hidden="true"></i>
                         Add New Teacher
                     </NavLink>
-                    <a onClick={()=>setShowAlert(true)} s
-
-
-
-
-
-
-                       tyle={{cursor:'pointer'}} className="nav-item nav-link">
+                    <a onClick={()=>setShowAlert(true)} style={{cursor:'pointer'}} className="nav-item nav-link">
                         <i className="fa fa-sign-out me-2"></i>
                         Logout
                     </a>

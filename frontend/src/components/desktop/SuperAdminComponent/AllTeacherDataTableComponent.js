@@ -7,22 +7,9 @@ import {useEffectOnce} from "../../../helper/UseEffectOnce";
 export default function AllTeacherDataTableComponent(){
     const dispatch = useDispatch();
     const teacherListArray = useSelector((state) => state.allTeacherDataList);
-    const {isOpen} = useSelector((state) => state.openCloseLoginPopup);
     const [search,setSearch] = useState("")
     const [filterTeacher,setFilterTeacher] = useState([])
-    const callFunctionToOpenLoginPopup = ()=>{
-        dispatch(actionToOpenCloseLoginPopup(false));
-    }
-    const openClassAssignPopUp=(id)=>{
-        console.log(id)
-        dispatch(actionToOpenCloseLoginPopup(true));
-    }
     const tableColumns = [
-        {
-            name:"Teacher Id",
-            selector:(row) => row.id,
-            sortable:true,
-        },
         {
             name:"Teacher Name",
             selector:(row) => row.name,
@@ -40,7 +27,7 @@ export default function AllTeacherDataTableComponent(){
         },
         {
             name:"Action",
-            cell:(row) => <button className='btn btn-primary' onClick={() => openClassAssignPopUp(row.id)}> Assign Class</button>  ,
+            cell:(row) => <button className='btn btn-primary'>Edit</button>,
         }
     ]
     useEffectOnce(() =>{
@@ -53,7 +40,7 @@ export default function AllTeacherDataTableComponent(){
         setFilterTeacher(result);
     },[search,teacherListArray]);
  return (
-     <div className={"container-fluid pt-4 px-4"}>
+     <div className={"container-fluid pt-4 px-4 datatable_container_main_div_section"}>
          <div className={"bg-light rounded h-100 p-4"}>
              {(teacherListArray.loading) ?
                  <div className={"d-flex justify-content-center h-100"}>
@@ -76,16 +63,6 @@ export default function AllTeacherDataTableComponent(){
                   subHeaderComponent={<input type="text" placeholder="Search here" className="w-25 form-control"  value={search} onChange={(e)=>setSearch(e.target.value)}/>}
               />
              }
-         </div>
-         <div style={{display:isOpen ? 'flex' : 'none'}}
-              id={"main_signup_component"}
-              className={"main_signup_component"}>
-             <div className={"main_signup_component_body"} >
-                 <div className={"popup_header_style"}>
-                     <div className={"popup_heder_main_heading"}>Assign Class</div>
-                     <div onClick={callFunctionToOpenLoginPopup} className={"cancel_button"}><div>X</div></div>
-                 </div>
-             </div>
          </div>
      </div>
 

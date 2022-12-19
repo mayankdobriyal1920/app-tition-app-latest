@@ -78,8 +78,6 @@ export default function SuperAdminDesktopDashboard() {
                                 <th scope="col">Student Email</th>
                                 <th scope="col">Student Class</th>
                                 <th scope="col">Board</th>
-                                <th scope="col">Subscription Start Date</th>
-                                <th scope="col">Subscription End Date</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -89,8 +87,6 @@ export default function SuperAdminDesktopDashboard() {
                                     <td>{subscriptionData?.email}</td>
                                     <td>{subscriptionData?.student_class}th</td>
                                     <td>{subscriptionData?.school_board_name}</td>
-                                    <td>{moment(subscriptionData?.created_at).format('LLL')}</td>
-                                    <td>{moment(subscriptionData?.subscription_end_date).format('LLL')}</td>
                                 </tr>
                             )))}
                             </tbody>
@@ -112,7 +108,6 @@ export default function SuperAdminDesktopDashboard() {
                                 <th scope="col">Student Email</th>
                                 <th scope="col">Student Class</th>
                                 <th scope="col">Board</th>
-                                <th scope="col">Subscription Start Date</th>
                                 <th scope="col">Subscription End Date</th>
                             </tr>
                             </thead>
@@ -123,8 +118,7 @@ export default function SuperAdminDesktopDashboard() {
                                 <td>{subscriptionData?.email}</td>
                                 <td>{subscriptionData?.student_class}th</td>
                                 <td>{subscriptionData?.school_board_name}</td>
-                                <td>{moment(subscriptionData?.created_at).format('LLL')}</td>
-                                <td>{moment(subscriptionData?.subscription_end_date).format('LLL')}</td>
+                                <td>{moment(subscriptionData?.subscription_end_date).format('ddd MMM D, hh:mm a')}</td>
                             </tr>
                             )))}
                             </tbody>
