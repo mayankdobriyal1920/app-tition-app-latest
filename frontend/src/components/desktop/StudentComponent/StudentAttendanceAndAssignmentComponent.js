@@ -104,7 +104,7 @@ export default function StudentAttendanceAndAssignmentComponent(){
                                             <p>Subject Name : {userClassData?.classes_assigned_to_teacher?.subject_name}</p>
                                         </a>
                                         <div className={"assignment_section mt-10"}>
-                                            <h6>All assignments :</h6>
+                                            <h6>Assignment :</h6>
                                             {userClassData?.student_class_attend_assignment ? (
                                                 <div className={"assignment_file_pdf_section"}>
                                                     {(userClassData?.student_class_attend_assignment?.map((studentAssignment,index)=>(

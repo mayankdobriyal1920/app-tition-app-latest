@@ -358,8 +358,8 @@ export const actionToGetUserAllClasses = (isLoaderDisable = false) => async (dis
                 eventData.push({
                         title: JSON.stringify({
                             subject_name: allUserClasses?.subject_name,
-                            teacher_name: allUserClasses?.teacher_name,
-                            time: moment(allUserClasses?.starting_from_date).format('hh:mm a')
+                            teacher_name: allUserClasses?.classes_assigned_to_teacher?.teacher_name,
+                            time: moment(allUserClasses?.classes_assigned_to_teacher?.starting_from_date).format('hh:mm a')
                         }),
                         date: nowDate,
                     }
