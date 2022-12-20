@@ -28,7 +28,7 @@ export default function UserProfileEditComponent(){
             setFatherName(classData.father_name);
             setMotherName(classData.mother_name);
             setSchoolName(classData.school_name);
-            setSchoolBoard(classData.school_board);
+            setSchoolBoard(classData.school_board_id);
             setState(classData.state);
             setCity(classData.city);
         }

@@ -185,7 +185,7 @@ export const actionToCreateTeacherProfile = (payload) => async (dispatch) => {
 export const actionToUpdateUserProfile = (payload,setUpdateProfileLoader) => async (dispatch) => {
     let setData = `name = ?,email = ?,father_name = ?,mother_name = ?,school_name = ?,school_board = ?,state = ?,city = ?`;
     let whereCondition = `id = '${payload?.id}'`;
-    let dataToSend = {column: setData, value: [payload?.name,payload?.email,payload?.father_name,payload?.mother_name,payload?.school_name,payload?.school_board,payload?.state,payload?.city], whereCondition: whereCondition, tableName: 'student_profile'};
+    let dataToSend = {column: setData, value: [payload?.name,payload?.email,payload?.fatherName,payload?.motherName,payload?.schoolName,payload?.schoolBoard,payload?.state,payload?.city], whereCondition: whereCondition, tableName: 'student_profile'};
     await dispatch(commonUpdateFunction(dataToSend));
     setTimeout(function(){
         setUpdateProfileLoader(false);
@@ -280,6 +280,12 @@ export const actionToGetLatestDemoClassesDetails = (idLoaderDisable = false) => 
 export const actionToGetAllAttendClassWithAssignment = (profile_id) => async (dispatch) => {
     dispatch({type: ALL_ATTENDANCE_AND_ASSIGNMENT_REQUEST});
     const {data} = await api.post(`common/actionToGetAllAttendClassWithAssignmentApiCall`,{profile_id});
+    dispatch({type: ALL_ATTENDANCE_AND_ASSIGNMENT_SUCCESS, payload:[...data?.response]});
+}
+export const actionToGetAllStudentAttendClassWithAssignment = () => async (dispatch,getState) => {
+    const userInfo = getState().userSignin.userInfo;
+    dispatch({type: ALL_ATTENDANCE_AND_ASSIGNMENT_REQUEST});
+    const {data} = await api.post(`common/actionToGetAllStudentClassAttendWithAssignmentApiCall`,{teacher_id:userInfo?.id});
     dispatch({type: ALL_ATTENDANCE_AND_ASSIGNMENT_SUCCESS, payload:[...data?.response]});
 }
 export const actionToGetAllSchoolBoardDataList = () => async (dispatch) => {

@@ -152,6 +152,77 @@ export const actionToGetAllAttendClassWithAssignmentQuery = (profileId)=>{
             WHERE student_class_attend.student_profile_id = '${profileId}'
             ORDER BY student_class_attend.created_at`;
 }
+export const actionToGetAllStudentClassAttendWithAssignmentQuery = (teacherId)=>{
+    return `SELECT json_object(
+                           'classes_assigned_to_teacher', classes_assigned_to_teacher.jsdata,
+                           'created_at', student_class_attend.created_at,
+                           'id',student_class_attend.id,
+                           'student_class_attend', student_class_attend.jsdata
+                       ) AS classes_assigned
+            FROM classes_assigned_to_teacher
+
+                     INNER JOIN (
+                SELECT student_class_attend.classes_assigned_to_teacher_id,
+                       json_arrayagg(
+                               json_object(
+                                       'student_name', student_profile.name,
+                                       'id', student_class_attend_assignment.id,
+                                       'path', student_class_attend_assignment.path,
+                                       'name', student_class_attend_assignment.name
+                                   )
+                           ) jsdata
+                FROM student_class_attend
+                         INNER JOIN student_profile ON student_profile_id = student_profile.id
+                         INNER JOIN student_class_attend_assignment
+                                    ON student_class_attend_assignment.student_class_attend_id = student_class_attend.id
+
+                GROUP BY student_class_attend.classes_assigned_to_teacher_id
+            ) student_class_attend
+                                ON student_class_attend.classes_assigned_to_teacher_id = classes_assigned_to_teacher.id
+
+            WHERE classes_assigned_to_teacher.teacher_id ='${teacherId}'`;
+}
+export const actionToGetAllClassWithAssignmentQuery = (profileId)=>{
+    return `SELECT JSON_OBJECT(
+                           'classes_assigned_to_teacher', classes_assigned_to_teacher.jsdata,
+                           'created_at', student_class_attend.created_at,
+                           'id',student_class_attend.id,
+                           'student_class_attend_assignment', student_class_attend_assignment.jsdata
+                       ) AS class_attend
+            from student_class_attend
+                     LEFT JOIN (SELECT classes_assigned_to_teacher.id,
+                                       json_object(
+                                               'id', classes_assigned_to_teacher.id,
+                                               'teacher_id', classes_assigned_to_teacher.teacher_id,
+                                               'starting_from_date', classes_assigned_to_teacher.starting_from_date,
+                                               'batch', classes_assigned_to_teacher.batch,
+                                               'is_demo_class', classes_assigned_to_teacher.is_demo_class,
+                                               'subject_id', classes_assigned_to_teacher.subject_id,
+                                               'school_board', classes_assigned_to_teacher.school_board,
+                                               'student_class', classes_assigned_to_teacher.student_class,
+                                               'class_end_time', classes_assigned_to_teacher.class_end_time,
+                                               'teacher_name', app_user.name,
+                                               'subject_name', subject.name
+                                           ) jsdata
+                                FROM classes_assigned_to_teacher
+                                         LEFT JOIN subject ON classes_assigned_to_teacher.subject_id = subject.id
+                                         LEFT JOIN app_user ON classes_assigned_to_teacher.teacher_id = app_user.id
+                                GROUP BY classes_assigned_to_teacher.id) classes_assigned_to_teacher
+                               ON student_class_attend.classes_assigned_to_teacher_id = classes_assigned_to_teacher.id
+                     LEFT JOIN (SELECT student_class_attend_assignment.student_class_attend_id,
+                                       json_arrayagg(
+                                               json_object(
+                                                       'id', student_class_attend_assignment.id,
+                                                       'path', student_class_attend_assignment.path,
+                                                       'name', student_class_attend_assignment.name
+                                                   )
+                                           ) jsdata
+                                FROM student_class_attend_assignment
+                                GROUP BY student_class_attend_assignment.student_class_attend_id) student_class_attend_assignment
+                               ON student_class_attend_assignment.student_class_attend_id = student_class_attend.id
+            WHERE student_class_attend.student_profile_id = '${profileId}'
+            ORDER BY student_class_attend.created_at`;
+}
 
 export const actionToGetUserAllClassesQuery = (userId)=>{
     return `SELECT JSON_OBJECT('id',student_profile.id,

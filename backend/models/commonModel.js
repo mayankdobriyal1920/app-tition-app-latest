@@ -5,7 +5,7 @@ import {
     actionToGetAllClassesDataListQuery,
     actionToGetAllDemoClassesDetailsQuery,
     actionToGetAllNewStudentProfileDataListQuery,
-    actionToGetAllShoolBoardDataListQuery,
+    actionToGetAllShoolBoardDataListQuery, actionToGetAllStudentClassAttendWithAssignmentQuery,
     actionToGetAllStudentDataListQuery,
     actionToGetAllStudentSubscriptionDataListQuery,
     actionToGetAllSubjectDataListQuery,
@@ -206,6 +206,18 @@ export const actionToGetAllAttendClassWithAssignmentApiCall = (body) => {
     const {profile_id} = body;
     return new Promise(function(resolve, reject) {
         const query = actionToGetAllAttendClassWithAssignmentQuery(profile_id);
+        pool.query(query, (error, results) => {
+            if (error) {
+                reject(error)
+            }
+            resolve(results);
+        })
+    })
+}
+export const actionToGetAllStudentClassAttendWithAssignmentApiCall = (body) => {
+    const {teacher_id} = body;
+    return new Promise(function(resolve, reject) {
+        const query = actionToGetAllStudentClassAttendWithAssignmentQuery(teacher_id);
         pool.query(query, (error, results) => {
             if (error) {
                 reject(error)

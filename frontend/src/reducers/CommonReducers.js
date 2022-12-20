@@ -55,7 +55,9 @@ import {
     LATEST_SUBSCRIPTION_DATA_LIST_REQUEST,
     LATEST_SUBSCRIPTION_DATA_LIST_SUCCESS,
     LATEST_DEMO_CLASSES_REQUEST,
-    LATEST_DEMO_CLASSES_SUCCESS
+    LATEST_DEMO_CLASSES_SUCCESS,
+    ALL_STUDENT_ATTENDANCE_AND_ASSIGNMENT_REQUEST,
+    ALL_STUDENT_ATTENDANCE_AND_ASSIGNMENT_SUCCESS
 } from "../constants/CommonConstants";
 
 export const userSigninReducer = (state = {}, action) => {
@@ -122,6 +124,7 @@ export const allAttendanceAndAssignmentReducer = (state = {}, action) => {
             return state;
     }
 };
+
 export const allTeacherDataListReducer = (state = {}, action) => {
     switch (action.type) {
         case ALL_TEACHER_DATA_LIST_REQUEST:

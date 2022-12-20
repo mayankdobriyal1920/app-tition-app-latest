@@ -26,7 +26,7 @@ import {
     actionToSearchTeacherAccordingToTheConditionApiCall,
     actionToAlreadyCreatedClassAccordingToTheConditionApiCall,
     actionToGetLatestSubscriptionsDataListApiCall,
-    actionToGetLatestDemoClassesDetailsApiCall
+    actionToGetLatestDemoClassesDetailsApiCall, actionToGetAllStudentClassAttendWithAssignmentApiCall
 } from "../models/commonModel.js";
 const commonRouter = express.Router();
 
@@ -156,6 +156,24 @@ commonRouter.post(
             if(data && data?.length){
                 data?.map((resData)=>{
                     finalData.push(JSON.parse(resData.class_attend));
+                })
+            }
+            res.status(200).send({
+                response: finalData,
+            });
+        }).catch(error => {
+                res.status(500).send(error);
+        })
+    })
+);
+commonRouter.post(
+    '/actionToGetAllStudentClassAttendWithAssignmentApiCall',
+    expressAsyncHandler(async (req, res) => {
+        actionToGetAllStudentClassAttendWithAssignmentApiCall(req.body).then((data) => {
+            let finalData = [];
+            if(data && data?.length){
+                data?.map((resData)=>{
+                    finalData.push(JSON.parse(resData.classes_assigned));
                 })
             }
             res.status(200).send({
