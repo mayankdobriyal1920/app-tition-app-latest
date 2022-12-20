@@ -2,23 +2,30 @@ import React from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {useEffectOnce} from "../../../helper/UseEffectOnce";
 import {
+    actionToGetAllStudentSubscriptionDataList,
     actionToGetLatestDemoClassesDetails,
     actionToGetLatestStudentProfileDataList, actionToGetLatestSubscriptionsDataList,
-    actionToGetLatestTeachersDataList
+    actionToGetLatestTeachersDataList, actionToGetTodayProfileDataList
 } from "../../../actions/CommonAction";
 import moment from "moment/moment";
 // import {_getFirstLatterOfName} from "../../../helper/CommonHelper";
 export default function SuperAdminDesktopDashboard() {
     const dispatch = useDispatch();
-    const teacherListArray = useSelector((state) => state.latestTeacherDataList);
-    const studentListArray = useSelector((state) => state.latestStudentDataList);
-    const subscriptionListArray = useSelector((state) => state.latestSubscriptionDataList);
-    const demoClassListArray = useSelector((state) => state.latestDemoClassDataList);
+    const teacherListArray = useSelector((state) => state?.latestTeacherDataList);
+    const studentListArray = useSelector((state) => state?.latestStudentDataList);
+    const subscriptionListArray = useSelector((state) => state?.latestSubscriptionDataList);
+    const demoClassListArray = useSelector((state) => state?.latestDemoClassDataList);
+    const allStudentListArray = useSelector((state) => state?.allStudentDataList);
+    const allTeacherListArray = useSelector((state) => state.allTeacherDataList);
+    const allSubscriptionListArray = useSelector((state) => state.allStudentSubscriptionDataList);
+    const todayStudentProfileListArray = useSelector((state) => state.todayStudentProfileDataList);
     useEffectOnce(() =>{
         dispatch(actionToGetLatestTeachersDataList());
         dispatch(actionToGetLatestStudentProfileDataList());
         dispatch(actionToGetLatestSubscriptionsDataList());
         dispatch(actionToGetLatestDemoClassesDetails());
+        dispatch(actionToGetAllStudentSubscriptionDataList());
+        dispatch(actionToGetTodayProfileDataList());
     },[]);
     return (
         <div className="content">
@@ -29,8 +36,8 @@ export default function SuperAdminDesktopDashboard() {
                         <div className="bg-light rounded d-flex align-items-center justify-content-between p-4">
                             <i className="fa fa-chart-line fa-3x text-primary"></i>
                             <div className="ms-3">
-                                <p className="mb-2">Today Sale</p>
-                                <h6 className="mb-0">$1234</h6>
+                                <p className="mb-2">Total Student</p>
+                                <h6 className="mb-0">{allStudentListArray?.studentData?.length}</h6>
                             </div>
                         </div>
                     </div>
@@ -38,8 +45,8 @@ export default function SuperAdminDesktopDashboard() {
                         <div className="bg-light rounded d-flex align-items-center justify-content-between p-4">
                             <i className="fa fa-chart-bar fa-3x text-primary"></i>
                             <div className="ms-3">
-                                <p className="mb-2">Total Sale</p>
-                                <h6 className="mb-0">$1234</h6>
+                                <p className="mb-2">Total Subscription</p>
+                                <h6 className="mb-0">{allSubscriptionListArray?.studentData?.length}</h6>
                             </div>
                         </div>
                     </div>
@@ -47,8 +54,8 @@ export default function SuperAdminDesktopDashboard() {
                         <div className="bg-light rounded d-flex align-items-center justify-content-between p-4">
                             <i className="fa fa-chart-area fa-3x text-primary"></i>
                             <div className="ms-3">
-                                <p className="mb-2">Today Revenue</p>
-                                <h6 className="mb-0">$1234</h6>
+                                <p className="mb-2">Today Profile</p>
+                                <h6 className="mb-0">{todayStudentProfileListArray?.studentData?.length}</h6>
                             </div>
                         </div>
                     </div>
@@ -56,8 +63,8 @@ export default function SuperAdminDesktopDashboard() {
                         <div className="bg-light rounded d-flex align-items-center justify-content-between p-4">
                             <i className="fa fa-chart-pie fa-3x text-primary"></i>
                             <div className="ms-3">
-                                <p className="mb-2">Total Revenue</p>
-                                <h6 className="mb-0">$1234</h6>
+                                <p className="mb-2">Total Teachers</p>
+                                <h6 className="mb-0">{allTeacherListArray?.teacherData?.length}</h6>
                             </div>
                         </div>
                     </div>

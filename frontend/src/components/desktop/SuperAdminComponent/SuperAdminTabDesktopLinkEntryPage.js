@@ -12,6 +12,7 @@ import {IonContent, IonPage} from "@ionic/react";
 import AllClassesDataTableComponent from "./AllClassesDataTableComponent";
 import AllDemoClassDataTableComponent from "./AllDemoClassDataTableComponent";
 import ClassAssignPopupComponent from "./ClassAssignPopupComponent";
+import EditTeacherPopupComponent from "./EditTeacherPopupComponent";
 
 export default function SuperAdminTabDesktopLinkEntryPage() {
     const { path } = useRouteMatch();
@@ -51,6 +52,7 @@ export default function SuperAdminTabDesktopLinkEntryPage() {
                 </div>
             </IonContent>
             <ClassAssignPopupComponent/>
+            <EditTeacherPopupComponent/>
         </IonPage>
     )
 }

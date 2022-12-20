@@ -12,7 +12,7 @@ import {
     actionToGetAllTeacherDataListQuery, actionToGetLatestDemoClassesDetailsQuery,
     actionToGetLatestStudentProfileDataListQuery, actionToGetLatestSubscriptionDataListQuery,
     actionToGetLatestTeacherDataListQuery,
-    actionToGetTeacherAllClassesQuery,
+    actionToGetTeacherAllClassesQuery, actionToGetTodayProfileDataListQuery,
     actionToGetUserAllClassesQuery, actionToSearchTeacherAccordingToTheConditionQuery
 } from "./commonQueries.js";
 import PaytmChecksum from 'paytmchecksum';
@@ -139,6 +139,17 @@ export const actionToGetAllStudentDataListApiCall = () => {
 export const actionToGetAllNewStudentProfileDataListApiCall = () => {
     return new Promise(function(resolve, reject) {
         const query = actionToGetAllNewStudentProfileDataListQuery();
+        pool.query(query, (error, results) => {
+            if (error) {
+                reject(error)
+            }
+            resolve(results);
+        })
+    })
+}
+export const actionToGetTodayProfileDataListApiCall = () => {
+    return new Promise(function(resolve, reject) {
+        const query = actionToGetTodayProfileDataListQuery();
         pool.query(query, (error, results) => {
             if (error) {
                 reject(error)

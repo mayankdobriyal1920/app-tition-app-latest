@@ -1,5 +1,8 @@
 import React, {useEffect, useState} from 'react';
-import { actionToGetAllTeacherDataList,actionToOpenCloseLoginPopup} from "../../../actions/CommonAction";
+import {
+    actionToGetAllTeacherDataList,
+    actionToOpenCloseEditTeacherPopup
+} from "../../../actions/CommonAction";
 import {useDispatch, useSelector} from "react-redux";
 import DataTable from 'react-data-table-component';
 import {useEffectOnce} from "../../../helper/UseEffectOnce";
@@ -9,7 +12,20 @@ export default function AllTeacherDataTableComponent(){
     const teacherListArray = useSelector((state) => state.allTeacherDataList);
     const [search,setSearch] = useState("")
     const [filterTeacher,setFilterTeacher] = useState([])
-    const tableColumns = [
+    const openEditTeacherPopUp=(data)=> {
+       console.log(data.id);
+        let payload = {
+            id:data.id,
+            name:data.name,
+            email:data.email,
+            address:data.address,
+            password:data.password,
+        }
+       dispatch(actionToOpenCloseEditTeacherPopup(true,payload));
+
+    }
+
+        const tableColumns = [
         {
             name:"Teacher Name",
             selector:(row) => row.name,
@@ -21,13 +37,28 @@ export default function AllTeacherDataTableComponent(){
             sortable:true,
         },
         {
+                name:"Mobile No",
+                selector:(row) => row.mobile,
+                sortable:true,
+        },
+        {
+                name:"Highest Qualification",
+                selector:(row) => row.highest_qualification,
+                sortable:true,
+        },
+            {
+                name:"Board",
+                selector:(row) => row.school_board_name,
+                sortable:true,
+            },
+        {
             name:"Address",
             selector:(row) => row.address,
             sortable:true,
         },
         {
             name:"Action",
-            cell:(row) => <button className='btn btn-primary'>Edit</button>,
+            cell:(row) => <button className='btn btn-primary' onClick={() => openEditTeacherPopUp(row)}>Edit</button>,
         }
     ]
     useEffectOnce(() =>{

@@ -1470,4 +1470,35 @@ button.submit:hover {
 }
 
 .assignment_file_pdf_section a {margin-top: 21px;font-size: 15px;}
+.edit_teacher_main_popup_outer_container {
+    position: fixed;
+    background: #ffffffeb;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+}
+.edit_teacher_main_popup_outer_container .edit_teacher_main_main_popup_inner_container {
+    margin: auto;
+    border-radius: 4px;
+    background: rgb(255, 255, 255);
+    box-shadow: rgb(0 0 0 / 10%) 0px 1px 0px 0px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    position: relative;
+    width: 780px;
+    min-height: 335px;
+}
+.edit_teacher_main_popup_outer_container .edit_teacher_main_main_popup_inner_container .close_popup_button {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    width: 23px;
+    height: 23px;
+    text-align: center;
+    background: rgb(255, 255, 255);
+    box-shadow: rgb(0 0 0 / 10%) 0px 1px 3px 0px;
+    cursor: pointer;
+    font-size: 15px;
+}
 /*upload css*/

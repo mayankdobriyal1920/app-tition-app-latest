@@ -7,6 +7,9 @@ export const actionToGetAllStudentDataListQuery = ()=>{
 export const actionToGetAllNewStudentProfileDataListQuery = ()=>{
     return `select student_profile.*,school_board.name as school_board_name from student_profile left join  school_board on student_profile.school_board = school_board.id `;
 }
+export const actionToGetTodayProfileDataListQuery = ()=>{
+    return `select student_profile.*,school_board.name as school_board_name from student_profile left join  school_board on student_profile.school_board = school_board.id  where (date(student_profile.created_at)=CURDATE()) `;
+}
 export const actionToGetLatestStudentProfileDataListQuery = ()=>{
     return `select student_profile.*,school_board.name as school_board_name from student_profile left join  school_board on student_profile.school_board = school_board.id order by student_profile.created_at desc limit 5`;
 }
@@ -17,7 +20,7 @@ export const actionToGetLatestSubscriptionDataListQuery = ()=>{
     return `select student_profile.*,school_board.name as school_board_name from student_profile join school_board on student_profile.school_board=school_board.id where subscription_end_date is not NULL order by student_profile.created_at desc limit 5`;
 }
 export const actionToGetAllTeacherDataListQuery = ()=>{
-    return `select * from app_user where app_user.role=2 order by id desc`;
+    return `select app_user.*,school_board.name as school_board_name from app_user left join school_board on app_user.board=school_board.id where app_user.role=2 order by  app_user.created_at desc`;
 }
 export const actionToSearchTeacherAccordingToTheConditionQuery = (subject_id,student_class,school_board)=>{
     return `SELECT app_user.name AS teacher_name,app_user.id AS teacher_id

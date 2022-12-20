@@ -52,7 +52,10 @@ import {
     LATEST_SUBSCRIPTION_DATA_LIST_REQUEST,
     LATEST_SUBSCRIPTION_DATA_LIST_SUCCESS,
     LATEST_DEMO_CLASSES_REQUEST,
-    LATEST_DEMO_CLASSES_SUCCESS
+    LATEST_DEMO_CLASSES_SUCCESS,
+    TODAY_PROFILE_DATA_LIST_REQUEST,
+    TODAY_PROFILE_DATA_LIST_SUCCESS,
+    OPEN_CLOSE_CLASS_EDIT_TEACHER_POPUP, OPEN_CLOSE_TEACHER_EDIT_POPUP
 } from "../constants/CommonConstants";
 
 import Axios from "axios";
@@ -109,6 +112,10 @@ export const actionToOpenCloseClassAssignPopup = (action,data) => async (dispatc
     let payload = {isOpen:action,dropdownData:data};
     dispatch({ type: OPEN_CLOSE_CLASS_ASSIGN_POPUP, payload: cloneDeep(payload)});
 };
+export const actionToOpenCloseEditTeacherPopup = (action,data) => async (dispatch) => {
+    let payload = {isOpen:action,dropdownData:data};
+    dispatch({ type: OPEN_CLOSE_TEACHER_EDIT_POPUP, payload: cloneDeep(payload)});
+};
 export const actionToCreateAndAssignClassData = (payload) => async (dispatch) => {
     let classAssignId = _generateUniqueId();
     if(payload?.class_assign_id){
@@ -137,7 +144,6 @@ export const actionToGetUserByMobileNumber = (mobileNumber) => async () => {
     const {data} = await api.post(`common/actionToValidateMobileNumberApiCall`,{mobileNumber});
     return data.response;
 };
-
 export const actionToUpdateAttendanceClassStatus = (profileData,classData,groupDataId) => async (dispatch) => {
     if(!profileData?.taken_single_demo) {
         let setData = `taken_single_demo = ?`;
@@ -181,6 +187,16 @@ export const actionToCreateTeacherProfile = (payload) => async (dispatch) => {
             await dispatch(callInsertDataFunction(insertData));
         })
     })
+}
+export const actionToUpdateTeacherProfile = (payload) => async (dispatch) => {
+    let setData = `name = ?,email = ?,password = ?,address = ?`;
+    let whereCondition = `id = '${payload?.id}'`;
+    let dataToSend = {column: setData, value: [payload?.name,payload?.email,payload?.password,payload?.address], whereCondition: whereCondition, tableName: 'app_user'};
+    await dispatch(commonUpdateFunction(dataToSend));
+    dispatch(actionToOpenCloseEditTeacherPopup(false,{}));
+    dispatch(actionToGetAllTeacherDataList());
+
+
 }
 export const actionToUpdateUserProfile = (payload,setUpdateProfileLoader) => async (dispatch) => {
     let setData = `name = ?,email = ?,father_name = ?,mother_name = ?,school_name = ?,school_board = ?,state = ?,city = ?`;
@@ -308,6 +324,11 @@ export const actionToGetAllNewStudentProfileDataList = () => async (dispatch) =>
     dispatch({type: ALL_NEW_STUDENT_PROFILE_DATA_LIST_REQUEST});
     const {data} = await api.post(`common/actionToGetAllNewStudentProfileDataListApiCall `);
     dispatch({type: ALL_NEW_STUDENT_PROFILE_DATA_LIST_SUCCESS, payload:[...data?.response]});
+}
+export const actionToGetTodayProfileDataList = () => async (dispatch) => {
+    dispatch({type: TODAY_PROFILE_DATA_LIST_REQUEST});
+    const {data} = await api.post(`common/actionToGetTodayProfileDataListApiCall `);
+    dispatch({type: TODAY_PROFILE_DATA_LIST_SUCCESS, payload:[...data?.response]});
 }
 export const actionToGetLatestSubscriptionsDataList = () => async (dispatch) => {
     dispatch({type: LATEST_SUBSCRIPTION_DATA_LIST_REQUEST});
