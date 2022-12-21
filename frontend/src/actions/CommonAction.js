@@ -480,8 +480,8 @@ export const actionToMuteUnmuteUserCall = (id,groupId) => async (dispatch) => {
         type: "handleMuteUnmuteInCall"
     }));
 }
-export const actionToSendVideoChunkDataToServer = (groupId,videoData) => async (dispatch) => {
-    const {data} = await api.post(`recording-video-chuncks`,videoData,{
+export const actionToSendVideoChunkDataToServer = (videoData) => async () => {
+     api.post(`recording-video-chuncks`,videoData,{
         headers: {
             'Content-Type': 'application/json'
         }
@@ -489,6 +489,18 @@ export const actionToSendVideoChunkDataToServer = (groupId,videoData) => async (
 }
 export const actionToSendVideoChunkDataToServerFinishProcess = (groupId) => async (dispatch) => {
     const {data} = await api.post(`recording-video-finish`,{groupId});
+    if(data?.name) {
+        const aliasArray = ['?', '?', '?'];
+        const columnArray = ['id', 'name', 'classes_assigned_to_teacher_id'];
+        const valuesArray = [_generateUniqueId(), data.name, groupId];
+        const insertData = {
+            alias: aliasArray,
+            column: columnArray,
+            values: valuesArray,
+            tableName: 'class_call_recording'
+        };
+        dispatch(callInsertDataFunction(insertData));
+    }
 }
 export const actionToRemoveCurrentGroupCallData = () => async (dispatch) => {
     dispatch({ type: CHAT_MODULE_CURRENT_CALL_GROUP_DATA, payload: {}});
@@ -513,7 +525,7 @@ export const actionToRateCurrentClass = (rating,classData) => async (dispatch,ge
     dispatch(actionToOpenRatingModalPopup(false,{}));
 }
 
-export const actionToStoreAssignmentData = (fileName,pathName,id,profileId) => async (dispatch,getState) => {
+export const actionToStoreAssignmentData = (fileName,pathName,id,profileId) => async (dispatch) => {
     const aliasArray = ['?','?','?','?'];
     const columnArray = ['id','student_class_attend_id','path','name'];
     const valuesArray = [_generateUniqueId(),id,pathName,fileName];
@@ -529,6 +541,10 @@ export const actionToEndCurrentCurrentCall = (groupId) => async (dispatch) => {
         classEndTime:moment().format('YYYY-MM-DD HH:mm:ss'),
         groupId:groupId
     }));
+    setTimeout(()=>{
+        dispatch(actionToGetTeacherAllClasses(false));
+        dispatch(actionToGetUserAllClasses(false));
+    },2000)
 }
 
 export const actionToSetMemberInGroupCall = (groupId,allMembersArray,memberData) => async (dispatch,getState) => {

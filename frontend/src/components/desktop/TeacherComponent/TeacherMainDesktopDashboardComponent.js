@@ -50,10 +50,9 @@ const iceServers= [
         credential: "openrelayproject",
     },
 ];
-
+let currentClassId = null;
 function TeacherMainDesktopDashboardComponentFunction(){
     const chatModuleNewUserAddedInCurrentCall = useSelector((state) => state.chatModuleNewUserAddedInCurrentCall);
-    const chatModuleCurrentCallGroupData = useSelector((state) => state.chatModuleCurrentCallGroupData);
     const {loading,classData} = useSelector((state) => state.teacherAllClassesList);
     const {userInfo} = useSelector((state) => state.userSignin);
     const [callLoading,setCallLoading] = React.useState(false);
@@ -62,7 +61,7 @@ function TeacherMainDesktopDashboardComponentFunction(){
     const dispatch = useDispatch();
 
     const callFunctionToExportRecordedVideo = ()=>{
-        dispatch(actionToSendVideoChunkDataToServerFinishProcess(cloneDeep(chatModuleCurrentCallGroupData?.groupId)));
+        dispatch(actionToSendVideoChunkDataToServerFinishProcess(currentClassId));
         dispatch(actionToRemoveCurrentGroupCallData());
     }
 
@@ -83,9 +82,10 @@ function TeacherMainDesktopDashboardComponentFunction(){
 
         function sendDataToBackend(base64EncodedData) {
             const body = JSON.stringify({
-                data: base64EncodedData
+                data: base64EncodedData,
+                groupId:currentClassId,
             });
-            dispatch(actionToSendVideoChunkDataToServer(chatModuleCurrentCallGroupData?.groupId,body));
+            dispatch(actionToSendVideoChunkDataToServer(body));
         }
     }
     const startCallInGroup = (e,classGroupData)=>{
@@ -122,6 +122,7 @@ function TeacherMainDesktopDashboardComponentFunction(){
                             });
                             setMyPeerConnectionId(memberData.peer_connection_id);
                             setMyPeer(myPeer);
+                            currentClassId = cloneDeep(classGroupData?.id);
 
                             dispatch(actionToSetCurrentCallDataGroupData(classGroupData));
                             console.log('[ PEER JS CONNECTION INSTANCE ]', myPeer,memberData.peer_connection_id);
@@ -157,8 +158,6 @@ function TeacherMainDesktopDashboardComponentFunction(){
                                                 isTeacher:false
                                             });
                                         })
-
-                                        console.log(allMembersInCall)
 
                                         dispatch(actionToSetCurrentCallDataGroupData(classGroupData));
                                         dispatch({type: CHAT_MODULE_CURRENT_CALL_ALL_MEMBERS, payload: [...allMembersInCall]});

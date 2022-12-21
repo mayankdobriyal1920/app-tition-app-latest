@@ -130,15 +130,25 @@ let chunks = [];
 app.post('/api-call-tutor/recording-video-chuncks', (req, res) => {
     const dataBuffer = new Buffer(req.body.data, 'base64');
     let chunkBuff = Buffer.from(dataBuffer) // This code throwing Error
-    chunks.push(chunkBuff);
+    if(!chunks[req.body.groupId]){
+        chunks[req.body.groupId] = [];
+    }
+    chunks[req.body.groupId].push(chunkBuff);
     res.status(200).send({message:`success ${port}`});
 });
 app.post('/api-call-tutor/recording-video-finish', (req, res) => {
-    let buf = Buffer.concat(chunks);
-    fs.writeFile(`${uploadPath}/RecordingVideo_${new Date().getTime()}.webm`, buf, (err) => {
-
-    });
-    res.json({save:true})
+    if(chunks[req.body.groupId]) {
+        let buf = Buffer.concat(chunks[req.body.groupId]);
+        const name = `RecordingVideo_${new Date().getTime()}.webm`;
+        fs.writeFile(`${uploadPath}/${name}`, buf, (err) => {});
+        res.send({save: true, name: name})
+        delete chunks[req.body.groupId];
+    }
+    res.send({save: true, name: ''})
+});
+app.get('/api-call-tutor/getFineByName', function(req, res){
+    const file = `${uploadPath}/${req.query.name}`;
+    res.download(file); // Set disposition and send it.
 });
 app.post("/api-call-tutor/uploadAssignmentApiCall", upload.single("file"), function (req, res) {
     if (!req.file) {
