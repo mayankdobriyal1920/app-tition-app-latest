@@ -1,33 +1,21 @@
 import React, {useEffect, useState} from 'react';
-import {
-    actionToAlreadyCreatedClassAccordingToTheCondition,
-    actionToGetAllClassesDataList, actionToOpenCloseClassAssignPopup,
-   actionToSearchTeacherAccordingToTheCondition
-} from "../../../actions/CommonAction";
 import {useDispatch, useSelector} from "react-redux";
 import DataTable from 'react-data-table-component';
 import {useEffectOnce} from "../../../helper/UseEffectOnce";
+import {
+    actionToAlreadyCreatedClassAccordingToTheCondition,
+    actionToGetAllRecordedClassesDetails, actionToOpenCloseClassAssignPopup,
+    actionToSearchTeacherAccordingToTheCondition
+} from "../../../actions/CommonAction";
+import moment from "moment";
 
-export default function AllClassesDataTableComponent(){
+
+export default function AllRecordedClassDataTableComponent() {
     const dispatch = useDispatch();
-    const classesListArray = useSelector((state) => state.allAdminClassesDataList);
-    const {isOpen} = useSelector((state) => state.openCloseLoginPopup);
+    const allRecordedClasses = useSelector((state) => state.allRecordedClasses);
     const [search,setSearch] = useState("")
     const [filterClass,setFilterClasses] = useState([])
-    const openClassAssignPopUp=(data)=>{
-        let payload = {
-            profile_subject_with_batch_id:data?.profile_subject_with_batch_id,
-            subject_id:data?.subject_id,
-            school_board:data?.school_board_id,
-            student_class:data?.student_class,
-            batch:data?.profile_subject_with_batch_batch_type,
-            has_taken_demo:1,
-        }
 
-        dispatch(actionToSearchTeacherAccordingToTheCondition(payload));
-        dispatch(actionToAlreadyCreatedClassAccordingToTheCondition(payload));
-        dispatch(actionToOpenCloseClassAssignPopup(true,payload));
-    }
     const tableColumns = [
         {
             name:"Subject Name",
@@ -45,42 +33,46 @@ export default function AllClassesDataTableComponent(){
             sortable:true,
         },
         {
-            name:"Student Name",
-            selector:(row) => row?.student_name,
+            name:"Batch",
+            selector:(row) => row?.classes_assigned_to_teacher_batch,
             sortable:true,
         },
         {
-            name:"Student Email",
-            selector:(row) => row?.student_email,
+            name:"Teacher Name",
+            selector:(row) => row?.teacher_name,
+            sortable:true,
+        },
+        {
+            name:"Teacher Email",
+            selector:(row) => row?.teacher_email,
+            sortable:true,
+        },
+        {
+            name:"Recorded At",
+            selector:(row) => moment(row?.class_recorded_at).format('D MMM YYYY, hh:mm a'),
             sortable:true,
         },
         {
             name:"Action",
-            cell:(row) => (row?.classes_assigned_to_teacher_id && row?.is_demo_class !== 1)
-                ? <div className={"btn btn-success"}>Class assigned</div>
-                :
-                 <button className='btn btn-primary' onClick={() => openClassAssignPopUp(row)}>Assign Class</button> ,
+            selector:(row) =><div className={"btn btn-success"}>View Recording</div>,
+            sortable:true,
         }
     ]
-
-
     useEffect(() =>{
-        if(classesListArray?.classesData) {
-            const result = classesListArray?.classesData?.filter((classes) => {
-                return classes?.subject_name?.toLowerCase()?.match(search?.toLowerCase());
+        if(allRecordedClasses?.classesData) {
+            const result = allRecordedClasses?.classesData?.filter((classes) => {
+                return classes?.subject_name?.toLowerCase().match(search?.toLowerCase());
             });
             setFilterClasses(result);
         }
-    },[search,classesListArray]);
-
+    },[search,allRecordedClasses]);
     useEffectOnce(() =>{
-        dispatch(actionToGetAllClassesDataList());
+        dispatch(actionToGetAllRecordedClassesDetails());
     },[]);
-
     return (
         <div className={"container-fluid pt-4 px-4 datatable_container_main_div_section"}>
             <div className={"bg-light rounded h-100 p-4"}>
-                {(classesListArray?.loading) ?
+                {(allRecordedClasses?.loading) ?
                     <div className={"d-flex justify-content-center h-100"}>
                         <div className={"spinner-border"} role={"status"}>
                             <span className={"sr-only"}>Loading...</span>

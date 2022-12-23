@@ -27,7 +27,9 @@ import {
     actionToAlreadyCreatedClassAccordingToTheConditionApiCall,
     actionToGetLatestSubscriptionsDataListApiCall,
     actionToGetTodayProfileDataListApiCall,
-    actionToGetLatestDemoClassesDetailsApiCall, actionToGetAllStudentClassAttendWithAssignmentApiCall
+    actionToGetLatestDemoClassesDetailsApiCall,
+    actionToGetAllStudentClassAttendWithAssignmentApiCall,
+    actionToGetAllRecordedClassesDetailsApiCall
 } from "../models/commonModel.js";
 const commonRouter = express.Router();
 
@@ -113,6 +115,19 @@ commonRouter.post(
     '/actionToGetAllDemoClassesDetailsApiCall',
     expressAsyncHandler(async (req, res) => {
         actionToGetAllDemoClassesDetailsApiCall(req.body).then((data) => {
+            res.status(200).send({
+                response: data,
+            });
+        })
+            .catch(error => {
+                res.status(500).send(error);
+            })
+    })
+);
+commonRouter.post(
+    '/actionToGetAllRecordedClassesDetailsApiCall',
+    expressAsyncHandler(async (req, res) => {
+        actionToGetAllRecordedClassesDetailsApiCall(req.body).then((data) => {
             res.status(200).send({
                 response: data,
             });

@@ -94,6 +94,30 @@ export const actionToGetAllDemoClassesDetailsQuery = ()=>{
      join subject on subject.id=profile_subject_with_batch.subject_id 
 WHERE profile_subject_with_batch.has_taken_demo = 0`;
 }
+export const actionToGetAllRecordedClassesDetailsQuery = ()=>{
+    return `SELECT
+                class_call_recording.name AS recorded_video_title,
+                class_call_recording.created_at AS class_recorded_at,
+                class_call_recording.id AS class_call_recording_id,
+                classes_assigned_to_teacher.batch AS classes_assigned_to_teacher_batch,
+                classes_assigned_to_teacher.is_demo_class AS is_demo_class,
+                classes_assigned_to_teacher.student_class AS student_class,
+                school_board.name AS school_board_name,
+                subject.name AS subject_name,
+                app_user.name AS teacher_name,
+                app_user.email AS teacher_email
+            FROM
+                class_call_recording
+                    JOIN
+                classes_assigned_to_teacher ON class_call_recording.classes_assigned_to_teacher_id = classes_assigned_to_teacher.id
+                    JOIN
+                school_board ON school_board.id = classes_assigned_to_teacher.school_board
+                    JOIN
+                subject ON subject.id = classes_assigned_to_teacher.subject_id
+                    JOIN
+                app_user ON app_user.id = classes_assigned_to_teacher.teacher_id  order by class_call_recording.created_at desc `;
+}
+
 export const actionToGetLatestDemoClassesDetailsQuery = ()=>{
     return `select profile_subject_with_batch.id as  profile_subject_with_batch_id,
                    profile_subject_with_batch.batch as  profile_subject_with_batch_batch_type,

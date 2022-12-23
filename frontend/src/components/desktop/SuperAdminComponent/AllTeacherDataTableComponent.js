@@ -13,13 +13,12 @@ export default function AllTeacherDataTableComponent(){
     const [search,setSearch] = useState("")
     const [filterTeacher,setFilterTeacher] = useState([])
     const openEditTeacherPopUp=(data)=> {
-       console.log(data.id);
         let payload = {
-            id:data.id,
-            name:data.name,
-            email:data.email,
-            address:data.address,
-            password:data.password,
+            id:data?.id,
+            name:data?.name,
+            email:data?.email,
+            address:data?.address,
+            password:data?.password,
         }
        dispatch(actionToOpenCloseEditTeacherPopup(true,payload));
 
@@ -28,32 +27,32 @@ export default function AllTeacherDataTableComponent(){
         const tableColumns = [
         {
             name:"Teacher Name",
-            selector:(row) => row.name,
+            selector:(row) => row?.name,
             sortable:true,
         },
         {
             name:"Email Address",
-            selector:(row) => row.email,
+            selector:(row) => row?.email,
             sortable:true,
         },
         {
                 name:"Mobile No",
-                selector:(row) => row.mobile,
+                selector:(row) => row?.mobile,
                 sortable:true,
         },
         {
                 name:"Highest Qualification",
-                selector:(row) => row.highest_qualification,
+                selector:(row) => row?.highest_qualification,
                 sortable:true,
         },
             {
                 name:"Board",
-                selector:(row) => row.school_board_name,
+                selector:(row) => row?.school_board_name,
                 sortable:true,
             },
         {
             name:"Address",
-            selector:(row) => row.address,
+            selector:(row) => row?.address,
             sortable:true,
         },
         {
@@ -65,15 +64,15 @@ export default function AllTeacherDataTableComponent(){
         dispatch(actionToGetAllTeacherDataList());
     },[]);
     useEffect(() =>{
-        const result = teacherListArray.teacherData.filter((teacher) => {
-        return teacher.name.toLowerCase().match(search.toLowerCase());
+        const result = teacherListArray?.teacherData?.filter((teacher) => {
+        return teacher?.name?.toLowerCase().match(search?.toLowerCase());
         });
         setFilterTeacher(result);
     },[search,teacherListArray]);
  return (
      <div className={"container-fluid pt-4 px-4 datatable_container_main_div_section"}>
          <div className={"bg-light rounded h-100 p-4"}>
-             {(teacherListArray.loading) ?
+             {(teacherListArray?.loading) ?
                  <div className={"d-flex justify-content-center h-100"}>
                      <div className={"spinner-border"} role={"status"}>
                          <span className={"sr-only"}>Loading...</span>

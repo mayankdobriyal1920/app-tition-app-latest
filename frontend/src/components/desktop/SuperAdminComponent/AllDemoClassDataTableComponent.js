@@ -16,11 +16,11 @@ export default function AllDemoClassDataTableComponent(){
 
     const openClassAssignPopUp=(data)=>{
         let payload = {
-            profile_subject_with_batch_id:data.profile_subject_with_batch_id,
-            subject_id:data.subject_id,
-            school_board:data.school_board_id,
-            student_class:data.student_class,
-            batch:data.profile_subject_with_batch_batch_type,
+            profile_subject_with_batch_id:data?.profile_subject_with_batch_id,
+            subject_id:data?.subject_id,
+            school_board:data?.school_board_id,
+            student_class:data?.student_class,
+            batch:data?.profile_subject_with_batch_batch_type,
             has_taken_demo:0,
         }
 
@@ -31,32 +31,32 @@ export default function AllDemoClassDataTableComponent(){
     const tableColumns = [
         {
             name:"Class Id",
-            selector:(row) => row.profile_subject_with_batch_id,
+            selector:(row) => row?.profile_subject_with_batch_id,
             sortable:true,
         },
         {
             name:"Subject Name",
-            selector:(row) => row.subject_name,
+            selector:(row) => row?.subject_name,
             sortable:true,
         },
         {
             name:"School Board",
-            selector:(row) => row.school_board_name,
+            selector:(row) => row?.school_board_name,
             sortable:true,
         },
         {
             name:"Student Class",
-            selector:(row) => row.student_class+"th",
+            selector:(row) => row?.student_class+"th",
             sortable:true,
         },
         {
             name:"Student Name",
-            selector:(row) => row.student_name,
+            selector:(row) => row?.student_name,
             sortable:true,
         },
         {
             name:"Action",
-            cell:(row) => (row.classes_assigned_to_teacher_id) ?
+            cell:(row) => (row?.classes_assigned_to_teacher_id) ?
                 <div className={"btn btn-success"}>Class assigned</div>
                  :
                 <button className='btn btn-primary' onClick={() => openClassAssignPopUp(row)}>Assign Class</button>
@@ -66,7 +66,7 @@ export default function AllDemoClassDataTableComponent(){
     useEffect(() =>{
         if(allDemoClasses?.classesData) {
             const result = allDemoClasses?.classesData?.filter((classes) => {
-                return classes.subject_name.toLowerCase().match(search.toLowerCase());
+                return classes?.subject_name?.toLowerCase().match(search.toLowerCase());
             });
             setFilterClasses(result);
         }
@@ -79,7 +79,7 @@ export default function AllDemoClassDataTableComponent(){
     return (
         <div className={"container-fluid pt-4 px-4 datatable_container_main_div_section"}>
             <div className={"bg-light rounded h-100 p-4"}>
-                {(allDemoClasses.loading) ?
+                {(allDemoClasses?.loading) ?
                     <div className={"d-flex justify-content-center h-100"}>
                         <div className={"spinner-border"} role={"status"}>
                             <span className={"sr-only"}>Loading...</span>

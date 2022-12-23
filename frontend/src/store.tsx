@@ -38,7 +38,7 @@ import {
     allTeacherDataToAssignClassReducer,
     openCloseClassAssignPopupReducer,
     openCloseEditTeacherPopupReducer,
-    allClassToAssignClassReducer, latestDemoClassesReducer,
+    allClassToAssignClassReducer, latestDemoClassesReducer, allRecordedClassesReducer,
 } from "./reducers/CommonReducers";
 
 const initialState = {
@@ -67,6 +67,7 @@ const initialState = {
     studentAllClassesList:{prevId:'',loading:true,classData:[]},
     teacherAllClassesList:{prevId:'',loading:true,classData:[]},
     allDemoClasses:{prevId:'',loading:true,classData:[]},
+    allRecordedClasses:{prevId:'',loading:true,classData:[]},
     teacherAllDemoClassList:[],
     studentAllTodayClassList:[],
     studentAllTimeClassList:[],
@@ -90,6 +91,7 @@ export const rootReducer = combineReducers({
     openCloseClassAssignPopup: openCloseClassAssignPopupReducer,
     allTeacherDataToAssignClass: allTeacherDataToAssignClassReducer,
     allDemoClasses: allDemoClassesReducer,
+    allRecordedClasses: allRecordedClassesReducer,
     allAttendanceAndAssignment: allAttendanceAndAssignmentReducer,
     studentAllTimeClassList: studentAllTimeClassListReducer,
     openCloseTeacherRatingPopup: openCloseTeacherRatingPopupReducer,

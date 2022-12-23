@@ -55,7 +55,10 @@ import {
     LATEST_DEMO_CLASSES_SUCCESS,
     TODAY_PROFILE_DATA_LIST_REQUEST,
     TODAY_PROFILE_DATA_LIST_SUCCESS,
-    OPEN_CLOSE_CLASS_EDIT_TEACHER_POPUP, OPEN_CLOSE_TEACHER_EDIT_POPUP
+    OPEN_CLOSE_CLASS_EDIT_TEACHER_POPUP,
+    OPEN_CLOSE_TEACHER_EDIT_POPUP,
+    ALL_RECORDED_CLASSES_REQUEST,
+    ALL_REQUESTED_CLASSES_SUCCESS, ALL_RECORDED_CLASSES_SUCCESS
 } from "../constants/CommonConstants";
 
 import Axios from "axios";
@@ -285,6 +288,13 @@ export const actionToGetAllDemoClassesDetails = (idLoaderDisable = false) => asy
 
     const {data} = await api.post(`common/actionToGetAllDemoClassesDetailsApiCall`);
     dispatch({type: ALL_DEMO_CLASSES_SUCCESS, payload:[...data?.response]});
+}
+export const actionToGetAllRecordedClassesDetails = (idLoaderDisable = false) => async (dispatch) => {
+    if(!idLoaderDisable)
+        dispatch({type: ALL_RECORDED_CLASSES_REQUEST});
+
+    const {data} = await api.post(`common/actionToGetAllRecordedClassesDetailsApiCall`);
+    dispatch({type: ALL_RECORDED_CLASSES_SUCCESS, payload:[...data?.response]});
 }
 export const actionToGetLatestDemoClassesDetails = (idLoaderDisable = false) => async (dispatch) => {
     if(!idLoaderDisable)

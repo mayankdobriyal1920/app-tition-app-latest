@@ -18,15 +18,15 @@ export default function ClassAssignPopupComponent(){
     const callFunctionToAssignClassData = ()=>{
         if(selectedTeacherId && classStartFromDateTime){
             let payload = {
-                profile_subject_with_batch_id:dropdownData.profile_subject_with_batch_id,
+                profile_subject_with_batch_id:dropdownData?.profile_subject_with_batch_id,
                 class_assign_id:selectedClassAssignId,
                 teacher_id:selectedTeacherId,
                 starting_from_date:moment(classStartFromDateTime).format('YYYY-MM-DD HH:mm:ss'),
-                batch:dropdownData.batch,
-                is_demo_class:dropdownData.has_taken_demo ? 0 : 1,
-                subject_id:dropdownData.subject_id,
-                school_board:dropdownData.school_board,
-                student_class:dropdownData.student_class,
+                batch:dropdownData?.batch,
+                is_demo_class:dropdownData?.has_taken_demo ? 0 : 1,
+                subject_id:dropdownData?.subject_id,
+                school_board:dropdownData?.school_board,
+                student_class:dropdownData?.student_class,
             }
             dispatch(actionToCreateAndAssignClassData(payload));
             closeClassAssignPopup();

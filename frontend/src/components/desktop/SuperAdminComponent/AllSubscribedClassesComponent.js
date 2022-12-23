@@ -3,6 +3,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {useEffectOnce} from "../../../helper/UseEffectOnce";
 import {actionToGetAllStudentDataList, actionToGetAllStudentSubscriptionDataList} from "../../../actions/CommonAction";
 import DataTable from "react-data-table-component";
+import moment from "moment/moment";
 
 export default function AllSubscribedClassesComponent(){
     const dispatch = useDispatch();
@@ -12,35 +13,35 @@ export default function AllSubscribedClassesComponent(){
     const tableColumns = [
         {
             name: "Student Id",
-            selector: (row) => row.id,
+            selector: (row) => row?.id,
             sortable: true,
         },
         {
             name: "Student Name",
-            selector: (row) => row.name,
+            selector: (row) => row?.name,
             sortable: true,
         },
         {
             name: "Student Email",
-            selector: (row) => row.email,
+            selector: (row) => row?.email,
             sortable: true,
         },
         {
             name: "Subscription End Date",
-            selector: (row) => row.subscription_end_date,
+            selector: (row) => moment(row?.subscription_end_date).format('D MMM YYYY, hh:mm a'),
             sortable: true,
         },
         {
             name: "Action",
-            cell: (row) => <button class='btn btn-primary' onClick={() => alert(row.id)}> Edit</button>,
+            cell: (row) => <button class='btn btn-primary' onClick={() => alert(row?.id)}> Edit</button>,
         }
     ]
     useEffectOnce(() =>{
         dispatch(actionToGetAllStudentSubscriptionDataList());
     },[]);
     useEffect(() => {
-        const resultName = studentListArray.studentData.filter((student) => {
-            return student.name.toLowerCase().match(search.toLowerCase());
+        const resultName = studentListArray?.studentData.filter((student) => {
+            return student?.name?.toLowerCase().match(search.toLowerCase());
         });
         setFilterSubject(resultName);
 
@@ -49,7 +50,7 @@ export default function AllSubscribedClassesComponent(){
     return (
         <div className={"container-fluid pt-4 px-4"}>
             <div className={"bg-light rounded h-100 p-4"}>
-                {(studentListArray.loading) ?
+                {(studentListArray?.loading) ?
                     <div className={"d-flex justify-content-center h-100"}>
                         <div className={"spinner-border"} role={"status"}>
                             <span className={"sr-only"}>Loading...</span>

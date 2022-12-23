@@ -12,69 +12,68 @@ export default function AllStudentDataTableComponent() {
     const tableColumns = [
         {
             name: "Name",
-            selector: (row) => row.name,
+            selector: (row) => row?.name,
             sortable: true,
         },
         {
             name: "Email",
-            selector: (row) => row.email,
+            selector: (row) => row?.email,
             sortable: true,
         },
         {
             name: "Father Name",
-            selector: (row) => row.father_name,
+            selector: (row) => row?.father_name,
             sortable: true,
         },
         {
             name: "Mother Name",
-            selector: (row) => row.mother_name,
+            selector: (row) => row?.mother_name,
             sortable: true,
         },
         {
             name: "School Name",
-            selector: (row) => row.school_name,
+            selector: (row) => row?.school_name,
             sortable: true,
         },
         {
             name: "Board",
-            selector: (row) => row.school_board_name,
+            selector: (row) => row?.school_board_name,
             sortable: true,
         },
         {
             name: "Class",
-            selector: (row) => row.student_class,
+            selector: (row) => row?.student_class,
             sortable: true,
         },
         {
             name: "State",
-            selector: (row) => row.state,
+            selector: (row) => row?.state,
             sortable: true,
         },
         {
             name: "City",
-            selector: (row) => row.city,
+            selector: (row) => row?.city,
             sortable: true,
         },
         {
             name: "Active",
-            selector: (row) => (row.is_active) ? 'Active' :'Inactive',
+            selector: (row) => (row?.is_active) ? 'Active' :'Inactive',
             sortable: true,
         }
     ]
     useEffectOnce(() =>{
         dispatch(actionToGetAllStudentDataList());
-        console.log(studentListArray);
     },[]);
     useEffect(() => {
-        const resultName = studentListArray.studentData.filter((student) => {
-            return student.name.toLowerCase().match(search.toLowerCase());
+        const resultName = studentListArray?.studentData.filter((student) => {
+            return student?.name?.toLowerCase().match(search?.toLowerCase());
         });
         setFilterStudent(resultName);
     }, [search,studentListArray]);
     return (
         <div className={"container-fluid pt-4 px-4 datatable_container_main_div_section"}>
         <div className={"bg-light rounded h-100 p-4"}>
-            {(studentListArray.loading ) ?
+            {(studentListArray?.loading ) ?
                 <div className={"d-flex justify-content-center h-100"}>
                     <div className={"spinner-border"} role={"status"}>
                         <span className={"sr-only"}>Loading...</span>

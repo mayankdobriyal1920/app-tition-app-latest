@@ -125,7 +125,7 @@ export default function SuperAdminDesktopDashboard() {
                                 <td>{subscriptionData?.email}</td>
                                 <td>{subscriptionData?.student_class}th</td>
                                 <td>{subscriptionData?.school_board_name}</td>
-                                <td>{moment(subscriptionData?.subscription_end_date).format('ddd MMM D, hh:mm a')}</td>
+                                <td>{moment(subscriptionData?.subscription_end_date).format('D MMM YYYY, hh:mm a')}</td>
                             </tr>
                             )))}
                             </tbody>

@@ -11,6 +11,7 @@ import AddNewTeacherComponent from "./AddNewTeacherComponent";
 import {IonContent, IonPage} from "@ionic/react";
 import AllClassesDataTableComponent from "./AllClassesDataTableComponent";
 import AllDemoClassDataTableComponent from "./AllDemoClassDataTableComponent";
+import AllRecordedClassDataTableComponent from "./AllRecordedClassDataTableComponent";
 import ClassAssignPopupComponent from "./ClassAssignPopupComponent";
 import EditTeacherPopupComponent from "./EditTeacherPopupComponent";
 
@@ -44,6 +45,9 @@ export default function SuperAdminTabDesktopLinkEntryPage() {
                         </Route>
                         <Route exact path={`${path}/all-demo-classes`}>
                             <AllDemoClassDataTableComponent/>
+                        </Route>
+                        <Route exact path={`${path}/all-recorded-classes`}>
+                            <AllRecordedClassDataTableComponent/>
                         </Route>
                         <Route exact path={`${path}/add-new-teacher`}>
                            <AddNewTeacherComponent/>

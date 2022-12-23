@@ -68,6 +68,10 @@ export default function SuperAdminLeftSideBarComponent(){
                         <i className="fa fa-newspaper me-2"></i>
                         All Classes (demo)
                     </NavLink>
+                    <NavLink to={`${path}/all-recorded-classes`} activeClassName={"active"} className={"nav-item nav-link"}>
+                        <i className="fa fa-video-camera me-2"></i>
+                        All Classes (Recorded)
+                    </NavLink>
                     <NavLink to={`${path}/add-new-teacher`} activeClassName={"active"} className={"nav-item nav-link"}>
                         <i className="fa fa-eye me-2" aria-hidden="true"></i>
                         Add New Teacher
