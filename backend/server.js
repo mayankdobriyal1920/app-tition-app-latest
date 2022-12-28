@@ -16,6 +16,7 @@ import fs from 'fs';
 import {updateCommonApiCall} from "./models/commonModel.js";
 import upload from "./models/upload.js";
 export let allChannelsInGroupCall = [];
+export let allChannelsInGroupCallData = {};
 export let membersInChannelWithDetails = {};
 let currentUserIdInGroupCall = {};
 
@@ -45,8 +46,8 @@ function setupWebSocket() {
             switch (dataToSend.type){
                 case 'startNewCallInGroupChannel':
                     allChannelsInGroupCall.push(dataToSend.groupId);
-                    membersInChannelWithDetails[dataToSend.groupId] = [];
-                    membersInChannelWithDetails[dataToSend.groupId].push(dataToSend.memberData);
+                    allChannelsInGroupCallData[dataToSend.groupId] = dataToSend.classGroupData;
+                    membersInChannelWithDetails[dataToSend.groupId] = dataToSend?.members;
                     currentUserIdInGroupCall[userID] = dataToSend.memberData.id;
                     break;
                 case 'addNewMemberDataInGroup':
@@ -75,8 +76,8 @@ function setupWebSocket() {
                     }
                     break;
                 case 'handleMuteUnmuteInCall':
-                    if(membersInChannelWithDetails[dataToSend.groupId] != undefined){
-                        membersInChannelWithDetails[dataToSend.groupId].members = dataToSend?.users;
+                    if(membersInChannelWithDetails[dataToSend.groupId] !== undefined){
+                        membersInChannelWithDetails[dataToSend.groupId] = dataToSend?.users;
                         dataToSend = {
                             clientId: dataToSend.clientId,
                             userId:dataToSend?.userId,
@@ -91,9 +92,11 @@ function setupWebSocket() {
                             delete currentUserIdInGroupCall[userID];
                             if(allChannelsInGroupCall?.length && allChannelsInGroupCall.includes(dataToSend.groupId))
                                 allChannelsInGroupCall.splice(allChannelsInGroupCall.indexOf(dataToSend.groupId),1);
-                            if(membersInChannelWithDetails[dataToSend.groupId] !== undefined) {
-                                if (membersInChannelWithDetails[dataToSend.groupId] !== undefined)
+
+                                if(membersInChannelWithDetails[dataToSend.groupId] !== undefined) {
                                     delete membersInChannelWithDetails[dataToSend.groupId];
+                                if (allChannelsInGroupCallData[dataToSend.groupId] !== undefined)
+                                    delete allChannelsInGroupCallData[dataToSend.groupId];
 
                                 let setData = `class_end_time = ?`;
                                 let whereCondition = `id = '${dataToSend.groupId}'`;

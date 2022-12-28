@@ -16,8 +16,8 @@ import StudentPayForSubscriptionComponent from "./StudentPayForSubscriptionCompo
 import moment from "moment";
 import {cloneDeep} from "lodash";
 import StarRatingOnEndCallComponent from "./StarRatingOnEndCallComponent";
-import {actionToUpdateAttendanceClassStatus} from "../../../actions/CommonAction";
-
+import {actionToGetPrevCallOnGroupClass, actionToUpdateAttendanceClassStatus} from "../../../actions/CommonAction";
+let allowOnce = false;
 const iceServers= [
     {
         urls: "stun:openrelay.metered.ca:80",
@@ -53,7 +53,6 @@ export default function StudentTodayClassesComponent(){
     const ignoreIncomingCall = ()=>{
         //dispatch(actionToRemoveDataFromIncomingCall({}));
     }
-
 
     const pickCallInGroup = (e,myClasses,groupData)=>{
         e.preventDefault();
@@ -114,7 +113,6 @@ export default function StudentTodayClassesComponent(){
         }
     }
 
-
     React.useEffect(()=>{
         if(chatModuleNewUserAddedInCurrentCall?.id !== undefined){
             connectToNewUser(chatModuleNewUserAddedInCurrentCall,myStream,myPeer);
@@ -126,6 +124,13 @@ export default function StudentTodayClassesComponent(){
             removeClosePeerConnection(chatModuleNewUserLeaveUserInCallData?.peer_connection_id);
         }
     },[chatModuleNewUserLeaveUserInCallData]);
+
+    React.useEffect(()=>{
+        if(classData.id && allowOnce){
+            dispatch(actionToGetPrevCallOnGroupClass(classData))
+            allowOnce = false;
+        }
+    },[classData]);
 
     return(
         <>

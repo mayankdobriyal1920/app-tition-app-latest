@@ -45,7 +45,7 @@ function LeftSideBarComponentFunction({isTeacherLeftSideBar}){
                 <div className={"logo_main_div"}>
                     <img src={siteLogo}/>
                     <br/>
-                    Mr. Tutor
+                    121 Tuition
                 </div>
             </div>
            <div className={"left_side_content_menu_section"}>

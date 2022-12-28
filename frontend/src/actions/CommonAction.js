@@ -525,6 +525,13 @@ export const actionToEndCurrentCurrentCallLocally = (groupId) => async (dispatch
     }
 }
 
+export const actionToGetPrevCallOnGroupClass = (classData) => async (dispatch) => {
+    const {data} = await api.post(`common/actionToGetPrevCallOnGroupClassApiCall`,{profileId:classData?.id});
+    if(data?.response?.classGroupData){
+        dispatch(actionToSetCurrentCallDataGroupData(data?.response?.classGroupData));
+        dispatch({type: CHAT_MODULE_CURRENT_CALL_ALL_MEMBERS, payload: [...data?.response?.members]});
+    }
+}
 export const actionToRateCurrentClass = (rating,classData) => async (dispatch,getState) => {
     let userInfo = getState().userSignin.userInfo;
     const aliasArray = ['?','?','?','?'];

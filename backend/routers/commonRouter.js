@@ -29,7 +29,7 @@ import {
     actionToGetTodayProfileDataListApiCall,
     actionToGetLatestDemoClassesDetailsApiCall,
     actionToGetAllStudentClassAttendWithAssignmentApiCall,
-    actionToGetAllRecordedClassesDetailsApiCall
+    actionToGetAllRecordedClassesDetailsApiCall, actionToGetPrevCallOnGroupClassApiCall
 } from "../models/commonModel.js";
 const commonRouter = express.Router();
 
@@ -89,6 +89,19 @@ commonRouter.post(
     '/actionToSearchTeacherAccordingToTheConditionApiCall',
     expressAsyncHandler(async (req, res) => {
         actionToSearchTeacherAccordingToTheConditionApiCall(req.body).then((data) => {
+            res.status(200).send({
+                response: data,
+            });
+        })
+            .catch(error => {
+                res.status(500).send(error);
+            })
+    })
+);
+commonRouter.post(
+    '/actionToGetPrevCallOnGroupClassApiCall',
+    expressAsyncHandler(async (req, res) => {
+        actionToGetPrevCallOnGroupClassApiCall(req.body).then((data) => {
             res.status(200).send({
                 response: data,
             });

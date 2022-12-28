@@ -17,6 +17,7 @@ import {
 } from "./commonQueries.js";
 import PaytmChecksum from 'paytmchecksum';
 import request from 'request';
+import {allChannelsInGroupCallData, membersInChannelWithDetails} from "../server.js";
 
 export const insertCommonApiCall = (body) => {
     const {column,alias,tableName,values} = body;
@@ -78,6 +79,39 @@ export const actionToSearchTeacherAccordingToTheConditionApiCall = (body) => {
             }
             resolve(results);
         })
+    })
+}
+export const actionToGetPrevCallOnGroupClassApiCall = (body) => {
+    let {profileId} = body;
+    return new Promise(function(resolve, reject) {
+        let found = false;
+        let foundData = null;
+        let foundMemberData = null;
+
+        if(allChannelsInGroupCallData && Object.keys(allChannelsInGroupCallData).length){
+            Object.keys(allChannelsInGroupCallData).map((key)=>{
+                if(allChannelsInGroupCallData[key]?.profile_subject_with_batch) {
+                    allChannelsInGroupCallData[key]?.profile_subject_with_batch?.map((studentProfile)=>{
+                        if (studentProfile?.student_id === profileId) {
+                            found = true;
+                            foundData = allChannelsInGroupCallData[key];
+                        }
+                    })
+                }
+            })
+            if(foundData !== null) {
+                if(membersInChannelWithDetails[foundData.id]){
+                    foundMemberData = membersInChannelWithDetails[foundData.id];
+                }
+            }
+            ///// USER ALREADY IN LIST /////
+        }
+
+        let result = {
+            classGroupData:foundData,
+            members: foundMemberData
+        }
+        resolve(result);
     })
 }
 export const actionToAlreadyCreatedClassAccordingToTheConditionApiCall = (body) => {

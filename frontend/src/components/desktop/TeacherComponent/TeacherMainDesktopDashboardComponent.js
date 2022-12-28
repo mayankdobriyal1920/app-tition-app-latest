@@ -150,6 +150,7 @@ function TeacherMainDesktopDashboardComponentFunction(){
                                         let finalClassGroupData = classGroupData;
                                         finalClassGroupData.started_at = new Date().toISOString();
                                         let allMembersInCall = [memberData];
+                                        finalClassGroupData.allMembers = allMembersInCall;
                                         classGroupData?.profile_subject_with_batch?.map((studentProfile) => {
                                             allMembersInCall.push({
                                                 id: studentProfile.student_id,

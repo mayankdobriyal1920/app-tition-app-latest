@@ -5,7 +5,7 @@ import {
 } from "../../actions/CommonAction";
 import {useEffect, useRef, useState} from "react";
 import OTPInput from "react-otp-input";
-let userOtp = Math.floor(100000 + Math.random() * 900000);
+let userOtp = 123456;
 let userDataForLogin = null;
 const DesktopLoginComponent=() => {
     const {isOpen} = useSelector((state) => state.openCloseLoginPopup);
@@ -41,7 +41,7 @@ const DesktopLoginComponent=() => {
                     } else {
                         userDataForLogin = data;
                         setHeaderTitle('Verify Account');
-                        userOtp = Math.floor(100000 + Math.random() * 900000);
+                        userOtp = 123456;
                         console.log('userOtp',userOtp)
                         setStep(2);
                         setVerifyDataLoader(false);
