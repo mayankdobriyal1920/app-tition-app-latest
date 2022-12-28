@@ -17,7 +17,7 @@ import moment from "moment";
 import {cloneDeep} from "lodash";
 import StarRatingOnEndCallComponent from "./StarRatingOnEndCallComponent";
 import {actionToGetPrevCallOnGroupClass, actionToUpdateAttendanceClassStatus} from "../../../actions/CommonAction";
-let allowOnce = false;
+let allowOnce = true;
 const iceServers= [
     {
         urls: "stun:openrelay.metered.ca:80",

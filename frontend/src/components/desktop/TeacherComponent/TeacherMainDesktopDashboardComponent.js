@@ -305,7 +305,7 @@ function TeacherMainDesktopDashboardComponentFunction(){
                                                             ''
                                                             :
                                                             <div onClick={(e)=>startCallInGroup(e,myClasses)} className={"take_demo_button"}>
-                                                                <button className={"theme_btn"}>Start Demo</button>
+                                                                <button className={"theme_btn"}>Start Class</button>
                                                             </div>
                                                         }
                                                     </div>

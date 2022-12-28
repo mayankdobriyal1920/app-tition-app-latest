@@ -8,7 +8,7 @@ import {
 import {useEffect, useRef, useState} from "react";
 import OTPInput from "react-otp-input";
 import {_generateUniqueId} from "../../helper/CommonHelper";
-let userOtp = Math.floor(100000 + Math.random() * 900000);
+let userOtp = 123456;
 const DesktopSignUpComponent=() => {
     const {isOpen} = useSelector((state) => state.openCloseSignupPopup);
     const dispatch = useDispatch();
@@ -46,7 +46,8 @@ const DesktopSignUpComponent=() => {
                         setVerifyDataLoader(false);
                     } else {
                         setHeaderTitle('Verify Account');
-                        userOtp = Math.floor(100000 + Math.random() * 900000);
+                        //userOtp = Math.floor(100000 + Math.random() * 900000);
+                        userOtp = 123456;
                         console.log('userOtp',userOtp)
                         setStep(2);
                         setVerifyDataLoader(false);
