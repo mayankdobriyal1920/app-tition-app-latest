@@ -17,7 +17,7 @@ import {
 } from "./commonQueries.js";
 import PaytmChecksum from 'paytmchecksum';
 import request from 'request';
-import {allChannelsInGroupCallData, membersInChannelWithDetails} from "../server.js";
+import {allChanelWhiteBoardEditingData, allChannelsInGroupCallData, membersInChannelWithDetails} from "../server.js";
 
 export const insertCommonApiCall = (body) => {
     const {column,alias,tableName,values} = body;
@@ -67,6 +67,15 @@ export const actionToGetAllSubjectDataListApiCall = () => {
             }
             resolve(results);
         })
+    })
+}
+export const actionToGetWhiteBoardPrevDataForGroupIdApiCall = (body) => {
+    let {groupDataId} = body;
+    return new Promise(function(resolve) {
+        let results = [];
+        if(allChanelWhiteBoardEditingData[groupDataId])
+            results = allChanelWhiteBoardEditingData[groupDataId];
+        resolve(results);
     })
 }
 export const actionToSearchTeacherAccordingToTheConditionApiCall = (body) => {

@@ -10,7 +10,7 @@ export default function TeacherTabDesktopLinkEntryPage() {
         <IonPage className={"main_padding_main_page dashboard_container"}>
             <div className={"row"}>
                 <div className={"col-2"}>
-                    <LeftSideBarComponent/>
+                    <LeftSideBarComponent isTeacherLeftSideBar={true}/>
                 </div>
                 <div className={"col-10"}>
                     <Switch>

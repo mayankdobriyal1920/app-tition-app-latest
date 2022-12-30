@@ -16,7 +16,11 @@ import StudentPayForSubscriptionComponent from "./StudentPayForSubscriptionCompo
 import moment from "moment";
 import {cloneDeep} from "lodash";
 import StarRatingOnEndCallComponent from "./StarRatingOnEndCallComponent";
-import {actionToGetPrevCallOnGroupClass, actionToUpdateAttendanceClassStatus} from "../../../actions/CommonAction";
+import {
+    actionToGetPrevCallOnGroupClass,
+    actionToGetWhiteBoardPrevDataForGroupId,
+    actionToUpdateAttendanceClassStatus
+} from "../../../actions/CommonAction";
 let allowOnce = true;
 const iceServers= [
     {
@@ -93,19 +97,20 @@ export default function StudentTodayClassesComponent(){
                         setMyStream(stream);
                         setInCallStatus('INCALL');
                         dispatch(actionToUpdateAttendanceClassStatus(classData,myClasses,groupData?.id))
+                        setTimeout(function(){
+                            dispatch(actionToGetWhiteBoardPrevDataForGroupId(groupData?.id))
+                        },1000)
                         sendWebsocketRequest(JSON.stringify({
                             clientId: localStorage.getItem('clientId'),
                             groupId: groupData?.id,
                             memberData: memberData,
                             type: "addNewMemberDataInGroup"
                         }));
-
                         myPeer.on('call', call => {
                             console.log('[PEER JS INCOMING CALL]', call);
                             call.answer(stream);
                             addCallSubscriptionEvents(call);
                         })
-
                     })
                 })
         }else {

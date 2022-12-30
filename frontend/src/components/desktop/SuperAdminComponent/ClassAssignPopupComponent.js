@@ -90,17 +90,16 @@ export default function ClassAssignPopupComponent(){
                                                     onChange={(e) => setSelectedTeacherId(e.target.value)}
                                                     aria-label="Floating label select example">
                                                     {(allClassToAssignClass?.loading) ?
-                                                        <option selected="">{'Loading...'}</option>
+                                                        <option selected>{'Loading...'}</option>
                                                         : (allClassToAssignClass?.classData?.length) ?
                                                             <>
-                                                                <option selected="">{'Select class'}</option>
+                                                                <option selected>{'Select class'}</option>
                                                                 {(allClassToAssignClass?.classData?.map((classData, key) => (
-                                                                    <option key={key}
-                                                                            value={classData?.id}>{classData?.id}</option>
+                                                                    <option key={key} value={classData?.id}>{classData?.id}</option>
                                                                 )))}
                                                             </>
                                                             :
-                                                            <option selected="">{'No class found'}</option>
+                                                            <option selected>{'No class found'}</option>
                                                     }
                                             </select>
                                             <label htmlFor="floatingSelect">Class Id</label>
@@ -161,7 +160,7 @@ export default function ClassAssignPopupComponent(){
                                                    onChange={(e) => setClassStartFromDateTime(e.target.value)}
                                                    className="form-control" id="floatingClassTime"
                                                    placeholder="Class date time"/>
-                                            <label htmlFor="floatingClassTime">Password</label>
+                                            <label htmlFor="floatingClassTime">Class date time</label>
                                         </div>
                                         <button type="button" onClick={callFunctionToAssignClassData}
                                                 className="btn btn-primary mt-30">

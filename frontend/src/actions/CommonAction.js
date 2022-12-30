@@ -147,6 +147,12 @@ export const actionToGetUserByMobileNumber = (mobileNumber) => async () => {
     const {data} = await api.post(`common/actionToValidateMobileNumberApiCall`,{mobileNumber});
     return data.response;
 };
+export const actionToGetWhiteBoardPrevDataForGroupId = (groupDataId) => async (dispatch) => {
+    const {data} = await api.post(`common/actionToGetWhiteBoardPrevDataForGroupIdApiCall`,{groupDataId});
+    data?.response?.map((anData)=>{
+        dispatch(actionToSetCaptureAnnotatorJSONData(anData.jsonObject, anData.type));
+    })
+}
 export const actionToUpdateAttendanceClassStatus = (profileData,classData,groupDataId) => async (dispatch) => {
     if(!profileData?.taken_single_demo) {
         let setData = `taken_single_demo = ?`;
@@ -424,6 +430,7 @@ export const actionToSendFabricDataToOtherUser = (jsonObject) => async ()=> {
         clientId: localStorage.getItem('clientId'),
         type: 'annotatorImageJson',
         userId:jsonObject.userId,
+        groupId:jsonObject.groupId,
         objectId:jsonObject.objectId,
         canvasIndex:jsonObject.canvasIndex,
         jsonObject: JSON.stringify(jsonObject)

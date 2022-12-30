@@ -29,7 +29,9 @@ import {
     actionToGetTodayProfileDataListApiCall,
     actionToGetLatestDemoClassesDetailsApiCall,
     actionToGetAllStudentClassAttendWithAssignmentApiCall,
-    actionToGetAllRecordedClassesDetailsApiCall, actionToGetPrevCallOnGroupClassApiCall
+    actionToGetAllRecordedClassesDetailsApiCall,
+    actionToGetPrevCallOnGroupClassApiCall,
+    actionToGetWhiteBoardPrevDataForGroupIdApiCall
 } from "../models/commonModel.js";
 const commonRouter = express.Router();
 
@@ -76,6 +78,18 @@ commonRouter.post(
     '/actionToGetAllSubjectDataListApiCall',
     expressAsyncHandler(async (req, res) => {
         actionToGetAllSubjectDataListApiCall(req.body).then((data) => {
+            res.status(200).send({
+                response: data,
+            });
+        }).catch(error => {
+            res.status(500).send(error);
+        })
+    })
+);
+commonRouter.post(
+    '/actionToGetWhiteBoardPrevDataForGroupIdApiCall',
+    expressAsyncHandler(async (req, res) => {
+        actionToGetWhiteBoardPrevDataForGroupIdApiCall(req.body).then((data) => {
             res.status(200).send({
                 response: data,
             });

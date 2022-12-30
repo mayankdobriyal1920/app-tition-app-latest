@@ -17,6 +17,7 @@ import {updateCommonApiCall} from "./models/commonModel.js";
 import upload from "./models/upload.js";
 export let allChannelsInGroupCall = [];
 export let allChannelsInGroupCallData = {};
+export let allChanelWhiteBoardEditingData = {};
 export let membersInChannelWithDetails = {};
 let currentUserIdInGroupCall = {};
 
@@ -50,13 +51,19 @@ function setupWebSocket() {
                     membersInChannelWithDetails[dataToSend.groupId] = dataToSend?.members;
                     currentUserIdInGroupCall[userID] = dataToSend.memberData.id;
                     break;
+                case 'annotatorImageJson':
+                    if(!allChanelWhiteBoardEditingData[dataToSend.groupId]){
+                        allChanelWhiteBoardEditingData[dataToSend.groupId] = [dataToSend];
+                    }else{
+                        allChanelWhiteBoardEditingData[dataToSend.groupId].push(dataToSend);
+                    }
+                    break;
                 case 'addNewMemberDataInGroup':
                     if(membersInChannelWithDetails[dataToSend.groupId] !== undefined && membersInChannelWithDetails[dataToSend.groupId].length) {
-
                         ///// USER ALREADY IN LIST /////
                         let found = false;
                         membersInChannelWithDetails[dataToSend.groupId]?.map((user)=>{
-                            if(user.id === dataToSend.memberData){
+                            if(user.id === dataToSend.memberData.id){
                                 found = true;
                             }
                         })
@@ -97,6 +104,8 @@ function setupWebSocket() {
                                     delete membersInChannelWithDetails[dataToSend.groupId];
                                 if (allChannelsInGroupCallData[dataToSend.groupId] !== undefined)
                                     delete allChannelsInGroupCallData[dataToSend.groupId];
+                                if (allChannelsInGroupCallData[dataToSend.groupId] !== undefined)
+                                    delete allChanelWhiteBoardEditingData[dataToSend.groupId];
 
                                 let setData = `class_end_time = ?`;
                                 let whereCondition = `id = '${dataToSend.groupId}'`;

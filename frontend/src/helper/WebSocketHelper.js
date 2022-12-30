@@ -143,7 +143,9 @@ export function handleWebSocketEvent(dispatch,state,data){
             dispatch(actionToSetMemberInGroupCall(data.groupId,data.groupMembersInCurrentCall,data.memberData));
             break;
         case 'annotatorImageJson': {
-             dispatch(actionToSetCaptureAnnotatorJSONData(data.jsonObject, data.type));
+            if(chatModuleCurrentCallGroupData?.id === data?.groupId) {
+                dispatch(actionToSetCaptureAnnotatorJSONData(data.jsonObject, data.type));
+            }
             break;
         }
         case 'actionToEndCurrentCurrentCall':

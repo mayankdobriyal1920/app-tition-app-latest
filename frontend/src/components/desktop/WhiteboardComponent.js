@@ -21,7 +21,7 @@ let renderOnce = false;
 let undo,redo,undoArray=[];
 const customAnnotationId = _generateUniqueId();
 
-export default function WhiteboardComponent(){
+export default function WhiteboardComponent({groupId}){
     const captureAnnotatorJSONData = useSelector((state) => state.captureAnnotatorJSONData);
     const userInfo = useSelector((state) => state.userSignin.userInfo);
     const [activeSelectedTool,setActiveSelectedTool] = useState('draw');
@@ -170,7 +170,7 @@ export default function WhiteboardComponent(){
             let canvas_object = {height:window.fabricCanvas.height/zoom,width:window.fabricCanvas.width/zoom};
             let jsonObject = JSON.stringify(canvas_object).toString();
             let currentIndex=window.fabricCanvas.getObjects().indexOf(userPointer);
-            dispatch(actionToSendFabricDataToOtherUser({userId:(userInfo != null ? userInfo.id : 0),canvasJson:jsonObject,custom_editor_id:customAnnotationId,
+            dispatch(actionToSendFabricDataToOtherUser({groupId:groupId,userId:(userInfo != null ? userInfo.id : 0),canvasJson:jsonObject,custom_editor_id:customAnnotationId,
                 type:type,userPointer:userPointer,objectId:userPointer?.id,currentIndex:currentIndex}));
         }
     }
@@ -258,7 +258,6 @@ export default function WhiteboardComponent(){
                     })
                     break;
                 case 'remove':
-                    console.log('captureAnnotatorJSONData',captureAnnotatorJSONData)
                     fabricCanvas.forEachObject(function(obj){
                         console.log('obj',obj);
                         if(userPointer && obj.id === userPointer.id) {

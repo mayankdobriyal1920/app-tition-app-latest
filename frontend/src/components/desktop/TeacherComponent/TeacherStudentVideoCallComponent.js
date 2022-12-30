@@ -139,7 +139,7 @@ export default function TeacherStudentVideoCallComponent({inCallStatus,setInCall
                 </div>
                 <div className={"col-7 center_white_board_video_with_details"}>
                     {(inCallStatus === 'INCALL') ?
-                        <WhiteboardComponent/>
+                        <WhiteboardComponent groupId={chatModuleCurrentCallGroupData.id}/>
                         : ''
                     }
                     {(isTeacher) ?
