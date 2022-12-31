@@ -2,8 +2,8 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 
-import React, {useEffect} from 'react';
-import {IonApp, IonRouterOutlet, setupIonicReact} from '@ionic/react';
+import React from 'react';
+import {IonApp, setupIonicReact} from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import { Redirect, Route } from 'react-router-dom';
 
@@ -27,6 +27,7 @@ import './theme/css/animate.css';
 import './theme/css/style.css';
 import './theme/css/spacing.css';
 import './theme/css/_common.css';
+import './theme/css/app_style.css';
 /* Theme variables */
 import './theme/variables.css';
 import {useDispatch} from "react-redux";
@@ -35,9 +36,9 @@ import $ from "jquery";
 import {actionToSetWindowSizeCount} from "./actions/CommonAction";
 import {isStudentLogin, isSuperAdminLogin, isTeacherMasterLogin} from "./middlewear/auth";
 import {AppEnterMainPage} from "./pages/AppEnterMainPage";
+import {useEffectOnce} from "./helper/UseEffectOnce";
 
 setupIonicReact();
-
 
 const PublicRoutes = () => {
   return (
@@ -52,7 +53,7 @@ const PublicRoutes = () => {
 
 const App = () => {
    const dispatch = useDispatch();
-  useEffect(() => {
+  useEffectOnce(() => {
     dispatch(actionToSetWindowSizeCount($(window).width()));
     window.addEventListener('resize', function() {
       dispatch(actionToSetWindowSizeCount($(window).width()));

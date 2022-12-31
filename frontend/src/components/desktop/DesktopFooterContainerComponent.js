@@ -1,5 +1,5 @@
 import React from '@ionic/react';
-import headerLogo from "../../theme/images/header_logo_one.svg";
+import headerLogo from "../../theme/images/header_logo_one.png";
 
 const DesktopHeaderContainerComponent=() => {
     return (

@@ -1,0 +1,180 @@
+.main_header_section button.login_button {
+    font-size: 1rem;
+    padding: 12px 19px;
+    background: #ff723a;
+    color: #fff;
+    font-weight: 600;
+    float: right;
+    height: 100%;
+}
+
+.main_header_section img {
+    float: left;
+    width: 140px;
+}
+
+.main_header_section {
+    border-bottom: 1px solid #ccc;
+}
+
+.main_header_section .image_col {
+    padding: 1px 20px;
+}
+.main_body_content_login_mobile .slider__img__box {
+    margin: auto;
+    padding: 28px;
+}
+.slider__img__box .slide-shape.img-eight {
+    animation: rotation infinite 55s linear;
+    position: relative;
+    left: 0px;
+    bottom: 0px;
+}
+.title_main_section_container {
+    display: flex;
+}
+.main_body_content_login_mobile .slider__img__box img.img-one {
+    position: absolute;
+    left: 42px;
+    top: -22px;
+}
+@media (min-width: 531px) and (max-width: 900px){
+    .slider__img__box .slide-shape.img-eight {
+        width: 441px;
+    }
+}
+@media (min-width: 330px) and (max-width: 340px){
+    .main_body_content_login_mobile .slider__img__box img.img-one {
+        width: 257px;
+    }
+}
+@media (min-width: 341px) and (max-width: 350px){
+    .main_body_content_login_mobile .slider__img__box img.img-one {
+        width: 260px;
+    }
+}
+@media (min-width: 351px) and (max-width: 360px){
+    .main_body_content_login_mobile .slider__img__box img.img-one {
+        width: 269px;
+    }
+}
+@media (min-width: 361px) and (max-width: 370px){
+    .main_body_content_login_mobile .slider__img__box img.img-one {
+        width: 270px;
+    }
+}
+@media (min-width: 370px) and (max-width: 380px){
+    .main_body_content_login_mobile .slider__img__box img.img-one {
+        width: 280px;
+    }
+}
+@media (min-width: 381px) and (max-width: 390px){
+    .main_body_content_login_mobile .slider__img__box img.img-one {
+        width: 290px;
+    }
+}
+@media (min-width: 391px) and (max-width: 410px){
+    .main_body_content_login_mobile .slider__img__box img.img-one {
+        width: 300px;
+    }
+}
+@media (min-width: 410px) and (max-width: 420px){
+    .main_body_content_login_mobile .slider__img__box img.img-one {
+        width: 313px;
+        left: 47px!important;
+    }
+}
+@media (min-width: 421px) and (max-width: 430px){
+    .main_body_content_login_mobile .slider__img__box img.img-one {
+        width: 320px;
+    }
+}
+@media (min-width: 431px) and (max-width: 440px){
+    .main_body_content_login_mobile .slider__img__box img.img-one {
+        width: 330px;
+        left: 50px!important;
+    }
+}
+@media (min-width: 441px) and (max-width: 450px){
+    .main_body_content_login_mobile .slider__img__box img.img-one {
+        width: 340px;
+        left: 50px!important;
+    }
+}
+@media (min-width: 451px) and (max-width: 460px){
+    .main_body_content_login_mobile .slider__img__box img.img-one {
+        width: 350px;
+        left: 50px!important;
+    }
+}
+@media (min-width: 461px) and (max-width: 470px){
+    .main_body_content_login_mobile .slider__img__box img.img-one {
+        width: 350px;
+        left: 56px!important;
+    }
+}
+@media (min-width: 470px) and (max-width: 900px){
+    .main_body_content_login_mobile .slider__img__box img.img-one {
+        width: 370px;
+        left: 56px!important;
+    }
+}
+
+.inner_slide_text_section_main {
+    position: absolute;
+    top: 100px;
+    bottom: 0px;
+    background: #ffffffa6;
+    padding: 18px;
+    width: 87%;
+    box-shadow: 1px -20px 20px 0px #c1c1c126;
+}
+
+.inner_slide_text_section_main .heading_text {
+    font-size: 20px;
+    font-weight: 600;
+    color: #424242;
+}
+
+.inner_slide_text_section_main .heading_text_p {
+    color: #000;
+    font-size: 14px;
+}
+
+.inner_slide_text_section_main button.theme_btn.search_btn {
+    padding: 15px;
+    font-size: 15px;
+    margin-top: 30px;
+}
+
+.why-chose-section-wrapper-mobile h5 {
+    font-size: 16px;
+}
+
+.why-chose-section-wrapper-mobile h2 {
+    font-size: 20px;
+}
+
+.why-chose-section-wrapper-mobile p {
+    font-size: 14px;
+}
+
+.why-chose-section-wrapper-mobile li {
+    font-size: 13px;
+}
+.copy-right-area-mobile {
+    border-top: 1px solid #ccc;
+    padding-top: 13px;
+}
+
+.copy-right-area-mobile h5 {
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.main_signup_component_body_mobile .popup_heder_main_heading {
+    font-size: 21px;
+}
+.main_signup_component_body_mobile span.sapater_otp {
+    margin: 0px 15px!important;
+}

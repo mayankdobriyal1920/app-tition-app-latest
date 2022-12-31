@@ -1,35 +1,17 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {isStudentLogin, isSuperAdminLogin, isTeacherMasterLogin} from "../middlewear/auth";
 import {IonReactRouter} from "@ionic/react-router";
 import {Redirect, Route} from "react-router-dom";
-
-import {useDispatch, useSelector} from "react-redux";
-import {w3cwebsocket as W3CWebSocket} from "websocket";
-
 import {IonRouterOutlet} from "@ionic/react";
 
 import StudentTabCommonLinkEntryPage from "./StudentPage/StudentTabCommonLinkPage";
-import {getWebsocketConnectedMessage} from "../helper/WebSocketHelper";
-import {
-    actionToGetAllSchoolBoardDataList,
-    actionToGetAllSubjectDataList,
-    actionToGetAllStudentDataList,
-    actionToGetUserFreshData, actionToGetUserAllClasses
-} from "../actions/CommonAction";
 import TeacherTabCommonLinkEntryPage from "./TeacherPages/TeacherTabCommonLinkEntryPage";
 import SuperAdminTabCommonLinkEntryPage from "./SuperAdminPages/SuperAdminTabCommonLinkEntryPage";
-import {useEffectOnce} from "../helper/UseEffectOnce";
 
 
 export const AppEnterMainPage = ()=>{
-    const {userInfo} = useSelector((state) => state.userSignin);
-    const dispatch = useDispatch();
 
     const StudentPrivateRoutes = () => {
-        const dispatch = useDispatch();
-        useEffectOnce(()=>{
-            dispatch(actionToGetUserAllClasses());
-        },[])
         return (
             <IonReactRouter>
                 <IonRouterOutlet>
@@ -62,14 +44,6 @@ export const AppEnterMainPage = ()=>{
             </IonReactRouter>
         );
     }
-
-
-    useEffectOnce(() => {
-        getWebsocketConnectedMessage(W3CWebSocket,dispatch,userInfo);
-        dispatch(actionToGetAllSubjectDataList());
-        dispatch(actionToGetAllSchoolBoardDataList());
-        dispatch(actionToGetUserFreshData(userInfo?.id));
-    },[]);
 
     return(
         (isStudentLogin()) ? <StudentPrivateRoutes/> : (isTeacherMasterLogin())  ? <TeacherPrivateRoutes/> :(isSuperAdminLogin()) ? <SuperAdminPrivateRoutes/> : ''

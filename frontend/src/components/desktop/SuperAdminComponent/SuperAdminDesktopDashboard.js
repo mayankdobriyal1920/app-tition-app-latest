@@ -8,9 +8,11 @@ import {
     actionToGetLatestTeachersDataList, actionToGetTodayProfileDataList
 } from "../../../actions/CommonAction";
 import moment from "moment/moment";
-// import {_getFirstLatterOfName} from "../../../helper/CommonHelper";
+import {useHistory} from "react-router";
+
+
 export default function SuperAdminDesktopDashboard() {
-    const dispatch = useDispatch();
+
     const teacherListArray = useSelector((state) => state?.latestTeacherDataList);
     const studentListArray = useSelector((state) => state?.latestStudentDataList);
     const subscriptionListArray = useSelector((state) => state?.latestSubscriptionDataList);
@@ -19,14 +21,12 @@ export default function SuperAdminDesktopDashboard() {
     const allTeacherListArray = useSelector((state) => state.allTeacherDataList);
     const allSubscriptionListArray = useSelector((state) => state.allStudentSubscriptionDataList);
     const todayStudentProfileListArray = useSelector((state) => state.todayStudentProfileDataList);
-    useEffectOnce(() =>{
-        dispatch(actionToGetLatestTeachersDataList());
-        dispatch(actionToGetLatestStudentProfileDataList());
-        dispatch(actionToGetLatestSubscriptionsDataList());
-        dispatch(actionToGetLatestDemoClassesDetails());
-        dispatch(actionToGetAllStudentSubscriptionDataList());
-        dispatch(actionToGetTodayProfileDataList());
-    },[]);
+    const history = useHistory();
+
+    const openKinkTab = (link)=>{
+        history.replace(link)
+    }
+
     return (
         <div className="content">
             {/*-- Sale & Revenue Start --*/}
@@ -75,7 +75,7 @@ export default function SuperAdminDesktopDashboard() {
                 <div className="bg-light text-center rounded p-4">
                     <div className="d-flex align-items-center justify-content-between mb-4">
                         <h6 className="mb-0">Recent Profiles</h6>
-                        <a href="/dashboard/new-student-profile-datatable">Show All</a>
+                        <a onClick={()=>openKinkTab("/dashboard/student-datatable")}>Show All</a>
                     </div>
                     <div className="table-responsive">
                         <table className="table text-start align-middle table-bordered table-hover mb-0">
@@ -105,7 +105,7 @@ export default function SuperAdminDesktopDashboard() {
                 <div className="bg-light text-center rounded p-4">
                     <div className="d-flex align-items-center justify-content-between mb-4">
                         <h6 className="mb-0">Recent Subscriptions</h6>
-                        <a href="/dashboard/all-subscribed-classes">Show All</a>
+                        <a onClick={()=>openKinkTab("/dashboard/all-subscribed-classes")}>Show All</a>
                     </div>
                     <div className="table-responsive">
                         <table className="table text-start align-middle table-bordered table-hover mb-0">
@@ -137,7 +137,7 @@ export default function SuperAdminDesktopDashboard() {
                 <div className="bg-light text-center rounded p-4">
                     <div className="d-flex align-items-center justify-content-between mb-4">
                         <h6 className="mb-0">Latest Demo Classes</h6>
-                        <a href="/dashboard/all-demo-classes">Show All</a>
+                        <a onClick={()=>openKinkTab("/dashboard/all-demo-classes")}>Show All</a>
                     </div>
                     <div className="table-responsive">
                         <table className="table text-start align-middle table-bordered table-hover mb-0">
@@ -174,7 +174,7 @@ export default function SuperAdminDesktopDashboard() {
                         <div className="h-100 bg-light rounded p-4">
                             <div className="d-flex align-items-center justify-content-between mb-2">
                                 <h6 className="mb-0">Teachers</h6>
-                                <a href="/dashboard/teacher-datatable">Show All</a>
+                                <a onClick={()=>openKinkTab("/dashboard/teacher-datatable")}>Show All</a>
                             </div>
                             {(teacherListArray?.teacherData?.map((teacherData,index)=>(
                                 <div className="d-flex align-items-center border-bottom py-3">
@@ -194,7 +194,7 @@ export default function SuperAdminDesktopDashboard() {
                         <div className="h-100 bg-light rounded p-4">
                             <div className="d-flex align-items-center justify-content-between mb-2">
                                 <h6 className="mb-0">Students</h6>
-                                <a href="/dashboard/student-datatable">Show All</a>
+                                <a onClick={()=>openKinkTab("/dashboard/all-demo-classes")}>Show All</a>
                             </div>
                             {(studentListArray?.studentData?.map((studentData,index)=>(
                                 <div className="d-flex align-items-center border-bottom py-3">

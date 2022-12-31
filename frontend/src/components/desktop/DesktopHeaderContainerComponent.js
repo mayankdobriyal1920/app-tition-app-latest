@@ -1,5 +1,5 @@
 import React from '@ionic/react';
-import headerLogoOne from '../../theme/images/header_logo_one.svg';
+import headerLogoOne from '../../theme/images/header_logo_one.png';
 import userLogoSvg from '../../theme/images/user.svg';
 import {useDispatch} from "react-redux";
 import {actionToOpenCloseLoginPopup, actionToOpenCloseSignupPopup} from "../../actions/CommonAction";

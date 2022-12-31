@@ -1,11 +1,9 @@
 import React from "react";
 import {Route, useRouteMatch, Switch, Redirect} from "react-router-dom";
-import {useDispatch} from "react-redux";
 import SuperAdminLeftSideBarComponent from "./SuperAdminLeftSideBarComponent";
 import SuperAdminDesktopDashboard from "./SuperAdminDesktopDashboard";
 import AllTeacherDataTableComponent from "./AllTeacherDataTableComponent";
 import AllStudentDataTableComponent from "./AllStudentDataTableComponent";
-import NewStudentProfileComponent from "./NewStudentProfileComponent";
 import AllSubscribedClassesComponent from "./AllSubscribedClassesComponent";
 import AddNewTeacherComponent from "./AddNewTeacherComponent";
 import {IonContent, IonPage} from "@ionic/react";
@@ -15,12 +13,10 @@ import AllRecordedClassDataTableComponent from "./AllRecordedClassDataTableCompo
 import ClassAssignPopupComponent from "./ClassAssignPopupComponent";
 import EditTeacherPopupComponent from "./EditTeacherPopupComponent";
 
+
 export default function SuperAdminTabDesktopLinkEntryPage() {
     const { path } = useRouteMatch();
-    const dispatch = useDispatch();
-    // useEffectOnce(()=>{
-    //     dispatch(actionToGetUserAllClasses());
-    // },[])
+
     return (
         <IonPage>
             <IonContent fullscreen>
