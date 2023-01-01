@@ -91,7 +91,7 @@ const MainLoginWithDetailPageMobileComponent=() => {
                                    </div>
                                </section>
                            </div>
-                           <div className="copy-right-area-mobile">
+                           <div className="copy-right-area-mobile mb-20">
                                <div className="copyright text-center">
                                    <h5>Copyright@ 2022 <a>Mr. Tutor</a>. All Rights Reserved</h5>
                                </div>

@@ -37,6 +37,7 @@
     "jquery": "^3.6.1",
     "moment": "^2.29.4",
     "multiselect-react-dropdown": "^2.0.25",
+    "node-sass": "^7.0.3",
     "paytmchecksum": "^1.5.0",
     "peerjs": "^1.4.7",
     "react": "^18.2.0",
@@ -92,7 +93,8 @@
   },
   "devDependencies": {
     "@capacitor/cli": "4.5.0",
-    "@fortawesome/fontawesome-free": "^6.2.1"
+    "@fortawesome/fontawesome-free": "^6.2.1",
+    "sass": "^1.57.1"
   },
   "description": "An Ionic project"
 }

@@ -11,10 +11,10 @@ import {signout
 } from "../../../actions/CommonAction";
 import StarRatingOnEndCallComponent from "../../desktop/StudentComponent/StarRatingOnEndCallComponent";
 import {Route,useRouteMatch,Switch} from "react-router-dom";
-import StudentDashboardMobile from "./StudentDashboardMobile";
+import TeacherDashboardMobile from "./TeacherDashboardMobile";
 
 
-export default function StudentTabMobileLinkEntryPage() {
+export default function TeacherTabMobileLinkEntryPage() {
 
     const openCloseTeacherRatingPopup = useSelector((state) => state.openCloseTeacherRatingPopup);
     const [inCallStatus] = React.useState('PREJOIN');
@@ -123,7 +123,7 @@ export default function StudentTabMobileLinkEntryPage() {
             )}
             <Switch>
                 <Route exact path={`${path}/home`}>
-                    <StudentDashboardMobile/>
+                    <TeacherDashboardMobile/>
                 </Route>
             </Switch>
             {(inCallStatus === 'PREJOIN') && (

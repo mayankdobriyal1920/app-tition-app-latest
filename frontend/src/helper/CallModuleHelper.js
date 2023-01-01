@@ -39,18 +39,22 @@ export const addVideoStream=(id,stream,isMe)=> {
         if(id?.indexOf('teacher') >= 0) {
             let teacher_class_assign_id = id?.split("_")[2];
             let teacherVideo = document.getElementById(teacher_class_assign_id);
-            teacherVideo.srcObject = stream;
-            teacherVideo.setAttribute('autoPlay','true');
-            teacherVideo.setAttribute('playsInline','true');
-            if(isMe)
-                teacherVideo.muted = true;
+            if(teacherVideo) {
+                teacherVideo.srcObject = stream;
+                teacherVideo.setAttribute('autoPlay', 'true');
+                teacherVideo.setAttribute('playsInline', 'true');
+                if(isMe)
+                    teacherVideo.muted = true;
+            }
         }else{
             let student_profile_id = id?.split("_")[2];
             let studentVideo = document.getElementById(student_profile_id);
-            studentVideo.srcObject = stream;
-            studentVideo.setAttribute('autoPlay','true');
-            studentVideo.setAttribute('playsInline','true');
-            studentVideo.muted = true;
+            if(studentVideo) {
+                studentVideo.srcObject = stream;
+                studentVideo.setAttribute('autoPlay', 'true');
+                studentVideo.setAttribute('playsInline', 'true');
+                studentVideo.muted = true;
+            }
         }
     }
 }

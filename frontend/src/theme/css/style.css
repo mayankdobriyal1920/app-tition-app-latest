@@ -390,11 +390,11 @@ span.sapater_otp {
     line-height: 42px;
     font-weight: 600;
     color: #1a2435;
+    width: 100%;
 }
 
 .left_side_bar_main_section_container .left_side_bar_logo_section .logo_main_div img {
-    width: 199px;
-    margin-left: 109px;
+    width: 96px;
 }
 
 .left_side_content_menu_section {
@@ -416,7 +416,9 @@ span.sapater_otp {
     width: 100%;
     display: flex;
 }
-
+.header_main_page .clock_section img {
+    width: 48px;
+}
 .menu_loop_section .menu_loop_section_inner_section .left_menu_item {
     margin: auto;
     text-align: center;
@@ -427,7 +429,81 @@ span.sapater_otp {
     line-height: 38px;
     color: #979797;
 }
+.header_main_page .logo_section {
+    text-align: center;
+}
 
+.header_main_page .logo_section img {
+    width: 48px;
+}
+
+.header_main_page {
+    padding: 10px 7px;
+    border-bottom: 1px solid #ddd;
+}
+.main_container_app_section .name_tite_section {
+    text-align: center;
+    padding: 31px;
+    font-size: 21px;
+    font-weight: 700;
+    font-family: monospace;
+}
+
+.main_container_app_section .name_tite_section div {
+    font-size: 14px;
+    font-weight: 100;
+    margin-top: 9px;
+    font-family: unset;
+}
+
+.main_container_app_section .name_tite_section {
+    text-align: center;
+    padding: 31px;
+    font-size: 21px;
+    font-weight: 700;
+    font-family: monospace;
+}
+
+.main_container_app_section .name_tite_section div {
+    font-size: 14px;
+    font-weight: 100;
+    margin-top: 9px;
+    font-family: unset;
+}
+
+.main_subject_section_today_classes {
+    padding: 20px;
+}
+
+.main_subject_section_today_classes h3 {
+    font-size: 16px;
+    color: #000;
+    margin-bottom: 10px;
+}
+
+.header_main_page .logout_section {
+    text-align: right;
+    display: flex;
+}
+
+.header_main_page .logout_section img {
+    width: 37px;
+    margin-left: auto;
+}
+
+.header_main_page .clock_section img {
+    width: 48px;
+}
+
+.header_main_page .logo_section {
+    display: flex;
+}
+
+.header_main_page .logo_section h2 {
+    font-size: 18px;
+    margin: auto;
+    color: #3c3c3c;
+}
 .menu_loop_section_inner_section.active svg {
     fill: #ff723a!important;
 }

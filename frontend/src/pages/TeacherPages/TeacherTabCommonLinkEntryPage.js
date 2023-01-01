@@ -1,6 +1,5 @@
 import React from "react";
 import {useDispatch, useSelector} from "react-redux";
-import StudentTabMobileLinkEntryPage from "../../components/mobile/StudentComponent/StudentTabMobileLinkEntryPage";
 import TeacherTabDesktopLinkEntryPage from "../../components/desktop/TeacherComponent/TeacherTabDesktopLinkEntryPage";
 import {
     actionToGetAllSchoolBoardDataList,
@@ -11,6 +10,7 @@ import {
 import {useEffectOnce} from "../../helper/UseEffectOnce";
 import {getWebsocketConnectedMessage} from "../../helper/WebSocketHelper";
 import {w3cwebsocket as W3CWebSocket} from "websocket";
+import TeacherTabMobileLinkEntryPage from "../../components/mobile/TeacherComponent/TeacherTabMobileLinkEntryPage";
 
 let loadOnce = true;
 export default function TeacherTabCommonLinkEntryPage() {
@@ -36,7 +36,7 @@ export default function TeacherTabCommonLinkEntryPage() {
             {(windowResizeCount >= 1200) ?
                 <TeacherTabDesktopLinkEntryPage/>
                 :
-                <StudentTabMobileLinkEntryPage/>
+                <TeacherTabMobileLinkEntryPage/>
             }
         </>
     )

@@ -51,7 +51,7 @@ const iceServers= [
     },
 ];
 let currentClassId = null;
-function TeacherMainDesktopDashboardComponentFunction(){
+function TeacherMainDesktopDashboardMobileComponentFunction(){
     const chatModuleNewUserAddedInCurrentCall = useSelector((state) => state.chatModuleNewUserAddedInCurrentCall);
     const {loading,classData} = useSelector((state) => state.teacherAllClassesList);
     const {userInfo} = useSelector((state) => state.userSignin);
@@ -223,152 +223,158 @@ function TeacherMainDesktopDashboardComponentFunction(){
         }
     },[chatModuleNewUserAddedInCurrentCall]);
 
+    // React.useEffect(()=>{
+    //     if(chatModuleNewUserLeaveUserInCallData?.id){
+    //         removeClosePeerConnection(chatModuleNewUserLeaveUserInCallData?.peer_connection_id);
+    //     }
+    // },[chatModuleNewUserLeaveUserInCallData]);
+
     return (
         <div className={"main_body_content_section all_student_subject_main_container"}>
             {(inCallStatus === 'PREJOIN') ?
                 <>
-                <StudentDashHeaderComponent type={"StudentMainDesktopDashboardComponent"}/>
-                <div className={"student_dash_all_courses_main_section mt-60"}>
-                    <div className={"student_demo_classes_main_page"}>
-                        <h2>Today's Classes</h2>
-                        <div className={"mt-15 demo_classes_main_section"}>
-                            {(loading) ?
-                                <FacebookLoader type={"facebookStyle"} item={2}/>
-                                : (teacherAllDemoClassList?.length) ?
-                                    <div className={"demo_classes_main_section_div"}>
-                                        {(teacherAllDemoClassList?.map((myClasses,key)=>(
-                                            <div key={key} className={"demo_classes_section_loop ml-15 mr-15 mb-10 mt-10"}>
-                                                <div className={"row"}>
-                                                    <div className={"col-7 demo_classes_section_subject_icon_name"}>
-                                                        <div className={"icon_sub"} style={{background:_getIconBySubjectKey(myClasses?.subject_name).color}}>
-                                                            {_getIconBySubjectKey(myClasses?.subject_name).icon}
+                    <StudentDashHeaderComponent type={"StudentMainDesktopDashboardComponent"}/>
+                    <div className={"student_dash_all_courses_main_section mt-60"}>
+                        <div className={"student_demo_classes_main_page"}>
+                            <h2>Today's Classes</h2>
+                            <div className={"mt-15 demo_classes_main_section"}>
+                                {(loading) ?
+                                    <FacebookLoader type={"facebookStyle"} item={2}/>
+                                    : (teacherAllDemoClassList?.length) ?
+                                        <div className={"demo_classes_main_section_div"}>
+                                            {(teacherAllDemoClassList?.map((myClasses,key)=>(
+                                                <div key={key} className={"demo_classes_section_loop ml-15 mr-15 mb-10 mt-10"}>
+                                                    <div className={"row"}>
+                                                        <div className={"col-7 demo_classes_section_subject_icon_name"}>
+                                                            <div className={"icon_sub"} style={{background:_getIconBySubjectKey(myClasses?.subject_name).color}}>
+                                                                {_getIconBySubjectKey(myClasses?.subject_name).icon}
+                                                            </div>
+                                                            <div className={"name_section"}>
+                                                                <div className={"name_section1"}>{myClasses?.subject_name}</div>
+                                                                <div className={"name_section2"}>{myClasses?.school_board}</div>
+                                                            </div>
                                                         </div>
-                                                        <div className={"name_section"}>
-                                                            <div className={"name_section1"}>{myClasses?.subject_name}</div>
-                                                            <div className={"name_section2"}>{myClasses?.school_board}</div>
-                                                        </div>
-                                                    </div>
-                                                    <div className={"col-5"}>
-                                                        {(myClasses?.class_end_time
-                                                            &&
-                                                            moment(myClasses?.class_end_time).format('YYYYMMDD') === moment().format('YYYYMMDD')
-                                                            &&
-                                                            moment(myClasses?.class_end_time).format('HH:mm:ss') < moment().format('HH:mm:ss')
-                                                        ) ?
-                                                            <>
+                                                        <div className={"col-5"}>
+                                                            {(myClasses?.class_end_time
+                                                                &&
+                                                                moment(myClasses?.class_end_time).format('YYYYMMDD') === moment().format('YYYYMMDD')
+                                                                &&
+                                                                moment(myClasses?.class_end_time).format('HH:mm:ss') < moment().format('HH:mm:ss')
+                                                            ) ?
+                                                                <>
+                                                                    <div className={"class_time_date_demo mb-3"}>
+                                                                        Start time : {moment(new Date(myClasses?.starting_from_date)).format('hh:mm a')}
+                                                                    </div>
+                                                                    <div className={"class_time_date_demo"}>
+                                                                        Class Taken : {moment(new Date(myClasses?.class_end_time)).format('hh:mm a')}
+                                                                    </div>
+                                                                </>
+                                                                :
                                                                 <div className={"class_time_date_demo mb-3"}>
                                                                     Start time : {moment(new Date(myClasses?.starting_from_date)).format('hh:mm a')}
                                                                 </div>
-                                                                <div className={"class_time_date_demo"}>
-                                                                    Class Taken : {moment(new Date(myClasses?.class_end_time)).format('hh:mm a')}
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                    <div className={"row"}>
+                                                        <div className={"col-8 demo_classes_section_teacher_icon_name"}>
+                                                            <div className={"teacher_detail_section"}>
+                                                                <div className={"teacher_font_icon"}>
+                                                                    <i className={"fa fa-info-circle"}/>
                                                                 </div>
-                                                            </>
-                                                            :
-                                                            <div className={"class_time_date_demo mb-3"}>
-                                                                Start time : {moment(new Date(myClasses?.starting_from_date)).format('hh:mm a')}
+                                                                <div className={"teacher_name_section"}>
+                                                                    {myClasses?.is_demo_class ? 'YES' : 'NO'} (is demo class)
+                                                                </div>
                                                             </div>
-                                                        }
-                                                    </div>
-                                                </div>
-                                                <div className={"row"}>
-                                                    <div className={"col-8 demo_classes_section_teacher_icon_name"}>
-                                                        <div className={"teacher_detail_section"}>
-                                                            <div className={"teacher_font_icon"}>
-                                                                <i className={"fa fa-info-circle"}/>
-                                                            </div>
-                                                            <div className={"teacher_name_section"}>
-                                                                {myClasses?.is_demo_class ? 'YES' : 'NO'} (is demo class)
+                                                            <div className={"teacher_detail_section"}>
+                                                                <div className={"teacher_font_icon"}>
+                                                                    <i className={"fa fa-clapperboard"}/>
+                                                                </div>
+                                                                <div className={"teacher_name_section"}>
+                                                                    {myClasses?.student_class}th (Student class)
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                        <div className={"teacher_detail_section"}>
-                                                            <div className={"teacher_font_icon"}>
-                                                                <i className={"fa fa-clapperboard"}/>
-                                                            </div>
-                                                            <div className={"teacher_name_section"}>
-                                                                {myClasses?.student_class}th (Student class)
-                                                            </div>
+                                                        <div className={"col-4"}>
+                                                            {(myClasses?.class_end_time
+                                                                &&
+                                                                moment(myClasses?.class_end_time).format('YYYYMMDD') === moment().format('YYYYMMDD')
+                                                                &&
+                                                                moment(myClasses?.class_end_time).format('HH:mm:ss') < moment().format('HH:mm:ss')
+                                                            ) ?
+                                                                ''
+                                                                :
+                                                                <div onClick={(e)=>startCallInGroup(e,myClasses)} className={"take_demo_button"}>
+                                                                    <button className={"theme_btn"}>Start Class</button>
+                                                                </div>
+                                                            }
                                                         </div>
                                                     </div>
-                                                    <div className={"col-4"}>
-                                                        {(myClasses?.class_end_time
-                                                            &&
-                                                            moment(myClasses?.class_end_time).format('YYYYMMDD') === moment().format('YYYYMMDD')
-                                                            &&
-                                                            moment(myClasses?.class_end_time).format('HH:mm:ss') < moment().format('HH:mm:ss')
-                                                        ) ?
-                                                            ''
-                                                            :
-                                                            <div onClick={(e)=>startCallInGroup(e,myClasses)} className={"take_demo_button"}>
-                                                                <button className={"theme_btn"}>Start Class</button>
-                                                            </div>
-                                                        }
-                                                    </div>
                                                 </div>
-                                            </div>
-                                        )))}
-                                    </div>
-                                    :
-                                    <div className={"no_demo_classes_div_section"}>
-                                        <img alt={"no_demo_classes"} src={noClassFound}/><br></br>
-                                        Demo class is not assigned you you yet, we will notify you when it will scheduled.
-                                    </div>
-                            }
-                        </div>
-                        <h2 className={"mt-30"}>Your Classes</h2>
-                        <div className={"mt-15 demo_classes_main_section"}>
-                            {(loading) ?
-                                <FacebookLoader type={"facebookStyle"} item={2}/>
-                                : (classData?.length) ?
-                                    <div className={"class_data_main_table_section"}>
-                                        <div className={"row class_list_table header_row mb-15"}>
-                                            <div className={"col-3 header"}>
-                                                Subject name
-                                            </div>
-                                            <div className={"col-3 header"}>
-                                                Batch type
-                                            </div>
-                                            <div className={"col-3 header"}>
-                                                Start time
-                                            </div>
+                                            )))}
                                         </div>
-                                        {(classData?.map((myClasses,key)=>(
-                                            <div key={key} className={"row class_list_table mb-15"}>
-                                                <div className={"col-3 icon_main_col"}>
-                                                    <div className={"icon_setion"} style={{background:_getIconBySubjectKey(myClasses?.subject_name).color}}>
-                                                        {_getIconBySubjectKey(myClasses?.subject_name).icon}
-                                                    </div>
-                                                    <div className={"name_section"}>
-                                                        {myClasses?.subject_name}
-                                                    </div>
+                                        :
+                                        <div className={"no_demo_classes_div_section"}>
+                                            <img alt={"no_demo_classes"} src={noClassFound}/><br></br>
+                                            Demo class is not assigned you you yet, we will notify you when it will scheduled.
+                                        </div>
+                                }
+                            </div>
+                            <h2 className={"mt-30"}>Your Classes</h2>
+                            <div className={"mt-15 demo_classes_main_section"}>
+                                {(loading) ?
+                                    <FacebookLoader type={"facebookStyle"} item={2}/>
+                                    : (classData?.length) ?
+                                        <div className={"class_data_main_table_section"}>
+                                            <div className={"row class_list_table header_row mb-15"}>
+                                                <div className={"col-3 header"}>
+                                                    Subject name
                                                 </div>
-                                                <div className={"col-3 body"}>
-                                                    {myClasses?.batch === 1 ? '1 to 1' : (myClasses?.batch === 2) ? '1 to 3' :(myClasses?.batch === 3) ? '1 to 5' : ''}
+                                                <div className={"col-3 header"}>
+                                                    Batch type
                                                 </div>
-                                                <div className={"col-3 body"}>
-                                                    {(myClasses?.starting_from_date) ?
-                                                        <>
-                                                            {moment(new Date(myClasses?.starting_from_date)).format('ddd MMM D, hh:mm a')}
-                                                        </>
-                                                        : 'Not confirm'
-                                                    }
+                                                <div className={"col-3 header"}>
+                                                    Start time
                                                 </div>
                                             </div>
-                                        )))}
-                                    </div>
-                                    :
-                                    <div className={"no_demo_classes_div_section"}>
-                                        <img alt={"no_demo_classes"} src={noClassFound}/><br></br>
-                                        Demo class is not assigned you you yet, we will notify you when it will scheduled.
-                                    </div>
-                            }
+                                            {(classData?.map((myClasses,key)=>(
+                                                <div key={key} className={"row class_list_table mb-15"}>
+                                                    <div className={"col-3 icon_main_col"}>
+                                                        <div className={"icon_setion"} style={{background:_getIconBySubjectKey(myClasses?.subject_name).color}}>
+                                                            {_getIconBySubjectKey(myClasses?.subject_name).icon}
+                                                        </div>
+                                                        <div className={"name_section"}>
+                                                            {myClasses?.subject_name}
+                                                        </div>
+                                                    </div>
+                                                    <div className={"col-3 body"}>
+                                                        {myClasses?.batch === 1 ? '1 to 1' : (myClasses?.batch === 2) ? '1 to 3' :(myClasses?.batch === 3) ? '1 to 5' : ''}
+                                                    </div>
+                                                    <div className={"col-3 body"}>
+                                                        {(myClasses?.starting_from_date) ?
+                                                            <>
+                                                                {moment(new Date(myClasses?.starting_from_date)).format('ddd MMM D, hh:mm a')}
+                                                            </>
+                                                            : 'Not confirm'
+                                                        }
+                                                    </div>
+                                                </div>
+                                            )))}
+                                        </div>
+                                        :
+                                        <div className={"no_demo_classes_div_section"}>
+                                            <img alt={"no_demo_classes"} src={noClassFound}/><br></br>
+                                            Demo class is not assigned you you yet, we will notify you when it will scheduled.
+                                        </div>
+                                }
+                            </div>
                         </div>
                     </div>
-                </div>
                 </>
                 :
                 <TeacherStudentVideoCallComponent inCallStatus={inCallStatus} setInCallStatus={setInCallStatus} isTeacher={true}/>
-           }
+            }
         </div>
     )
 }
-export const TeacherMainDesktopDashboardComponent = React.memo(TeacherMainDesktopDashboardComponentFunction);
+export const TeacherMainDesktopDashboardMobileComponent = React.memo(TeacherMainDesktopDashboardMobileComponentFunction);

@@ -134,11 +134,14 @@
     font-size: 20px;
     font-weight: 600;
     color: #424242;
+    font-family: system-ui;
+    margin-bottom: 10px;
 }
 
 .inner_slide_text_section_main .heading_text_p {
     color: #000;
     font-size: 14px;
+    font-family: system-ui;
 }
 
 .inner_slide_text_section_main button.theme_btn.search_btn {
@@ -176,5 +179,5 @@
     font-size: 21px;
 }
 .main_signup_component_body_mobile span.sapater_otp {
-    margin: 0px 15px!important;
+    margin: 0px 11px!important;
 }

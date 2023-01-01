@@ -211,10 +211,13 @@ div#loading-bar-spinner {
     display: flex;
     background: #ffffffd1;
 }
-
+.text_right{
+    text-align: right;
+}
 div#loading-bar-spinner .spinner-inner {
     margin: auto;
     text-align: center;
+    display: flex;
 }
 
 div#loading-bar-spinner .spinner-inner .spinner-icon-message {
@@ -230,8 +233,7 @@ div#loading-bar-spinner .spinner-inner .spinner-icon-message {
     border-top-color: #FF723A!important;
     border-left-color: #FF723A!important;
     border-radius: 50%;
-    margin-left: 78px;
-    margin-bottom: 32px;
+    margin:auto;
 }
 @keyframes preloader {
     0% {
