@@ -11,8 +11,11 @@ import {signout
 import StarRatingOnEndCallComponent from "../../desktop/StudentComponent/StarRatingOnEndCallComponent";
 import {Route,useRouteMatch,Switch} from "react-router-dom";
 import StudentDashboardMobile from "./StudentDashboardMobile";
-import StudentTodayClassesComponent from "../../desktop/StudentComponent/StudentTodayClassesComponent";
-import {StudentCreateProfileComponent} from "../../desktop/StudentComponent/StudentCreateProfileComponent";
+import StudentDesktopScheduledClasses from "../../desktop/StudentComponent/StudentDesktopScheduledClasses";
+import UserProfileEditComponent from "../../desktop/UserProfileEditComponent";
+import StudentAttendanceAndAssignmentComponent
+    from "../../desktop/StudentComponent/StudentAttendanceAndAssignmentComponent";
+import StudentPaymentConfirmMobileComponent from "./StudentPaymentConfirmMobileComponent";
 
 
 export default function StudentTabMobileLinkEntryPage() {
@@ -124,10 +127,22 @@ export default function StudentTabMobileLinkEntryPage() {
                 <StarRatingOnEndCallComponent classCallData={openCloseTeacherRatingPopup?.dropdownData}/>
             )}
             <Switch>
-                <Redirect exact from="/dashboard" to={`${path}/home`} />
                 <Route exact path={`${path}/home`}>
                     <StudentDashboardMobile/>
                 </Route>
+                <Route exact path={`${path}/student-scheduled-classes`}>
+                    <StudentDesktopScheduledClasses/>
+                </Route>
+                <Route path={`${path}/subscription-confirm`}>
+                    <StudentPaymentConfirmMobileComponent/>
+                </Route>
+                <Route path={`${path}/student-profile-page`}>
+                    <UserProfileEditComponent/>
+                </Route>
+                <Route path={`${path}/student-attendance-assignment`}>
+                    <StudentAttendanceAndAssignmentComponent/>
+                </Route>
+                <Redirect exact from="/dashboard" to={`${path}/home`} />
             </Switch>
             {(inCallStatus === 'PREJOIN') && (
                 <FooterTabComponent/>

@@ -11,8 +11,8 @@ export default function StarRatingOnEndCallComponent({classCallData}){
     return(
         <div className={"class_star_rating_component"}>
             <div className={"class_star_rating_component_inner"}>
-                <h1>Call End</h1>
-                <p className={"start_message mt-10 mb-10"}>How much you will rate this call.</p>
+                <h1>Class Ended</h1>
+                <p className={"start_message mt-10 mb-10"}>How much you will rate this class.</p>
                 <div className={"star_rating_main_div_with_stars mt-10 mb-10"}>
                     <i onClick={()=>setStoreStartRatingCount(1)}
                        className={"fa fa-star "+(storeStartRatingCount >= 1 ? 'active' : '')}

@@ -4,7 +4,54 @@
         padding: 0px !important;
         box-shadow: none !important;
     }
-
+    .student_pay_for_subscription_main_page {
+        width: 100%!important;
+        background: #c093ff;
+        border-radius: 0px!important;
+        overflow: hidden;
+        margin: 0px!important;
+        padding: 29px;
+        height: calc(100vh - 130px);
+        h1{
+            font-size: 18px!important;
+        }
+        p{
+            font-size: 14px;
+            color:#000000;
+        }
+        h2{
+            font-size: 17px!important;
+        }
+        h3{
+            font-size: 15px!important;
+        }
+        .classes_section_loop{
+            p{
+                font-size: 14px!important;
+                color:#000000!important;
+            }
+        }
+        .classes_section_total_payable{
+            h3{
+                font-size: 15px!important;
+            }
+        }
+        .classes_section_total_payable button.theme_btn.pay_button {
+            padding: 5px 39px !important;
+            font-size: 15px;
+            height: 35px;
+            border-radius: 0px;
+        }
+    }
+    .no_demo_classes_div_section {
+        text-align: center;
+        font-size: 15px;
+        line-height: 24px;
+        color: #ff500a;
+    }
+    .no_demo_classes_div_section img {
+        width: 30%!important;
+    }
     .demo_classes_main_section_div {
         display: block !important;
     }
@@ -264,5 +311,27 @@
     .profile_form_main_inner_body label.form-check-label {
         font-size: 14px;
         color: #fff;
+    }
+}
+.student_payment_subscription_plan_success_main_section.mobile{
+    .student_payment_subscription_plan_inner_div h2 {
+        font-size: 26px;
+        margin-bottom: 18px;
+    }
+    .student_payment_subscription_plan_inner_div img.success_check {
+        width: 30%;
+        margin-bottom: 15px;
+    }
+    p{
+        font-size: 15px;
+    }
+    .go_to_dashboard_class_link {
+        background: #ff723a;
+        color: #fff;
+        padding: 10px 34px;
+        margin-top: 15px;
+        display: block;
+        font-weight: 600;
+        font-size: 15px;
     }
 }

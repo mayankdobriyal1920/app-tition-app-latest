@@ -4,7 +4,7 @@ export default function UploadCllRecordingOnEndCallComponent(){
     return(
         <div className={"recording_upload_section_main_container"}>
             <div className={"recording_upload_section_inner"}>
-                <h1>Call End</h1>
+                <h1>Class Ended</h1>
                 <p className={"start_message"}>Uploading recording file (please don't close window until uploading is in progress).</p>
                 <div className={"star_rating_main_div_with_stars"}>
                     <i onClick={()=>setStoreStartRatingCount(1)}

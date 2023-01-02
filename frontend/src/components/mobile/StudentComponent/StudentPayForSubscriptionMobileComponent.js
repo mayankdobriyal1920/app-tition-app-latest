@@ -33,12 +33,12 @@ export default function StudentPayForSubscriptionMobileComponent(){
             </div>
             <div className={"classes_section_total_payable"}>
                 <div className={"row"}>
-                    <div className={"col-4"}>
-                        <h3>Total amount : Rs 12000</h3>
+                    <div className={"col"}>
+                        <h3>Total: Rs 12000</h3>
                     </div>
-                    <div className={"col-4"}>
+                    <div className={"col"}>
                         <button onClick={()=>setAmountAndOpenPaymentPopup(1000)} className={"theme_btn pay_button"}>
-                            Make Payment
+                            Pay
                         </button>
                     </div>
                 </div>
