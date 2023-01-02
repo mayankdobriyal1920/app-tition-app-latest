@@ -185,3 +185,84 @@
     color: #fff;
     padding: 10px;
 }
+.main_signup_component_body_mobile{
+    .comments-form input {
+        font-size: 14px;
+        height: 39px;
+        border-radius: 0px;
+        padding-left: 14px;
+    }
+    .comments-form input::placeholder{
+        font-size: 14px;
+    }
+    .comments-form textarea {
+        font-size: 14px;
+        height: 250px;
+        border-radius: 0px;
+        padding-top: 14px;
+        padding-left: 14px;
+    }
+    .comments-form textarea::placeholder{
+        font-size: 13px;
+    }
+    .contact-form-wrapper .message_btn {
+        font-size: 14px;
+        padding: 15px 84px;
+        border-radius: 20px;
+    }
+}
+.user_create_profile_main.mobile_container{
+    .user_create_profile_main_row {
+        background: #c093ff;
+        border-radius: 0px!important;
+        width: 100%;
+        overflow: hidden;
+        margin: 0px!important;
+        padding: 29px;
+    }
+    .profile_form_main_inner_body {
+        padding: 0px 5px!important;
+    }
+    .profile_form_header {
+        font-size: 18px!important;
+        color: #fff;
+        font-weight: 600;
+    }
+    .profile_form_main_inner_body .form-group label {
+        font-size: 14px!important;
+    }
+    .profile_form_main_inner_body .form-group input, .profile_form_main_inner_body .form-group select {
+        font-size: 14px;
+        border-radius: 0px;
+        text-overflow: ellipsis;
+        color: #7a7a7a;
+    }
+    .user_create_profile_main_row .personal_prof_form_2 {
+        background: none;
+        border-radius: 0px;
+        width: 100%;
+        margin: 0px;
+        padding: 0px;
+        height: auto!important;
+    }
+    .user_create_profile_main_row .personal_prof_form {
+        background: none;
+        border-radius: 0px;
+        width: 100%;
+        margin: 0px;
+        margin-top:15px;
+        padding: 0px;
+        height: auto!important;
+    }
+    .profile_form_main_inner_body2 label {
+        font-size: 14px;
+    }
+    .profile_form_main_inner_body2 .form-group input, .profile_form_main_inner_body2 .form-group select {
+        font-size: 14px;
+        border-radius: 0px;
+    }
+    .profile_form_main_inner_body label.form-check-label {
+        font-size: 14px;
+        color: #fff;
+    }
+}

@@ -1,10 +1,9 @@
 import React, {useState} from "react";
 import {IonPage, IonFooter, IonRow, IonCol, IonAlert} from "@ionic/react";
-import {NavLink} from "react-router-dom";
+import {NavLink, Redirect} from "react-router-dom";
 import siteLogo from "../../../theme/images/header_logo_mini.svg";
 import logoutLogo from "../../../theme/images/icon/logout_logo.svg";
 import {useDispatch, useSelector} from "react-redux";
-import "../../../theme/css/app_style_common.scss";
 
 
 import {signout
@@ -12,6 +11,8 @@ import {signout
 import StarRatingOnEndCallComponent from "../../desktop/StudentComponent/StarRatingOnEndCallComponent";
 import {Route,useRouteMatch,Switch} from "react-router-dom";
 import StudentDashboardMobile from "./StudentDashboardMobile";
+import StudentTodayClassesComponent from "../../desktop/StudentComponent/StudentTodayClassesComponent";
+import {StudentCreateProfileComponent} from "../../desktop/StudentComponent/StudentCreateProfileComponent";
 
 
 export default function StudentTabMobileLinkEntryPage() {
@@ -113,6 +114,7 @@ export default function StudentTabMobileLinkEntryPage() {
         )
     }
 
+
     return (
         <IonPage>
             {(inCallStatus === 'PREJOIN') && (
@@ -122,6 +124,7 @@ export default function StudentTabMobileLinkEntryPage() {
                 <StarRatingOnEndCallComponent classCallData={openCloseTeacherRatingPopup?.dropdownData}/>
             )}
             <Switch>
+                <Redirect exact from="/dashboard" to={`${path}/home`} />
                 <Route exact path={`${path}/home`}>
                     <StudentDashboardMobile/>
                 </Route>

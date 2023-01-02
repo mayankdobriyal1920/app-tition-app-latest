@@ -28,6 +28,7 @@ import './theme/css/style.css';
 import './theme/css/spacing.css';
 import './theme/css/_common.css';
 import './theme/css/app_style.css';
+import './theme/css/app_style_common.scss';
 /* Theme variables */
 import './theme/variables.css';
 import {useDispatch} from "react-redux";

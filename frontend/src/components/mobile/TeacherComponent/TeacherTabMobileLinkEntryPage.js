@@ -1,10 +1,10 @@
 import React, {useState} from "react";
 import {IonPage, IonFooter, IonRow, IonCol, IonAlert} from "@ionic/react";
-import {NavLink} from "react-router-dom";
+import {NavLink, Redirect} from "react-router-dom";
 import siteLogo from "../../../theme/images/header_logo_mini.svg";
 import logoutLogo from "../../../theme/images/icon/logout_logo.svg";
 import {useDispatch, useSelector} from "react-redux";
-import "../../../theme/css/app_style_common.scss";
+
 
 
 import {signout
@@ -122,6 +122,7 @@ export default function TeacherTabMobileLinkEntryPage() {
                 <StarRatingOnEndCallComponent classCallData={openCloseTeacherRatingPopup?.dropdownData}/>
             )}
             <Switch>
+                <Redirect exact from="/dashboard" to={`${path}/home`} />
                 <Route exact path={`${path}/home`}>
                     <TeacherDashboardMobile/>
                 </Route>

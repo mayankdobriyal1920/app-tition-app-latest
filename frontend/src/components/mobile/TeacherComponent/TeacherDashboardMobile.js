@@ -5,7 +5,7 @@ import {FacebookLoader} from "../../Loader/FacebookLoader";
 import {_generateUniqueId, _getIconBySubjectKey} from "../../../helper/CommonHelper";
 import moment from "moment";
 import noClassFound from "../../../theme/images/chose/no_classes_found.png";
-import "../../../theme/css/app_style_common.scss";
+
 import {
     addCallSubscriptionEvents,
     addVideoStream, connectToNewUser, myPeer, myStream, setMyMediaRecorder,
