@@ -4,7 +4,7 @@ import studentReadingImg from "../../theme/images/chose/reading_student1.png";
 import SpinnerLoader from "../Loader/SpinnerLoader";
 import {actionToUpdateUserProfile} from "../../actions/CommonAction";
 
-export default function UserProfileEditComponent(){
+export default function UserProfileEditComponent({isMobile}){
 
     const schoolBoardData = useSelector((state) => state.allSchoolBoardDataList.boardData);
 
@@ -79,14 +79,16 @@ export default function UserProfileEditComponent(){
 
 
     return (
-        <div className={"user_profile_edit_main_container"}>
+        <div className={"user_profile_edit_main_container "+(isMobile ? 'mobile' : '')}>
             <div className={"user_profile_edit_main_container_inner_section"}>
                 <form onSubmit={submitCreateProfileForm}>
-                    <div className={"user_create_profile_main_row mt-30"}>
+                    <div className={"user_create_profile_main_row"}>
                         <div className={"personal_prof_form_2"}>
-                            <div className={"profile_form_header"}>
-                                Personal Information
-                            </div>
+                            {(!isMobile) &&
+                                <div className={"profile_form_header"}>
+                                    Personal Information
+                                </div>
+                            }
                             <div className={"profile_form_main_inner_body mt-30"}>
                                 <div className="row">
                                     <div className="col-lg-6 col-md-6 mt-10">

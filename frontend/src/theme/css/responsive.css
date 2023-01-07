@@ -1,0 +1,142 @@
+@media (min-width: 1500px) {
+    .user_profile_fixed_section_main_container .user_profile_main_section .user_icon_profile_name {
+        font-size: 18px!important;
+    }
+    .student_dash_header_inner_section .main_heading {
+        font-size: 26px;
+    }
+    .student_dash_header_section .sub_heading {
+        line-height: 20px;
+    }
+    .student_demo_classes_main_page h2 {
+        font-size: 19px;
+    }
+    .demo_classes_section_subject_icon_name .icon_sub {
+        width: 14%!important;
+    }
+    .demo_classes_section_subject_icon_name .name_section .name_section1 {
+        font-size: 16px;
+    }
+    .demo_classes_section_teacher_icon_name .teacher_detail_section .teacher_name_section {
+        font-size: 15px;
+    }
+    .user_profile_personal_detail_heading {
+        font-size: 17px;
+    }
+    .user_profile_personal_detail .user_profile_personal_detail_text {
+        font-size: 16px;
+    }
+    .demo_classes_main_section_div .demo_classes_section_loop .class_time_date_demo {
+        font-size: 15px;
+    }
+    .demo_classes_section_loop .take_demo_button button.theme_btn {
+        font-size: 16px;
+    }
+    .user_profile_personal_detail_batch_section {
+        font-size: 16px;
+    }
+
+    .left_side_content_menu_section .menu_loop_section .menu_loop_section_inner_section svg {
+        width: 12%;
+    }
+    .menu_loop_section .menu_loop_section_inner_section .left_menu_item .left_menu_item_2 {
+        font-size: 17px;
+    }
+    .class_list_table.header_row {
+        font-size: 16px;
+    }
+    .icon_main_col .name_section {
+        font-size: 18px;
+    }
+    .class_data_main_table_section .body {
+        margin-top: 17px;
+    }
+}
+
+@media only screen and (min-width: 992px) and (max-width: 1200px) {
+    .navbar-nav .nav-item .nav-link {
+        margin: 0 20px;
+    }
+}
+@media (min-width: 992px) {
+    .navbar-expand-lg .navbar-nav .nav-link {
+        padding-right: 0.5rem;
+        padding-left: 0.5rem;
+    }
+}
+@media only screen and (min-width: 992px) and (max-width: 1350px) {
+    .profile_form_main_inner_body .row{
+        display:block;
+    }
+    .no_demo_classes_div_section img {
+        width: 20%;
+    }
+    .user_create_profile_main_row .profile_form_header {
+        font-size: 3vh;
+    }
+    .no_demo_classes_div_section {
+        font-size: 2.5vh;
+    }
+    .profile_form_main_inner_body .form-group  input,.profile_form_main_inner_body .form-group  select {
+        font-size: 2vh;
+    }
+    .profile_form_main_inner_body .form-group label {
+        font-size: 2vh!important;
+    }
+    .profile_form_main_inner_body2 .form-group label {
+        font-size: 2vh!important;
+    }
+    div#loading-bar-spinner .spinner-inner .spinner-icon-message {
+        font-size: 2.6vh;
+    }
+    .profile_form_main_inner_body2 .form-group  input,.profile_form_main_inner_body2 .form-group  select {
+        font-size: 2vh;
+    }
+    .student_dash_header_section {
+        padding-top: 23px;
+    }
+    .profile_form_main_inner_body2 button.theme_btn {
+        padding: 10px;
+    }
+    .profile_form_main_inner_body2 .form-group label {
+        font-size: 2vh!important;
+    }
+    .profile_form_main_inner_body2 label.form-check-label {
+        font-size: 2vh;
+    }
+    .profile_form_main_inner_body .row .col-lg-6{
+        width: 100%;
+    }
+    .slider__img__box .slide-shape.img-seven {
+        display: none;
+    }
+    .slider__img__box .slide-shape.img-eight {
+        width: 100%;
+        left: -10px;
+    }
+    .slider__img__box .img-one {
+        width: 100%;
+        padding-right: 0;
+    }
+    .chose-img-wrapper .chose_05 {
+        width: 100%;
+    }
+    .pl-lg-0 {
+        padding-left: 0;
+    }
+    .why-chose-section-wrapper {
+        margin-left: 0;
+        margin-right: 0;
+    }
+    .why-chose-us {
+        margin-right: 0;
+        margin-left: 0;
+    }
+    .img-bg::before {
+        width: 100%;
+        left: 0;
+    }
+    .main-header-area .free_btn {
+        display: none!important;
+    }
+}

@@ -224,7 +224,7 @@ function TeacherMainDesktopDashboardComponentFunction(){
     },[chatModuleNewUserAddedInCurrentCall]);
 
     return (
-        <div className={"main_body_content_section all_student_subject_main_container"}>
+        <div className={"main_body_content_section all_student_subject_main_container teacher"}>
             {(inCallStatus === 'PREJOIN') ?
                 <>
                 <StudentDashHeaderComponent type={"StudentMainDesktopDashboardComponent"}/>
@@ -237,9 +237,9 @@ function TeacherMainDesktopDashboardComponentFunction(){
                                 : (teacherAllDemoClassList?.length) ?
                                     <div className={"demo_classes_main_section_div"}>
                                         {(teacherAllDemoClassList?.map((myClasses,key)=>(
-                                            <div key={key} className={"demo_classes_section_loop ml-15 mr-15 mb-10 mt-10"}>
+                                            <div key={key} className={"demo_classes_section_loop mr-30 mb-10 mt-10"}>
                                                 <div className={"row"}>
-                                                    <div className={"col-7 demo_classes_section_subject_icon_name"}>
+                                                    <div className={"col demo_classes_section_subject_icon_name"}>
                                                         <div className={"icon_sub"} style={{background:_getIconBySubjectKey(myClasses?.subject_name).color}}>
                                                             {_getIconBySubjectKey(myClasses?.subject_name).icon}
                                                         </div>
@@ -248,7 +248,29 @@ function TeacherMainDesktopDashboardComponentFunction(){
                                                             <div className={"name_section2"}>{myClasses?.school_board}</div>
                                                         </div>
                                                     </div>
-                                                    <div className={"col-5"}>
+                                                </div>
+                                                <div className={"row"}>
+                                                    <div className={"col demo_classes_section_teacher_icon_name"}>
+                                                        <div className={"teacher_detail_section"}>
+                                                            <div className={"teacher_font_icon"}>
+                                                                <i className={"fa fa-info-circle"}/>
+                                                            </div>
+                                                            <div className={"teacher_name_section"}>
+                                                                {myClasses?.is_demo_class ? 'YES' : 'NO'} (is demo class)
+                                                            </div>
+                                                        </div>
+                                                        <div className={"teacher_detail_section"}>
+                                                            <div className={"teacher_font_icon"}>
+                                                                <i className={"fa fa-clapperboard"}/>
+                                                            </div>
+                                                            <div className={"teacher_name_section"}>
+                                                                {myClasses?.student_class}th (Student class)
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className={"row"}>
+                                                    <div className={"col demo_classes_section_teacher_icon_name"}>
                                                         {(myClasses?.class_end_time
                                                             &&
                                                             moment(myClasses?.class_end_time).format('YYYYMMDD') === moment().format('YYYYMMDD')
@@ -271,37 +293,21 @@ function TeacherMainDesktopDashboardComponentFunction(){
                                                     </div>
                                                 </div>
                                                 <div className={"row"}>
-                                                    <div className={"col-8 demo_classes_section_teacher_icon_name"}>
-                                                        <div className={"teacher_detail_section"}>
-                                                            <div className={"teacher_font_icon"}>
-                                                                <i className={"fa fa-info-circle"}/>
-                                                            </div>
-                                                            <div className={"teacher_name_section"}>
-                                                                {myClasses?.is_demo_class ? 'YES' : 'NO'} (is demo class)
-                                                            </div>
+                                                    <div className={"col demo_classes_section_teacher_icon_name"}>
+                                                        <div>
+                                                            {(myClasses?.class_end_time
+                                                                &&
+                                                                moment(myClasses?.class_end_time).format('YYYYMMDD') === moment().format('YYYYMMDD')
+                                                                &&
+                                                                moment(myClasses?.class_end_time).format('HH:mm:ss') < moment().format('HH:mm:ss')
+                                                            ) ?
+                                                                ''
+                                                                :
+                                                                <div onClick={(e)=>startCallInGroup(e,myClasses)} className={"take_demo_button"}>
+                                                                    <button className={"theme_btn"}>Start Class</button>
+                                                                </div>
+                                                            }
                                                         </div>
-                                                        <div className={"teacher_detail_section"}>
-                                                            <div className={"teacher_font_icon"}>
-                                                                <i className={"fa fa-clapperboard"}/>
-                                                            </div>
-                                                            <div className={"teacher_name_section"}>
-                                                                {myClasses?.student_class}th (Student class)
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div className={"col-4"}>
-                                                        {(myClasses?.class_end_time
-                                                            &&
-                                                            moment(myClasses?.class_end_time).format('YYYYMMDD') === moment().format('YYYYMMDD')
-                                                            &&
-                                                            moment(myClasses?.class_end_time).format('HH:mm:ss') < moment().format('HH:mm:ss')
-                                                        ) ?
-                                                            ''
-                                                            :
-                                                            <div onClick={(e)=>startCallInGroup(e,myClasses)} className={"take_demo_button"}>
-                                                                <button className={"theme_btn"}>Start Class</button>
-                                                            </div>
-                                                        }
                                                     </div>
                                                 </div>
                                             </div>

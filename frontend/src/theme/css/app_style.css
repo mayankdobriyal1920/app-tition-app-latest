@@ -24,13 +24,13 @@
     margin: auto;
     padding: 28px;
 }
-.slider__img__box .slide-shape.img-eight {
+.main_body_content_login_mobile .slider__img__box .slide-shape.img-eight {
     animation: rotation infinite 55s linear;
     position: relative;
     left: 0px;
     bottom: 0px;
 }
-.title_main_section_container {
+.main_body_content_login_mobile .title_main_section_container {
     display: flex;
 }
 .main_body_content_login_mobile .slider__img__box img.img-one {
@@ -39,7 +39,7 @@
     top: -22px;
 }
 @media (min-width: 531px) and (max-width: 900px){
-    .slider__img__box .slide-shape.img-eight {
+    .main_body_content_login_mobile .slider__img__box .slide-shape.img-eight {
         width: 441px;
     }
 }
@@ -120,7 +120,7 @@
     }
 }
 
-.inner_slide_text_section_main {
+.main_body_content_login_mobile .inner_slide_text_section_main {
     position: absolute;
     top: 100px;
     bottom: 0px;
@@ -130,7 +130,7 @@
     box-shadow: 1px -20px 20px 0px #c1c1c126;
 }
 
-.inner_slide_text_section_main .heading_text {
+.main_body_content_login_mobile .inner_slide_text_section_main .heading_text {
     font-size: 20px;
     font-weight: 600;
     color: #424242;
@@ -138,39 +138,39 @@
     margin-bottom: 10px;
 }
 
-.inner_slide_text_section_main .heading_text_p {
+.main_body_content_login_mobile .inner_slide_text_section_main .heading_text_p {
     color: #000;
     font-size: 14px;
     font-family: system-ui;
 }
 
-.inner_slide_text_section_main button.theme_btn.search_btn {
+.main_body_content_login_mobile .inner_slide_text_section_main button.theme_btn.search_btn {
     padding: 15px;
     font-size: 15px;
     margin-top: 30px;
 }
 
-.why-chose-section-wrapper-mobile h5 {
+.main_body_content_login_mobile .why-chose-section-wrapper-mobile h5 {
     font-size: 16px;
 }
 
-.why-chose-section-wrapper-mobile h2 {
+.main_body_content_login_mobile .why-chose-section-wrapper-mobile h2 {
     font-size: 20px;
 }
 
-.why-chose-section-wrapper-mobile p {
+.main_body_content_login_mobile .why-chose-section-wrapper-mobile p {
     font-size: 14px;
 }
 
-.why-chose-section-wrapper-mobile li {
+.main_body_content_login_mobile .why-chose-section-wrapper-mobile li {
     font-size: 13px;
 }
-.copy-right-area-mobile {
+.main_body_content_login_mobile .copy-right-area-mobile {
     border-top: 1px solid #ccc;
     padding-top: 13px;
 }
 
-.copy-right-area-mobile h5 {
+.main_body_content_login_mobile .copy-right-area-mobile h5 {
     font-size: 13px;
     font-weight: 500;
 }

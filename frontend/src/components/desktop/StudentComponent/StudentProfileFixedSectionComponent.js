@@ -70,10 +70,7 @@ function StudentProfileFixedSectionComponentFunction(){
                             <i className={"fa fa-address-book"}/> Batch
                         </div>
                         <div className={"user_profile_personal_detail_batch_section mb-10 row mt-10"}>
-                            <div className={"col-2 user_batch_icon_section"}>
-                                <img src={teacherBatch}/>
-                            </div>
-                            <div className={"col-10"}>
+                            <div className={"col"}>
                                 {
                                  (classData?.batch === 1) ?
                                      <div className={"batch_text_info"}>

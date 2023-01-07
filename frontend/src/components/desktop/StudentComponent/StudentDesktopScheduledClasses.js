@@ -6,7 +6,7 @@ import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 
 
-export default function StudentDesktopScheduledClasses(){
+export default function StudentDesktopScheduledClasses({isMobile}){
     const {loading} = useSelector((state) => state.studentAllClassesList);
     const studentAllTimeClassList = useSelector((state) => state.studentAllTimeClassList);
 
@@ -22,13 +22,16 @@ export default function StudentDesktopScheduledClasses(){
     }
 
     return(
-        <div className={"main_body_content_section all_student_subject_main_container"}>
-            <div className={" mt-60"}>
+        <div className={"main_body_content_section all_student_subject_main_container "+(isMobile ? 'mobile' : '')}>
+            <div className={"main_body_content_section_inner_calander mt-60"}>
                 <div className={""}>
-                    <h2>Scheduled Classes</h2>
+                    <h2 className={"heading_sch"}>Scheduled Classes</h2>
                     <div className={"mt-15 scheduled_classes_main_section"}>
                         {(loading) ?
-                            <FacebookLoader type={"facebookStyle"} item={2}/>
+                            (isMobile) ?
+                                <FacebookLoader type={"facebookStyle"} item={7}/>
+                                :
+                                <FacebookLoader type={"facebookStyle"} item={2}/>
                             : (studentAllTimeClassList?.length) ?
                                 <div className={""}>
                                     <FullCalendar

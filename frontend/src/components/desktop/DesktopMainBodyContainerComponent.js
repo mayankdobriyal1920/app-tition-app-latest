@@ -56,7 +56,7 @@ const DesktopMainBodyContainerComponent=() => {
                                 <div className="slider__content pt-15">
                                     <h1 className="main-title mb-40 wow fadeInUp2  animated" data-wow-delay=".1s"
                                         style={{visibility: "visible" ,animationDelay: '0.1s' , animationName: 'fadeInUp2'}}>
-                                        Mr. Tutor live class program is a unique blend of conventional.
+                                        121 Tuition live class program is a unique blend of conventional.
                                     </h1>
                                     <h5 className="mb-35 wow fadeInUp2  animated" data-wow-delay=".2s"
                                         style={{visibility: "visible" ,animationDelay: '0.2s' , animationName: 'fadeInUp2'}}>
@@ -78,20 +78,29 @@ const DesktopMainBodyContainerComponent=() => {
             </section>
 
 
-
-
+            <section className={"pt-150 pb-45 pt-md-95 pb-md-20"}>
+                <div className="container">
+                    <div className="row">
+                        <div className="col-xl-12">
+                            <div className="section-title text-center mb-50">
+                                <h5 className="bottom-line mb-25">Featured</h5>
+                                <h2>Explore 121 Tuition</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
 
             <div className="why-chose-section-wrapper gradient-bg mr-100 ml-100">
                 <section className="why-chose-us">
-                    <div className="why-chose-us-bg pt-150 pb-175 pt-md-95 pb-md-90 pt-xs-95 pb-xs-90">
+                    <div className="why-chose-us-bg pb-175 pb-md-90 pt-xs-95 pb-xs-90">
                         <div className="container">
                             <div className={"row align-items-center"}>
                                 <div className={"col-xl-7 col-lg-7"}>
                                     <div className="chose-img-wrapper mb-50 pos-rel">
                                         <div className="img-bg pos-rel">
-                                            <img className="chose_05 pl-70 pl-lg-0 pl-md-0 pl-xs-0"
-                                                 src={chose5} alt="Chose-img"/>
+                                            <img className="chose_05 pl-70 pl-lg-0 pl-md-0 pl-xs-0" src={chose5} alt="Chose-img"/>
                                         </div>
                                         <img className="chose chose_06" src={dotBox3} alt="Chose-img"/>
                                     </div>
@@ -101,8 +110,7 @@ const DesktopMainBodyContainerComponent=() => {
                                         <div className="section-title mb-30 wow fadeInUp2  animated"
                                              data-wow-delay=".1s"
                                              style={{visibility: 'visible', 'animationDelay': '0.2s' , 'animationName': 'fadeInUp2'}}>
-                                            <h5 className="bottom-line mb-25">Explore Mr. Tutor</h5>
-                                            <h2 className="mb-25">Why Choose Mr. Tutor?</h2>
+                                            <h2 className="mb-25">Why Choose 121 Tuition?</h2>
                                             <p>Get the same learning experience as school with the comfort of being at home with Extramarks. Learn from top faculty anytime, anywhere</p>
                                         </div>
                                         <ul className="text-list mb-40 wow fadeInUp2  animated" data-wow-delay=".2s"

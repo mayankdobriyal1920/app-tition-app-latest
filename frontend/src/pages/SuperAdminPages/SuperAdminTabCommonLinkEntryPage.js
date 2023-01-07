@@ -41,7 +41,7 @@ export default function SuperAdminTabCommonLinkEntryPage() {
 
     return (
         <>
-            {(windowResizeCount >= 1200) ?
+            {(windowResizeCount >= 1000) ?
                 <SuperAdminTabDesktopLinkEntryPage/>
                 :
                 <StudentTabMobileLinkEntryPage/>

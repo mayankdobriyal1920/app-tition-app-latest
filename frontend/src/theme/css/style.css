@@ -34,11 +34,11 @@ body {
 }
 .main-header-area .navbar-nav .nav-item .nav-link {
     color: #505050;
-    font-size: 20px;
+    font-size: 2.3vh;
     line-height: 1;
     display: inline-block;
     position: relative;
-    margin: 0 37px;
+    margin: 0 2.3vh;
     padding: 30px 0;
 }
 .main-header-area .free_btn {
@@ -249,9 +249,7 @@ body {
     text-align: center;
     line-height: 25px;
 }
-.why-chose-section-wrapper.gradient-bg.mr-100.ml-100 {
-    margin-top: 248px;
-}
+
 .footer-area {
     position: relative;
     z-index: 1;
@@ -326,24 +324,37 @@ div#main_signup_component {
     border-radius: 9px;
     border: 1px solid #ccc;
 }
-.contact-form input {
-    font-weight: 600;
-}
+
 .comments-form input {
     color: #707070;
-    font-size: 16px;
-    height: 60px;
+    font-size: 2.3vh;
+    height: 7vh;
     width: 100%;
     border-radius: 5px;
     border: 1px solid rgba(112, 112, 112, 0.2);
-    padding-left: 30px;
+    padding-left: 2vw;
     display: inline-block;
+}
+.comments-form input::placeholder{
+    font-size: 2.1vh;
 }
 .contact-form textarea {
     font-weight: 600;
 }
 span.sapater_otp {
-    margin: 0px 23px;
+    margin: 0px 3vh;
+}
+.otp_container > div div {
+    margin-left: auto;
+    margin-right: auto;
+}
+.otp_container > div {
+    display: flex;
+    text-align: center;
+    width: 100%;
+}
+.main_signup_component_body_inner form.row.gx-3.comments-form.contact-form {
+    text-align: center;
 }
 .comments-form textarea {
     color: #707070;
@@ -358,14 +369,17 @@ span.sapater_otp {
     resize: none;
 }
 .otp_container {
-    padding: 10px 154px;
+    margin: auto;
+}
+.all_student_subject_main_container.teacher .demo_classes_main_section{
+    width: 100%!important;
 }
 .contact-form-wrapper .message_btn {
     border: 0;
-    font-size: 16px;
+    font-size: 2.3vh;
     font-weight: 700;
     text-transform: uppercase;
-    padding: 24px 84px;
+    padding: 2vh 84px;
     border-radius: 5px;
 }
 .main_signup_component_body_inner {
@@ -386,7 +400,7 @@ span.sapater_otp {
 .left_side_bar_main_section_container .left_side_bar_logo_section .logo_main_div {
     text-align: center;
     margin-top: 70px;
-    font-size: 18px;
+    font-size: 2.1vh;
     line-height: 42px;
     font-weight: 600;
     color: #1a2435;
@@ -394,7 +408,7 @@ span.sapater_otp {
 }
 
 .left_side_bar_main_section_container .left_side_bar_logo_section .logo_main_div img {
-    width: 96px;
+    width: 37%;
 }
 
 .left_side_content_menu_section {
@@ -404,11 +418,11 @@ span.sapater_otp {
 
 .left_side_content_menu_section .menu_loop_section {
     display: flex;
-    margin-top: calc(50vh - 436px);
+    margin-top: 25px;
 }
 
 .left_side_content_menu_section .menu_loop_section .menu_loop_section_inner_section svg {
-    width: 37px;
+    width: 14%;
     fill: #979797;
 }
 
@@ -425,7 +439,7 @@ span.sapater_otp {
 }
 
 .menu_loop_section .menu_loop_section_inner_section .left_menu_item .left_menu_item_2 {
-    font-size: 16px;
+    font-size: 2vh;
     line-height: 38px;
     color: #979797;
 }
@@ -517,7 +531,6 @@ span.sapater_otp {
     height: 100vh;
     padding: 41px;
     width: 100%;
-    position: relative;
     overflow: auto;
 }
 
@@ -527,35 +540,47 @@ span.sapater_otp {
 
 .user_create_profile_main_row .personal_prof_form {
     background: #ffffff5c;
-    height: calc(100vh - 449px);
-    border-radius: 23px;
+    height: calc(100vh - 43vh);
+    border-radius: 0px;
     width: 100%;
     overflow: hidden;
     margin: 0px 6px;
     padding: 29px;
 }
+
 .user_create_profile_main_row .personal_prof_form_2 {
-    height: calc(100vh - 449px);
+    height: calc(100vh - 43vh);
     background: #c093ff;
-    border-radius: 23px;
+    border-radius: 0px;
+    overflow: auto;
     width: 100%;
-    overflow: hidden;
     margin: 0px 6px;
-    padding: 29px;
+    padding: 2.3vh;
+}
+.user_create_profile_main_row .personal_prof_form3 {
+    height: calc(100vh - 43vh);
+    background: #ffffff5c;
+    border-radius: 0px;
+    overflow: auto;
+    width: 100%;
+    margin: 0px 6px;
+    padding: 2.3vh;
 }
 .user_create_profile_main_row .profile_form_header {
     color: #fff;
-    font-size: 25px;
+    font-size: 26px;
     text-align: center;
     width: 100%;
 }
-
+.student_class_second_col{
+    position: relative;
+}
 .user_create_profile_main_row .personal_prof_form img {
     margin: auto;
 }
 
 .student_dash_header_inner_section .main_heading {
-    font-size: 32px;
+    font-size: 4vh;
     color: #1a2435;
     line-height: 44px;
 }
@@ -578,19 +603,20 @@ span.sapater_otp {
 }
 
 .demo_classes_main_section {
-    width: calc(100vw - 847px);
+    width: 70%;
     background: #ffffff8c;
     border-radius: 8px;
-    padding: 18px;
+    padding: 18px 0px 18px 7px;
     box-shadow: 0px 0px 20px 3px #ff5e0038;
 }
 
 .student_dash_header_section .sub_heading {
-    line-height: 41px;
+    line-height: 2.5vh;
     font-size: 18px;
 }
-.profile_form_main_inner_body {
-    padding: 0px 10px;
+
+.student_demo_classes_main_page h2{
+    font-size: 2.5vh;
 }
 .class_star_rating_component {
     position: fixed;
@@ -681,18 +707,18 @@ span.sapater_otp {
     color: #ff500a;
 }
 .class_list_table .icon_setion {
-    width: 65px;
-    height: 65px;
+    width: 52px;
     border-radius: 7px;
-    padding: 14px;
+    padding: 5px;
+    height: 52px;
+    margin-top: auto;
+    display: flex;
+    margin-bottom: auto;
 }
-.class_list_table .icon_setion {
-    width: 65px;
-    height: 65px;
-    border-radius: 7px;
-    padding: 14px;
+.class_list_table .icon_setion svg {
+    min-width: 30px;
+    margin: auto;
 }
-
 .class_data_main_table_section .icon_main_col {
     display: flex;
     font-size: 16px;
@@ -705,17 +731,24 @@ span.sapater_otp {
     line-height: 48px;
     color: #ff723a;
     font-weight: 600;
+    font-size: 2vh;
 }
-
+.icon_main_col .name_section {
+    font-size: 2vh;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+.class_data_main_table_section .body {
+    font-size: 2vh;
+    margin-top: auto;
+    margin-bottom: auto;
+}
 .class_data_main_table_section {
     background: #fff;
     border-radius: 10px;
     padding: 14px;
 }
 
-.class_data_main_table_section .body {
-    margin-top: 17px;
-}
 .demo_classes_main_section_div {
     display: flex;
     flex-wrap: wrap;
@@ -726,7 +759,8 @@ span.sapater_otp {
     border-radius: 18px;
     padding: 15px;
     overflow: hidden;
-    width: 485px;
+    margin: 10px 10px;
+    width: 46%;
 }
 div#teacher_video_class_container {
     top: 0px;
@@ -743,11 +777,11 @@ div#teacher_video_class_container {
 }
 
 .demo_classes_section_subject_icon_name .icon_sub {
-    width: 58px;
-    height: 58px;
-    border-radius: 100%;
+    width: 14%;
+    height: auto;
+    border-radius: 5px;
     overflow: hidden;
-    padding: 10px;
+    display: flex;
     text-align: center;
     margin-right: 13px;
 }
@@ -773,6 +807,7 @@ div#teacher_video_class_container {
 .datatable_container_main_div_section {
     margin-top: 40px;
     width: calc(100vw - 325px)!important;
+    margin-right: 0px;
 }
 .assign_class_main_popup_outer_container {
     position: fixed;
@@ -914,14 +949,24 @@ div#teacher_video_class_container {
 }
 .demo_classes_section_subject_icon_name .icon_sub svg {
     width: 100%;
+    margin: auto;
+    padding: 6px;
 }
-
 .demo_classes_section_subject_icon_name .name_section {
+    width: 80%;
+}
+.demo_classes_main_section_div .demo_classes_section_loop .class_time_date_demo {
+    font-size: 14px;
+}
+.demo_classes_section_teacher_icon_name {
+    margin-top: 5px;
+    padding: 0px;
+    padding-left: 3px;
 }
 
 .demo_classes_section_subject_icon_name .name_section .name_section1 {
     font-weight: 600;
-    font-size: 15px;
+    font-size: 1.9vh;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -938,8 +983,9 @@ div#teacher_video_class_container {
 }
 
 .demo_classes_main_section_div .demo_classes_section_loop .class_time_date_demo {
-    font-size: 15px;
+    font-size: 1.9vh;
     font-weight: 600;
+    padding-left: 13px;
     color: #ff723a;
 }
 
@@ -954,13 +1000,15 @@ div#teacher_video_class_container {
 }
 
 .demo_classes_section_teacher_icon_name .teacher_detail_section .teacher_name_section {
-    font-size: 14px;
+    font-size: 1.8vh;
     margin-left: 14px;
 }
 
 .demo_classes_section_loop .take_demo_button button.theme_btn {
-    font-size: 13px;
+    font-size: 1.8vh;
     padding: 9px 20px;
+    width: 89%;
+    margin: 0px 13px;
 }
 
 .user_profile_fixed_section_main_container {
@@ -968,12 +1016,13 @@ div#teacher_video_class_container {
     right: 10px;
     top: 0px;
     height: 100vh;
-    width: 417px;
+    overflow: auto;
+    width: 30%;
     background-image: linear-gradient(180deg, #ff804d, #ffe9e0);
 }
 
 .user_profile_fixed_section_main_container .user_profile_main_section {
-    margin-top: 135px;
+    margin-top: 10vh;
     padding: 0px 45px;
 }
 .user_profile_fixed_section_main_container .user_profile_icon_user_section {
@@ -981,7 +1030,7 @@ div#teacher_video_class_container {
 }
 .user_profile_fixed_section_main_container .user_profile_main_section .class_standared_text {
     font-size: 15px;
-    margin-top: 10px;
+    margin-top: 0px;
     color: #4c4c4c;
 }
 .user_profile_fixed_section_main_container .user_profile_main_section .user_icon_profile {
@@ -994,11 +1043,11 @@ div#teacher_video_class_container {
     font-size: 25px;
     background: #fff;
     font-weight: 600;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 .user_profile_fixed_section_main_container .user_profile_main_section .user_icon_profile_name {
-    font-size: 25px;
+    font-size: 2.5vh;
     font-weight: 600;
     color: #444;
 }
@@ -1006,7 +1055,7 @@ div#teacher_video_class_container {
     padding: 10px;
     border-radius: 10px;
     background: #ffffff96;
-    font-size: 15px;
+    font-size: 2vh;
     color: #ff4800;
     margin-left: 19px;
 }
@@ -1016,10 +1065,10 @@ div#teacher_video_class_container {
 }
 .user_profile_personal_detail_heading {
     color: #444;
-    font-size: 16px;
+    font-size: 2.1vh;
 }
 .user_profile_personal_detail .user_profile_personal_detail_text {
-    font-size: 14px;
+    font-size: 1.9vh;
     margin-left: 24px;
 }
 .teacher_video_class_container_inner_row {
@@ -1182,10 +1231,9 @@ div#main_user_video_call_video_section video.my_video_peer_connection {
     color: #000;
 }
 .student_pay_for_subscription_main_page {
-    width: calc(100vw - 900px);
+    width: 70%;
 }
 .student_pay_for_subscription_main_page .classes_section {
-    max-height: calc(100vh - 600px);
     overflow: auto;
     padding: 10px 30px 10px 0px;
     margin-bottom: 36px;
@@ -1226,12 +1274,19 @@ div#main_user_video_call_video_section video.my_video_peer_connection {
 }
 .classes_section_total_payable h3 {
     margin-top: 10px;
+    font-size: 3vh;
 }
 .call_ent_button_section button.mute_call_button {
     width: 65px;
     height: 65px;
     border-radius: 100%;
     background: #8d8d8d;
+}
+.student_pay_for_subscription_main_page h1 {
+    font-size: 3.4vh;
+}
+.student_pay_for_subscription_main_page h3 {
+    font-size: 3.2vh;
 }
 .user_profile_fixed_section_main_container .facebook_style_loader_container {
     padding: 47px;
@@ -1481,7 +1536,7 @@ div#main_user_video_call_video_section video.my_video_peer_connection {
 .user_profile_edit_main_container {
     display: flex;
     height: 100vh;
-    width: calc(100vw - 372px);
+    width: 100%;
 }
 
 .inputfile-6 + label span {
@@ -1493,9 +1548,22 @@ div#main_user_video_call_video_section video.my_video_peer_connection {
     overflow: hidden;
     vertical-align: top;
 }
+.section-title h2 {
+    font-size: 4vh!important;
+}
 .user_profile_edit_main_container_inner_section .personal_prof_form_2 {
-    height: calc(100vh - 163px);
+    height: 100vh;
     padding: 124px!important;
+    border-radius: 0px!important;
+}
+.fc .fc-scrollgrid-section-body table tbody{
+    display: block!important;
+}
+.fc .fc-scrollgrid-section .fc-scroller{
+    overflow: auto auto!important;
+}
+.user_profile_edit_main_container_inner_section button.theme_btn {
+    width: 100%;
 }
 .user_profile_edit_main_container_inner_section .personal_prof_form_2  .profile_form_main_inner_body {line-height: 37px;}
 .user_profile_edit_main_container_inner_section .personal_prof_form_2 .profile_form_main_inner_body input.form-control

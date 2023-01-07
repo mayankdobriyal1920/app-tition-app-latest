@@ -97,7 +97,7 @@ function StudentCreateProfileComponentFunction(){
                     <img alt={"studentReadingImg"} src={studentReadingImg}/>
                 </div>
                 <div className={"col personal_prof_form_2"}>
-                    <div className={"profile_form_header"}>
+                    <div className={"profile_form_header mt-15"}>
                         Personal Information
                     </div>
                     <div className={"profile_form_main_inner_body mt-30"}>
@@ -222,11 +222,11 @@ function StudentCreateProfileComponentFunction(){
                         </div>
                     </div>
                 </div>
-                <div className={"col personal_prof_form"}>
-                    <div style={{color:'rgb(120 119 118)'}} className={"profile_form_header"}>
+                <div className={"col personal_prof_form3"}>
+                    <div style={{color:'rgb(120 119 118)'}} className={"profile_form_header mt-15"}>
                         Class Information
                     </div>
-                    <div className={"profile_form_main_inner_body2"}>
+                    <div className={"profile_form_main_inner_body2 mt-15"}>
                         <div className={"row"}>
                             <div className="col-lg-12 col-md-12 mt-10">
                                 <div className="form-group">
@@ -262,7 +262,7 @@ function StudentCreateProfileComponentFunction(){
                             </div>
                             <div  onChange={(e)=>setBatchFunction(e.target.value)}>
                                 <div className="col-lg-12 col-md-12 mt-10">
-                                    <div className="form-group">
+                                    <div className="form-group mb-10">
                                         <label htmlFor="exampleInputEmail1">Select Batch <span className={"error"}>*</span></label>
                                     </div>
                                     <div className="form-check">

@@ -131,16 +131,16 @@ export default function StudentTabMobileLinkEntryPage() {
                     <StudentDashboardMobile/>
                 </Route>
                 <Route exact path={`${path}/student-scheduled-classes`}>
-                    <StudentDesktopScheduledClasses/>
+                    <StudentDesktopScheduledClasses isMobile={true}/>
                 </Route>
                 <Route path={`${path}/subscription-confirm`}>
                     <StudentPaymentConfirmMobileComponent/>
                 </Route>
                 <Route path={`${path}/student-profile-page`}>
-                    <UserProfileEditComponent/>
+                    <UserProfileEditComponent isMobile={true}/>
                 </Route>
                 <Route path={`${path}/student-attendance-assignment`}>
-                    <StudentAttendanceAndAssignmentComponent/>
+                    <StudentAttendanceAndAssignmentComponent isMobile={true}/>
                 </Route>
                 <Redirect exact from="/dashboard" to={`${path}/home`} />
             </Switch>

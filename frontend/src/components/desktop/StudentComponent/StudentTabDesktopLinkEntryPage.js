@@ -17,7 +17,7 @@ export default function StudentTabDesktopLinkEntryPage() {
                 <div className={"col-2"}>
                     <LeftSideBarComponent/>
                 </div>
-                <div className={"col-10"}>
+                <div className={"col-10 student_class_second_col"}>
                     <Switch>
                         <Route exact path={`${path}/home`}>
                             <StudentDesktopDashboard/>

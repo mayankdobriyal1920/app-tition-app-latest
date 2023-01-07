@@ -143,7 +143,7 @@ const DesktopLoginComponent=() => {
                                         <p className={"theme_color mt-10"}>Please wait!! Verifying your one time password...</p>
                                         :
                                         <>
-                                            <p>Didn't receive the code?</p>
+                                            <p className={"mt-15"}>Didn't receive the code?</p>
                                             <p><a className={"theme_color"} role={"button"}>Resend</a></p>
                                         </>
                                     }

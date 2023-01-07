@@ -159,7 +159,7 @@ export default function StudentTodayClassesComponent(){
                                                 {(studentAllTodayClassList?.map((myClasses,key)=>(
                                                     <div key={key} className={"demo_classes_section_loop mr-30 mb-10 mt-10"}>
                                                         <div className={"row"}>
-                                                            <div className={"col-7 demo_classes_section_subject_icon_name"}>
+                                                            <div className={"col demo_classes_section_subject_icon_name"}>
                                                                 <div className={"icon_sub"} style={{background:_getIconBySubjectKey(myClasses?.subject_name).color}}>
                                                                     {_getIconBySubjectKey(myClasses?.subject_name).icon}
                                                                 </div>
@@ -168,30 +168,9 @@ export default function StudentTodayClassesComponent(){
                                                                     <div className={"name_section2"}>{classData?.school_board}</div>
                                                                 </div>
                                                             </div>
-                                                            <div className={"col-5"}>
-                                                                {(myClasses?.classes_assigned_to_teacher?.class_end_time
-                                                                    &&
-                                                                    moment(myClasses?.classes_assigned_to_teacher?.class_end_time).format('YYYYMMDD') === moment().format('YYYYMMDD')
-                                                                    &&
-                                                                    moment(myClasses?.classes_assigned_to_teacher?.class_end_time).format('HH:mm:ss') < moment().format('HH:mm:ss')
-                                                                ) ?
-                                                                    <>
-                                                                        <div className={"class_time_date_demo mb-3"}>
-                                                                            Start time : {moment(new Date(myClasses?.classes_assigned_to_teacher?.starting_from_date)).format('hh:mm a')}
-                                                                        </div>
-                                                                        <div className={"class_time_date_demo"}>
-                                                                            Class End : {moment(new Date(myClasses?.classes_assigned_to_teacher?.class_end_time)).format('hh:mm a')}
-                                                                        </div>
-                                                                    </>
-                                                                    :
-                                                                    <div className={"class_time_date_demo mb-3"}>
-                                                                        Start time : {moment(new Date(myClasses?.classes_assigned_to_teacher?.starting_from_date)).format('hh:mm a')}
-                                                                    </div>
-                                                                }
-                                                            </div>
                                                         </div>
                                                         <div className={"row"}>
-                                                            <div className={"col-8 demo_classes_section_teacher_icon_name"}>
+                                                            <div className={"col demo_classes_section_teacher_icon_name"}>
                                                                 <div className={"teacher_detail_section"}>
                                                                     <div className={"teacher_font_icon"}>
                                                                         <i className={"fa fa-info-circle"}/>
@@ -209,15 +188,42 @@ export default function StudentTodayClassesComponent(){
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <div data-id={myClasses?.id} data-cur-class={chatModuleCurrentCallGroupData?.id} className={"col-4"}>
-                                                                {(chatModuleCurrentCallGroupData?.id === myClasses?.classes_assigned_to_teacher_id) ?
-                                                                    <div
-                                                                        onClick={(e) => pickCallInGroup(e,myClasses, chatModuleCurrentCallGroupData)}
-                                                                        className={"take_demo_button"}>
-                                                                        <button className={"theme_btn"}>Join Class</button>
+                                                        </div>
+                                                        <div className={"row"}>
+                                                            <div className={"col demo_classes_section_teacher_icon_name"}>
+                                                                {(myClasses?.classes_assigned_to_teacher?.class_end_time
+                                                                    &&
+                                                                    moment(myClasses?.classes_assigned_to_teacher?.class_end_time).format('YYYYMMDD') === moment().format('YYYYMMDD')
+                                                                    &&
+                                                                    moment(myClasses?.classes_assigned_to_teacher?.class_end_time).format('HH:mm:ss') < moment().format('HH:mm:ss')
+                                                                ) ?
+                                                                    <>
+                                                                        <div className={"class_time_date_demo"}>
+                                                                            Start time : {moment(new Date(myClasses?.classes_assigned_to_teacher?.starting_from_date)).format('hh:mm a')}
+                                                                        </div>
+                                                                        <div className={"class_time_date_demo"}>
+                                                                            Class End : {moment(new Date(myClasses?.classes_assigned_to_teacher?.class_end_time)).format('hh:mm a')}
+                                                                        </div>
+                                                                    </>
+                                                                    :
+                                                                    <div className={"class_time_date_demo"}>
+                                                                        Start time : {moment(new Date(myClasses?.classes_assigned_to_teacher?.starting_from_date)).format('hh:mm a')}
                                                                     </div>
-                                                                    : ''
                                                                 }
+                                                            </div>
+                                                        </div>
+                                                        <div className={"row"}>
+                                                            <div className={"col demo_classes_section_teacher_icon_name"}>
+                                                                <div data-id={myClasses?.id} data-cur-class={chatModuleCurrentCallGroupData?.id}>
+                                                                    {(chatModuleCurrentCallGroupData?.id === myClasses?.classes_assigned_to_teacher_id) ?
+                                                                        <div
+                                                                            onClick={(e) => pickCallInGroup(e,myClasses, chatModuleCurrentCallGroupData)}
+                                                                            className={"take_demo_button"}>
+                                                                            <button className={"theme_btn"}>Join Class</button>
+                                                                        </div>
+                                                                        : ''
+                                                                    }
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -238,16 +244,16 @@ export default function StudentTodayClassesComponent(){
                                             <div className={"class_data_main_table_section"}>
                                                 <div className={"row class_list_table header_row mb-15"}>
                                                     <div className={"col-3 header"}>
-                                                        Subject name
+                                                        Subject
                                                     </div>
                                                     <div className={"col-3 header"}>
-                                                        Teacher Name
+                                                        Teacher
                                                     </div>
                                                     <div className={"col-3 header"}>
-                                                        Start time
+                                                        Time
                                                     </div>
                                                     <div className={"col-3 header"}>
-                                                        Subscription end date
+                                                        Subscription
                                                     </div>
                                                 </div>
                                                 {(classData?.profile_subject_with_batch?.map((myClasses,key)=>(

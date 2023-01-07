@@ -12,7 +12,7 @@ import axios from "axios";
 // SET your own endpoint
 const endpoint = "https://apnafinances.com/api-call-tutor/uploadAssignmentApiCall";
 
-export default function StudentAttendanceAndAssignmentComponent(){
+export default function StudentAttendanceAndAssignmentComponent({isMobile}){
     const {loading,attendanceData} = useSelector((state) => state.allAttendanceAndAssignment);
     const {classData} = useSelector((state) => state.studentAllClassesList);
     const [selectedFile,setSelectedFile] = useState({});
@@ -81,12 +81,16 @@ export default function StudentAttendanceAndAssignmentComponent(){
         }
     },[classData])
     return(
-        <div className={"student_attendance_assignment_main_container mt-150"}>
-            <div className="section-title text-center mb-45">
+        <div className={"student_attendance_assignment_main_container mt-65 "+(isMobile ? 'mobile' : '')}>
+            {(!isMobile) &&
+            (<div className="section-title text-center mb-45">
                 <h2 className="mb-25">Attendance class with assignment</h2>
-            </div>
+            </div>)}
             {(loading) ?
-                <FacebookLoader type={"facebookStyle"} item={5}/>
+                (isMobile) ?
+                    <FacebookLoader type={"facebookStyle"} item={7}/>
+                    :
+                    <FacebookLoader type={"facebookStyle"} item={2}/>
                 : (attendanceData?.length) ?
                     <div className="accordion accordion-two" id="accoedion-ex-two">
                         {(attendanceData?.map((userClassData,key)=>(

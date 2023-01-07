@@ -20,7 +20,7 @@ const MainAppHomePageWithLogin=() => {
     return (
         <IonPage>
             <>
-                {(windowResizeCount >= 1200) ?
+                {(windowResizeCount >= 1000) ?
                     <div className={"main_scroll_body_component"} ref={mainScrollDivRef} onScroll={getScrollValue}>
                         <DesktopHeaderContainerComponent scrollBodyValue={scrollBodyValue}/>
                         <DesktopMainBodyContainerComponent/>

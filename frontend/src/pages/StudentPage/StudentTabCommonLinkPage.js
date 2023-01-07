@@ -30,7 +30,7 @@ export default function StudentTabCommonLinkEntryPage() {
 
     return (
         <>
-            {(windowResizeCount >= 1200) ?
+            {(windowResizeCount >= 1000) ?
                 <StudentTabDesktopLinkEntryPage/>
                 :
                 <StudentTabMobileLinkEntryPage/>

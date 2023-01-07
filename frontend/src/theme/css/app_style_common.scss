@@ -335,3 +335,150 @@
         font-size: 15px;
     }
 }
+.main_body_content_section.all_student_subject_main_container.mobile{
+    padding: 0px;
+    background-image:none!important;
+    .main_body_content_section_inner_calander {
+        margin-top: 0px !important;
+    }
+
+    .heading_sch{
+        display: none!important;
+    }
+    h2{
+        font-size: 18px;
+    }
+    .fc-direction-ltr {
+        height: calc(100vh - 149px)!important;
+    }
+    .scheduled_classes_main_section {
+        border-radius: 0px;
+        padding: 10px;
+        margin: 0px!important;
+        background: #fff;
+        box-shadow: unset!important;
+        border: unset;
+    }
+    .fc .fc-scrollgrid-liquid {
+        height: 100%;
+        border: 1px solid #ddd;
+    }
+    .fc-today-button{
+        display: none!important;
+    }
+    .fc-button-group{
+        .fc-icon{
+            font-size: 14px!important;
+        }
+        .fc-button{
+            padding: 8px;
+            font-size:0px!important;
+        }
+    }
+    .fc .fc-col-header-cell-cushion{
+        padding: 0px!important;
+        font-size: 15px;
+    }
+    .fc .fc-daygrid-day-number {
+        padding: 0px;
+        font-size: 12px!important;
+    }
+    .time_text_event_container_in_calander p{
+        font-size: 12px!important;
+    }
+    .time_text_event_container_in_calander {
+        padding: 3px;
+    }
+    .fc .fc-scrollgrid-section-body table{
+        tbody{
+            display: block!important;
+        }
+    }
+    .fc .fc-scrollgrid-section{
+        .fc-scroller{
+            overflow: auto auto!important;
+        }
+    }
+}
+.student_attendance_assignment_main_container.mobile{
+    margin: 0px!important;
+    padding: 36px!important;
+
+    .accordion-header button {
+        font-size: 15px!important;
+    }
+
+    .accordion-collapse p {
+        font-size: 14px;
+    }
+
+    .accordion-collapse a {
+        font-size: 14px;
+    }
+
+    .accordion-collapse h6 {
+        font-size: 15px;
+    }
+
+    .upload.container_section svg {
+    }
+
+    .upload.container_section label {
+        padding: 10px 0px;
+    }
+
+    .upload.container_section label figure {
+        width: 72px;
+        height: 69px;
+        margin: 0 auto 0px;
+    }
+
+    .upload.container_section button {
+        padding: 9px 16px;
+        font-size: 12px!important;
+    }
+}
+.user_profile_edit_main_container.mobile{
+    width: 100%;
+    margin: 0px;
+    padding: 0px;
+    height: calc(100vh - 128px);
+    overflow: auto;
+    .user_profile_edit_main_container.mobile {
+        width: 100%;
+        margin: 0px;
+        padding: 0px;
+    }
+
+    .user_create_profile_main_row {
+        margin: 0px!important;
+    }
+
+    .user_profile_edit_main_container_inner_section .personal_prof_form_2 {
+        padding: 4px!important;
+        height: auto!important;
+        border-radius: 0px;
+        overflow: auto;
+    }
+
+    .user_profile_edit_main_container_inner_section .personal_prof_form_2 input,
+    .user_profile_edit_main_container_inner_section .personal_prof_form_2 select,
+    .user_profile_edit_main_container_inner_section .personal_prof_form_2 input::placeholder,
+    .user_profile_edit_main_container_inner_section .personal_prof_form_2 select::placeholder
+    {
+        font-size: 14px!important;
+        padding: 8px 8px!important;
+        border-radius: 0px!important;
+    }
+
+    .user_profile_edit_main_container_inner_section .personal_prof_form_2 label {
+        font-size: 15px!important;
+    }
+    .user_create_profile_main_row button {
+        margin: 26px 13px;
+        padding: 10px;
+        font-size: 15px;
+        width: 94%;
+        border-radius: 0px!important;
+    }
+}

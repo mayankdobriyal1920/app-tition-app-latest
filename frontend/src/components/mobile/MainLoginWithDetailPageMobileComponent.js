@@ -56,7 +56,7 @@ const MainLoginWithDetailPageMobileComponent=() => {
                                        <img className="slide-shape img-eight" src={earthBg} alt=""/>
                                        <div className={"inner_slide_text_section_main"}>
                                            <p className={"heading_text"}>
-                                               Mr. Tutor live class program is a unique blend of conventional.
+                                               121 Tuition live class program is a unique blend of conventional.
                                            </p>
                                            <p className={"heading_text_p"}>
                                                Easy and user-friendly access to live classes along with interactive doubt solving sessions help students to achieve their goals
@@ -75,8 +75,8 @@ const MainLoginWithDetailPageMobileComponent=() => {
                                                    <div className="section-title mb-30 wow fadeInUp2  animated"
                                                         data-wow-delay=".1s"
                                                         style={{visibility: 'visible', 'animationDelay': '0.2s' , 'animationName': 'fadeInUp2'}}>
-                                                       <h5 className="bottom-line mb-25">Explore Mr. Tutor</h5>
-                                                       <h2 className="mb-25">Why Choose Mr. Tutor?</h2>
+                                                       <h5 className="bottom-line mb-25">Explore 121 Tuition</h5>
+                                                       <h2 className="mb-25">Why Choose 121 Tuition?</h2>
                                                        <p>Get the same learning experience as school with the comfort of being at home with Extramarks. Learn from top faculty anytime, anywhere</p>
                                                    </div>
                                                    <ul className="text-list wow fadeInUp2  animated" data-wow-delay=".2s"
@@ -93,7 +93,7 @@ const MainLoginWithDetailPageMobileComponent=() => {
                            </div>
                            <div className="copy-right-area-mobile mb-20">
                                <div className="copyright text-center">
-                                   <h5>Copyright@ 2022 <a>Mr. Tutor</a>. All Rights Reserved</h5>
+                                   <h5>Copyright@ 2022 <a>121 Tuition</a>. All Rights Reserved</h5>
                                </div>
                            </div>
                        </div>)

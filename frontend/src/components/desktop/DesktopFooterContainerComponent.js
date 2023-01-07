@@ -14,7 +14,7 @@ const DesktopHeaderContainerComponent=() => {
                                     <img src={headerLogo} alt=""/>
                                 </a>
                             </div>
-                            <p>Get the same learning experience as school with the comfort of being at home with Mr.Tutor. Learn from top faculty anytime, anywhere
+                            <p>Get the same learning experience as school with the comfort of being at home with 121 Tuition. Learn from top faculty anytime, anywhere
                             </p>
                         </div>
                     </div>
@@ -31,8 +31,7 @@ const DesktopHeaderContainerComponent=() => {
                         </div>
                     </div>
                     <div className="col-xl-3 col-lg-4 col-md-6  wow fadeInUp2  animated" data-wow-delay=".5s"
-                         style={{visibility: 'visible', 'animationDelay': '0.5s' , 'animationName': 'fadeInUp2'}}
-                    >
+                         style={{visibility: 'visible', 'animationDelay': '0.5s' , 'animationName': 'fadeInUp2'}}>
                         <div className="footer__widget mb-25 pl-90 pl-md-0 pl-xs-0">
                             <h6 className="widget-title mb-35">Quick Links</h6>
                             <ul className="fot-list">
@@ -56,7 +55,7 @@ const DesktopHeaderContainerComponent=() => {
                     <div className="row align-items-center">
                         <div className="col-lg-12">
                             <div className="copyright text-center">
-                                <h5>Copyright@ 2022 <a>Mr. Tutor</a>. All Rights Reserved</h5>
+                                <h5>Copyright@ 2022 <a>121 Tuition</a>. All Rights Reserved</h5>
                             </div>
                         </div>
                     </div>

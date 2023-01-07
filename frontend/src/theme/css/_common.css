@@ -150,7 +150,7 @@ h1, h2, h3, h4, h5, h6 {
 .popup_heder_main_heading {
     width: 100%;
     text-align: center;
-    font-size: 34px;
+    font-size: 3.5vh;
     color: #383838;
     line-height: 30px;
 }
@@ -223,6 +223,8 @@ div#loading-bar-spinner .spinner-inner {
 div#loading-bar-spinner .spinner-inner .spinner-icon-message {
     font-size: 23px;
     font-weight: 600;
+    margin: auto;
+    padding-left: 15px;
 }
 
 #loading-bar-spinner.spinner .spinner-icon {
