@@ -48,8 +48,8 @@ const MainLoginWithDetailPageMobileComponent=() => {
                        <div className={"mobile_signup_section"}>
                            <SignupMobileComponent/>
                        </div>
-                       :(<div>
-                           <div className={"main_body_content_login_mobile"}>
+                       :(<div className={"main_body_content_login_mobile"}>
+                           <div>
                                <div className={"title_main_section_container"}>
                                    <div className={"slider__img__box"}>
                                        <img className="img-one" src={slider01} alt=""/>
@@ -91,7 +91,7 @@ const MainLoginWithDetailPageMobileComponent=() => {
                                    </div>
                                </section>
                            </div>
-                           <div className="copy-right-area-mobile mb-20">
+                           <div className="copy-right-area-mobile">
                                <div className="copyright text-center">
                                    <h5>Copyright@ 2022 <a>121 Tuition</a>. All Rights Reserved</h5>
                                </div>

@@ -62,13 +62,15 @@
     }
 
     .demo_classes_main_section_div .demo_classes_section_loop .class_time_date_demo {
-        font-size: 13px !important;
+        font-size: 12px !important;
     }
 
     .demo_classes_section_subject_icon_name .name_section .name_section1 {
         width: 113px !important;
     }
-
+    .demo_classes_main_section_div .demo_classes_section_loop .take_demo_button {
+        text-align: center;
+    }
     .demo_classes_section_subject_icon_name .name_section .name_section2 {
         width: 113px !important;
     }
@@ -146,6 +148,7 @@
     }
     .class_data_main_table_section .body {
         margin-top: 0px!important;
+        text-align: center;
     }
     .class_list_table {
         font-size: 13px!important;
@@ -231,6 +234,27 @@
     font-size: 17px;
     color: #fff;
     padding: 10px;
+}
+.main_body_content_login_mobile{
+    .section-title h5 {
+        font-size: 1.5vh;
+    }
+    .section-title h2 {
+        font-size: 2.5vh!important;
+    }
+    .section-title p {
+        font-size: 1.7vh;
+    }
+    ul.text-list li {
+        font-size: 1.8vh;
+    }
+    .copyright h5 {
+        font-size: 1.3vh;
+    }
+    .copy-right-area-mobile {
+        background: #d7d7d7;
+        padding: 16px;
+    }
 }
 .main_signup_component_body_mobile{
     .comments-form input {

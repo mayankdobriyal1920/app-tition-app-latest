@@ -84,7 +84,10 @@ export default function TeacherDashboardMobile() {
     }
     const startCallInGroup = (e,classGroupData)=>{
         e.preventDefault();
-        console.log(classGroupData)
+        if(!navigator?.mediaDevices?.getDisplayMedia){
+            alert('Sorry!!! screen recording is not support on your device please try in WINDOWS and MACOS');
+            return false;
+        }
 
         let getUserMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia).bind(navigator);
         if(getUserMedia) {
@@ -281,7 +284,7 @@ export default function TeacherDashboardMobile() {
                                                                     </div>
                                                                 </div>
                                                                 <div className={"row"}>
-                                                                    <div className={"col-8 demo_classes_section_teacher_icon_name"}>
+                                                                    <div className={"col-7 demo_classes_section_teacher_icon_name"}>
                                                                         <div className={"teacher_detail_section"}>
                                                                             <div className={"teacher_font_icon"}>
                                                                                 <i className={"fa fa-info-circle"}/>
@@ -299,7 +302,7 @@ export default function TeacherDashboardMobile() {
                                                                             </div>
                                                                         </div>
                                                                     </div>
-                                                                    <div className={"col-4"}>
+                                                                    <div className={"col-5"}>
                                                                         {(myClasses?.class_end_time
                                                                             &&
                                                                             moment(myClasses?.class_end_time).format('YYYYMMDD') === moment().format('YYYYMMDD')

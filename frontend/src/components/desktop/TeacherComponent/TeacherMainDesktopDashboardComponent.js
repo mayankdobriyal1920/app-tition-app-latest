@@ -90,8 +90,10 @@ function TeacherMainDesktopDashboardComponentFunction(){
     }
     const startCallInGroup = (e,classGroupData)=>{
         e.preventDefault();
-        console.log(classGroupData)
-
+        if(!navigator?.mediaDevices?.getDisplayMedia){
+            alert('Sorry!!! screen recording is not support on your device please try in WINDOWS and MACOS');
+            return false;
+        }
         let getUserMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia).bind(navigator);
         if(getUserMedia) {
             getUserMedia({
@@ -99,10 +101,8 @@ function TeacherMainDesktopDashboardComponentFunction(){
                     video: true
                 },
                 function(stream){
-
                     navigator.mediaDevices.getDisplayMedia({preferCurrentTab:true})
                         .then(recordStream => {
-
                             if (callLoading) return;
                             setCallLoading(true);
 

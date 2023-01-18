@@ -204,7 +204,7 @@ export default function StudentTodayClassesMobileComponent() {
                                                                 </div>
                                                             </div>
                                                             <div className={"row"}>
-                                                                <div className={"col-8 demo_classes_section_teacher_icon_name"}>
+                                                                <div className={"col-7 demo_classes_section_teacher_icon_name"}>
                                                                     <div className={"teacher_detail_section"}>
                                                                         <div className={"teacher_font_icon"}>
                                                                             <i className={"fa fa-info-circle"}/>
@@ -222,7 +222,7 @@ export default function StudentTodayClassesMobileComponent() {
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                <div data-id={myClasses?.id} data-cur-class={chatModuleCurrentCallGroupData?.id} className={"col-4"}>
+                                                                <div data-id={myClasses?.id} data-cur-class={chatModuleCurrentCallGroupData?.id} className={"col-5"}>
                                                                     {(chatModuleCurrentCallGroupData?.id === myClasses?.classes_assigned_to_teacher_id) ?
                                                                         <div
                                                                             onClick={(e) => pickCallInGroup(e,myClasses, chatModuleCurrentCallGroupData)}

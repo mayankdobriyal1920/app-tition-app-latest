@@ -734,7 +734,7 @@ span.sapater_otp {
     font-size: 2vh;
 }
 .icon_main_col .name_section {
-    font-size: 2vh;
+    font-size: 1.6vh;
     margin-top: auto;
     margin-bottom: auto;
 }
@@ -759,7 +759,7 @@ span.sapater_otp {
     border-radius: 18px;
     padding: 15px;
     overflow: hidden;
-    margin: 10px 10px;
+    margin: 10px 0px;
     width: 46%;
 }
 div#teacher_video_class_container {
@@ -1007,8 +1007,7 @@ div#teacher_video_class_container {
 .demo_classes_section_loop .take_demo_button button.theme_btn {
     font-size: 1.8vh;
     padding: 9px 20px;
-    width: 89%;
-    margin: 0px 13px;
+    width: 80%;
 }
 
 .user_profile_fixed_section_main_container {
@@ -1549,7 +1548,7 @@ div#main_user_video_call_video_section video.my_video_peer_connection {
     vertical-align: top;
 }
 .section-title h2 {
-    font-size: 4vh!important;
+    font-size: 4vh;
 }
 .user_profile_edit_main_container_inner_section .personal_prof_form_2 {
     height: 100vh;
