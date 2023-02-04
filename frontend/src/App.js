@@ -39,6 +39,9 @@ import {actionToSetWindowSizeCount} from "./actions/CommonAction";
 import {isStudentLogin, isSuperAdminLogin, isTeacherMasterLogin} from "./middlewear/auth";
 import {AppEnterMainPage} from "./pages/AppEnterMainPage";
 import {useEffectOnce} from "./helper/UseEffectOnce";
+import AppAboutUsPage from "./pages/MainAppHomePageWithLogin/AppAboutUsPage";
+import AppMainPricingPage from "./pages/MainAppHomePageWithLogin/AppMainPricingPage";
+import AppMainContactUsPage from "./pages/MainAppHomePageWithLogin/AppMainContactUsPage";
 
 setupIonicReact();
 
@@ -46,6 +49,9 @@ const PublicRoutes = () => {
   return (
       <IonReactRouter>
         <Route path="/home" exact={true} component={MainAppHomePageWithLogin} />
+        <Route path="/about" exact={true} component={AppAboutUsPage} />
+        <Route path="/pricing" exact={true} component={AppMainPricingPage} />
+        <Route path="/contact" exact={true} component={AppMainContactUsPage} />
         <Redirect exact from="/" to="/home" />
         <Route render={() => <Redirect to="/home" />} />
       </IonReactRouter>

@@ -4,6 +4,11 @@
         padding: 0px !important;
         box-shadow: none !important;
     }
+    .class_data_main_table_section .body {
+        margin-top: 0px !important;
+        text-align: center;
+        font-size: 11px!important;
+    }
     .student_pay_for_subscription_main_page {
         width: 100%!important;
         background: #c093ff;
@@ -59,10 +64,11 @@
     .demo_classes_main_section_div .demo_classes_section_loop {
         padding: 6px !important;
         width: 100% !important;
+        margin: 10px 0px!important;
     }
 
     .demo_classes_main_section_div .demo_classes_section_loop .class_time_date_demo {
-        font-size: 12px !important;
+        font-size: 11px !important;
     }
 
     .demo_classes_section_subject_icon_name .name_section .name_section1 {
@@ -479,10 +485,11 @@
     }
 
     .user_profile_edit_main_container_inner_section .personal_prof_form_2 {
-        padding: 4px!important;
+        padding: 0px 24px !important;
         height: auto!important;
         border-radius: 0px;
         overflow: auto;
+        margin: 0px!important;
     }
 
     .user_profile_edit_main_container_inner_section .personal_prof_form_2 input,

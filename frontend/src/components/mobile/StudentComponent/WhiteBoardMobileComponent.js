@@ -16,6 +16,7 @@ import {cloneDeep} from "lodash";
 import {actionToSendFabricDataToOtherUser, actionToUpdateIpAddress} from "../../../actions/CommonAction";
 import {ANNOTATOR_UNDO_REDO_CAPTURE, ANNOTATOR_USER_ON_CAPTURE} from "../../../constants/CommonConstants";
 import {_generateUniqueId} from "../../../helper/CommonHelper";
+import {FacebookLoader} from "../../Loader/FacebookLoader";
 
 let renderOnce = false;
 let undo,redo,undoArray=[];
@@ -25,6 +26,7 @@ export default function WhiteBoardMobileComponent({groupId}){
     const captureAnnotatorJSONData = useSelector((state) => state.captureAnnotatorJSONData);
     const userInfo = useSelector((state) => state.userSignin.userInfo);
     const [activeSelectedTool,setActiveSelectedTool] = useState('draw');
+    const [canvasLoading,setCanvasLoading] = useState(true);
     const captureAnnotatorUndoRedoArray = useSelector((state) => state.captureAnnotatorUndoRedoArray);
     redo = captureAnnotatorUndoRedoArray.redo;
     undo = captureAnnotatorUndoRedoArray.undo;
@@ -145,19 +147,19 @@ export default function WhiteBoardMobileComponent({groupId}){
         }
         returnPathShapeName('path');
     }
-    const callFunctionToLoadImageInCanvas = ()=>{
-        let imgWidth = $('.center_white_board_video_main_container').width();
-        let imgHeight = $('.center_white_board_video_main_container').height();
+    const callFunctionToLoadImageInCanvas = (e)=>{
         if(!renderOnce) {
             window.fabricCanvas = window._canvas = new fabric.Canvas('modal_screenshot_image_canvas');
             window.fabricCanvas.selection = false;
             window.fabricCanvas.freeDrawingBrush.color = 'red';
             window.fabricCanvas.isDrawingMode = true;
-            console.log(document.querySelector('.center_white_board_video_main_container').clientHeight);
-            window.fabricCanvas.setDimensions({width:imgWidth, height:imgHeight});
-            drawLineArrow(window.fabricCanvas);
-            callFunctionToActiveSelectTool('draw');
-            eventOnFabric();
+            setTimeout(function(){
+                window.fabricCanvas.setDimensions({width: e.target.width, height: e.target.height});
+                drawLineArrow(window.fabricCanvas);
+                callFunctionToActiveSelectTool('draw');
+                eventOnFabric();
+                setCanvasLoading(false);
+            },2000)
             renderOnce = true;
         }
     }
@@ -309,6 +311,13 @@ export default function WhiteBoardMobileComponent({groupId}){
 
     return(
         <div>
+            {(canvasLoading) ?
+                <div style={{background:'#fff'}} className={"canvas_editor_tools_main_section"}>
+                    <FacebookLoader type={"facebookStyle"} item={6}/>
+                </div>
+                :
+                ''}
+            <div style={{display:canvasLoading ? 'none' : 'block'}}>
             <div className={"canvas_editor_tools_main_section"}>
                 <button onClick={()=>callFunctionToActiveSelectTool('draw')} className={"canvas_tool "+(activeSelectedTool === 'draw' ? 'active' : '')}>
                     <svg width="13" height="13" viewBox="0 0 20 20.002"><path d="M144,345.24a1,1,0,0,0-.29-.71l-4.24-4.24a1.014,1.014,0,0,0-1.42,0l-2.83,2.83h0l-10.93,10.93a1,1,0,0,0-.29.71V359a1,1,0,0,0,1,1h4.24a1,1,0,0,0,.76-.29l10.87-10.93h0l2.84-2.78a1.183,1.183,0,0,0,.22-.33.963.963,0,0,0,0-.24.654.654,0,0,0,0-.14ZM128.83,358H126v-2.83l9.93-9.93,2.83,2.83Zm11.34-11.34-2.83-2.83,1.42-1.41,2.82,2.82Z" transform="translate(-124 -340)" fill="#fff"></path></svg>
@@ -337,6 +346,7 @@ export default function WhiteBoardMobileComponent({groupId}){
             <div className={"center_white_board_video_main_container"}>
                 <canvas ref={editCanvasRef} id="modal_screenshot_image_canvas"></canvas>
                 <img style={{display:'none'}} onLoad={callFunctionToLoadImageInCanvas} src={infiniteCanvas} ref={editCanvasImageRef}></img>
+            </div>
             </div>
         </div>
     )

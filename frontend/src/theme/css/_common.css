@@ -196,6 +196,9 @@ button:focus, input:focus, input:focus, textarea, textarea:focus{
     font-size: 17px;
     font-weight: 400;
 }
+.pos-rel {
+    position: relative;
+}
 @keyframes loading-bar-spinner {
     0%   { transform: rotate(0deg);   transform: rotate(0deg); }
     100% { transform: rotate(360deg); transform: rotate(360deg); }

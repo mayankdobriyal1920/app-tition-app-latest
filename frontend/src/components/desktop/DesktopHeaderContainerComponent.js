@@ -3,6 +3,7 @@ import headerLogoOne from '../../theme/images/header_logo_one.png';
 import userLogoSvg from '../../theme/images/user.svg';
 import {useDispatch} from "react-redux";
 import {actionToOpenCloseLoginPopup, actionToOpenCloseSignupPopup} from "../../actions/CommonAction";
+import {NavLink} from "react-router-dom";
 
 const DesktopHeaderContainerComponent=({scrollBodyValue}) => {
     const dispatch = useDispatch();
@@ -29,25 +30,25 @@ const DesktopHeaderContainerComponent=({scrollBodyValue}) => {
                                 <div className="nav-container">
                                     <div className="collapse navbar-collapse" id="navbarSupportedContent">
                                         <ul className="navbar-nav">
-                                            <li className="nav-item dropdown active">
-                                                <a role="button" className="nav-link">
+                                            <li className="nav-item dropdown">
+                                                <NavLink to={`home`} activeClassName={"active"} className="nav-item nav-link">
                                                     Home
-                                                </a>
+                                                </NavLink>
                                             </li>
                                             <li className="nav-item dropdown">
-                                                <a role="button" className="nav-link">
-                                                    About Us
-                                                </a>
+                                                <NavLink to={`about`} activeClassName={"active"} className="nav-item nav-link">
+                                                    About us
+                                                </NavLink>
                                             </li>
                                             <li className="nav-item dropdown">
-                                                <a role="button" className="nav-link">
+                                                <NavLink to={`pricing`} activeClassName={"active"} className="nav-item nav-link">
                                                     Pricing
-                                                </a>
+                                                </NavLink>
                                             </li>
-                                            <li className="nav-item">
-                                                <a role="button" className="nav-link">
-                                                    Contact Us
-                                                </a>
+                                            <li className="nav-item dropdown">
+                                                <NavLink to={`contact`} activeClassName={"active"} className="nav-item nav-link">
+                                                    Contact us
+                                                </NavLink>
                                             </li>
                                         </ul>
                                     </div>
