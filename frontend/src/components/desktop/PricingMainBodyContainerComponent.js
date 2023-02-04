@@ -34,8 +34,8 @@ const PricingMainBodyContainerComponent=() => {
                                 <div className="col-lg-4 col-md-6">
                                     <div className="plan text-center mb-30">
                                         <div className="pr__header mb-30">
-                                            <h2>Basic</h2>
-                                            <h5>Best Choice for individuals</h5>
+                                            <h2>1 to 1</h2>
+                                            <h5>Single teacher single student.</h5>
                                             <img src={writing} alt="" className="pr-icon"/>
                                         </div>
                                         <div className="pr__body">
@@ -55,8 +55,8 @@ const PricingMainBodyContainerComponent=() => {
                                 <div className="col-lg-4 col-md-6">
                                     <div className="plan plan-2 text-center mb-30">
                                         <div className="pr__header mb-30">
-                                            <h2>Standard</h2>
-                                            <h5>Best Choice for Yearly Access</h5>
+                                            <h2>1 to 3</h2>
+                                            <h5>Single teacher three student.</h5>
                                             <img src={test} alt="" className="pr-icon"/>
                                         </div>
                                         <div className="pr__body">
@@ -76,8 +76,8 @@ const PricingMainBodyContainerComponent=() => {
                                 <div className="col-lg-4 col-md-6">
                                     <div className="plan plan-2a text-center mb-30">
                                         <div className="pr__header mb-30">
-                                            <h2>Unlimited</h2>
-                                            <h5>Billed once. Get lifetime access.</h5>
+                                            <h2>1 to 5</h2>
+                                            <h5>Single teacher five student.</h5>
                                             <img src={lifetime} alt="" className="pr-icon"/>
                                         </div>
                                         <div className="pr__body">
