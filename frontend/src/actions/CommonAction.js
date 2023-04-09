@@ -173,10 +173,11 @@ export const actionToUpdateAttendanceClassStatus = (profileData,classData,groupD
         await dispatch(callInsertDataFunction(insertData));
     }
 }
-export const actionToUpdateSubscriptionPlanDetailForUser = (classDataId) => async (dispatch) => {
+export const actionToUpdateSubscriptionPlanDetailForUser = (classDataId,month) => async (dispatch) => {
+    console.log('actionToUpdateSubscriptionPlanDetailForUser',classDataId,month);
     let setData = `subscription_end_date = ?`;
     let whereCondition = `id = '${classDataId}'`;
-    let dataToSend = {column: setData, value: [moment().add(2,'months').format('YYYY-MM-DD HH:mm:ss')], whereCondition: whereCondition, tableName: 'student_profile'};
+    let dataToSend = {column: setData, value: [moment().add(month,'months').format('YYYY-MM-DD HH:mm:ss')], whereCondition: whereCondition, tableName: 'student_profile'};
     await dispatch(commonUpdateFunction(dataToSend));
     dispatch(actionToGetUserAllClasses(true));
 }
@@ -378,8 +379,8 @@ export const actionToGetAllClassesDataList = (idLoaderDisable = false) => async 
     const {data} = await api.post(`common/actionToGetAllClassesDataListApiCall`);
     dispatch({type: ALL_CLASSES_DATA_LIST_SUCCESS, payload:[...data?.response]});
 }
-export const actionToCreatePaymentIntend = (setClientSecret,amount) => async () => {
-    const {data} = await api.post(`common/actionToCreatePaymentIntendApiCall`, {amount});
+export const actionToCreatePaymentIntend = (setClientSecret,amount,totalMonths) => async () => {
+    const {data} = await api.post(`common/actionToCreatePaymentIntendApiCall`, {amount,totalMonths});
     setClientSecret(data.clientSecret)
 }
 export const actionToConfigStripeSetup = (setStripePromise) => async () => {

@@ -8,7 +8,7 @@ import {
     drawLineArrow,
     drawObjectInCanvas,
     setUserId,
-    returnPathShapeName
+    returnPathShapeName, setSelectToolColorToEditor
 } from "../../helper/EditorToolbar";
 import {eventBus} from "../../helper/EventBus";
 import {useEffectOnce} from "../../helper/UseEffectOnce";
@@ -28,6 +28,8 @@ export default function WhiteboardComponent({groupId}){
     const [activeSelectedTool,setActiveSelectedTool] = useState('draw');
     const [canvasLoading,setCanvasLoading] = useState(true);
     const captureAnnotatorUndoRedoArray = useSelector((state) => state.captureAnnotatorUndoRedoArray);
+    const [selectActiveTool,setSelectActiveTool] = useState(false);
+    const [selectedToolColor,setSelectedToolColor] = useState('#FF0000');
     redo = captureAnnotatorUndoRedoArray.redo;
     undo = captureAnnotatorUndoRedoArray.undo;
     const dispatch = useDispatch();
@@ -39,9 +41,13 @@ export default function WhiteboardComponent({groupId}){
         drawObjectInCanvas(id,window.fabricCanvas)
         setActiveSelectedTool(id);
     }
+    const callFunctionToSetChangeColor = (color)=>{
+        setSelectToolColorToEditor(window.fabricCanvas,color)
+        setSelectedToolColor(color);
+    }
     const storeUndoAndRedo = (userPointer,type,userObject = '')=>{
         if(type != 'select'){
-            let undoType= type == 'add' ? 'remove' : type == 'remove' ? 'add' : type;
+            let undoType= type === 'add' ? 'remove' : type === 'remove' ? 'add' : type;
             let undo = cloneDeep(undoArray);
             undo.push({type:type,userPointer: cloneDeep(userPointer),undoType:undoType,userObject:userObject.userObject,undoRedoCanvasSizeArray:userObject.undoRedoCanvasSizeArray});
             undoArray=undo;
@@ -72,7 +78,7 @@ export default function WhiteboardComponent({groupId}){
                 let userPointer = lastElement.userPointer;
                 let userObject = lastElement.userObject;
                 let fabricCanvas = window.fabricCanvas;
-                let lastType = (type == 'undo') ? lastElement.undoType : lastElement.type;
+                let lastType = (type === 'undo') ? lastElement.undoType : lastElement.type;
 
                 switch(lastType){
                     case 'add': {
@@ -92,7 +98,7 @@ export default function WhiteboardComponent({groupId}){
                         let height = window.fabricCanvas.getHeight();
                         let width = window.fabricCanvas.getWidth();
                         fabricCanvas.forEachObject(function (obj) {
-                            if (userPointer && obj.id == userPointer.id) {
+                            if (userPointer && obj.id === userPointer.id) {
                                 window.fabricCanvas.remove(obj);
                                 window.fabricCanvas.setZoom(zoom);
                                 window.fabricCanvas.setHeight(height);
@@ -136,7 +142,7 @@ export default function WhiteboardComponent({groupId}){
         setTimeout(function() {
             removeFromFabric();
             window.fabricCanvas.on("path:created", addDrawLineElement);
-        },2000)
+        });
     }
     const addDrawLineElement = (opt) => {
         let pathShapeName = returnPathShapeName();
@@ -295,6 +301,7 @@ export default function WhiteboardComponent({groupId}){
         eventBus.on('send-to-websocket-fabric',sendToWebsocketFabricData);
         dispatch(actionToUpdateIpAddress());
         setUserId(userInfo?.id);
+        setSelectedToolColor('#FF0000');
         return ()=>{
             eventBus.on('send-to-websocket-fabric',(data)=>{
                 sendToWebsocketFabricData(data);
@@ -319,6 +326,7 @@ export default function WhiteboardComponent({groupId}){
             }
             <div style={{display:canvasLoading ? 'none' : 'block'}}>
                 <div className={"canvas_editor_tools_main_section mt-30"}>
+                    <div className={"canvas_editor_inner_main_section"}>
                     <button onClick={()=>callFunctionToActiveSelectTool('draw')} className={"canvas_tool "+(activeSelectedTool === 'draw' ? 'active' : '')}>
                         <svg width="18" height="18" viewBox="0 0 20 20.002"><path d="M144,345.24a1,1,0,0,0-.29-.71l-4.24-4.24a1.014,1.014,0,0,0-1.42,0l-2.83,2.83h0l-10.93,10.93a1,1,0,0,0-.29.71V359a1,1,0,0,0,1,1h4.24a1,1,0,0,0,.76-.29l10.87-10.93h0l2.84-2.78a1.183,1.183,0,0,0,.22-.33.963.963,0,0,0,0-.24.654.654,0,0,0,0-.14ZM128.83,358H126v-2.83l9.93-9.93,2.83,2.83Zm11.34-11.34-2.83-2.83,1.42-1.41,2.82,2.82Z" transform="translate(-124 -340)" fill="#fff"></path></svg>
                     </button>
@@ -342,6 +350,93 @@ export default function WhiteboardComponent({groupId}){
                             className={"canvas_tool " + (redo.length > 0 ? 'undo_redo_enable': 'undo_redo_disable')}>
                         <svg width="15" height="18" viewBox="0 0 17.5 20"><defs></defs><path d="M12.031,5.883C4.578,5.883,2.188,7,2.188,11.449c0,4.72,2.542,6.618,9.775,6.13a1.125,1.125,0,0,1,1.161,1.1A1.151,1.151,0,0,1,12.1,19.929C3.729,20.493,0,17.707,0,11.448c0-3.387,1.291-5.6,3.783-6.769,1.9-.886,4.228-1.15,8.248-1.15V0L17.5,4.706,12.031,9.413Z" fill="#fff"></path></svg>
                     </button>
+                </div>
+                    <div className="supported_tools_main_ctrl test">
+                        <div className="st_colors">
+                            <div
+                                onClick={()=>setSelectActiveTool(false)}
+                                className={"color_varians_main_ctrl "+(selectActiveTool ? 'select_tool_active' : '')}
+                                id="color_variant_main_ctrl">
+                                <div className="cv_innr_ctrl" data-color={selectedToolColor}>
+                                    <div className={"colored_icon_ctrl "+((selectedToolColor === '#FF0000') ? 'active' : '')}
+                                         style={{background: "#FF0000"}}
+                                         data-id="#FF0000"
+                                         onClick={()=>callFunctionToSetChangeColor('#FF0000')}>
+                                    </div>
+                                    <div className={"colored_icon_ctrl "+((selectedToolColor === '#FD612C') ? 'active' : '')}
+                                         style={{background: "#FD612C"}}
+                                         data-id="#FD612C"
+                                         onClick={()=>callFunctionToSetChangeColor('#FD612C')}>
+                                    </div>
+                                    <div className={"colored_icon_ctrl "+((selectedToolColor === '#FD9A00') ? 'active' : '')}
+                                         style={{background: "#FD9A00"}}
+                                         data-id="#FD9A00"
+                                         onClick={()=>callFunctionToSetChangeColor('#FD9A00')}>
+                                    </div>
+                                    <div className={"colored_icon_ctrl "+((selectedToolColor === '#EEC300') ? 'active' : '')}
+                                         style={{background: "#EEC300"}}
+                                         data-id="#EEC300"
+                                         onClick={()=>callFunctionToSetChangeColor('#EEC300')}>
+                                    </div>
+                                    <div className={"colored_icon_ctrl "+((selectedToolColor === '#A4CF30') ? 'active' : '')}
+                                         style={{background: "#A4CF30"}}
+                                         data-id="#A4CF30"
+                                         onClick={()=>callFunctionToSetChangeColor('#A4CF30')}>
+                                    </div>
+                                    <div className={"colored_icon_ctrl "+((selectedToolColor === '#62D26F') ? 'active' : '')}
+                                         style={{background: "#62D26F"}}
+                                         data-id="#62D26F"
+                                         onClick={()=>callFunctionToSetChangeColor('#62D26F')}>
+                                    </div>
+                                    <div className={"colored_icon_ctrl "+((selectedToolColor === '#37C5AB') ? 'active' : '')}
+                                         style={{background: "#37C5AB"}}
+                                         data-id="#37C5AB"
+                                         onClick={()=>callFunctionToSetChangeColor('#37C5AB')}>
+                                    </div>
+                                    <div className={"colored_icon_ctrl "+((selectedToolColor === '#20AAEA') ? 'active' : '')}
+                                         style={{background: "#20AAEA"}}
+                                         data-id="#20AAEA"
+                                         onClick={()=>callFunctionToSetChangeColor('#20AAEA')}>
+                                    </div>
+                                    <div className={"colored_icon_ctrl "+((selectedToolColor === '#4186E0') ? 'active' : '')}
+                                         style={{background: "#4186E0"}}
+                                         data-id="#4186E0"
+                                         onClick={()=>callFunctionToSetChangeColor('#4186E0')}>
+                                    </div>
+                                    <div className={"colored_icon_ctrl "+((selectedToolColor === '#7A6FF0') ? 'active' : '')}
+                                         style={{background: "#7A6FF0"}}
+                                         data-id="#7A6FF0"
+                                         onClick={()=>callFunctionToSetChangeColor('#7A6FF0')}>
+                                    </div>
+                                    <div className={"colored_icon_ctrl "+((selectedToolColor === '#AA62E3') ? 'active' : '')}
+                                         style={{background: "#AA62E3"}}
+                                         data-id="#AA62E3"
+                                         onClick={()=>callFunctionToSetChangeColor('#AA62E3')}>
+                                    </div>
+                                    <div className={"colored_icon_ctrl "+((selectedToolColor === '#EA4E9D') ? 'active' : '')}
+                                         style={{background: "#EA4E9D"}}
+                                         data-id="#EA4E9D"
+                                         onClick={()=>callFunctionToSetChangeColor('#EA4E9D')}>
+                                    </div>
+                                    <div className={"colored_icon_ctrl "+((selectedToolColor === '#A98BAF') ? 'active' : '')}
+                                         style={{background: "#A98BAF"}}
+                                         data-id="#A98BAF"
+                                         onClick={()=>callFunctionToSetChangeColor('#A98BAF')}>
+                                    </div>
+                                    <div className={"colored_icon_ctrl "+((selectedToolColor === '#FC91AD') ? 'active' : '')}
+                                         style={{background: "#FC91AD"}}
+                                         data-id="#FC91AD"
+                                         onClick={()=>callFunctionToSetChangeColor('#FC91AD')}>
+                                    </div>
+                                    <div className={"colored_icon_ctrl "+((selectedToolColor === '#666666') ? 'active' : '')}
+                                         style={{background: "#666666"}}
+                                         data-id="#666666"
+                                         onClick={()=>callFunctionToSetChangeColor('#666666')}>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div className={"center_white_board_video_main_container"}>
                     <canvas ref={editCanvasRef} id="modal_screenshot_image_canvas"></canvas>

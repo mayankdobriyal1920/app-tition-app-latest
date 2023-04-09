@@ -49,6 +49,7 @@ export default function TeacherStudentVideoCallComponent({inCallStatus,setInCall
 
     }
     const handleMuteUnmuteInCall = ()=>{
+        console.log('handleMuteUnmuteInCall');
         if(isTeacher){
             dispatch(actionToMuteUnmuteUserCall(chatModuleCurrentCallGroupData?.id,chatModuleCurrentCallGroupData?.id));
         }else{
@@ -108,9 +109,6 @@ export default function TeacherStudentVideoCallComponent({inCallStatus,setInCall
                                     <h1>Demo class of {chatModuleCurrentCallGroupData?.subject_name} ({_readableTimeFromSeconds(timerTimeInterval)})</h1>
                                     <div className={"mt-15"}>
                                         <div className={"detail_main_h"}>
-                                            <b>Class id :- </b> {chatModuleCurrentCallGroupData?.id}
-                                        </div>
-                                        <div className={"detail_main_h"}>
                                             <b>Class started at :- </b> {moment(chatModuleCurrentCallGroupData?.class_time).format('hh:mm a')}
                                         </div>
                                         <div className={"detail_main_h"}>
@@ -159,7 +157,7 @@ export default function TeacherStudentVideoCallComponent({inCallStatus,setInCall
                         </div>
                         :
                         <div className={"call_ent_button_section"}>
-                            <button onMouseDown={()=>handleMuteUnmuteInCall()} onMouseUp={()=>handleMuteUnmuteInCall()} className={"tap_to_speak_button mr-10 "+(isMutedCall ? '' : 'tap')}>
+                            <button onClick={()=>handleMuteUnmuteInCall()}className={"tap_to_speak_button mr-10 "+(isMutedCall ? '' : 'tap')}>
                                 <svg fill={"#fff"} width={"34"} viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18v-1.06A8 8 0 0 1 2 9h2a6 6 0 1 0 12 0h2a8 8 0 0 1-7 7.94V18h3v2H6v-2h3zM6 4a4 4 0 1 1 8 0v5a4 4 0 1 1-8 0V4z"/></svg>
                             </button>
                         </div>

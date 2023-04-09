@@ -413,14 +413,16 @@ span.sapater_otp {
 
 .left_side_content_menu_section {
     width: 100%;
-    margin-top: 50px;
+    margin-top: 4vh;
 }
 
 .left_side_content_menu_section .menu_loop_section {
     display: flex;
-    margin-top: 25px;
+    margin-top: 2vh;
 }
-
+.student_dash_header_inner_section .main_heading_icon {
+    width: 5vh;
+}
 .left_side_content_menu_section .menu_loop_section .menu_loop_section_inner_section svg {
     width: 14%;
     fill: #979797;
@@ -529,8 +531,7 @@ span.sapater_otp {
     box-shadow: 1px 0px 3px 0px #afafaf;
     background-image: linear-gradient(180deg, #ffc0a7, #ffe9e0);
     height: 100vh;
-    padding: 41px;
-    width: 100%;
+    padding: 40px 17px;
     overflow: auto;
 }
 
@@ -580,7 +581,7 @@ span.sapater_otp {
 }
 
 .student_dash_header_inner_section .main_heading {
-    font-size: 4vh;
+    font-size: 3.4vh;
     color: #1a2435;
     line-height: 44px;
 }
@@ -597,13 +598,12 @@ span.sapater_otp {
     font-size: 15px!important;
 }
 .student_dash_header_inner_section .main_heading_icon {
-    width: 67px;
+    width: 7vh;
     margin-left: 30px;
     margin-top: 14px;
 }
 
 .demo_classes_main_section {
-    width: 70%;
     background: #ffffff8c;
     border-radius: 8px;
     padding: 18px 0px 18px 7px;
@@ -612,7 +612,7 @@ span.sapater_otp {
 
 .student_dash_header_section .sub_heading {
     line-height: 2.5vh;
-    font-size: 18px;
+    font-size: 2.4vh;
 }
 
 .student_demo_classes_main_page h2{
@@ -673,8 +673,26 @@ span.sapater_otp {
 }
 .side_other_video_with_details .member_name_section {
     text-align: center;
-    font-size: 17px;
+    font-size: 2.3vh;
     color: #fff;
+}
+.fc-toolbar-chunk .fc .fc-button{
+    opacity: 0!important;
+}
+.fc .fc-toolbar-title{
+    font-size: 2.8vh!important;
+}
+.fc .fc-col-header-cell-cushion {
+    font-size: 2.1vh;
+}
+.fc .fc-button .fc-icon{
+    font-size: 2.8vh!important;
+}
+.fc .fc-daygrid-day-number {
+    font-size: 2vh;
+}
+.fc .fc-button{
+    padding: 0.1em 0.65em;
 }
 .profile_form_main_inner_body .form-group  input,.profile_form_main_inner_body .form-group  select {
     font-size: 15px;
@@ -709,7 +727,7 @@ span.sapater_otp {
 .class_list_table .icon_setion {
     width: 52px;
     border-radius: 7px;
-    padding: 5px;
+    padding: 10px;
     height: 52px;
     margin-top: auto;
     display: flex;
@@ -734,7 +752,7 @@ span.sapater_otp {
     font-size: 2vh;
 }
 .icon_main_col .name_section {
-    font-size: 1.6vh;
+    font-size: 2.2vh;
     margin-top: auto;
     margin-bottom: auto;
 }
@@ -775,15 +793,18 @@ div#teacher_video_class_container {
 .demo_classes_section_subject_icon_name {
     display: flex;
 }
-
+.main_body_content_section.all_student_subject_main_container.with_student {
+    width: 70%;
+}
 .demo_classes_section_subject_icon_name .icon_sub {
-    width: 14%;
-    height: auto;
+    height: 50px;
+    width: 63px;
     border-radius: 5px;
     overflow: hidden;
+    margin: auto;
     display: flex;
     text-align: center;
-    margin-right: 13px;
+    margin-right: 10px;
 }
 .payment_popup_main_container {
     position: fixed;
@@ -948,7 +969,6 @@ div#teacher_video_class_container {
     margin: auto;
 }
 .demo_classes_section_subject_icon_name .icon_sub svg {
-    width: 100%;
     margin: auto;
     padding: 6px;
 }
@@ -1124,19 +1144,96 @@ div#main_user_video_call_video_section video.my_video_peer_connection {
 }
 .center_white_board_video_with_details {
     background: #e9e9e9;
+    overflow: auto;
+    height: calc(100vh - 0px);
 }
 .side_my_video_with_details .video_class_description {
     padding: 14px;
+    overflow: auto;
+    height: calc(100vh - 221px);
+}
+.supported_tools_main_ctrl {
+    display: flex;
+    margin: auto;
+}
+.supported_tools_main_ctrl.test {
+    display: flex;
+    padding-top: 17px;
 }
 
+.canvas_editor_inner_main_section {
+    background: #6a6a6a;
+    border-radius: 18px;
+    display: flex;
+}
+.supported_tools_main_ctrl {
+    justify-content: center;
+    left: 0;
+    max-width: 50%;
+    right: 0;
+}
+.st_colors {
+    align-items: center;
+    display: flex;
+}
+.color_varians_main_ctrl, .cv_innr_ctrl {
+    align-items: center;
+    display: inline-flex;
+}
+.colored_icon_ctrl {
+    align-items: center;
+    border-radius: 1px;
+    cursor: pointer;
+    display: inline-flex;
+    height: 14px;
+    justify-content: center;
+    margin: 0 6px;
+    min-width: 14px;
+    opacity: 1;
+    position: relative;
+    text-align: center;
+    transition: all .5ms ease-in-out;
+    -moz-transition: all .5ms ease-in-out;
+}
+.colored_icon_ctrl.active:before {
+    align-items: center;
+    color: #fff;
+    content: "\f00c";
+    display: inline-flex;
+    font-family: Font Awesome\ 5 Free;
+    font-size: 10px;
+    font-weight: 900;
+    height: 14px;
+    height: 100%;
+    justify-content: center;
+    left: 0;
+    line-height: 1.6;
+    margin: auto;
+    position: absolute;
+    top: 0;
+    vertical-align: middle;
+    width: 100%;
+}
+.colored_icon_ctrl.active:after {
+    border: 2px solid #0e9aef;
+    border-radius: 1px;
+    bottom: 0;
+    content: "";
+    height: 24px;
+    left: -5px;
+    position: absolute;
+    right: 0;
+    top: -5px;
+    width: 24px;
+}
 .video_class_description_details .detail_main_h {
     line-height: 30px;
-    font-size: 16px;
+    font-size: 2.3vh;
     color: #fff;
 }
 .video_class_all_students_loop {
     line-height: 30px;
-    font-size: 16px;
+    font-size: 2.3vh;
     color: #fff;
     display: flex;
 }
@@ -1155,12 +1252,6 @@ div#main_user_video_call_video_section video.my_video_peer_connection {
 
 .video_class_all_students_loop .student_name {
     margin-top: 4px;
-}
-.video_class_all_students_loop {
-    line-height: 30px;
-    font-size: 16px;
-    color: #fff;
-    display: flex;
 }
 
 .video_class_all_students_loop .name_initial {
@@ -1194,12 +1285,9 @@ div#main_user_video_call_video_section video.my_video_peer_connection {
     padding: 18px;
     border-radius: 23px;
 }
+
 .video_class_description_details_first_col h1 {
-    font-size: 22px;
-    color: #fff;
-}
-.video_class_description_details_first_col h1 {
-    font-size: 22px;
+    font-size: 2.8vh;
     color: #fff;
 }
 .side_other_video_with_details .other_video_peer_connection {
@@ -1230,12 +1318,25 @@ div#main_user_video_call_video_section video.my_video_peer_connection {
     color: #000;
 }
 .student_pay_for_subscription_main_page {
-    width: 70%;
+    width: 100%;
+}
+.student_pay_for_subscription_main_page .classes_section {
+    display: flex;
+    flex-flow: wrap;
+}
+.student_pay_for_subscription_main_page .classes_section_loop p {
+    font-size: 2.3vh;
 }
 .student_pay_for_subscription_main_page .classes_section {
     overflow: auto;
-    padding: 10px 30px 10px 0px;
     margin-bottom: 36px;
+}
+.student_pay_for_subscription_main_page .classes_section_loop {
+    margin-right: 6px;
+    width: 32%;
+}
+.student_pay_for_subscription_main_page .classes_section_loop {
+    margin-right: 6px;
 }
 .call_ent_button_section button.end_call_button {
     width: 65px;
@@ -1258,7 +1359,7 @@ div#main_user_video_call_video_section video.my_video_peer_connection {
 
 .time_text_event_container_in_calander p {
     color: #fff;
-    font-size: 13px!important;
+    font-size: 2vh!important;
 }
 
 .time_text_event_container_in_calander p span {
@@ -1285,23 +1386,47 @@ div#main_user_video_call_video_section video.my_video_peer_connection {
     font-size: 3.4vh;
 }
 .student_pay_for_subscription_main_page h3 {
-    font-size: 3.2vh;
+    font-size: 2.7vh;
 }
 .user_profile_fixed_section_main_container .facebook_style_loader_container {
     padding: 47px;
     margin-top: 47px;
 }
+.classes_section_total_payable.month {
+    margin-bottom: 10px;
+}
+.student_pay_for_subscription_main_page .classes_section_loop p {
+    font-size: 2.3vh;
+}
+
+.classes_section_total_payable.month {
+    margin-bottom: 10px;
+}
+
+.classes_section_total_payable.month select.total_month_input_select {
+    border: 0px;
+    border-radius: 5px;
+    padding: 8px 17px;
+}
+
+.classes_section_total_payable.month select.total_month_input_select option {
+    font-size: 2.3vh;
+}
 .canvas_editor_tools_main_section {
      padding: 11px;
      background: #6a6a6a;
      border-radius: 18px;
-     display: flex;
  }
 .undo_redo_disable {
     opacity: .5;
 }
+.canvas_editor_inner_main_section {
+    background: #6a6a6a;
+    border-radius: 18px;
+    display: flex;
+}
 .canvas_editor_tools_main_section button.canvas_tool {
-    padding: 16px;
+    padding: 9px;
     margin: auto;
     background: #fff0;
     border-radius: 10px;
@@ -1344,12 +1469,11 @@ div#main_user_video_call_video_section video.my_video_peer_connection {
     cursor: pointer;
     display: inline-block;
     overflow: hidden;
-    padding: 0.625rem 1.25rem;
+    padding: 0.6rem 0px;
     /* 10px 20px */
 }
 .upload.container_section {
     display: flex;
-    width: 141px;
 }
 .no-js .inputfile + label {
     display: none;
@@ -1372,9 +1496,7 @@ div#main_user_video_call_video_section video.my_video_peer_connection {
     vertical-align: middle;
     fill: currentColor;
     margin-top: -0.25em;
-    /* 4px */
     margin-right: 0.25em;
-    /* 4px */
 }
 
 /* style 1 */
@@ -1570,11 +1692,23 @@ a.nav-item.nav-link.active {
 .user_profile_edit_main_container_inner_section .personal_prof_form_2  .profile_form_main_inner_body {line-height: 37px;}
 .user_profile_edit_main_container_inner_section .personal_prof_form_2 .profile_form_main_inner_body input.form-control
 , .user_profile_edit_main_container_inner_section .personal_prof_form_2 .profile_form_main_inner_body .form-group select {
-    font-size: 18px;
+    font-size: 2.3vh;
     border-radius: 5px;
     text-overflow: ellipsis;
     color: #7a7a7a;
     padding: 12px 10px;
+}
+.accordion-body p{
+    font-size: 2.2vh;
+}
+.accordion-body h6{
+    font-size: 2.4vh;
+}
+.accordion-item:first-of-type .accordion-button{
+    font-size: 2.4vh;
+}
+.user_profile_edit_main_container_inner_section {
+    width: 100%;
 }
 .inputfile-6 + label strong {
     height: 100%;
@@ -1778,7 +1912,7 @@ button.submit {
     background-color: #d3394c;
     color: #ffffff;
     border: none;
-    font-size: 15px;
+    font-size: 2.4vh;
     font-weight: bold;
 }
 button.submit:hover {
@@ -1789,11 +1923,13 @@ button.submit:hover {
 }
 
 .assignment_file_pdf_section img {
-    width: 30px;
+    width: 23px;
     margin-right: 10px;
 }
-
-.assignment_file_pdf_section a {margin-top: 21px;font-size: 15px;}
+.inputfile-4 + label{
+    font-size: 2.4vh;
+}
+.assignment_file_pdf_section a {margin-top: 21px;font-size: 2.3vh;}
 .edit_teacher_main_popup_outer_container {
     position: fixed;
     background: #ffffffeb;
@@ -2017,12 +2153,7 @@ section.page-title-area {
     position: relative;
     z-index: 2;
 }
-.section-title h2 {
-    font-size: 44px;
-    line-height: 1.3;
-    position: relative;
-    z-index: 1;
-}
+
 .single-contact-box {
     background-color: rgba(142, 102, 255, 0.05);
     padding: 45px 115px;

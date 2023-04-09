@@ -24,15 +24,11 @@ export function setUserId(id){
     userId = id;
 }
 
-export function drawObjectInCanvas(id,selectedCanvas){
+export function drawObjectInCanvas(id,selectedCanvas,color){
     let activeObjectElement= selectedCanvas.getActiveObject();
-
-    if(activeObjectElement && activeObjectElement != null && typeof activeObjectElement != "undefined" && activeObjectElement.shapeName == 'text' && activeObjectElement.isEditing == true){
-        activeObjectElement.exitEditing();
-    }
     selectedCanvas.isDrawingMode = true;
     selectedCanvas.freeDrawingBrush = new fabric.PencilBrush(selectedCanvas);
-    selectedCanvas.freeDrawingBrush.color = "#f1f1f100";
+    selectedCanvas.freeDrawingBrush.color = selectedToolColor;
     selectedCanvas.freeDrawingBrush.width = 0;
     drawActive= false;
 
@@ -42,6 +38,7 @@ export function drawObjectInCanvas(id,selectedCanvas){
             drawActive= true;
             selectedCanvas.freeDrawingBrush = new fabric.PencilBrush(selectedCanvas);
             selectedCanvas.freeDrawingBrush.width = Number(selectedToolStroke);
+            selectedCanvas.freeDrawingBrush.color = selectedToolColor;
             enableFreeDrawing(selectedCanvas,'free draw');
             return;
         case 'undo':
@@ -71,8 +68,19 @@ export function drawObjectInCanvas(id,selectedCanvas){
 
     }
 }
+
+export function setSelectToolColorToEditor(selected_canvas,color){
+    selectedToolColor = color;
+    selected_canvas.freeDrawingBrush.color = color;
+    // if(typeof selected_canvas.getActiveObject() != "undefined" && selected_canvas.getActiveObject() != null) {
+    //     const currentSelectedObject = selected_canvas.getActiveObject();
+    //     currentSelectedObject.set('stroke',color);
+    // }
+    selected_canvas.renderAll();
+}
 export function enableFreeDrawing(selected_canvas,shapeName){
     removeEvents(selected_canvas);
+    console.log('selectedToolColor',selectedToolColor);
     selected_canvas.freeDrawingBrush.color = selectedToolColor;
     selected_canvas.isDrawingMode = true;
 

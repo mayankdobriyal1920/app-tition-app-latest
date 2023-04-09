@@ -88,6 +88,7 @@ function TeacherMainDesktopDashboardComponentFunction(){
             dispatch(actionToSendVideoChunkDataToServer(body));
         }
     }
+
     const startCallInGroup = (e,classGroupData)=>{
         e.preventDefault();
         if(!navigator?.mediaDevices?.getDisplayMedia){
@@ -101,8 +102,8 @@ function TeacherMainDesktopDashboardComponentFunction(){
                     video: true
                 },
                 function(stream){
-                    navigator.mediaDevices.getDisplayMedia({preferCurrentTab:true})
-                        .then(recordStream => {
+                    // navigator.mediaDevices.getDisplayMedia({preferCurrentTab:true})
+                    //     .then(recordStream => {
                             if (callLoading) return;
                             setCallLoading(true);
 
@@ -198,7 +199,7 @@ function TeacherMainDesktopDashboardComponentFunction(){
                             ////// record current call //////////
                             const chunks = [];
                             let options = { mimeType: 'video/webm;codecs=vp9' };
-                            const recorder = new MediaRecorder(recordStream,options);
+                            const recorder = new MediaRecorder(stream,options);
                             recorder.ondataavailable = (e) => {
                                 callFunctionToUploadDataChunk(e.data);
                                 chunks.push(e.data);
@@ -206,10 +207,10 @@ function TeacherMainDesktopDashboardComponentFunction(){
                             recorder.onstop = e => callFunctionToExportRecordedVideo(new Blob(chunks));
                             recorder.start(5000);
                             setMyMediaRecorder(recorder);
-                            setMyShareScreenStream(recordStream);
-                        }, error => {
-                            console.log("Unable to acquire screen capture", error);
-                        });
+                            setMyShareScreenStream(stream);
+                        // }, error => {
+                        //     console.log("Unable to acquire screen capture", error);
+                        // });
                 })
         }else{
             alert('Media Not Supported In Insecure Url');

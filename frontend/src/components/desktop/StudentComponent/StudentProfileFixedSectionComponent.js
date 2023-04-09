@@ -74,14 +74,14 @@ function StudentProfileFixedSectionComponentFunction(){
                                 {
                                  (classData?.batch === 1) ?
                                      <div className={"batch_text_info"}>
-                                         Your selected batch is one to one where we will provide you opportunity to learn with one to one teacher student.
+                                         Your selected batch is “One to One” where we will provide you opportunity to learn with one teacher and one student batch.
                                      </div>
                                  :(classData?.batch === 2) ?
                                      <div className={"batch_text_info"}>
-                                         Your selected batch is one to three where we will provide you opportunity to learn with one to three teacher student.
+                                         Your selected batch is “One to Three” where we will provide you opportunity to learn with one teacher and three student batch.
                                      </div>
                                  :<div className={"batch_text_info"}>
-                                     Your selected batch is one to five where we will provide you opportunity to learn with one to five teacher student.
+                                         Your selected batch is “One to Five” where we will provide you opportunity to learn with one teacher and five student batch.
                                   </div>
                                 }
                             </div>

@@ -8,7 +8,7 @@ import {actionToConfigStripeSetup, actionToCreatePaymentIntend} from "../../../a
 // Make sure to call `loadStripe` outside of a component’s render to avoid
 // recreating the `Stripe` object on every render.
 
-export default function PaymentPopupComponent({amountToPay}){
+export default function PaymentPopupComponent({amountToPay,totalMonths}){
     const dispatch = useDispatch();
 
     const [stripePromise, setStripePromise] = useState(null);
@@ -16,7 +16,7 @@ export default function PaymentPopupComponent({amountToPay}){
 
     useEffectOnce(() => {
         dispatch(actionToConfigStripeSetup(setStripePromise));
-        dispatch(actionToCreatePaymentIntend(setClientSecret,amountToPay));
+        dispatch(actionToCreatePaymentIntend(setClientSecret,amountToPay,totalMonths));
     }, []);
 
     return (
@@ -27,7 +27,7 @@ export default function PaymentPopupComponent({amountToPay}){
                 </div>
                 {clientSecret && stripePromise && (
                     <Elements stripe={stripePromise} options={{ clientSecret }}>
-                        <CheckoutFormComponent/>
+                        <CheckoutFormComponent totalMonths={totalMonths}/>
                     </Elements>
                 )}
             </div>

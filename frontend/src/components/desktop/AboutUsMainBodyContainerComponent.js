@@ -32,18 +32,29 @@ const AboutUsMainBodyContainerComponent=() => {
                         <div className="row">
                             <div className="col-xl-6 col-lg-6">
                                 <div className="slider__content slider__content__02 pt-120">
-                                    <h5 className="left-line mb-20 pl-40 wow fadeInUp2  animated" data-wow-delay=".1s"
-                                        style={{visibility: "visible",animationDelay: "0.1s", animationName: "fadeInUp2"}}>
-                                        Browse Categories
-                                    </h5>
                                     <h1 className="main-title mb-40 wow fadeInUp2  animated" data-wow-delay=".2s"
-                                        style={{visibility: "visible",animationDelay: "0.2s", animationName: "fadeInUp2"}}>Learn
-                                        online from the leaders in Business Education</h1>
+                                        style={{visibility: "visible",animationDelay: "0.2s", animationName: "fadeInUp2"}}>About Us</h1>
                                     <h5 className="mb-35 wow fadeInUp2  animated" data-wow-delay=".3s"
-                                        style={{visibility: "visible",animationDelay: "0.3s", animationName: "fadeInUp2"}}>There
-                                        are many variations of passages of Lorem Ipsum available, but the majority have
-                                        suffered alteration in some form, by injected humour, or randomised words which
-                                        don't look .</h5>
+                                        style={{visibility: "visible",animationDelay: "0.3s", animationName: "fadeInUp2"}}>
+                                        Every child is unique and hence every child learns differently.
+                                        One to One tuition gives every child personalised tuition by understanding the child’s learning styles.
+                                        India's top teachers mentor children personally to achieve their goals.</h5>
+                                    <h2 className="mb-35 wow fadeInUp2  animated" data-wow-delay=".3s"
+                                        style={{visibility: "visible",animationDelay: "0.3s", animationName: "fadeInUp2"}}>
+                                        One to One tuition will
+                                    </h2>
+                                    <ul className="text-list mb-40 wow fadeInUp2  animated" data-wow-delay=".2s"
+                                        style={{visibility: 'visible', 'animationDelay': '0.2s' , 'animationName': 'fadeInUp2'}}>
+                                        <li>Offer the advantage of 100% individual attention.</li>
+                                        <li>Unique teaching pedagogy.</li>
+                                        <li>Guidance on all subjects with expert teachers in that field.</li>
+                                        <li>Ask doubts without hesitation.</li>
+                                        <li>Two-way interaction system where students can also write on the whiteboard to ask doubts and interact.</li>
+                                        <li>Personalised study schedules and techniques.</li>
+                                        <li>Provide guidance for homework and class tests.</li>
+                                        <li>Real-time tracking solutions for all the PARENTS.</li>
+                                        <li>Offline learning experience through Online mode.</li>
+                                    </ul>
                                 </div>
                             </div>
                             <div className="col-xl-6 col-lg-6">

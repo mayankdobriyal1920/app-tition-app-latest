@@ -39,16 +39,36 @@ const PricingMainBodyContainerComponent=() => {
                                             <img src={writing} alt="" className="pr-icon"/>
                                         </div>
                                         <div className="pr__body">
-                                            <h2 className="mb-30"><span className="old-price">$699</span>
-                                                <b><sup>$</sup>399<span className="new-price">/ Monthly</span> </b></h2>
-                                            <ul className="price-list">
-                                                <li>All Courses</li>
-                                                <li>For One Person Uses Only</li>
-                                                <li>25+ Article Free</li>
-                                                <li>No Social Media Activity</li>
-                                                <li>No Lifetime Access</li>
-                                                <li>Emergency Support Only</li>
-                                            </ul>
+                                            <h2 className="mb-10">
+                                                <b>
+                                                    <span className="new-price">Kg to 4th</span>
+                                                </b>
+                                            </h2>
+                                            <h2 className="mb-10">
+                                                <b>
+                                                    <sup>₹</sup>2000<span className="new-price">/ Monthly</span>
+                                                </b>
+                                            </h2>
+                                            <h2 className="mb-10">
+                                                <b>
+                                                    <span className="new-price">5th to 8th</span>
+                                                </b>
+                                            </h2>
+                                            <h2 className="mb-10">
+                                                <b>
+                                                    <sup>₹</sup>2500<span className="new-price">/ Monthly</span>
+                                                </b>
+                                            </h2>
+                                            <h2 className="mb-10">
+                                                <b>
+                                                    <span className="new-price">9th to 10th</span>
+                                                </b>
+                                            </h2>
+                                            <h2 className="mb-10">
+                                                <b>
+                                                    <sup>₹</sup>3000<span className="new-price">/ Monthly</span>
+                                                </b>
+                                            </h2>
                                         </div>
                                     </div>
                                 </div>
@@ -60,16 +80,36 @@ const PricingMainBodyContainerComponent=() => {
                                             <img src={test} alt="" className="pr-icon"/>
                                         </div>
                                         <div className="pr__body">
-                                            <h2 className="mb-30"><span className="old-price">$899</span>
-                                                <b><sup>$</sup>599<span className="new-price">/ Monthly</span> </b></h2>
-                                            <ul className="price-list">
-                                                <li>All Courses</li>
-                                                <li>For One Person Uses Only</li>
-                                                <li>25+ Article Free</li>
-                                                <li>No Social Media Activity</li>
-                                                <li>No Lifetime Access</li>
-                                                <li>Emergency Support Only</li>
-                                            </ul>
+                                            <h2 className="mb-10">
+                                                <b>
+                                                    <span className="new-price">Kg to 4th</span>
+                                                </b>
+                                            </h2>
+                                            <h2 className="mb-10">
+                                                <b>
+                                                    <sup>₹</sup>1800<span className="new-price">/ Monthly</span>
+                                                </b>
+                                            </h2>
+                                            <h2 className="mb-10">
+                                                <b>
+                                                    <span className="new-price">5th to 8th</span>
+                                                </b>
+                                            </h2>
+                                            <h2 className="mb-10">
+                                                <b>
+                                                    <sup>₹</sup>2200<span className="new-price">/ Monthly</span>
+                                                </b>
+                                            </h2>
+                                            <h2 className="mb-10">
+                                                <b>
+                                                    <span className="new-price">9th to 10th</span>
+                                                </b>
+                                            </h2>
+                                            <h2 className="mb-10">
+                                                <b>
+                                                    <sup>₹</sup>2700<span className="new-price">/ Monthly</span>
+                                                </b>
+                                            </h2>
                                         </div>
                                     </div>
                                 </div>
@@ -81,16 +121,36 @@ const PricingMainBodyContainerComponent=() => {
                                             <img src={lifetime} alt="" className="pr-icon"/>
                                         </div>
                                         <div className="pr__body">
-                                            <h2 className="mb-30"><span className="old-price">$1299</span>
-                                                <b><sup>$</sup>799<span className="new-price">/ Monthly</span> </b></h2>
-                                            <ul className="price-list">
-                                                <li>All Courses</li>
-                                                <li>For One Person Uses Only</li>
-                                                <li>25+ Article Free</li>
-                                                <li>No Social Media Activity</li>
-                                                <li>No Lifetime Access</li>
-                                                <li>Emergency Support Only</li>
-                                            </ul>
+                                            <h2 className="mb-10">
+                                                <b>
+                                                    <span className="new-price">Kg to 4th</span>
+                                                </b>
+                                            </h2>
+                                            <h2 className="mb-10">
+                                                <b>
+                                                    <sup>₹</sup>1700<span className="new-price">/ Monthly</span>
+                                                </b>
+                                            </h2>
+                                            <h2 className="mb-10">
+                                                <b>
+                                                    <span className="new-price">5th to 8th</span>
+                                                </b>
+                                            </h2>
+                                            <h2 className="mb-10">
+                                                <b>
+                                                    <sup>₹</sup>2100<span className="new-price">/ Monthly</span>
+                                                </b>
+                                            </h2>
+                                            <h2 className="mb-10">
+                                                <b>
+                                                    <span className="new-price">9th to 10th</span>
+                                                </b>
+                                            </h2>
+                                            <h2 className="mb-10">
+                                                <b>
+                                                    <sup>₹</sup>2500<span className="new-price">/ Monthly</span>
+                                                </b>
+                                            </h2>
                                         </div>
                                     </div>
                                 </div>

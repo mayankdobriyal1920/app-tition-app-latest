@@ -14,6 +14,57 @@ export const _generateUniqueId = () => {
     return uniqueId()+'-'+uniqueId()+'-'+uniqueId()+'-'+uniqueId();
 }
 
+export function _getClassWisePaymentData(unit,batch){
+    if(batch === 1) {
+        switch (unit) {
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+                return 2000;
+            case 5:
+            case 6:
+            case 7:
+            case 8:
+                return 2500;
+            case 9:
+            case 10:
+                return 3000;
+        }
+    }else if(batch === 2){
+        switch (unit) {
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+                return 1800;
+            case 5:
+            case 6:
+            case 7:
+            case 8:
+                return 2200;
+            case 9:
+            case 10:
+                return 2700;
+        }
+    }else if(batch === 3){
+        switch (unit) {
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+                return 1700;
+            case 5:
+            case 6:
+            case 7:
+            case 8:
+                return 2100;
+            case 9:
+            case 10:
+                return 2500;
+        }
+    }
+}
 export function _getIconBySubjectKey(name){
     let colorIcon;
     switch (name.toLowerCase()){

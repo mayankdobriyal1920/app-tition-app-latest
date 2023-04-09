@@ -84,7 +84,7 @@ export default function StudentAttendanceAndAssignmentComponent({isMobile}){
         <div className={"student_attendance_assignment_main_container mt-65 "+(isMobile ? 'mobile' : '')}>
             {(!isMobile) &&
             (<div className="section-title text-center mb-45">
-                <h2 className="mb-25">Attendance class with assignment</h2>
+                <h2 className="mb-25">Class Attendance & Assignments</h2>
             </div>)}
             {(loading) ?
                 (isMobile) ?

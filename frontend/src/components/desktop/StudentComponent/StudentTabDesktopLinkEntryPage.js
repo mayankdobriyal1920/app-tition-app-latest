@@ -25,7 +25,7 @@ export default function StudentTabDesktopLinkEntryPage() {
                         <Route exact path={`${path}/student-scheduled-classes`}>
                             <StudentDesktopScheduledClasses/>
                         </Route>
-                        <Route path={`${path}/subscription-confirm`}>
+                        <Route path={`${path}/subscription-confirm/:month`}>
                             <StudentPaymentConfirmComponent/>
                         </Route>
                         <Route path={`${path}/student-profile-page`}>

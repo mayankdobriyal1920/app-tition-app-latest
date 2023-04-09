@@ -1,19 +1,18 @@
 import React, {useState} from "react";
 import {useSelector} from "react-redux"
 import PaymentPopupComponent from "./PaymentPopupComponent";
+import {_getClassWisePaymentData} from "../../../helper/CommonHelper";
 
 export default function StudentPayForSubscriptionComponent(){
     const {classData} = useSelector((state) => state.studentAllClassesList);
-    const studentAllTodayClassList = useSelector((state) => state.studentAllTodayClassList);
     const [openClosePaymentPopup,setOpenClosePaymentPopup] = useState(false);
     const [amountToPay,setAmountToPay] = useState(false);
-
+    const [totalMonths,setTotalMonths] = useState(1);
 
     const setAmountAndOpenPaymentPopup = (amount)=>{
         setOpenClosePaymentPopup(true);
         setAmountToPay(amount);
     }
-
 
     return (
         <div className={"student_pay_for_subscription_main_page"}>
@@ -22,29 +21,43 @@ export default function StudentPayForSubscriptionComponent(){
             <h2 className={"mb-10"}>Subscription details :-</h2>
             <h3 className={"mb-10"}>Total Classes(3)</h3>
             <div className={"classes_section"}>
-                {(studentAllTodayClassList.map((userSubjectData,key)=>(
+                {(classData?.profile_subject_with_batch?.map((userSubjectData,key)=>(
                     <div key={key} className={"classes_section_loop"}>
                         <p><span>Name : </span>{userSubjectData?.subject_name}</p>
                         <p><span>Class : </span>{classData?.student_class}th</p>
-                        <p><span>Course fee : </span>Rs 3000</p>
-                        <p><span>Total classes : </span>150</p>
+                        <p><span>Course fee : </span>Rs {_getClassWisePaymentData(classData?.student_class,classData?.batch)}</p>
                     </div>
                 )))}
+            </div>
+            <div className={"classes_section_total_payable month"}>
+                <div className={"row"}>
+                    <div className={"col-4"}>
+                        <h3>Total month : </h3>
+                    </div>
+                    <div className={"col-4"}>
+                        <select onChange={(e)=>setTotalMonths(Number(e.target.value))} className={"total_month_input_select"}>
+                            <option value={1}>1 Month</option>
+                            <option value={3}>3 Months</option>
+                            <option value={6}>6 Months</option>
+                            <option value={12}>12 Months</option>
+                        </select>
+                    </div>
+                </div>
             </div>
             <div className={"classes_section_total_payable"}>
                 <div className={"row"}>
                     <div className={"col-4"}>
-                        <h3>Total amount : Rs 12000</h3>
+                        <h3>Total amount : Rs {_getClassWisePaymentData(classData?.student_class,classData?.batch) * classData?.profile_subject_with_batch?.length * totalMonths}</h3>
                     </div>
                     <div className={"col-4"}>
-                        <button onClick={()=>setAmountAndOpenPaymentPopup(1000)} className={"theme_btn pay_button"}>
+                        <button onClick={()=>setAmountAndOpenPaymentPopup(_getClassWisePaymentData(classData?.student_class,classData?.batch) * classData?.profile_subject_with_batch?.length * totalMonths,totalMonths)} className={"theme_btn pay_button"}>
                             Make Payment
                         </button>
                     </div>
                 </div>
             </div>
             {(openClosePaymentPopup) ?
-                <PaymentPopupComponent amountToPay={amountToPay}/>
+                <PaymentPopupComponent amountToPay={amountToPay} totalMonths={totalMonths}/>
                 :''
             }
         </div>
