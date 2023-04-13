@@ -971,6 +971,7 @@ div#teacher_video_class_container {
 .demo_classes_section_subject_icon_name .icon_sub svg {
     margin: auto;
     padding: 6px;
+    width: 50px;
 }
 .demo_classes_section_subject_icon_name .name_section {
     width: 80%;

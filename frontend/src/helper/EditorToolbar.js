@@ -277,7 +277,7 @@ export function drawLineArrow(selected_canvas){
             return true;
         }else {
             canvas.add(group);
-            canvas.setActiveObject(group);
+            //canvas.setActiveObject(group);
             //canvas.isDrawingMode = false;
             eventBus.dispatch('send-to-websocket-fabric', {type: 'add', userPointer: group});
         }
@@ -355,7 +355,7 @@ function drawCircle(selected_canvas) {
                 mr:false,
                 mtr:false});
             circle.setCoords();
-            selected_canvas.setActiveObject(circle);
+            //selected_canvas.setActiveObject(circle);
             eventBus.dispatch('send-to-websocket-fabric',{type:'add',userPointer:circle,resize:true});
         }
         selected_canvas.renderAll();
@@ -430,7 +430,7 @@ function drawRectangle(selected_canvas) {
         if(rect.width === 0 && rect.height === 0){
             selected_canvas.remove(rect);
         }else{
-            selected_canvas.setActiveObject(rect);
+            //selected_canvas.setActiveObject(rect);
             eventBus.dispatch('send-to-websocket-fabric',{type:'add',userPointer:rect,resize:true});
         }
         selected_canvas.renderAll();
@@ -464,7 +464,7 @@ export function createCopyOfFreeDraw(selected_canvas, oldPath,shapeName){
         selected_canvas.remove(oldPath);
         setTimeout(()=>{
             selected_canvas.add(clone);
-            selected_canvas.setActiveObject(clone);
+            //selected_canvas.setActiveObject(clone);
             selected_canvas.renderAll();
             const canvasIndex = selected_canvas?.lowerCanvasEl?.getAttribute('data-index');
             const captureId = selected_canvas?.lowerCanvasEl?.getAttribute('data-capture-id');

@@ -12,11 +12,17 @@
     float: left;
     width: 140px;
 }
-
+.center_white_board_video_with_details {
+    background: #e9e9e9;
+    overflow: auto;
+    height: auto!important;
+}
 .main_header_section {
     border-bottom: 1px solid #ccc;
 }
-
+.student_video_call_section_container .canvas_editor_tools_main_section button.canvas_tool {
+    margin-right: 28px!important;
+}
 .main_header_section .image_col {
     padding: 1px 20px;
 }

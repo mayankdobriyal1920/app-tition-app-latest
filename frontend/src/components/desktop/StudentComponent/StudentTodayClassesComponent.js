@@ -61,7 +61,6 @@ export default function StudentTodayClassesComponent(){
     const pickCallInGroup = (e,myClasses,groupData)=>{
         e.preventDefault();
         let getUserMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia).bind(navigator);
-
         if(getUserMedia) {
             getUserMedia({
                     audio: true,

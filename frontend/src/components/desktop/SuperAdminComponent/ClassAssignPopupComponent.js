@@ -2,6 +2,13 @@ import React, {useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {actionToCreateAndAssignClassData, actionToOpenCloseClassAssignPopup} from "../../../actions/CommonAction";
 import moment from "moment";
+
+let weekDatesArray = [];
+let weekStartDate = moment().startOf('week').format('DD-MM-YYYY');
+for (let i = 0; i < 6; i++) {
+    let weekDate = moment(weekStartDate).add(i, 'days').format("YYYY-MM-DD");
+    weekDatesArray.push(weekDate);
+}
 export default function ClassAssignPopupComponent(){
     const [selectedTeacherId,setSelectedTeacherId] = useState(null);
     const [selectedClassAssignId,setSelectedClassAssignId] = useState(null);
@@ -162,6 +169,16 @@ export default function ClassAssignPopupComponent(){
                                                    placeholder="Class date time"/>
                                             <label htmlFor="floatingClassTime">Class date time</label>
                                         </div>
+                                        {(weekDatesArray?.map((date,key)=>(
+                                            <div key={key} className="form-floating">
+                                                <input type="time"
+                                                value={classStartFromDateTime}
+                                                onChange={(e) => setClassStartFromDateTime(e.target.value)}
+                                                className="form-control" id="floatingClassTime"
+                                                placeholder="Class date time"/>
+                                                <label htmlFor="floatingClassTime">{moment(date).format('dddd ,Do MMMM')}</label>
+                                            </div>
+                                        )))}
                                         <button type="button" onClick={callFunctionToAssignClassData}
                                                 className="btn btn-primary mt-30">
                                             Assign
