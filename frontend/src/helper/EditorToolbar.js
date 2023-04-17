@@ -114,6 +114,7 @@ export function deleteElementObject(selected_canvas){
             if(activeObjectElement) {
                 selected_canvas.remove(activeObjectElement);
                 selected_canvas.renderAll()
+                eventBus.dispatch('send-to-websocket-fabric', {type: 'remove', userPointer: activeObjectElement});
             }
         })
         isDown = false;
