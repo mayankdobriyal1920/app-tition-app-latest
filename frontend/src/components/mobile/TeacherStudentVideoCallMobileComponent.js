@@ -11,17 +11,16 @@ import $ from 'jquery';
 import {useEffectOnce} from "../../helper/UseEffectOnce";
 import WhiteBoardMobileComponent from "./StudentComponent/WhiteBoardMobileComponent";
 import {IonCol, IonContent, IonPage, IonRow} from "@ionic/react";
+import WhiteboardComponent from "../desktop/WhiteboardComponent";
 let loadOnce = false;
 export default function TeacherStudentVideoCallMobileComponent({inCallStatus,setInCallStatus,isTeacher}){
     const chatModuleCurrentCallGroupData = useSelector((state) => state.chatModuleCurrentCallGroupData);
     const chatModuleCurrentCallGroupMembers = useSelector((state) => state.chatModuleCurrentCallGroupMembers);
-    const openCloseTeacherRatingPopup = useSelector((state) => state.openCloseTeacherRatingPopup);
     const studentAllClassesList = useSelector((state) => state.studentAllClassesList);
     const userInfo = useSelector((state) => state.userSignin.userInfo);
     let [timerTimeInterval,setTimerTimeInterval] = useState(0);
     const dispatch = useDispatch();
-    let [isMutedCall,setIsMutedCall] = useState(isTeacher ? false : true);
-
+    let [isMutedCall,setIsMutedCall] = useState(!isTeacher);
 
     const endMyStreamTrackOnEndCall = ()=>{
         if(myStream != null) {
@@ -58,10 +57,11 @@ export default function TeacherStudentVideoCallMobileComponent({inCallStatus,set
         setIsMutedCall(!isMutedCall);
     }
 
-    const endCallFunctionCall = (groupId)=>{
+    const endCallFunctionCall = (groupId,classId,startDateTime)=>{
         endMyStreamTrackOnEndCall();
         setInCallStatus('PREJOIN');
-        dispatch(actionToEndCurrentCurrentCall(groupId));
+        let startDate = moment(startDateTime).format('YYYY-MM-DD');
+        dispatch(actionToEndCurrentCurrentCall(groupId,classId,startDate));
     }
     const leaveCallFunctionCall = ()=>{
         endMyStreamTrackOnEndCall();
@@ -78,10 +78,10 @@ export default function TeacherStudentVideoCallMobileComponent({inCallStatus,set
     },[])
 
     useEffect(()=>{
-        if(openCloseTeacherRatingPopup?.isOpen){
+        if(!chatModuleCurrentCallGroupData?.id){
             leaveCallFunctionCall();
         }
-    },[openCloseTeacherRatingPopup])
+    },[chatModuleCurrentCallGroupData])
 
 
     return(
@@ -97,7 +97,7 @@ export default function TeacherStudentVideoCallMobileComponent({inCallStatus,set
                     <div className={"student_video_call_section_container"}>
                     <div className={"center_white_board_video_with_details"}>
                         {(inCallStatus === 'INCALL') ?
-                            <WhiteBoardMobileComponent groupId={chatModuleCurrentCallGroupData.id}/>
+                            <WhiteboardComponent groupId={chatModuleCurrentCallGroupData.id}/>
                             : ''
                         }
                     </div>
@@ -109,8 +109,8 @@ export default function TeacherStudentVideoCallMobileComponent({inCallStatus,set
                                        id={groupMembers?.id}
                                        data-user-id={userInfo?.id}
                                        data-teacher-id={chatModuleCurrentCallGroupData?.teacher_id}
-                                       muted={(!groupMembers?.mute && userInfo?.id !== chatModuleCurrentCallGroupData?.teacher_id) ? false : true}
-                                       data-muted={(!groupMembers?.mute && userInfo?.id !== chatModuleCurrentCallGroupData?.teacher_id) ? false : true}
+                                       muted={(userInfo?.id === chatModuleCurrentCallGroupData?.teacher_id) ? true : groupMembers?.mute}
+                                       data-muted={(userInfo?.id === chatModuleCurrentCallGroupData?.teacher_id) ? true : groupMembers?.mute}
                                        autoPlay={true} className={'my_video_peer_connection'}></video>
                                 :''
                         )))}
@@ -118,13 +118,13 @@ export default function TeacherStudentVideoCallMobileComponent({inCallStatus,set
                     {/*Important div for call*/}
                     {(isTeacher) ?
                         <div className={"call_ent_button_section"}>
-                            {!isMutedCall ?
+                            {isMutedCall ?
                                 <button onClick={()=>handleMuteUnmuteInCall()} className={"mute_call_button  mr-10"}>
-                                    <svg  fill={"#fff"} width={"24"} viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18v-1.06A8 8 0 0 1 2 9h2a6 6 0 1 0 12 0h2a8 8 0 0 1-7 7.94V18h3v2H6v-2h3zM6 4a4 4 0 1 1 8 0v5a4 4 0 1 1-8 0V4z"/></svg>
+                                    <svg fill={"#fff"} width={"24"} viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" className="bi bi-mic-mute-fill"><path d="M13 8c0 .564-.094 1.107-.266 1.613l-.814-.814A4.02 4.02 0 0 0 12 8V7a.5.5 0 0 1 1 0v1zm-5 4c.818 0 1.578-.245 2.212-.667l.718.719a4.973 4.973 0 0 1-2.43.923V15h3a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1h3v-2.025A5 5 0 0 1 3 8V7a.5.5 0 0 1 1 0v1a4 4 0 0 0 4 4zm3-9v4.879L5.158 2.037A3.001 3.001 0 0 1 11 3z"/><path d="M9.486 10.607 5 6.12V8a3 3 0 0 0 4.486 2.607zm-7.84-9.253 12 12 .708-.708-12-12-.708.708z"/></svg>
                                 </button>
                                 :
                                 <button onClick={()=>handleMuteUnmuteInCall()} className={"mute_call_button  mr-10"}>
-                                    <svg fill={"#fff"} width={"24"} viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" className="bi bi-mic-mute-fill"><path d="M13 8c0 .564-.094 1.107-.266 1.613l-.814-.814A4.02 4.02 0 0 0 12 8V7a.5.5 0 0 1 1 0v1zm-5 4c.818 0 1.578-.245 2.212-.667l.718.719a4.973 4.973 0 0 1-2.43.923V15h3a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1h3v-2.025A5 5 0 0 1 3 8V7a.5.5 0 0 1 1 0v1a4 4 0 0 0 4 4zm3-9v4.879L5.158 2.037A3.001 3.001 0 0 1 11 3z"/><path d="M9.486 10.607 5 6.12V8a3 3 0 0 0 4.486 2.607zm-7.84-9.253 12 12 .708-.708-12-12-.708.708z"/></svg>
+                                    <svg  fill={"#fff"} width={"24"} viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18v-1.06A8 8 0 0 1 2 9h2a6 6 0 1 0 12 0h2a8 8 0 0 1-7 7.94V18h3v2H6v-2h3zM6 4a4 4 0 1 1 8 0v5a4 4 0 1 1-8 0V4z"/></svg>
                                 </button>
                             }
                             <button onClick={()=>endCallFunctionCall(chatModuleCurrentCallGroupData?.id)} className={"end_call_button"}>
@@ -133,9 +133,15 @@ export default function TeacherStudentVideoCallMobileComponent({inCallStatus,set
                         </div>
                         :
                         <div className={"call_ent_button_section"}>
-                            <button onClick={()=>handleMuteUnmuteInCall()}className={"tap_to_speak_button mr-10 "+(isMutedCall ? '' : 'tap')}>
-                                <svg fill={"#fff"} width={"34"} viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18v-1.06A8 8 0 0 1 2 9h2a6 6 0 1 0 12 0h2a8 8 0 0 1-7 7.94V18h3v2H6v-2h3zM6 4a4 4 0 1 1 8 0v5a4 4 0 1 1-8 0V4z"/></svg>
-                            </button>
+                            {isMutedCall ?
+                                <button onClick={()=>handleMuteUnmuteInCall()} className={"tap_to_speak_button  mr-10"}>
+                                    <svg fill={"#fff"} width={"24"} viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" className="bi bi-mic-mute-fill"><path d="M13 8c0 .564-.094 1.107-.266 1.613l-.814-.814A4.02 4.02 0 0 0 12 8V7a.5.5 0 0 1 1 0v1zm-5 4c.818 0 1.578-.245 2.212-.667l.718.719a4.973 4.973 0 0 1-2.43.923V15h3a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1h3v-2.025A5 5 0 0 1 3 8V7a.5.5 0 0 1 1 0v1a4 4 0 0 0 4 4zm3-9v4.879L5.158 2.037A3.001 3.001 0 0 1 11 3z"/><path d="M9.486 10.607 5 6.12V8a3 3 0 0 0 4.486 2.607zm-7.84-9.253 12 12 .708-.708-12-12-.708.708z"/></svg>
+                                </button>
+                                :
+                                <button onClick={()=>handleMuteUnmuteInCall()} className={"tap_to_speak_button  mr-10 tap"}>
+                                    <svg  fill={"#fff"} width={"24"} viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18v-1.06A8 8 0 0 1 2 9h2a6 6 0 1 0 12 0h2a8 8 0 0 1-7 7.94V18h3v2H6v-2h3zM6 4a4 4 0 1 1 8 0v5a4 4 0 1 1-8 0V4z"/></svg>
+                                </button>
+                            }
                         </div>
                     }
                 </div>

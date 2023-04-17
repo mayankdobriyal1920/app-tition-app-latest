@@ -31,7 +31,11 @@ import {
     actionToGetAllStudentClassAttendWithAssignmentApiCall,
     actionToGetAllRecordedClassesDetailsApiCall,
     actionToGetPrevCallOnGroupClassApiCall,
-    actionToGetWhiteBoardPrevDataForGroupIdApiCall
+    actionToGetWhiteBoardPrevDataForGroupIdApiCall,
+    actionToGetTeacherAllTodayClassesApiCall,
+    actionToGetTeacherAllDemoClassesApiCall,
+    actionToGetStudentAllTodayClassesApiCall,
+    actionToGetStudentAllDemoClassesApiCall
 } from "../models/commonModel.js";
 const commonRouter = express.Router();
 
@@ -424,6 +428,78 @@ commonRouter.post(
     '/actionToGetTeacherAllClassesApiCall',
     expressAsyncHandler(async (req, res) => {
         actionToGetTeacherAllClassesApiCall(req.body).then((data) => {
+            let finalData = [];
+            if(data && data?.length){
+                data?.map((resData)=>{
+                    finalData.push(JSON.parse(resData.teacher_classes_data));
+                })
+            }
+            res.status(200).send({
+                response: finalData,
+            });
+        }).catch(error => {
+            res.status(500).send(error);
+        })
+    })
+);
+commonRouter.post(
+    '/actionToGetTeacherAllTodayClassesApiCall',
+    expressAsyncHandler(async (req, res) => {
+        actionToGetTeacherAllTodayClassesApiCall(req.body).then((data) => {
+            let finalData = [];
+            if(data && data?.length){
+                data?.map((resData)=>{
+                    finalData.push(JSON.parse(resData.teacher_classes_data));
+                })
+            }
+            res.status(200).send({
+                response: finalData,
+            });
+        }).catch(error => {
+            res.status(500).send(error);
+        })
+    })
+);
+commonRouter.post(
+    '/actionToGetStudentAllTodayClassesApiCall',
+    expressAsyncHandler(async (req, res) => {
+        actionToGetStudentAllTodayClassesApiCall(req.body).then((data) => {
+            let finalData = [];
+            if(data && data?.length){
+                data?.map((resData)=>{
+                    finalData.push(JSON.parse(resData.classes_data));
+                })
+            }
+            res.status(200).send({
+                response: finalData,
+            });
+        }).catch(error => {
+            res.status(500).send(error);
+        })
+    })
+);
+commonRouter.post(
+    '/actionToGetStudentAllDemoClassesApiCall',
+    expressAsyncHandler(async (req, res) => {
+        actionToGetStudentAllDemoClassesApiCall(req.body).then((data) => {
+            let finalData = [];
+            if(data && data?.length){
+                data?.map((resData)=>{
+                    finalData.push(JSON.parse(resData.classes_data));
+                })
+            }
+            res.status(200).send({
+                response: finalData,
+            });
+        }).catch(error => {
+            res.status(500).send(error);
+        })
+    })
+);
+commonRouter.post(
+    '/actionToGetTeacherAllDemoClassesApiCall',
+    expressAsyncHandler(async (req, res) => {
+        actionToGetTeacherAllDemoClassesApiCall(req.body).then((data) => {
             let finalData = [];
             if(data && data?.length){
                 data?.map((resData)=>{

@@ -59,7 +59,13 @@ import {
     TODAY_PROFILE_DATA_LIST_SUCCESS,
     OPEN_CLOSE_TEACHER_EDIT_POPUP,
     LATEST_DEMO_CLASSES_SUCCESS,
-    ALL_RECORDED_CLASSES_REQUEST, ALL_RECORDED_CLASSES_SUCCESS
+    ALL_RECORDED_CLASSES_REQUEST,
+    ALL_RECORDED_CLASSES_SUCCESS,
+    TEACHER_ALL_TODAY_CLASS_LIST_SUCCESS,
+    TEACHER_ALL_TODAY_CLASS_LIST_REQUEST,
+    TEACHER_ALL_DEMO_CLASS_LIST_REQUEST,
+    STUDENT_ALL_DEMO_CLASS_LIST_REQUEST,
+    STUDENT_ALL_DEMO_CLASS_LIST_SUCCESS, STUDENT_ALL_TODAY_CLASS_LIST_REQUEST
 } from "../constants/CommonConstants";
 
 export const userSigninReducer = (state = {}, action) => {
@@ -92,6 +98,27 @@ export const allStudentDataListReducer = (state = {}, action) => {
             return { loading: true,studentData:[] ,prevId:action.payload};
         case ALL_STUDENT_DATA_LIST_SUCCESS:
             return { loading: false,studentData:action.payload ,prevId:state.prevId};
+        default:
+            return state;
+    }
+};
+
+export const allStudentDemoDataListReducer = (state = {}, action) => {
+    switch (action.type) {
+        case STUDENT_ALL_DEMO_CLASS_LIST_REQUEST:
+            return { loading: true,classData:[] ,prevId:action.payload};
+        case STUDENT_ALL_DEMO_CLASS_LIST_SUCCESS:
+            return { loading: false,classData:action.payload ,prevId:state.prevId};
+        default:
+            return state;
+    }
+};
+export const allStudentTodayDataListReducer = (state = {}, action) => {
+    switch (action.type) {
+        case STUDENT_ALL_TODAY_CLASS_LIST_REQUEST:
+            return { loading: true,classData:[] ,prevId:action.payload};
+        case STUDENT_ALL_TODAY_CLASS_LIST_SUCCESS:
+            return { loading: false,classData:action.payload ,prevId:state.prevId};
         default:
             return state;
     }
@@ -267,6 +294,26 @@ export const teacherAllClassesListReducer = (state = {}, action) => {
             return state;
     }
 };
+export const teacherAllTodayClassesListReducer = (state = {}, action) => {
+    switch (action.type) {
+        case TEACHER_ALL_TODAY_CLASS_LIST_REQUEST:
+            return { loading: true,classData:[] ,prevId:action.payload};
+        case TEACHER_ALL_TODAY_CLASS_LIST_SUCCESS:
+            return { loading: false,classData:action.payload ,prevId:state.prevId};
+        default:
+            return state;
+    }
+};
+export const teacherAllDemoClassesListReducer = (state = {}, action) => {
+    switch (action.type) {
+        case TEACHER_ALL_DEMO_CLASS_LIST_REQUEST:
+            return { loading: true,classData:[] ,prevId:action.payload};
+        case TEACHER_ALL_DEMO_CLASS_LIST_SUCCESS:
+            return { loading: false,classData:action.payload ,prevId:state.prevId};
+        default:
+            return state;
+    }
+};
 export const captureAnnotatorJSONDataReducer = (state = {}, action) => {
     switch (action.type) {
         case CAPTURE_ANNOTATOR_JSON_DATA:
@@ -299,14 +346,7 @@ export const getIPAddressDataReducer = (state = {}, action) => {
             return state;
     }
 }
-export const studentAllTodayClassListReducer = (state = {}, action) => {
-    switch (action.type) {
-        case STUDENT_ALL_TODAY_CLASS_LIST_SUCCESS:
-            return action.payload;
-        default:
-            return state;
-    }
-};
+
 export const studentAllTimeClassListReducer = (state = {}, action) => {
     switch (action.type) {
         case STUDENT_ALL_TIME_CLASS_LIST_SUCCESS:
@@ -315,14 +355,7 @@ export const studentAllTimeClassListReducer = (state = {}, action) => {
             return state;
     }
 };
-export const teacherAllDemoClassListReducer = (state = {}, action) => {
-    switch (action.type) {
-        case TEACHER_ALL_DEMO_CLASS_LIST_SUCCESS:
-            return action.payload;
-        default:
-            return state;
-    }
-};
+
 export const windowResizeCountReducer = (state = {}, action) => {
     switch (action.type) {
         case WINDOW_RESIZE_COUNT:

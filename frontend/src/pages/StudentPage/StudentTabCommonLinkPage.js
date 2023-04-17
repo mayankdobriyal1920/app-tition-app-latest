@@ -7,7 +7,10 @@ import {getWebsocketConnectedMessage} from "../../helper/WebSocketHelper";
 import {w3cwebsocket as W3CWebSocket} from "websocket";
 import {
     actionToGetAllSchoolBoardDataList,
-    actionToGetAllSubjectDataList, actionToGetUserAllClasses,
+    actionToGetAllSubjectDataList,
+    actionToGetStudentAllDemoClasses,
+    actionToGetStudentAllTodayClasses,
+    actionToGetUserAllClasses,
     actionToGetUserFreshData
 } from "../../actions/CommonAction";
 
@@ -24,6 +27,8 @@ export default function StudentTabCommonLinkEntryPage() {
             dispatch(actionToGetAllSchoolBoardDataList());
             dispatch(actionToGetUserFreshData(userInfo?.id));
             dispatch(actionToGetUserAllClasses());
+            dispatch(actionToGetStudentAllTodayClasses());
+            dispatch(actionToGetStudentAllDemoClasses());
             loadOnce = false;
         }
     },[])

@@ -45,9 +45,12 @@ const iceServers= [
 
 
 export default function StudentTodayClassesComponent(){
-    const {loading,classData} = useSelector((state) => state.studentAllClassesList);
-    const studentAllTodayClassList = useSelector((state) => state.studentAllTodayClassList);
+    const studentAllClassesList = useSelector((state) => state.studentAllClassesList);
+    const allStudentDemoDataList = useSelector((state) => state.allStudentDemoDataList);
+    const allStudentTodayDataList = useSelector((state) => state.allStudentTodayDataList);
+
     const openCloseTeacherRatingPopup = useSelector((state) => state.openCloseTeacherRatingPopup);
+    const [callLoading,setCallLoading] = React.useState(null);
     const [inCallStatus,setInCallStatus] = React.useState('PREJOIN');
     const chatModuleCurrentCallGroupData = useSelector((state) => state.chatModuleCurrentCallGroupData);
     const chatModuleNewUserAddedInCurrentCall = useSelector((state) => state.chatModuleNewUserAddedInCurrentCall);
@@ -58,8 +61,14 @@ export default function StudentTodayClassesComponent(){
         //dispatch(actionToRemoveDataFromIncomingCall({}));
     }
 
-    const pickCallInGroup = (e,myClasses,groupData)=>{
+    const pickCallInGroup = (e,myClasses)=>{
         e.preventDefault();
+        if(!navigator?.mediaDevices?.getDisplayMedia){
+            alert('Sorry!!! screen recording is not support on your device please try in WINDOWS and MACOS');
+            return false;
+        }
+        if (callLoading) return false;
+        setCallLoading(myClasses?.id);
         let getUserMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia).bind(navigator);
         if(getUserMedia) {
             getUserMedia({
@@ -69,16 +78,19 @@ export default function StudentTodayClassesComponent(){
                 function(stream){
                     setInCallStatus('JOINING');
                     let memberData = cloneDeep(myClasses);
-                    memberData.id = classData?.id;
-                    memberData.name = classData?.name;
-                    memberData.peer_connection_id = 'student_'+_generateUniqueId()+'_'+classData?.id;
-                    memberData.audio = true;
+                    memberData.id = myClasses?.id;
+                    //// Member profile name
+                    memberData.name = studentAllClassesList?.classData?.name;
+                    /// Student profile id
+                    memberData.peer_connection_id = 'student_'+_generateUniqueId()+'_'+studentAllClassesList?.classData?.id;
+                    memberData.mute = true;
 
                     setMyPeerConnectionId(memberData.peer_connection_id);
 
                     let myPeer = new Peer(memberData.peer_connection_id, {
                         host: 'apnafinances.com',
-                        secure: true,
+                        secure: false,
+                        port: 80,
                         config: {'iceServers': iceServers},
                         path: '/peerApp',
                     });
@@ -95,13 +107,14 @@ export default function StudentTodayClassesComponent(){
                         console.log('[PEER CONNECTION OPEN IN ID]', id);
                         setMyStream(stream);
                         setInCallStatus('INCALL');
-                        dispatch(actionToUpdateAttendanceClassStatus(classData,myClasses,groupData?.id))
+                        dispatch(actionToUpdateAttendanceClassStatus(studentAllClassesList?.classData,myClasses))
                         setTimeout(function(){
-                            dispatch(actionToGetWhiteBoardPrevDataForGroupId(groupData?.id))
+                            setCallLoading(null);
+                            dispatch(actionToGetWhiteBoardPrevDataForGroupId(myClasses?.id))
                         },1000)
                         sendWebsocketRequest(JSON.stringify({
                             clientId: localStorage.getItem('clientId'),
-                            groupId: groupData?.id,
+                            groupId: myClasses?.id,
                             memberData: memberData,
                             type: "addNewMemberDataInGroup"
                         }));
@@ -118,23 +131,23 @@ export default function StudentTodayClassesComponent(){
     }
 
     React.useEffect(()=>{
-        if(chatModuleNewUserAddedInCurrentCall?.id !== undefined){
+        if(chatModuleNewUserAddedInCurrentCall?.id){
             connectToNewUser(chatModuleNewUserAddedInCurrentCall,myStream,myPeer);
         }
     },[chatModuleNewUserAddedInCurrentCall]);
 
     React.useEffect(()=>{
-        if(chatModuleNewUserLeaveUserInCallData?.id != undefined){
+        if(chatModuleNewUserLeaveUserInCallData?.id){
             removeClosePeerConnection(chatModuleNewUserLeaveUserInCallData?.peer_connection_id);
         }
     },[chatModuleNewUserLeaveUserInCallData]);
 
     React.useEffect(()=>{
-        if(classData.id && allowOnce){
-            dispatch(actionToGetPrevCallOnGroupClass(classData))
+        if(studentAllClassesList?.classData.id && allowOnce){
+            dispatch(actionToGetPrevCallOnGroupClass(studentAllClassesList?.classData))
             allowOnce = false;
         }
-    },[classData]);
+    },[studentAllClassesList?.classData]);
 
     return(
         <>
@@ -143,7 +156,7 @@ export default function StudentTodayClassesComponent(){
               :''
             }
             <div className={"student_demo_classes_main_page"}>
-                {(classData?.taken_single_demo && !classData?.subscription_end_date) ?
+                {(studentAllClassesList?.classData?.taken_single_demo && !studentAllClassesList?.classData?.subscription_end_date) ?
                     <StudentPayForSubscriptionComponent/>
                     :
                     <>
@@ -151,11 +164,11 @@ export default function StudentTodayClassesComponent(){
                             <>
                                 <h2>Today Classes</h2>
                                 <div className={"mt-15 demo_classes_main_section"}>
-                                    {(loading) ?
+                                    {(allStudentTodayDataList?.loading) ?
                                         <FacebookLoader type={"facebookStyle"} item={2}/>
-                                        : (studentAllTodayClassList?.length) ?
+                                        : (allStudentTodayDataList?.classData?.length) ?
                                             <div className={"demo_classes_main_section_div"}>
-                                                {(studentAllTodayClassList?.map((myClasses,key)=>(
+                                                {(allStudentTodayDataList?.classData?.map((myClasses,key)=>(
                                                     <div key={key} className={"demo_classes_section_loop mr-30 mb-10 mt-10"}>
                                                         <div className={"row"}>
                                                             <div className={"col demo_classes_section_subject_icon_name"}>
@@ -164,7 +177,7 @@ export default function StudentTodayClassesComponent(){
                                                                 </div>
                                                                 <div className={"name_section"}>
                                                                     <div className={"name_section1"}>{myClasses?.subject_name}</div>
-                                                                    <div className={"name_section2"}>{classData?.school_board}</div>
+                                                                    <div className={"name_section2"}>{myClasses?.school_board}</div>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -175,7 +188,7 @@ export default function StudentTodayClassesComponent(){
                                                                         <i className={"fa fa-info-circle"}/>
                                                                     </div>
                                                                     <div className={"teacher_name_section"}>
-                                                                        {myClasses?.classes_assigned_to_teacher?.teacher_name} ({myClasses?.subject_name} Teacher)
+                                                                        {myClasses?.teacher_name} ({myClasses?.subject_name} Teacher)
                                                                     </div>
                                                                 </div>
                                                                 <div className={"teacher_detail_section"}>
@@ -190,23 +203,18 @@ export default function StudentTodayClassesComponent(){
                                                         </div>
                                                         <div className={"row"}>
                                                             <div className={"col demo_classes_section_teacher_icon_name"}>
-                                                                {(myClasses?.classes_assigned_to_teacher?.class_end_time
-                                                                    &&
-                                                                    moment(myClasses?.classes_assigned_to_teacher?.class_end_time).format('YYYYMMDD') === moment().format('YYYYMMDD')
-                                                                    &&
-                                                                    moment(myClasses?.classes_assigned_to_teacher?.class_end_time).format('HH:mm:ss') < moment().format('HH:mm:ss')
-                                                                ) ?
+                                                                {(myClasses?.class_end_date_time) ?
                                                                     <>
                                                                         <div className={"class_time_date_demo"}>
-                                                                            Start time : {moment(new Date(myClasses?.classes_assigned_to_teacher?.starting_from_date)).format('hh:mm a')}
+                                                                            Start time : {moment(new Date(myClasses?.start_from_date_time)).format('hh:mm a')}
                                                                         </div>
                                                                         <div className={"class_time_date_demo"}>
-                                                                            Class End : {moment(new Date(myClasses?.classes_assigned_to_teacher?.class_end_time)).format('hh:mm a')}
+                                                                            Class End : {moment(new Date(myClasses?.class_end_date_time)).format('hh:mm a')}
                                                                         </div>
                                                                     </>
                                                                     :
                                                                     <div className={"class_time_date_demo"}>
-                                                                        Start time : {moment(new Date(myClasses?.classes_assigned_to_teacher?.starting_from_date)).format('hh:mm a')}
+                                                                        Start time : {moment(new Date(myClasses?.start_from_date_time)).format('hh:mm a')}
                                                                     </div>
                                                                 }
                                                             </div>
@@ -214,11 +222,98 @@ export default function StudentTodayClassesComponent(){
                                                         <div className={"row"}>
                                                             <div className={"col demo_classes_section_teacher_icon_name"}>
                                                                 <div data-id={myClasses?.id} data-cur-class={chatModuleCurrentCallGroupData?.id}>
-                                                                    {(chatModuleCurrentCallGroupData?.id === myClasses?.classes_assigned_to_teacher_id) ?
+                                                                    {(chatModuleCurrentCallGroupData?.id === myClasses?.id) ?
+                                                                        <div
+                                                                            onClick={(e) => pickCallInGroup(e,myClasses)}
+                                                                            className={"take_demo_button"}>
+                                                                            <button className={"theme_btn"}>
+                                                                                {callLoading === myClasses?.id ? 'Joining class...' :
+                                                                                    'Join Class'}
+                                                                            </button>
+                                                                        </div>
+                                                                        : ''
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                )))}
+                                            </div>
+                                            :
+                                            <div className={"no_demo_classes_div_section"}>
+                                                <img alt={"no_demo_classes"} src={noClassFound}/><br></br>
+                                                Class is not assigned you you yet, we will notify you when it will scheduled.
+                                            </div>
+                                    }
+                                </div>
+                                <h2 className={"mt-30"}>Demo Classes</h2>
+                                <div className={"mt-15 demo_classes_main_section"}>
+                                    {(allStudentDemoDataList?.loading) ?
+                                        <FacebookLoader type={"facebookStyle"} item={2}/>
+                                        : (allStudentDemoDataList?.classData?.length) ?
+                                            <div className={"demo_classes_main_section_div"}>
+                                                {(allStudentDemoDataList?.classData?.map((myClasses,key)=>(
+                                                    <div key={key} className={"demo_classes_section_loop mr-30 mb-10 mt-10"}>
+                                                        <div className={"row"}>
+                                                            <div className={"col demo_classes_section_subject_icon_name"}>
+                                                                <div className={"icon_sub"} style={{background:_getIconBySubjectKey(myClasses?.subject_name).color}}>
+                                                                    {_getIconBySubjectKey(myClasses?.subject_name).icon}
+                                                                </div>
+                                                                <div className={"name_section"}>
+                                                                    <div className={"name_section1"}>{myClasses?.subject_name}</div>
+                                                                    <div className={"name_section2"}>{myClasses?.school_board}</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div className={"row"}>
+                                                            <div className={"col demo_classes_section_teacher_icon_name"}>
+                                                                <div className={"teacher_detail_section"}>
+                                                                    <div className={"teacher_font_icon"}>
+                                                                        <i className={"fa fa-info-circle"}/>
+                                                                    </div>
+                                                                    <div className={"teacher_name_section"}>
+                                                                        {myClasses?.teacher_name} ({myClasses?.subject_name} Teacher)
+                                                                    </div>
+                                                                </div>
+                                                                <div className={"teacher_detail_section"}>
+                                                                    <div className={"teacher_font_icon"}>
+                                                                        <i className={"fa fa-clapperboard"}/>
+                                                                    </div>
+                                                                    <div className={"teacher_name_section"}>
+                                                                        {myClasses?.batch === 1 ? '1 to 1' : (myClasses?.batch === 2) ? '1 to 3' :(myClasses?.batch === 3) ? '1 to 5' : ''} (Batch type)
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div className={"row"}>
+                                                            <div className={"col demo_classes_section_teacher_icon_name"}>
+                                                                {(myClasses?.class_end_time) ?
+                                                                    <>
+                                                                        <div className={"class_time_date_demo"}>
+                                                                            Start time : {moment(new Date(myClasses?.starting_from_date)).format('hh:mm a')}
+                                                                        </div>
+                                                                        <div className={"class_time_date_demo"}>
+                                                                            Class End : {moment(new Date(myClasses?.class_end_time)).format('hh:mm a')}
+                                                                        </div>
+                                                                    </>
+                                                                    :
+                                                                    <div className={"class_time_date_demo"}>
+                                                                        Start time : {moment(new Date(myClasses?.starting_from_date)).format('hh:mm a')}
+                                                                    </div>
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                        <div className={"row"}>
+                                                            <div className={"col demo_classes_section_teacher_icon_name"}>
+                                                                <div data-id={myClasses?.id} data-cur-class={chatModuleCurrentCallGroupData?.id}>
+                                                                    {(chatModuleCurrentCallGroupData?.id === myClasses?.id) ?
                                                                         <div
                                                                             onClick={(e) => pickCallInGroup(e,myClasses, chatModuleCurrentCallGroupData)}
                                                                             className={"take_demo_button"}>
-                                                                            <button className={"theme_btn"}>Join Class</button>
+                                                                            <button className={"theme_btn"}>
+                                                                                {callLoading === myClasses?.id ? 'Joining class...' :
+                                                                                    'Join Class'}
+                                                                            </button>
                                                                         </div>
                                                                         : ''
                                                                     }
@@ -237,27 +332,24 @@ export default function StudentTodayClassesComponent(){
                                 </div>
                                 <h2 className={"mt-30"}>Your Classes</h2>
                                 <div className={"mt-15 demo_classes_main_section"}>
-                                    {(loading) ?
+                                    {(studentAllClassesList?.loading) ?
                                         <FacebookLoader type={"facebookStyle"} item={2}/>
-                                        : (classData?.profile_subject_with_batch?.length) ?
+                                        : (studentAllClassesList?.classData?.profile_subject_with_batch?.length) ?
                                             <div className={"class_data_main_table_section"}>
                                                 <div className={"row class_list_table header_row mb-15"}>
-                                                    <div className={"col-3 header"}>
+                                                    <div className={"col header"}>
                                                         Subject
                                                     </div>
-                                                    <div className={"col-3 header"}>
+                                                    <div className={"col header"}>
                                                         Teacher
                                                     </div>
-                                                    <div className={"col-3 header"}>
-                                                        Time
-                                                    </div>
-                                                    <div className={"col-3 header"}>
+                                                    <div className={"col header"}>
                                                         Subscription
                                                     </div>
                                                 </div>
-                                                {(classData?.profile_subject_with_batch?.map((myClasses,key)=>(
+                                                {(studentAllClassesList?.classData?.profile_subject_with_batch?.map((myClasses,key)=>(
                                                     <div key={key} className={"row class_list_table mb-15"}>
-                                                        <div className={"col-3 icon_main_col"}>
+                                                        <div className={"col icon_main_col"}>
                                                             <div className={"icon_setion"} style={{background:_getIconBySubjectKey(myClasses?.subject_name).color}}>
                                                                 {_getIconBySubjectKey(myClasses?.subject_name).icon}
                                                             </div>
@@ -266,21 +358,12 @@ export default function StudentTodayClassesComponent(){
                                                             </div>
                                                         </div>
                                                         <div className={"col-3 body"}>
-                                                            {myClasses?.classes_assigned_to_teacher?.teacher_name ? myClasses?.classes_assigned_to_teacher?.teacher_name : 'Not Assigned' }
+                                                            {myClasses?.class_assigned_teacher_batch?.teacher_name ? myClasses?.class_assigned_teacher_batch?.teacher_name : 'Not Assigned' }
                                                         </div>
-                                                        <div className={"col-3 body"}>
-                                                            {(myClasses?.classes_assigned_to_teacher?.starting_from_date) ?
+                                                        <div data-date={studentAllClassesList?.classData?.subscription_end_date} className={"col body"}>
+                                                            {(studentAllClassesList?.classData?.subscription_end_date) ?
                                                                 <>
-                                                                    {_getTodayTomorrowDateFormat(myClasses?.classes_assigned_to_teacher?.starting_from_date)},
-                                                                    {moment(new Date(myClasses?.classes_assigned_to_teacher?.starting_from_date)).format('hh:mm a')}
-                                                                </>
-                                                                : 'Not confirm'
-                                                            }
-                                                        </div>
-                                                        <div data-date={classData?.subscription_end_date} className={"col-3 body"}>
-                                                            {(classData?.subscription_end_date) ?
-                                                                <>
-                                                                    {moment(new Date(classData?.subscription_end_date)).format('DD ddd MMM, YYYY')}
+                                                                    {moment(new Date(studentAllClassesList?.classData?.subscription_end_date)).format('DD ddd MMM, YYYY')}
                                                                 </>
                                                                 : 'No subscription'
                                                             }
@@ -291,7 +374,7 @@ export default function StudentTodayClassesComponent(){
                                             :
                                             <div className={"no_demo_classes_div_section"}>
                                                 <img alt={"no_demo_classes"} src={noClassFound}/><br></br>
-                                                Demo class is not assigned you you yet, we will notify you when it will scheduled.
+                                                Class is not assigned you you yet, we will notify you when it will scheduled.
                                             </div>
                                     }
                                 </div>

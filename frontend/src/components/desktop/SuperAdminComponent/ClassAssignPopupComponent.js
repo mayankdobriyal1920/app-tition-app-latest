@@ -1,18 +1,20 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {actionToCreateAndAssignClassData, actionToOpenCloseClassAssignPopup} from "../../../actions/CommonAction";
 import moment from "moment";
+import {cloneDeep} from "lodash";
 
 let weekDatesArray = [];
-let weekStartDate = moment().startOf('week').format('DD-MM-YYYY');
-for (let i = 0; i < 6; i++) {
+let weekStartDate = moment().startOf('week').format('YYYY-MM-DD');
+for (let i = 0; i < 7; i++) {
     let weekDate = moment(weekStartDate).add(i, 'days').format("YYYY-MM-DD");
     weekDatesArray.push(weekDate);
 }
 export default function ClassAssignPopupComponent(){
     const [selectedTeacherId,setSelectedTeacherId] = useState(null);
     const [selectedClassAssignId,setSelectedClassAssignId] = useState(null);
-    const [classStartFromDateTime,setClassStartFromDateTime] = useState(null);
+    const [classBatchName,setClassBatchName] = useState('');
+    let [classStartFromDateTime,setClassStartFromDateTime] = useState({});
     const [selAssignCreateButon,setSelAssignCreateButon] = useState('create');
     const {isOpen,dropdownData} = useSelector((state) => state.openCloseClassAssignPopup);
     const allTeacherDataToAssignClass = useSelector((state) => state.allTeacherDataToAssignClass);
@@ -22,13 +24,36 @@ export default function ClassAssignPopupComponent(){
         dispatch(actionToOpenCloseClassAssignPopup(false,{}));
     }
 
+    useEffect(()=>{
+        classStartFromDateTime = {};
+        if(weekDatesArray?.length){
+            weekDatesArray?.map((date)=>{
+                classStartFromDateTime[date] = null;
+                setClassStartFromDateTime(cloneDeep(classStartFromDateTime));
+            })
+        }
+    },[weekDatesArray])
+
+    const callFunctionToSetClassDateTime = (date,time)=> {
+        classStartFromDateTime[date] = time;
+        setClassStartFromDateTime(cloneDeep(classStartFromDateTime));
+    }
     const callFunctionToAssignClassData = ()=>{
-        if(selectedTeacherId && classStartFromDateTime){
+        let allClassDateTime = [];
+        Object.keys(classStartFromDateTime).map((date)=>{
+            if(classStartFromDateTime[date]) {
+                let dateTime = `${date} ${classStartFromDateTime[date]}`;
+                allClassDateTime.push(moment(dateTime).format('YYYY-MM-DD HH:mm:ss'));
+            }
+        })
+        if(selectedTeacherId && allClassDateTime?.length && classBatchName?.trim()?.length){
+            if(!selectedClassAssignId && !classBatchName?.trim()?.length) return;
             let payload = {
                 profile_subject_with_batch_id:dropdownData?.profile_subject_with_batch_id,
                 class_assign_id:selectedClassAssignId,
+                class_batch_name:classBatchName,
                 teacher_id:selectedTeacherId,
-                starting_from_date:moment(classStartFromDateTime).format('YYYY-MM-DD HH:mm:ss'),
+                all_class_date_time:allClassDateTime,
                 batch:dropdownData?.batch,
                 is_demo_class:dropdownData?.has_taken_demo ? 0 : 1,
                 subject_id:dropdownData?.subject_id,
@@ -162,18 +187,17 @@ export default function ClassAssignPopupComponent(){
                                             <label htmlFor="floatingSelect">Teacher</label>
                                         </div>
                                         <div className="form-floating mb-3">
-                                            <input type="datetime-local"
-                                                   value={classStartFromDateTime}
-                                                   onChange={(e) => setClassStartFromDateTime(e.target.value)}
+                                            <input type="text"
+                                                   value={classBatchName}
+                                                   onChange={(e) => setClassBatchName(e.target.value)}
                                                    className="form-control" id="floatingClassTime"
                                                    placeholder="Class date time"/>
-                                            <label htmlFor="floatingClassTime">Class date time</label>
+                                            <label htmlFor="floatingSelect">Class Batch Name</label>
                                         </div>
                                         {(weekDatesArray?.map((date,key)=>(
                                             <div key={key} className="form-floating">
                                                 <input type="time"
-                                                value={classStartFromDateTime}
-                                                onChange={(e) => setClassStartFromDateTime(e.target.value)}
+                                                onBlur={(e) => callFunctionToSetClassDateTime(date,e.target.value)}
                                                 className="form-control" id="floatingClassTime"
                                                 placeholder="Class date time"/>
                                                 <label htmlFor="floatingClassTime">{moment(date).format('dddd ,Do MMMM')}</label>

@@ -58,7 +58,13 @@ import {
     OPEN_CLOSE_CLASS_EDIT_TEACHER_POPUP,
     OPEN_CLOSE_TEACHER_EDIT_POPUP,
     ALL_RECORDED_CLASSES_REQUEST,
-    ALL_REQUESTED_CLASSES_SUCCESS, ALL_RECORDED_CLASSES_SUCCESS
+    ALL_REQUESTED_CLASSES_SUCCESS,
+    ALL_RECORDED_CLASSES_SUCCESS,
+    TEACHER_ALL_TODAY_CLASS_LIST_REQUEST,
+    TEACHER_ALL_TODAY_CLASS_LIST_SUCCESS,
+    TEACHER_ALL_DEMO_CLASS_LIST_REQUEST,
+    STUDENT_ALL_DEMO_CLASS_LIST_REQUEST,
+    STUDENT_ALL_TODAY_CLASS_LIST_REQUEST, STUDENT_ALL_DEMO_CLASS_LIST_SUCCESS
 } from "../constants/CommonConstants";
 
 import Axios from "axios";
@@ -70,7 +76,7 @@ import moment from "moment";
 import { loadStripe } from "@stripe/stripe-js";
 
 const api = Axios.create({
-    baseURL: `https://apnafinances.com/api-call-tutor/`
+    baseURL: `http://apnafinances.com/api-call-tutor/`
 })
 export const callInsertDataFunction = (payload) => async () => {
     try {
@@ -124,16 +130,31 @@ export const actionToCreateAndAssignClassData = (payload) => async (dispatch) =>
     if(payload?.class_assign_id){
         classAssignId = payload?.class_assign_id
     }else{
-        let aliasArray = ['?','?','?','?','?','?','?','?'];
-        let columnArray = ['id','teacher_id','starting_from_date','batch','is_demo_class','subject_id','school_board','student_class'];
-        let valuesArray = [classAssignId,payload?.teacher_id,payload?.starting_from_date,payload?.batch,payload?.is_demo_class,payload?.subject_id,payload?.school_board,payload?.student_class];
-        let insertData = {alias:aliasArray,column:columnArray,values:valuesArray,tableName:'classes_assigned_to_teacher'};
+        let aliasArray = ['?','?','?','?','?','?','?','?','?'];
+        let columnArray = ['id','teacher_id','starting_from_date','batch','is_demo_class','subject_id','school_board','student_class','class_batch_name'];
+        let valuesArray = [classAssignId,payload?.teacher_id,payload?.starting_from_date ? payload?.starting_from_date : null,payload?.batch,payload?.is_demo_class,payload?.subject_id,payload?.school_board,payload?.student_class,payload?.class_batch_name];
+        let insertData = {alias:aliasArray,column:columnArray,values:valuesArray,tableName:'class_assigned_teacher_batch'};
         await dispatch(callInsertDataFunction(insertData));
     }
-    let setData = `classes_assigned_to_teacher_id = ?`;
+
+
+    await Promise.all(
+        payload?.all_class_date_time?.map(async (dateTime)=>{
+            let timetableId = _generateUniqueId()
+            let aliasArray = ['?','?','?'];
+            let columnArray = ['id','start_from_date_time','class_assigned_teacher_batch_id'];
+            let valuesArray = [timetableId,dateTime,classAssignId];
+            let insertData = {alias:aliasArray,column:columnArray,values:valuesArray,tableName:'class_timetable_with_class_batch_assigned'};
+            await dispatch(callInsertDataFunction(insertData));
+        })
+    )
+
+
+    let setData = `class_assigned_teacher_batch_id = ?`;
     let whereCondition = `id = '${payload?.profile_subject_with_batch_id}'`;
     let dataToSend = {column: setData, value: [classAssignId], whereCondition: whereCondition, tableName: 'profile_subject_with_batch'};
     await dispatch(commonUpdateFunction(dataToSend));
+
     dispatch(actionToGetAllDemoClassesDetails(true));
     dispatch(actionToGetAllClassesDataList(true));
     sendWebsocketRequest(JSON.stringify({
@@ -153,7 +174,7 @@ export const actionToGetWhiteBoardPrevDataForGroupId = (groupDataId) => async (d
         dispatch(actionToSetCaptureAnnotatorJSONData(anData.jsonObject, anData.type));
     })
 }
-export const actionToUpdateAttendanceClassStatus = (profileData,classData,groupDataId) => async (dispatch) => {
+export const actionToUpdateAttendanceClassStatus = (profileData,classData) => async (dispatch) => {
     if(!profileData?.taken_single_demo) {
         let setData = `taken_single_demo = ?`;
         let whereCondition = `id = '${profileData?.id}'`;
@@ -162,19 +183,18 @@ export const actionToUpdateAttendanceClassStatus = (profileData,classData,groupD
     }
     if(!classData?.has_taken_demo) {
         let setData = `has_taken_demo = ?`;
-        let whereCondition = `id = '${classData?.id}'`;
+        let whereCondition = `id = '${classData?.profile_subject_with_batch_id}'`;
         let dataToSend = {column: setData, value: [1], whereCondition: whereCondition, tableName: 'profile_subject_with_batch'};
         dispatch(commonUpdateFunction(dataToSend));
     }else{
         let aliasArray = ['?','?','?','?'];
-        let columnArray = ['id','classes_assigned_to_teacher_id','student_profile_id','profile_subject_with_batch_id'];
-        let valuesArray = [_generateUniqueId(),groupDataId,profileData?.id,classData?.id];
+        let columnArray = ['id','class_timetable_with_class_batch_assigned_id','student_profile_id','profile_subject_with_batch_id'];
+        let valuesArray = [_generateUniqueId(),classData?.class_id,profileData?.id,classData?.profile_subject_with_batch_id];
         let insertData = {alias:aliasArray,column:columnArray,values:valuesArray,tableName:'student_class_attend'};
         await dispatch(callInsertDataFunction(insertData));
     }
 }
 export const actionToUpdateSubscriptionPlanDetailForUser = (classDataId,month) => async (dispatch) => {
-    console.log('actionToUpdateSubscriptionPlanDetailForUser',classDataId,month);
     let setData = `subscription_end_date = ?`;
     let whereCondition = `id = '${classDataId}'`;
     let dataToSend = {column: setData, value: [moment().add(month,'months').format('YYYY-MM-DD HH:mm:ss')], whereCondition: whereCondition, tableName: 'student_profile'};
@@ -375,9 +395,19 @@ export const actionToGetLatestTeachersDataList = () => async (dispatch) => {
 export const actionToGetAllClassesDataList = (idLoaderDisable = false) => async (dispatch) => {
     if(!idLoaderDisable)
         dispatch({type: ALL_CLASSES_DATA_LIST_REQUEST});
+    let weekStartDate = moment().startOf('week').format('YYYY-MM-DD')
+    let weekEndDate = moment().endOf('week').format('YYYY-MM-DD')
 
-    const {data} = await api.post(`common/actionToGetAllClassesDataListApiCall`);
-    dispatch({type: ALL_CLASSES_DATA_LIST_SUCCESS, payload:[...data?.response]});
+    const {data} = await api.post(`common/actionToGetAllClassesDataListApiCall`,{weekStartDate,weekEndDate});
+    let finalDataArray = [];
+    data?.response?.map((dataClass)=>{
+        if(dataClass?.class_timetable_with_class_batch_assigned){
+            dataClass.class_timetable_with_class_batch_assigned = JSON.parse(dataClass.class_timetable_with_class_batch_assigned);
+        }
+        finalDataArray.push(dataClass);
+    })
+
+    dispatch({type: ALL_CLASSES_DATA_LIST_SUCCESS, payload:[...finalDataArray]});
 }
 export const actionToCreatePaymentIntend = (setClientSecret,amount,totalMonths) => async () => {
     const {data} = await api.post(`common/actionToCreatePaymentIntendApiCall`, {amount,totalMonths});
@@ -394,27 +424,19 @@ export const actionToGetUserAllClasses = (isLoaderDisable = false) => async (dis
       dispatch({type: STUDENT_ALL_CLASS_LIST_REQUEST});
 
     const {data} = await api.post(`common/actionToGetUserAllClassesApiCall`,{userId:userInfo?.id});
-    let todayClasses = [];
-    data?.response?.profile_subject_with_batch?.map((classData)=>{
-        if(classData?.classes_assigned_to_teacher){
-            todayClasses.push(classData);
-        }
-    })
     dispatch({type: STUDENT_ALL_CLASS_LIST_SUCCESS, payload:cloneDeep(data?.response)});
-    dispatch({type: STUDENT_ALL_TODAY_CLASS_LIST_SUCCESS, payload:[...todayClasses]});
-
 
     let eventData = [];
     data?.response?.profile_subject_with_batch?.map((allUserClasses)=>{
-        if(allUserClasses?.classes_assigned_to_teacher?.is_demo_class === 0) {
+        if(allUserClasses?.class_assigned_teacher_batch?.is_demo_class === 0) {
             let nowDate = moment(allUserClasses?.starting_from_date).format('YYYY-MM-DD');
             let i = 30;
             do {
                 eventData.push({
                         title: JSON.stringify({
                             subject_name: allUserClasses?.subject_name,
-                            teacher_name: allUserClasses?.classes_assigned_to_teacher?.teacher_name,
-                            time: moment(allUserClasses?.classes_assigned_to_teacher?.starting_from_date).format('hh:mm a')
+                            teacher_name: allUserClasses?.class_assigned_teacher_batch?.teacher_name,
+                            time: moment(allUserClasses?.class_assigned_teacher_batch?.starting_from_date).format('hh:mm a')
                         }),
                         date: nowDate,
                     }
@@ -431,6 +453,7 @@ export const actionToSendFabricDataToOtherUser = (jsonObject) => async ()=> {
         clientId: localStorage.getItem('clientId'),
         type: 'annotatorImageJson',
         userId:jsonObject.userId,
+        canvasReservedJson:jsonObject.canvasReservedJson,
         groupId:jsonObject.groupId,
         objectId:jsonObject.objectId,
         canvasIndex:jsonObject.canvasIndex,
@@ -440,7 +463,6 @@ export const actionToSendFabricDataToOtherUser = (jsonObject) => async ()=> {
 export const actionToOpenRatingModalPopup = (action,payload) => (dispatch) => {
     let data = {isOpen:action,dropdownData:payload}
     dispatch({type:OPEN_CLOSE_TEACHER_RATING_POPUP,payload:data});
-    dispatch(actionToEndCurrentCurrentCallLocally(payload?.id));
 }
 export const actionToSetCaptureAnnotatorJSONData = (jsonObject) => (dispatch) => {
     let annotatorData = JSON.parse(jsonObject);
@@ -458,20 +480,56 @@ export const actionToUpdateIpAddress = () => async(dispatch) =>{
         dispatch({type: GET_IP_ADDRESS, payload:'10.2.99.129'});
     }
 }
+
+export const actionToGetStudentAllTodayClasses = (isLoaderDisable = false) => async (dispatch,getState) => {
+    const userInfo = getState().userSignin.userInfo;
+
+    if(!isLoaderDisable)
+        dispatch({type: STUDENT_ALL_TODAY_CLASS_LIST_REQUEST});
+
+    let todayDate = moment().format('YYYY-MM-DD');
+    const {data} = await api.post(`common/actionToGetStudentAllTodayClassesApiCall`,{userId:userInfo?.id,todayDate});
+    dispatch({type: STUDENT_ALL_TODAY_CLASS_LIST_SUCCESS, payload:[...data?.response]});
+}
+export const actionToGetStudentAllDemoClasses = (isLoaderDisable = false) => async (dispatch,getState) => {
+    const userInfo = getState().userSignin.userInfo;
+
+    if(!isLoaderDisable)
+        dispatch({type: STUDENT_ALL_DEMO_CLASS_LIST_REQUEST});
+
+    const {data} = await api.post(`common/actionToGetStudentAllDemoClassesApiCall`,{userId:userInfo?.id});
+    dispatch({type: STUDENT_ALL_DEMO_CLASS_LIST_SUCCESS, payload:[...data?.response]});
+}
+
 export const actionToGetTeacherAllClasses = (isLoaderDisable = false) => async (dispatch,getState) => {
     const userInfo = getState().userSignin.userInfo;
 
     if(!isLoaderDisable)
-       dispatch({type: TEACHER_ALL_CLASS_LIST_REQUEST});
+        dispatch({type: TEACHER_ALL_CLASS_LIST_REQUEST});
 
     const {data} = await api.post(`common/actionToGetTeacherAllClassesApiCall`,{userId:userInfo?.id});
-    let todayClasses = [];
 
-    data?.response?.map((classData)=>{
-        todayClasses.push(classData);
-    })
     dispatch({type: TEACHER_ALL_CLASS_LIST_SUCCESS, payload:[...data?.response]});
-    dispatch({type: TEACHER_ALL_DEMO_CLASS_LIST_SUCCESS, payload:[...todayClasses]});
+}
+export const actionToGetTeacherAllTodayClasses = (isLoaderDisable = false) => async (dispatch,getState) => {
+    const userInfo = getState().userSignin.userInfo;
+
+    if(!isLoaderDisable)
+        dispatch({type: TEACHER_ALL_TODAY_CLASS_LIST_REQUEST});
+
+    let todayDate = moment().format('YYYY-MM-DD');
+    const {data} = await api.post(`common/actionToGetTeacherAllTodayClassesApiCall`,{userId:userInfo?.id,todayDate});
+    dispatch({type: TEACHER_ALL_TODAY_CLASS_LIST_SUCCESS, payload:[...data?.response]});
+}
+export const actionToGetTeacherAllDemoClasses = (isLoaderDisable = false) => async (dispatch,getState) => {
+    const userInfo = getState().userSignin.userInfo;
+
+    if(!isLoaderDisable)
+        dispatch({type: TEACHER_ALL_DEMO_CLASS_LIST_REQUEST});
+
+    let todayDate = moment().format('YYYY-MM-DD');
+    const {data} = await api.post(`common/actionToGetTeacherAllDemoClassesApiCall`,{userId:userInfo?.id,todayDate});
+    dispatch({type: TEACHER_ALL_DEMO_CLASS_LIST_SUCCESS, payload:[...data?.response]});
 }
 export const actionToSetCurrentCallDataGroupData = (groupData) => async (dispatch) => {
     dispatch({ type: CHAT_MODULE_CURRENT_CALL_GROUP_DATA, payload: groupData});
@@ -489,7 +547,7 @@ export const actionToMuteUnmuteUserCallLocally = (id) => async (dispatch,getStat
     return allMembersInCall;
 }
 export const actionToMuteUnmuteUserCall = (id,groupId) => async (dispatch) => {
-    let allUsers = await dispatch(actionToMuteUnmuteUserCallLocally(id,true));
+    let allUsers = await dispatch(actionToMuteUnmuteUserCallLocally(id));
     sendWebsocketRequest(JSON.stringify({
         clientId:localStorage.getItem('clientId'),
         users:allUsers,
@@ -509,7 +567,7 @@ export const actionToSendVideoChunkDataToServerFinishProcess = (groupId) => asyn
     const {data} = await api.post(`recording-video-finish`,{groupId});
     if(data?.name) {
         const aliasArray = ['?', '?', '?'];
-        const columnArray = ['id', 'name', 'classes_assigned_to_teacher_id'];
+        const columnArray = ['id', 'name', 'class_assigned_teacher_batch_id'];
         const valuesArray = [_generateUniqueId(), data.name, groupId];
         const insertData = {
             alias: aliasArray,
@@ -530,6 +588,15 @@ export const actionToEndCurrentCurrentCallLocally = (groupId) => async (dispatch
     if(chatModuleCurrentCallGroupData?.id === groupId){
         dispatch({ type: CHAT_MODULE_CURRENT_CALL_GROUP_DATA, payload: {}});
         dispatch({type: CHAT_MODULE_CURRENT_CALL_ALL_MEMBERS, payload: []});
+        setTimeout(()=>{
+            if(getState().userSignin.userInfo.role === 1) {
+                dispatch(actionToGetStudentAllTodayClasses(false));
+                dispatch(actionToGetStudentAllDemoClasses(false));
+            }else {
+                dispatch(actionToGetTeacherAllTodayClasses(false));
+                dispatch(actionToGetTeacherAllDemoClasses(false));
+            }
+        },2000)
     }
 }
 
@@ -543,8 +610,8 @@ export const actionToGetPrevCallOnGroupClass = (classData) => async (dispatch) =
 export const actionToRateCurrentClass = (rating,classData) => async (dispatch,getState) => {
     let userInfo = getState().userSignin.userInfo;
     const aliasArray = ['?','?','?','?'];
-    const columnArray = ['id','rating','user_id','classes_assigned_to_teacher_id'];
-    const valuesArray = [_generateUniqueId(),rating,userInfo?.id,classData?.id];
+    const columnArray = ['id','rating','user_id','class_timetable_with_class_batch_assigned_id'];
+    const valuesArray = [_generateUniqueId(),rating,userInfo?.id,classData?.class_id];
     const insertData = {alias:aliasArray,column:columnArray,values:valuesArray,tableName:'classes_rating'};
     await dispatch(callInsertDataFunction(insertData));
     dispatch(actionToOpenRatingModalPopup(false,{}));
@@ -558,18 +625,16 @@ export const actionToStoreAssignmentData = (fileName,pathName,id,profileId) => a
     await dispatch(callInsertDataFunction(insertData));
     dispatch(actionToGetAllAttendClassWithAssignment(profileId))
 }
-export const actionToEndCurrentCurrentCall = (groupId) => async (dispatch) => {
+export const actionToEndCurrentCurrentCall = (groupId,classId,startDate) => async (dispatch) => {
     dispatch(actionToEndCurrentCurrentCallLocally(groupId));
     sendWebsocketRequest(JSON.stringify({
         clientId: localStorage.getItem('clientId'),
         type: 'actionToEndCurrentCurrentCall',
         classEndTime:moment().format('YYYY-MM-DD HH:mm:ss'),
-        groupId:groupId
+        groupId:groupId,
+        classId:classId,
+        startDate:startDate
     }));
-    setTimeout(()=>{
-        dispatch(actionToGetTeacherAllClasses(false));
-        dispatch(actionToGetUserAllClasses(false));
-    },2000)
 }
 
 export const actionToSetMemberInGroupCall = (groupId,allMembersArray,memberData) => async (dispatch,getState) => {

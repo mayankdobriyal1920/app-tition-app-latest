@@ -11,7 +11,6 @@ import {useEffectOnce} from "../../../helper/UseEffectOnce";
 export default function AllClassesDataTableComponent(){
     const dispatch = useDispatch();
     const classesListArray = useSelector((state) => state.allAdminClassesDataList);
-    const {isOpen} = useSelector((state) => state.openCloseLoginPopup);
     const [search,setSearch] = useState("")
     const [filterClass,setFilterClasses] = useState([])
     const openClassAssignPopUp=(data)=>{
@@ -56,10 +55,10 @@ export default function AllClassesDataTableComponent(){
         },
         {
             name:"Action",
-            cell:(row) => (row?.classes_assigned_to_teacher_id && row?.is_demo_class !== 1)
+            cell:(row) => (row?.class_timetable_with_class_batch_assigned?.length && row?.is_demo_class !== 1)
                 ? <div className={"btn btn-success"}>Class assigned</div>
                 :
-                 <button className='btn btn-primary' onClick={() => openClassAssignPopUp(row)}>Assign Class</button> ,
+                <button className='btn btn-primary' onClick={() => openClassAssignPopUp(row)}>Assign Class</button> ,
         }
     ]
 

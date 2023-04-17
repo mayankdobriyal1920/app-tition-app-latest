@@ -1,8 +1,9 @@
 import {
+    actionToEndCurrentCurrentCallLocally,
     actionToGetTeacherAllClasses,
     actionToGetUserAllClasses,
-    actionToMuteUnmuteUserCallLocally, actionToOpenRatingModalPopup,
-    actionToRemoveUserFromCurrentCallLocally,
+    actionToMuteUnmuteUserCallLocally,
+    actionToOpenRatingModalPopup,
     actionToSetCaptureAnnotatorJSONData,
     actionToSetCurrentCallDataGroupData,
     actionToSetMemberInGroupCall,
@@ -30,7 +31,7 @@ export function getWebsocketConnectedMessage(W3CWebSocket,dispatch,userData) {
         webSocketClient.onerror = webSocketClient.onopen = webSocketClient.onclose = null;
         webSocketClient.close();
     }
-    let wsUrl = `wss://apnafinances.com/api-call-tutor`;
+    let wsUrl = `ws://apnafinances.com/api-call-tutor`;
 
     webSocketClient = new W3CWebSocket(wsUrl, null, {
         headers: {
@@ -150,7 +151,9 @@ export function handleWebSocketEvent(dispatch,state,data){
         }
         case 'actionToEndCurrentCurrentCall':
             if(chatModuleCurrentCallGroupData?.id === data?.groupId) {
-                dispatch(actionToOpenRatingModalPopup(true,cloneDeep(chatModuleCurrentCallGroupData)));
+                if(!chatModuleCurrentCallGroupData?.is_demo_class)
+                    dispatch(actionToOpenRatingModalPopup(true,cloneDeep(chatModuleCurrentCallGroupData)));
+                dispatch(actionToEndCurrentCurrentCallLocally(data?.groupId));
             }
             break;
         case 'handleMuteUnmuteInCall': {

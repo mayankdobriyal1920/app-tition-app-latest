@@ -19,6 +19,8 @@ export let allChannelsInGroupCall = [];
 export let allChannelsInGroupCallData = {};
 export let allChanelWhiteBoardEditingData = {};
 export let membersInChannelWithDetails = {};
+export let canvasReservedJson = {};
+export let canvasReservedJsonActiveIndex = {};
 let currentUserIdInGroupCall = {};
 
 const clients = {};
@@ -49,6 +51,13 @@ function setupWebSocket() {
                     allChannelsInGroupCall.push(dataToSend.groupId);
                     allChannelsInGroupCallData[dataToSend.groupId] = dataToSend.classGroupData;
                     membersInChannelWithDetails[dataToSend.groupId] = dataToSend?.members;
+
+                    if(canvasReservedJsonActiveIndex[dataToSend.groupId] === undefined)
+                        canvasReservedJsonActiveIndex[dataToSend.groupId] = 0;
+                    if(allChanelWhiteBoardEditingData[dataToSend.groupId] === undefined)
+                        allChanelWhiteBoardEditingData[dataToSend.groupId] = [];
+
+                    membersInChannelWithDetails[dataToSend.groupId] = dataToSend?.members;
                     currentUserIdInGroupCall[userID] = dataToSend.memberData.id;
                     break;
                 case 'annotatorImageJson':
@@ -57,6 +66,7 @@ function setupWebSocket() {
                     }else{
                         allChanelWhiteBoardEditingData[dataToSend.groupId].push(dataToSend);
                     }
+                    allChanelWhiteBoardEditingData[dataToSend.groupId] = dataToSend?.canvasReservedJson;
                     break;
                 case 'addNewMemberDataInGroup':
                     if(membersInChannelWithDetails[dataToSend.groupId] !== undefined && membersInChannelWithDetails[dataToSend.groupId].length) {
@@ -104,13 +114,25 @@ function setupWebSocket() {
                                     delete membersInChannelWithDetails[dataToSend.groupId];
                                 if (allChannelsInGroupCallData[dataToSend.groupId] !== undefined)
                                     delete allChannelsInGroupCallData[dataToSend.groupId];
-                                if (allChannelsInGroupCallData[dataToSend.groupId] !== undefined)
+                                if (allChanelWhiteBoardEditingData[dataToSend.groupId] !== undefined)
                                     delete allChanelWhiteBoardEditingData[dataToSend.groupId];
 
-                                let setData = `class_end_time = ?`;
-                                let whereCondition = `id = '${dataToSend.groupId}'`;
-                                let updateData = {column: setData, value: [dataToSend?.classEndTime], whereCondition: whereCondition, tableName: 'classes_assigned_to_teacher'};
-                                updateCommonApiCall(updateData);
+                                    // if(!dataToSend.classId) {
+                                    //     let setData = `class_end_time = ?`;
+                                    //     let whereCondition = `id = '${dataToSend.groupId}'`;
+                                    //     let updateData = {
+                                    //         column: setData,
+                                    //         value: [dataToSend?.classEndTime],
+                                    //         whereCondition: whereCondition,
+                                    //         tableName: 'class_assigned_teacher_batch'
+                                    //     };
+                                    //     updateCommonApiCall(updateData);
+                                    // }else{
+                                    //     let setData = `class_end_date_time = ?`;
+                                    //     let whereCondition = `class_assigned_teacher_batch_id = '${dataToSend.groupId}' AND DATE(start_from_date_time) = '${dataToSend?.startDate}'`;
+                                    //     let updateData = {column: setData, value: [dataToSend?.classEndTime], whereCondition: whereCondition, tableName: 'class_timetable_with_class_batch_assigned'};
+                                    //     updateCommonApiCall(updateData);
+                                    // }
                         }
                     }
                     break;
@@ -172,11 +194,11 @@ app.post("/api-call-tutor/uploadAssignmentApiCall", upload.single("file"), funct
     }
 })
 app.get('/api-call-tutor', (req, res) => {
-    res.status(200).send({message:`Node Server is ready port ${port}`});
+    res?.status(200).send({message:`Node Server is ready port ${port}`});
 });
 
 app.use((err, req, res) => {
-    res.status(500).send({ message: err.message });
+    res?.status(500).send({ message: err.message });
 });
 
 server.listen(port,host, function() {

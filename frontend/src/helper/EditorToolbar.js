@@ -398,6 +398,7 @@ function drawRectangle(selected_canvas) {
             LockRotation: true,
             transparentCorners:false,
         });
+
         selected_canvas.add(rect);
     });
 

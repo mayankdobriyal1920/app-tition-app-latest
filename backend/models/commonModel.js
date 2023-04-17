@@ -4,16 +4,26 @@ import {
     actionToGetAllAttendClassWithAssignmentQuery,
     actionToGetAllClassesDataListQuery,
     actionToGetAllDemoClassesDetailsQuery,
-    actionToGetAllNewStudentProfileDataListQuery, actionToGetAllRecordedClassesDetailsQuery,
-    actionToGetAllShoolBoardDataListQuery, actionToGetAllStudentClassAttendWithAssignmentQuery,
+    actionToGetAllNewStudentProfileDataListQuery,
+    actionToGetAllRecordedClassesDetailsQuery,
+    actionToGetAllShoolBoardDataListQuery,
+    actionToGetAllStudentClassAttendWithAssignmentQuery,
     actionToGetAllStudentDataListQuery,
     actionToGetAllStudentSubscriptionDataListQuery,
     actionToGetAllSubjectDataListQuery,
-    actionToGetAllTeacherDataListQuery, actionToGetLatestDemoClassesDetailsQuery,
-    actionToGetLatestStudentProfileDataListQuery, actionToGetLatestSubscriptionDataListQuery,
+    actionToGetAllTeacherDataListQuery,
+    actionToGetLatestDemoClassesDetailsQuery,
+    actionToGetLatestStudentProfileDataListQuery,
+    actionToGetLatestSubscriptionDataListQuery,
     actionToGetLatestTeacherDataListQuery,
-    actionToGetTeacherAllClassesQuery, actionToGetTodayProfileDataListQuery,
-    actionToGetUserAllClassesQuery, actionToSearchTeacherAccordingToTheConditionQuery
+    actionToGetStudentAllDemoClassesQuery,
+    actionToGetStudentAllTodayClassesQuery,
+    actionToGetTeacherAllClassesQuery,
+    actionToGetTeacherAllDemoClassesQuery,
+    actionToGetTeacherAllTodayClassesQuery,
+    actionToGetTodayProfileDataListQuery,
+    actionToGetUserAllClassesQuery,
+    actionToSearchTeacherAccordingToTheConditionQuery
 } from "./commonQueries.js";
 import PaytmChecksum from 'paytmchecksum';
 import request from 'request';
@@ -256,12 +266,13 @@ export const actionToGetAllTeacherDataListApiCall = () => {
         })
     })
 }
-export const actionToGetAllClassesDataListApiCall = () => {
+export const actionToGetAllClassesDataListApiCall = (body) => {
+    const {weekStartDate,weekEndDate} = body;
     return new Promise(function(resolve, reject) {
-        const query = actionToGetAllClassesDataListQuery();
+        const query = actionToGetAllClassesDataListQuery(weekStartDate,weekEndDate);
         pool.query(query, (error, results) => {
             if (error) {
-                reject(error)
+                reject(query)
             }
             resolve(results);
         })
@@ -364,6 +375,58 @@ export const actionToGetTeacherAllClassesApiCall = (body) => {
     const {userId} = body;
     return new Promise(function(resolve, reject) {
         const query = actionToGetTeacherAllClassesQuery(userId);
+
+        pool.query(query, (error, results) => {
+            if (error) {
+                reject(query)
+            }
+            resolve(results);
+        })
+    })
+}
+export const actionToGetTeacherAllTodayClassesApiCall = (body) => {
+    const {userId,todayDate} = body;
+    return new Promise(function(resolve, reject) {
+        const query = actionToGetTeacherAllTodayClassesQuery(userId,todayDate);
+
+        pool.query(query, (error, results) => {
+            if (error) {
+                reject(query)
+            }
+            resolve(results);
+        })
+    })
+}
+export const actionToGetStudentAllTodayClassesApiCall = (body) => {
+    const {userId,todayDate} = body;
+    return new Promise(function(resolve, reject) {
+        const query = actionToGetStudentAllTodayClassesQuery(userId,todayDate);
+
+        pool.query(query, (error, results) => {
+            if (error) {
+                reject(query)
+            }
+            resolve(results);
+        })
+    })
+}
+export const actionToGetStudentAllDemoClassesApiCall = (body) => {
+    const {userId} = body;
+    return new Promise(function(resolve, reject) {
+        const query = actionToGetStudentAllDemoClassesQuery(userId);
+
+        pool.query(query, (error, results) => {
+            if (error) {
+                reject(query)
+            }
+            resolve(results);
+        })
+    })
+}
+export const actionToGetTeacherAllDemoClassesApiCall = (body) => {
+    const {userId} = body;
+    return new Promise(function(resolve, reject) {
+        const query = actionToGetTeacherAllDemoClassesQuery(userId);
 
         pool.query(query, (error, results) => {
             if (error) {

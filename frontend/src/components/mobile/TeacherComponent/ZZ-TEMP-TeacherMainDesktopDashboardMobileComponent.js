@@ -53,11 +53,12 @@ const iceServers= [
 let currentClassId = null;
 function TeacherMainDesktopDashboardMobileComponentFunction(){
     const chatModuleNewUserAddedInCurrentCall = useSelector((state) => state.chatModuleNewUserAddedInCurrentCall);
-    const {loading,classData} = useSelector((state) => state.teacherAllClassesList);
+    const teacherAllClassesList = useSelector((state) => state.teacherAllClassesList);
+    const teacherAllTodayClassesList = useSelector((state) => state.teacherAllTodayClassesList);
+    const teacherAllDemoClassesList = useSelector((state) => state.teacherAllDemoClassesList);
     const {userInfo} = useSelector((state) => state.userSignin);
     const [callLoading,setCallLoading] = React.useState(false);
     const [inCallStatus,setInCallStatus] = React.useState('PREJOIN');
-    const teacherAllDemoClassList = useSelector((state) => state.teacherAllDemoClassList);
     const dispatch = useDispatch();
 
     const callFunctionToExportRecordedVideo = ()=>{
@@ -238,11 +239,11 @@ function TeacherMainDesktopDashboardMobileComponentFunction(){
                         <div className={"student_demo_classes_main_page"}>
                             <h2>Today's Classes</h2>
                             <div className={"mt-15 demo_classes_main_section"}>
-                                {(loading) ?
+                                {(teacherAllTodayClassesList?.loading) ?
                                     <FacebookLoader type={"facebookStyle"} item={2}/>
-                                    : (teacherAllDemoClassList?.length) ?
+                                    : (teacherAllTodayClassesList?.classData?.length) ?
                                         <div className={"demo_classes_main_section_div"}>
-                                            {(teacherAllDemoClassList?.map((myClasses,key)=>(
+                                            {(teacherAllTodayClassesList?.classData?.map((myClasses,key)=>(
                                                 <div key={key} className={"demo_classes_section_loop ml-15 mr-15 mb-10 mt-10"}>
                                                     <div className={"row"}>
                                                         <div className={"col-7 demo_classes_section_subject_icon_name"}>
@@ -255,12 +256,78 @@ function TeacherMainDesktopDashboardMobileComponentFunction(){
                                                             </div>
                                                         </div>
                                                         <div className={"col-5"}>
-                                                            {(myClasses?.class_end_time
-                                                                &&
-                                                                moment(myClasses?.class_end_time).format('YYYYMMDD') === moment().format('YYYYMMDD')
-                                                                &&
-                                                                moment(myClasses?.class_end_time).format('HH:mm:ss') < moment().format('HH:mm:ss')
-                                                            ) ?
+                                                            {(myClasses?.class_end_date_time) ?
+                                                                <>
+                                                                    <div className={"class_time_date_demo mb-3"}>
+                                                                        Start time : {moment(new Date(myClasses?.start_from_date_time)).format('hh:mm a')}
+                                                                    </div>
+                                                                    <div className={"class_time_date_demo"}>
+                                                                        Class Taken : {moment(new Date(myClasses?.class_end_date_time)).format('hh:mm a')}
+                                                                    </div>
+                                                                </>
+                                                                :
+                                                                <div className={"class_time_date_demo mb-3"}>
+                                                                    Start time : {moment(new Date(myClasses?.start_from_date_time)).format('hh:mm a')}
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                    <div className={"row"}>
+                                                        <div className={"col-8 demo_classes_section_teacher_icon_name"}>
+                                                            <div className={"teacher_detail_section"}>
+                                                                <div className={"teacher_font_icon"}>
+                                                                    <i className={"fa fa-info-circle"}/>
+                                                                </div>
+                                                            </div>
+                                                            <div className={"teacher_detail_section"}>
+                                                                <div className={"teacher_font_icon"}>
+                                                                    <i className={"fa fa-clapperboard"}/>
+                                                                </div>
+                                                                <div className={"teacher_name_section"}>
+                                                                    {myClasses?.student_class}th (Student class)
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div className={"col-4"}>
+                                                            {(!myClasses?.class_end_time) ?
+                                                                <div onClick={(e)=>startCallInGroup(e,myClasses)} className={"take_demo_button"}>
+                                                                    <button className={"theme_btn"}>Start Class</button>
+                                                                </div>
+                                                                :
+                                                                ''
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )))}
+                                        </div>
+                                        :
+                                        <div className={"no_demo_classes_div_section"}>
+                                            <img alt={"no_demo_classes"} src={noClassFound}/><br></br>
+                                            Demo class is not assigned you you yet, we will notify you when it will scheduled.
+                                        </div>
+                                }
+                            </div>
+                            <h2>Demo Classes</h2>
+                            <div className={"mt-15 demo_classes_main_section"}>
+                                {(teacherAllDemoClassesList?.loading) ?
+                                    <FacebookLoader type={"facebookStyle"} item={2}/>
+                                    : (teacherAllDemoClassesList?.classData?.length) ?
+                                        <div className={"demo_classes_main_section_div"}>
+                                            {(teacherAllDemoClassesList?.classData?.map((myClasses,key)=>(
+                                                <div key={key} className={"demo_classes_section_loop ml-15 mr-15 mb-10 mt-10"}>
+                                                    <div className={"row"}>
+                                                        <div className={"col-7 demo_classes_section_subject_icon_name"}>
+                                                            <div className={"icon_sub"} style={{background:_getIconBySubjectKey(myClasses?.subject_name).color}}>
+                                                                {_getIconBySubjectKey(myClasses?.subject_name).icon}
+                                                            </div>
+                                                            <div className={"name_section"}>
+                                                                <div className={"name_section1"}>{myClasses?.subject_name}</div>
+                                                                <div className={"name_section2"}>{myClasses?.school_board}</div>
+                                                            </div>
+                                                        </div>
+                                                        <div className={"col-5"}>
+                                                            {(myClasses?.class_end_time) ?
                                                                 <>
                                                                     <div className={"class_time_date_demo mb-3"}>
                                                                         Start time : {moment(new Date(myClasses?.starting_from_date)).format('hh:mm a')}
@@ -282,9 +349,6 @@ function TeacherMainDesktopDashboardMobileComponentFunction(){
                                                                 <div className={"teacher_font_icon"}>
                                                                     <i className={"fa fa-info-circle"}/>
                                                                 </div>
-                                                                <div className={"teacher_name_section"}>
-                                                                    {myClasses?.is_demo_class ? 'YES' : 'NO'} (is demo class)
-                                                                </div>
                                                             </div>
                                                             <div className={"teacher_detail_section"}>
                                                                 <div className={"teacher_font_icon"}>
@@ -296,17 +360,12 @@ function TeacherMainDesktopDashboardMobileComponentFunction(){
                                                             </div>
                                                         </div>
                                                         <div className={"col-4"}>
-                                                            {(myClasses?.class_end_time
-                                                                &&
-                                                                moment(myClasses?.class_end_time).format('YYYYMMDD') === moment().format('YYYYMMDD')
-                                                                &&
-                                                                moment(myClasses?.class_end_time).format('HH:mm:ss') < moment().format('HH:mm:ss')
-                                                            ) ?
-                                                                ''
-                                                                :
+                                                            {(!myClasses?.class_end_time) ?
                                                                 <div onClick={(e)=>startCallInGroup(e,myClasses)} className={"take_demo_button"}>
                                                                     <button className={"theme_btn"}>Start Class</button>
                                                                 </div>
+                                                                :
+                                                              ''
                                                             }
                                                         </div>
                                                     </div>
@@ -322,9 +381,9 @@ function TeacherMainDesktopDashboardMobileComponentFunction(){
                             </div>
                             <h2 className={"mt-30"}>Your Classes</h2>
                             <div className={"mt-15 demo_classes_main_section"}>
-                                {(loading) ?
+                                {(teacherAllClassesList?.loading) ?
                                     <FacebookLoader type={"facebookStyle"} item={2}/>
-                                    : (classData?.length) ?
+                                    : (teacherAllClassesList?.classData?.length) ?
                                         <div className={"class_data_main_table_section"}>
                                             <div className={"row class_list_table header_row mb-15"}>
                                                 <div className={"col-3 header"}>
@@ -334,10 +393,10 @@ function TeacherMainDesktopDashboardMobileComponentFunction(){
                                                     Batch type
                                                 </div>
                                                 <div className={"col-3 header"}>
-                                                    Start time
+                                                    Batch name
                                                 </div>
                                             </div>
-                                            {(classData?.map((myClasses,key)=>(
+                                            {(teacherAllClassesList?.classData?.map((myClasses,key)=>(
                                                 <div key={key} className={"row class_list_table mb-15"}>
                                                     <div className={"col-3 icon_main_col"}>
                                                         <div className={"icon_setion"} style={{background:_getIconBySubjectKey(myClasses?.subject_name).color}}>
@@ -351,12 +410,7 @@ function TeacherMainDesktopDashboardMobileComponentFunction(){
                                                         {myClasses?.batch === 1 ? '1 to 1' : (myClasses?.batch === 2) ? '1 to 3' :(myClasses?.batch === 3) ? '1 to 5' : ''}
                                                     </div>
                                                     <div className={"col-3 body"}>
-                                                        {(myClasses?.starting_from_date) ?
-                                                            <>
-                                                                {moment(new Date(myClasses?.starting_from_date)).format('ddd MMM D, hh:mm a')}
-                                                            </>
-                                                            : 'Not confirm'
-                                                        }
+                                                        {myClasses?.class_batch_name}
                                                     </div>
                                                 </div>
                                             )))}
@@ -377,4 +431,4 @@ function TeacherMainDesktopDashboardMobileComponentFunction(){
         </div>
     )
 }
-export const TeacherMainDesktopDashboardMobileComponent = React.memo(TeacherMainDesktopDashboardMobileComponentFunction);
+export const ZZTEMPTeacherMainDesktopDashboardMobileComponent = React.memo(TeacherMainDesktopDashboardMobileComponentFunction);

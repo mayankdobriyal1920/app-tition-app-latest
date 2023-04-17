@@ -796,15 +796,40 @@ div#teacher_video_class_container {
 .main_body_content_section.all_student_subject_main_container.with_student {
     width: 70%;
 }
+.canvas_next_prev_button_container .next_prev_button.page_number button {
+    border-radius: 50%!important;
+    background: #6a6a6a!important;
+    width: 30px;
+    height: 30px;
+    padding: 0px!important;
+}
 .demo_classes_section_subject_icon_name .icon_sub {
     height: 50px;
     width: 63px;
     border-radius: 5px;
     overflow: hidden;
-    margin: auto;
     display: flex;
     text-align: center;
-    margin-right: 10px;
+    margin: 0px 10px;
+}
+.canvas_next_prev_button_container {
+    width: 100%;
+    text-align: center;
+    display: flex;
+}
+
+.canvas_next_prev_button_container .next_prev_button {
+    margin: auto;
+    font-size: 12px;
+    font-weight: 900;
+}
+
+.canvas_next_prev_button_container .next_prev_button button {
+    background: #ff8e1f;
+    padding: 10px 42px;
+    color: #fff;
+    font-weight: 600;
+    border-radius: 14px;
 }
 .payment_popup_main_container {
     position: fixed;

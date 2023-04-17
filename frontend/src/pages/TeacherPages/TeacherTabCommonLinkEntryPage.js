@@ -5,7 +5,10 @@ import {
     actionToGetAllSchoolBoardDataList,
     actionToGetAllStudentAttendClassWithAssignment,
     actionToGetAllSubjectDataList,
-    actionToGetTeacherAllClasses, actionToGetUserFreshData
+    actionToGetTeacherAllClasses,
+    actionToGetTeacherAllDemoClasses,
+    actionToGetTeacherAllTodayClasses,
+    actionToGetUserFreshData
 } from "../../actions/CommonAction";
 import {useEffectOnce} from "../../helper/UseEffectOnce";
 import {getWebsocketConnectedMessage} from "../../helper/WebSocketHelper";
@@ -21,6 +24,8 @@ export default function TeacherTabCommonLinkEntryPage() {
     useEffectOnce(()=>{
         if(loadOnce) {
             dispatch(actionToGetTeacherAllClasses());
+            dispatch(actionToGetTeacherAllTodayClasses());
+            dispatch(actionToGetTeacherAllDemoClasses());
             dispatch(actionToGetAllStudentAttendClassWithAssignment());
             getWebsocketConnectedMessage(W3CWebSocket, dispatch, userInfo);
             dispatch(actionToGetAllSubjectDataList());

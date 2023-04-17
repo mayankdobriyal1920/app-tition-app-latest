@@ -97,15 +97,15 @@ export default function StudentAttendanceAndAssignmentComponent({isMobile}){
                             <div key={key} className="accordion-item mb-30">
                                 <h2 className="accordion-header" id="headingOne">
                                     <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target={"#collapseOne"+(key)} aria-expanded="false" aria-controls="collapseOne">
-                                        {moment(userClassData?.classes_assigned_to_teacher?.class_end_time).format('LLL')} Class attend
+                                        {moment(userClassData?.class_assigned_teacher_batch?.class_end_time).format('LLL')} Class attend
                                     </button>
                                 </h2>
                                 <div id={"collapseOne"+(key)} className="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accoedion-ex-two">
                                     <div className="accordion-body">
                                         <a>
-                                            <p>Subject Name : {userClassData?.classes_assigned_to_teacher?.subject_name}</p>
-                                            <p>Teacher Name : {userClassData?.classes_assigned_to_teacher?.teacher_name}</p>
-                                            <p>Subject Name : {userClassData?.classes_assigned_to_teacher?.subject_name}</p>
+                                            <p>Subject Name : {userClassData?.class_assigned_teacher_batch?.subject_name}</p>
+                                            <p>Teacher Name : {userClassData?.class_assigned_teacher_batch?.teacher_name}</p>
+                                            <p>Subject Name : {userClassData?.class_assigned_teacher_batch?.subject_name}</p>
                                         </a>
                                         <div className={"assignment_section mt-10"}>
                                             <h6>Assignment :</h6>
