@@ -81,7 +81,7 @@ export const actionToGetAllClassesDataListQuery = (weekStartDate,weekEndDate)=>{
                                                    )
                                            ) jsdata
                                 FROM class_timetable_with_class_batch_assigned
-                                WHERE DATE (start_from_date_time) >= '${weekStartDate}' AND DATE(start_from_date_time) <= '${weekEndDate}'
+                                WHERE DATE (start_from_date_time) > '${weekStartDate}' AND DATE(start_from_date_time) < '${weekEndDate}'
                                 GROUP BY class_assigned_teacher_batch_id) class_timetable_with_class_batch_assigned
                                on class_assigned_teacher_batch.id =
                                   class_timetable_with_class_batch_assigned.class_assigned_teacher_batch_id

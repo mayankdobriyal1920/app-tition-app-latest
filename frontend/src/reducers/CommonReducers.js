@@ -65,7 +65,7 @@ import {
     TEACHER_ALL_TODAY_CLASS_LIST_REQUEST,
     TEACHER_ALL_DEMO_CLASS_LIST_REQUEST,
     STUDENT_ALL_DEMO_CLASS_LIST_REQUEST,
-    STUDENT_ALL_DEMO_CLASS_LIST_SUCCESS, STUDENT_ALL_TODAY_CLASS_LIST_REQUEST
+    STUDENT_ALL_DEMO_CLASS_LIST_SUCCESS, STUDENT_ALL_TODAY_CLASS_LIST_REQUEST, EDITOR_ACTIVE_EDITOR_JSON
 } from "../constants/CommonConstants";
 
 export const userSigninReducer = (state = {}, action) => {
@@ -109,6 +109,14 @@ export const allStudentDemoDataListReducer = (state = {}, action) => {
             return { loading: true,classData:[] ,prevId:action.payload};
         case STUDENT_ALL_DEMO_CLASS_LIST_SUCCESS:
             return { loading: false,classData:action.payload ,prevId:state.prevId};
+        default:
+            return state;
+    }
+};
+export const editorActiveEditorJsonReducer = (state = {}, action) => {
+    switch (action.type) {
+        case EDITOR_ACTIVE_EDITOR_JSON:
+            return action.payload;
         default:
             return state;
     }

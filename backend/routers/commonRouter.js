@@ -37,6 +37,7 @@ import {
     actionToGetStudentAllTodayClassesApiCall,
     actionToGetStudentAllDemoClassesApiCall
 } from "../models/commonModel.js";
+import {canvasReservedJson, canvasReservedJsonActiveIndex} from "../server.js";
 const commonRouter = express.Router();
 
 const stripe = Stripe('sk_test_51ME77cSIFtW1VSPuJqLQWVmK1vmdptG6j457wJlQv98NeRnB2eAdwkbQYWwlNfVIrtuRbNFPZsbKyafCQwdZuT1300SgcSS7AB');
@@ -88,6 +89,32 @@ commonRouter.post(
         }).catch(error => {
             res.status(500).send(error);
         })
+    })
+);
+commonRouter.post(
+    '/actionToGetActiveEditorJsonApiCall',
+    expressAsyncHandler(async (req, res) => {
+        let {groupId} = req.body;
+        let jsonData = {data:'',status:Math.random()};
+        if(canvasReservedJson[groupId] && canvasReservedJson[groupId][canvasReservedJsonActiveIndex[groupId]]){
+            jsonData = {status:Math.random(),data:canvasReservedJson[groupId][canvasReservedJsonActiveIndex[groupId]]}
+        }
+        res.status(200).send({
+            response: jsonData,
+        });
+    })
+);
+commonRouter.post(
+    '/actionToGetEditorCompleteJsonDataWithIndexApiCall',
+    expressAsyncHandler(async (req, res) => {
+        let {groupId} = req.body;
+        let jsonData = {data:''};
+        if(canvasReservedJson[groupId]){
+            jsonData = {data:canvasReservedJson[groupId],index:canvasReservedJsonActiveIndex[groupId]}
+        }
+        res.status(200).send({
+            response: jsonData,
+        });
     })
 );
 commonRouter.post(

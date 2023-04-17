@@ -64,7 +64,7 @@ import {
     TEACHER_ALL_TODAY_CLASS_LIST_SUCCESS,
     TEACHER_ALL_DEMO_CLASS_LIST_REQUEST,
     STUDENT_ALL_DEMO_CLASS_LIST_REQUEST,
-    STUDENT_ALL_TODAY_CLASS_LIST_REQUEST, STUDENT_ALL_DEMO_CLASS_LIST_SUCCESS
+    STUDENT_ALL_TODAY_CLASS_LIST_REQUEST, STUDENT_ALL_DEMO_CLASS_LIST_SUCCESS, EDITOR_ACTIVE_EDITOR_JSON
 } from "../constants/CommonConstants";
 
 import Axios from "axios";
@@ -460,16 +460,41 @@ export const actionToSendFabricDataToOtherUser = (jsonObject) => async ()=> {
         jsonObject: JSON.stringify(jsonObject)
     }));
 }
+export const actionToChangeActiveIndexEditorJson = (groupId,newIndex) => async ()=> {
+    sendWebsocketRequest(JSON.stringify({
+        clientId: localStorage.getItem('clientId'),
+        type: 'actionToChangeActiveIndexEditorJson',
+        groupId:groupId,
+        newIndex:newIndex
+    }));
+}
 export const actionToOpenRatingModalPopup = (action,payload) => (dispatch) => {
     let data = {isOpen:action,dropdownData:payload}
     dispatch({type:OPEN_CLOSE_TEACHER_RATING_POPUP,payload:data});
 }
+export const actionToGetActiveEditorJson = (groupId) => async (dispatch) => {
+    const {data} = await api.post(`common/actionToGetActiveEditorJsonApiCall`,{groupId});
+    dispatch({type: EDITOR_ACTIVE_EDITOR_JSON, payload:cloneDeep(data?.response)});
+}
+export const actionToGetEditorCompleteJsonDataWithIndex = (groupId) => async () => {
+    const {data} = await api.post(`common/actionToGetEditorCompleteJsonDataWithIndexApiCall`,{groupId});
+    return data?.response;
+}
 export const actionToSetCaptureAnnotatorJSONData = (jsonObject) => (dispatch) => {
-    let annotatorData = JSON.parse(jsonObject);
-    let annotatorJSONData = {userId:annotatorData.userId,canvasJson:annotatorData.canvasJson,custom_editor_id:annotatorData.custom_editor_id,
-        type:annotatorData.type,userPointer:annotatorData.userPointer,sizeArray:annotatorData.sizeArray,
-        currentIndex:annotatorData.currentIndex,canvasIndex:annotatorData.canvasIndex};
-    dispatch({type:CAPTURE_ANNOTATOR_JSON_DATA,payload:cloneDeep(annotatorJSONData)});
+    if(jsonObject) {
+        let annotatorData = JSON.parse(jsonObject);
+        let annotatorJSONData = {
+            userId: annotatorData.userId,
+            canvasJson: annotatorData.canvasJson,
+            custom_editor_id: annotatorData.custom_editor_id,
+            type: annotatorData.type,
+            userPointer: annotatorData.userPointer,
+            sizeArray: annotatorData.sizeArray,
+            currentIndex: annotatorData.currentIndex,
+            canvasIndex: annotatorData.canvasIndex
+        };
+        dispatch({type: CAPTURE_ANNOTATOR_JSON_DATA, payload: cloneDeep(annotatorJSONData)});
+    }
 }
 export const actionToUpdateIpAddress = () => async(dispatch) =>{
     try{

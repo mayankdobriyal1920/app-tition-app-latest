@@ -1,5 +1,5 @@
 import {
-    actionToEndCurrentCurrentCallLocally,
+    actionToEndCurrentCurrentCallLocally, actionToGetActiveEditorJson,
     actionToGetTeacherAllClasses,
     actionToGetUserAllClasses,
     actionToMuteUnmuteUserCallLocally,
@@ -154,6 +154,11 @@ export function handleWebSocketEvent(dispatch,state,data){
                 if(!chatModuleCurrentCallGroupData?.is_demo_class)
                     dispatch(actionToOpenRatingModalPopup(true,cloneDeep(chatModuleCurrentCallGroupData)));
                 dispatch(actionToEndCurrentCurrentCallLocally(data?.groupId));
+            }
+            break;
+        case 'actionToChangeActiveIndexEditorJson':
+            if(chatModuleCurrentCallGroupData?.id === data?.groupId) {
+                dispatch(actionToGetActiveEditorJson(data?.groupId));
             }
             break;
         case 'handleMuteUnmuteInCall': {

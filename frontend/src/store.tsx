@@ -42,7 +42,7 @@ import {
     teacherAllTodayClassesListReducer,
     teacherAllDemoClassesListReducer,
     allStudentDemoDataListReducer,
-    allStudentTodayDataListReducer,
+    allStudentTodayDataListReducer, editorActiveEditorJsonReducer,
 } from "./reducers/CommonReducers";
 
 const initialState = {
@@ -81,6 +81,7 @@ const initialState = {
     ipAddress:'',
     captureAnnotatorJSONData: {},
     annotatorUserOnCapture:{},
+    editorActiveEditorJson:{},
     chatModuleCurrentCallGroupMembers:[],
     chatModuleNewUserAddedInCurrentCall:{},
     chatModuleNewUserLeaveUserInCallData:{},
@@ -94,6 +95,7 @@ const initialState = {
     allStudentTodayDataList:{prevId:'',loading:true,classesData:[]},
 };
 export const rootReducer = combineReducers({
+    editorActiveEditorJson: editorActiveEditorJsonReducer,
     allStudentDemoDataList: allStudentDemoDataListReducer,
     allStudentTodayDataList: allStudentTodayDataListReducer,
     allClassToAssignClass: allClassToAssignClassReducer,

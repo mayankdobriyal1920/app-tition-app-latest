@@ -24,8 +24,7 @@ export function setUserId(id){
     userId = id;
 }
 
-export function drawObjectInCanvas(id,selectedCanvas,color){
-    let activeObjectElement= selectedCanvas.getActiveObject();
+export function drawObjectInCanvas(id,selectedCanvas){
     selectedCanvas.isDrawingMode = true;
     selectedCanvas.freeDrawingBrush = new fabric.PencilBrush(selectedCanvas);
     selectedCanvas.freeDrawingBrush.color = selectedToolColor;
@@ -40,6 +39,15 @@ export function drawObjectInCanvas(id,selectedCanvas,color){
             selectedCanvas.freeDrawingBrush.width = Number(selectedToolStroke);
             selectedCanvas.freeDrawingBrush.color = selectedToolColor;
             enableFreeDrawing(selectedCanvas,'free draw');
+            return;
+        case 'delete':
+            removeEvents(selectedCanvas);
+            selectedCanvas.isDrawingMode = false;
+            //Changing cursor of canvas brush
+            $(".modal_screenshot_image").addClass('modal_screenshot_image_cursor_move');
+            $(".modal_screenshot_image").removeClass('modal_screenshot_image_cursor_crosshair');
+            changeObjectSelection(true, selectedCanvas);
+            deleteElementObject(selectedCanvas);
             return;
         case 'undo':
         case 'redo':
@@ -91,6 +99,23 @@ export function enableFreeDrawing(selected_canvas,shapeName){
     });
     selected_canvas.on('mouse:up', function () {
         if (!isDown) return;
+        isDown = false;
+    });
+}
+export function deleteElementObject(selected_canvas){
+    let isDown;
+    selected_canvas.on('mouse:down', function () {
+        isDown= true;
+    });
+    selected_canvas.on('mouse:up', function () {
+        if (!isDown) return;
+        setTimeout(function (){
+            let activeObjectElement= selected_canvas.getActiveObject();
+            if(activeObjectElement) {
+                selected_canvas.remove(activeObjectElement);
+                selected_canvas.renderAll()
+            }
+        })
         isDown = false;
     });
 }

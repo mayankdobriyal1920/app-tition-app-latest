@@ -11,7 +11,11 @@ import {
 import {eventBus} from "../../helper/EventBus";
 import {useEffectOnce} from "../../helper/UseEffectOnce";
 import {cloneDeep} from "lodash";
-import {actionToSendFabricDataToOtherUser, actionToUpdateIpAddress} from "../../actions/CommonAction";
+import {
+    actionToChangeActiveIndexEditorJson, actionToGetActiveEditorJson, actionToGetEditorCompleteJsonDataWithIndex,
+    actionToSendFabricDataToOtherUser,
+    actionToUpdateIpAddress
+} from "../../actions/CommonAction";
 import {ANNOTATOR_UNDO_REDO_CAPTURE, ANNOTATOR_USER_ON_CAPTURE} from "../../constants/CommonConstants";
 import {_generateUniqueId} from "../../helper/CommonHelper";
 import {FacebookLoader} from "../Loader/FacebookLoader";
@@ -21,6 +25,7 @@ const customAnnotationId = _generateUniqueId();
 let canvasReservedJson = [];
 export default function WhiteboardComponent({groupId}){
     const captureAnnotatorJSONData = useSelector((state) => state.captureAnnotatorJSONData);
+    const editorActiveEditorJson = useSelector((state) => state.editorActiveEditorJson);
     const userInfo = useSelector((state) => state.userSignin.userInfo);
     const [activeSelectedTool,setActiveSelectedTool] = useState('draw');
     const [canvasLoading,setCanvasLoading] = useState(true);
@@ -40,7 +45,7 @@ export default function WhiteboardComponent({groupId}){
     }
     const goToPrevCanvasPage = (index)=>{
         if(index >= 0) {
-            canvasReservedJson[index] = JSON.stringify(window.fabricCanvas);
+            canvasReservedJson[index] = JSON.stringify(cloneDeep(window.fabricCanvas));
             window.fabricCanvas.clear();
             let newIndex = index - 1;
             setCanvasActivePage(newIndex);
@@ -49,19 +54,21 @@ export default function WhiteboardComponent({groupId}){
                     window.fabricCanvas.renderAll();
                 })
             }
+            dispatch(actionToChangeActiveIndexEditorJson(groupId,newIndex));
         }
     }
     const goToNextCanvasPage = (index)=>{
         if(index >= 0) {
-            canvasReservedJson[index] = JSON.stringify(window.fabricCanvas);
+            canvasReservedJson[index] = JSON.stringify(cloneDeep(window.fabricCanvas));
             let newIndex = index + 1;
-            setCanvasActivePage(index + 1);
+            setCanvasActivePage(newIndex);
             window.fabricCanvas.clear();
             if(canvasReservedJson[newIndex]) {
                 window.fabricCanvas.loadFromJSON(canvasReservedJson[newIndex], function () {
                     window.fabricCanvas.renderAll();
                 })
             }
+            dispatch(actionToChangeActiveIndexEditorJson(groupId,newIndex));
         }
     }
     const callFunctionToSetChangeColor = (color)=>{
@@ -105,27 +112,27 @@ export default function WhiteboardComponent({groupId}){
 
                 switch(lastType){
                     case 'add': {
-                        let zoom = window.fabricCanvas.getZoom();
-                        let height = window.fabricCanvas.getHeight();
-                        let width = window.fabricCanvas.getWidth();
+                        // let zoom = window.fabricCanvas.getZoom();
+                        // let height = window.fabricCanvas.getHeight();
+                        // let width = window.fabricCanvas.getWidth();
                         window.fabricCanvas.add(userPointer);
-                        window.fabricCanvas.setZoom(zoom);
-                        window.fabricCanvas.setHeight(height);
-                        window.fabricCanvas.setWidth(width);
+                        // window.fabricCanvas.setZoom(zoom);
+                        // window.fabricCanvas.setHeight(height);
+                        // window.fabricCanvas.setWidth(width);
                         window.fabricCanvas.renderAll();
                         sendToWebsocketFabric(userPointer,lastType);
                         break;
                     }
                     case 'remove': {
-                        let zoom = window.fabricCanvas.getZoom();
-                        let height = window.fabricCanvas.getHeight();
-                        let width = window.fabricCanvas.getWidth();
+                        // let zoom = window.fabricCanvas.getZoom();
+                        // let height = window.fabricCanvas.getHeight();
+                        // let width = window.fabricCanvas.getWidth();
                         fabricCanvas.forEachObject(function (obj) {
                             if (userPointer && obj.id === userPointer.id) {
                                 window.fabricCanvas.remove(obj);
-                                window.fabricCanvas.setZoom(zoom);
-                                window.fabricCanvas.setHeight(height);
-                                window.fabricCanvas.setWidth(width);
+                               // window.fabricCanvas.setZoom(zoom);
+                               // window.fabricCanvas.setHeight(height);
+                               // window.fabricCanvas.setWidth(width);
                                 window.fabricCanvas.renderAll();
                                 sendToWebsocketFabric(obj,lastType);
                             }
@@ -185,9 +192,6 @@ export default function WhiteboardComponent({groupId}){
         let clientWidth = document.querySelector('.center_white_board_video_main_container').clientWidth;
         let clientHeight = document.querySelector('.center_white_board_video_main_container').clientHeight;
 
-        console.log('clientWidth',clientWidth);
-        console.log('clientHeight',clientHeight);
-
         setTimeout(function(){
             let rect = new fabric.Rect({
                 width: clientWidth,
@@ -200,6 +204,7 @@ export default function WhiteboardComponent({groupId}){
             callFunctionToActiveSelectTool('draw');
             eventOnFabric();
             setCanvasLoading(false);
+            dispatch(actionToGetActiveEditorJson(groupId));
         })
     }
     const sendToWebsocketFabric = (userPointer,type)=>{
@@ -210,9 +215,30 @@ export default function WhiteboardComponent({groupId}){
             let canvas_object = {height:window.fabricCanvas.height,width:window.fabricCanvas.width};
             let jsonObject = JSON.stringify(canvas_object).toString();
             let currentIndex = window.fabricCanvas.getObjects().indexOf(userPointer);
-            canvasReservedJson[canvasActivePage] = JSON.stringify(window.fabricCanvas);
-            dispatch(actionToSendFabricDataToOtherUser({groupId:groupId,canvasReservedJson:canvasReservedJson,userId:(userInfo != null ? userInfo.id : 0),canvasJson:jsonObject,custom_editor_id:customAnnotationId,
-                type:type,userPointer:userPointer,objectId:userPointer?.id,currentIndex:currentIndex}));
+            if(userInfo?.role === 2) {
+                dispatch(actionToSendFabricDataToOtherUser({
+                    groupId: groupId,
+                    canvasReservedJson: JSON.stringify(window.fabricCanvas),
+                    userId: (userInfo != null ? userInfo.id : 0),
+                    canvasJson: jsonObject,
+                    custom_editor_id: customAnnotationId,
+                    type: type,
+                    userPointer: userPointer,
+                    objectId: userPointer?.id,
+                    currentIndex: currentIndex
+                }));
+            }else{
+                dispatch(actionToSendFabricDataToOtherUser({
+                    groupId: groupId,
+                    userId: (userInfo != null ? userInfo.id : 0),
+                    canvasJson: jsonObject,
+                    custom_editor_id: customAnnotationId,
+                    type: type,
+                    userPointer: userPointer,
+                    objectId: userPointer?.id,
+                    currentIndex: currentIndex
+                }));
+            }
         }
     }
     const sendToWebsocketFabricData = (data) => {
@@ -344,11 +370,31 @@ export default function WhiteboardComponent({groupId}){
         }
     },[editCanvasRef]);
 
+    useEffectOnce(()=>{
+        if(userInfo?.role === 2) {
+            dispatch(actionToGetEditorCompleteJsonDataWithIndex(groupId)).then((returnData) => {
+                if (returnData?.data) {
+                    setCanvasActivePage(returnData?.index);
+                    canvasReservedJson = returnData?.data;
+                }
+            })
+        }
+    },[groupId]);
+
     React.useEffect(()=>{
-        if(captureAnnotatorJSONData && window.fabricCanvas && captureAnnotatorJSONData.custom_editor_id != customAnnotationId && captureAnnotatorJSONData.canvasJson){
+        if(captureAnnotatorJSONData && window.fabricCanvas && captureAnnotatorJSONData.custom_editor_id !== customAnnotationId && captureAnnotatorJSONData.canvasJson){
             drawFromWebSocket(JSON.parse(captureAnnotatorJSONData.canvasJson),captureAnnotatorJSONData.type,captureAnnotatorJSONData.userPointer,captureAnnotatorJSONData.sizeArray,captureAnnotatorJSONData.currentIndex);
         }
     },[captureAnnotatorJSONData]);
+
+    React.useEffect(()=>{
+        window.fabricCanvas.clear();
+        if(editorActiveEditorJson?.data) {
+            window.fabricCanvas.loadFromJSON(editorActiveEditorJson?.data, function () {
+                window.fabricCanvas.renderAll();
+            })
+        }
+    },[editorActiveEditorJson]);
 
 
     return(
@@ -376,6 +422,9 @@ export default function WhiteboardComponent({groupId}){
                     </button>
                     <button onClick={()=>callFunctionToActiveSelectTool('rectangle')} className={"canvas_tool "+(activeSelectedTool === 'rectangle' ? 'active' : '')}>
                         <svg width="18" height="18" viewBox="0 0 20 20"><defs></defs><path d="M21,2H3A1,1,0,0,0,2,3V21a1,1,0,0,0,1,1H21a1,1,0,0,0,1-1V3A1,1,0,0,0,21,2ZM20,20H4V4H20Z" transform="translate(-2 -2)" fill="#fff"></path></svg>
+                    </button>
+                    <button onClick={()=>callFunctionToActiveSelectTool('delete')} className={"canvas_tool "+(activeSelectedTool === 'delete' ? 'active' : '')}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="#000000" version="1.1" id="Layer_1" viewBox="0 0 480.001 480.001"><g><g><path fill="#ffffff" d="M333.142,350.846c0.115-0.115,0.215-0.239,0.323-0.357l129.681-129.706c10.878-10.878,16.864-25.368,16.855-40.8    c-0.01-15.409-5.999-29.865-16.854-40.694l-97.844-97.874c-10.853-10.845-25.326-16.817-40.75-16.817    c-15.426,0-29.895,5.974-40.741,16.82L16.855,308.329C5.974,319.21-0.012,333.713,0,349.168    c0.013,15.425,6.002,29.884,16.854,40.7l62.592,62.606c0.061,0.061,0.127,0.112,0.188,0.171c0.174,0.165,0.349,0.331,0.534,0.483    c0.082,0.067,0.171,0.126,0.255,0.19c0.175,0.135,0.349,0.271,0.532,0.395c0.07,0.047,0.145,0.085,0.215,0.13    c0.205,0.131,0.412,0.26,0.627,0.376c0.051,0.026,0.103,0.048,0.154,0.074c0.239,0.123,0.482,0.241,0.732,0.346    c0.033,0.014,0.067,0.024,0.101,0.037c0.269,0.108,0.54,0.208,0.819,0.293c0.034,0.011,0.07,0.017,0.104,0.027    c0.276,0.081,0.556,0.154,0.841,0.211c0.082,0.017,0.165,0.023,0.247,0.038c0.239,0.041,0.479,0.084,0.724,0.107    c0.33,0.033,0.663,0.051,0.998,0.051h137.91h159.308c5.522,0,10-4.478,10-10c0-5.522-4.478-10-10-10H248.566l84.22-84.236    C332.904,351.06,333.027,350.96,333.142,350.846z M220.285,435.404H90.66l-59.675-59.689    c-7.076-7.054-10.977-16.487-10.985-26.563c-0.008-10.106,3.897-19.582,10.996-26.681l129.825-129.803l151.091,151.091    L220.285,435.404z M174.965,178.527L297.953,55.56c7.069-7.069,16.516-10.963,26.6-10.963c10.085,0,19.536,3.895,26.609,10.962    l97.85,97.88c7.08,7.063,10.982,16.493,10.989,26.557c0.006,10.085-3.899,19.547-10.998,26.645l-122.95,122.974L174.965,178.527z"/></g></g></svg>
                     </button>
                     <button onClick={()=>undo.length > 0 ? applyUndoRedo('undo') : ''}
                             className={"canvas_tool " + (undo.length > 0 ? 'undo_redo_enable': 'undo_redo_disable')}>
@@ -476,17 +525,21 @@ export default function WhiteboardComponent({groupId}){
                 <div className={"center_white_board_video_main_container"}>
                     <canvas ref={editCanvasRef} id="modal_screenshot_image_canvas"></canvas>
                 </div>
-                <div className={"canvas_next_prev_button_container"}>
-                    <div className={"next_prev_button"}>
-                        <button disabled={!canvasActivePage} onClick={()=>goToPrevCanvasPage(canvasActivePage)} type={"button"}>PREV</button>
-                    </div>
-                    <div className={"next_prev_button page_number"}>
-                        <button type={"button"}>{canvasActivePage+1}</button>
-                    </div>
-                    <div className={"next_prev_button"}>
-                        <button onClick={()=>goToNextCanvasPage(canvasActivePage)} type={"button"}>NEXT</button>
-                    </div>
-                </div>
+                {(userInfo?.role === 2) ?
+                    <div className={"canvas_next_prev_button_container"}>
+                        <div className={"next_prev_button"}>
+                            <button disabled={!canvasActivePage} onClick={() => goToPrevCanvasPage(canvasActivePage)}
+                                    type={"button"}>PREV
+                            </button>
+                        </div>
+                        <div className={"next_prev_button page_number"}>
+                            <button type={"button"}>{canvasActivePage + 1}</button>
+                        </div>
+                        <div className={"next_prev_button"}>
+                            <button onClick={() => goToNextCanvasPage(canvasActivePage)} type={"button"}>NEXT</button>
+                        </div>
+                    </div> : ''
+                }
             </div>
         </div>
     )

@@ -56,6 +56,8 @@ function setupWebSocket() {
                         canvasReservedJsonActiveIndex[dataToSend.groupId] = 0;
                     if(allChanelWhiteBoardEditingData[dataToSend.groupId] === undefined)
                         allChanelWhiteBoardEditingData[dataToSend.groupId] = [];
+                    if(canvasReservedJson[dataToSend.groupId] === undefined)
+                        canvasReservedJson[dataToSend.groupId] = [];
 
                     membersInChannelWithDetails[dataToSend.groupId] = dataToSend?.members;
                     currentUserIdInGroupCall[userID] = dataToSend.memberData.id;
@@ -66,7 +68,9 @@ function setupWebSocket() {
                     }else{
                         allChanelWhiteBoardEditingData[dataToSend.groupId].push(dataToSend);
                     }
-                    allChanelWhiteBoardEditingData[dataToSend.groupId] = dataToSend?.canvasReservedJson;
+                    if(dataToSend?.canvasReservedJson[dataToSend.groupId] && canvasReservedJsonActiveIndex[dataToSend.groupId] !== undefined){
+                        canvasReservedJson[dataToSend.groupId][canvasReservedJsonActiveIndex[dataToSend.groupId]] = dataToSend?.canvasReservedJson;
+                    }
                     break;
                 case 'addNewMemberDataInGroup':
                     if(membersInChannelWithDetails[dataToSend.groupId] !== undefined && membersInChannelWithDetails[dataToSend.groupId].length) {
@@ -102,6 +106,10 @@ function setupWebSocket() {
                             type: 'handleMuteUnmuteInCall'
                         }
                     }
+                    break;
+                case 'actionToChangeActiveIndexEditorJson':
+                    canvasReservedJsonActiveIndex[dataToSend.groupId] = dataToSend.newIndex;
+                    console.log('canvasReservedJsonActiveIndex[dataToSend.groupId]',canvasReservedJsonActiveIndex[dataToSend.groupId]);
                     break;
                 case 'actionToEndCurrentCurrentCall':
                     if(membersInChannelWithDetails[dataToSend.groupId] !== undefined && membersInChannelWithDetails[dataToSend.groupId].length){
@@ -198,7 +206,7 @@ app.get('/api-call-tutor', (req, res) => {
 });
 
 app.use((err, req, res) => {
-    res?.status(500).send({ message: err.message });
+    res?.send({ message: err.message });
 });
 
 server.listen(port,host, function() {
