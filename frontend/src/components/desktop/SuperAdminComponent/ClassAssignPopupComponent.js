@@ -13,6 +13,7 @@ for (let i = 0; i < 7; i++) {
 export default function ClassAssignPopupComponent(){
     const [selectedTeacherId,setSelectedTeacherId] = useState(null);
     const [selectedClassAssignId,setSelectedClassAssignId] = useState(null);
+    const [selectedClassData,setSelectedClassData] = useState(null);
     const [classBatchName,setClassBatchName] = useState('');
     let [classStartFromDateTime,setClassStartFromDateTime] = useState({});
     const [selAssignCreateButon,setSelAssignCreateButon] = useState('create');
@@ -33,6 +34,16 @@ export default function ClassAssignPopupComponent(){
             })
         }
     },[weekDatesArray])
+
+    useEffect(()=>{
+        classStartFromDateTime = {};
+        if(selectedClassAssignId){
+            allClassToAssignClass?.classData?.map((classData)=>{
+                if(classData?.id === selectedClassAssignId)
+                    setSelectedClassData(cloneDeep(classData));
+            })
+        }
+    },[selectedClassAssignId])
 
     const callFunctionToSetClassDateTime = (date,time)=> {
         classStartFromDateTime[date] = time;
@@ -119,7 +130,7 @@ export default function ClassAssignPopupComponent(){
                                     <div className={"assign_create_section mt-15"}>
                                         <div className="form-floating mb-3">
                                             <select className="form-select" id="floatingSelect"
-                                                    onChange={(e) => setSelectedTeacherId(e.target.value)}
+                                                    onChange={(e) => setSelectedClassAssignId(e.target.value)}
                                                     aria-label="Floating label select example">
                                                     {(allClassToAssignClass?.loading) ?
                                                         <option selected>{'Loading...'}</option>
@@ -127,19 +138,19 @@ export default function ClassAssignPopupComponent(){
                                                             <>
                                                                 <option selected>{'Select class'}</option>
                                                                 {(allClassToAssignClass?.classData?.map((classData, key) => (
-                                                                    <option key={key} value={classData?.id}>{classData?.id}</option>
+                                                                    <option key={key} value={classData?.id}>{classData?.class_batch_name}</option>
                                                                 )))}
                                                             </>
                                                             :
                                                             <option selected>{'No class found'}</option>
                                                     }
                                             </select>
-                                            <label htmlFor="floatingSelect">Class Id</label>
+                                            <label htmlFor="floatingSelect">Class Bath Name</label>
                                         </div>
                                         <div className="form-floating mb-3">
                                             <input type="text"
                                                    readOnly={true}
-                                                   value={allClassToAssignClass?.classData?.teacher_name}
+                                                   value={selectedClassData?.teacher_name}
                                                    className="form-control" id="floatingClassTime"
                                                    placeholder="Class date time"/>
                                             <label htmlFor="floatingClassTime">Teacher</label>
@@ -147,19 +158,17 @@ export default function ClassAssignPopupComponent(){
                                         <div className="form-floating mb-3">
                                             <input type="text"
                                                    readOnly={true}
-                                                   value={allClassToAssignClass?.classData?.starting_from_date}
-                                                   className="form-control" id="floatingClassTime"
-                                                   placeholder="Class date time"/>
-                                            <label htmlFor="floatingClassTime">Class date Time</label>
-                                        </div>
-                                        <div className="form-floating mb-3">
-                                            <input type="text"
-                                                   readOnly={true}
-                                                   value={allClassToAssignClass?.classData?.batch}
+                                                   value={selectedClassData?.batch}
                                                    className="form-control" id="floatingClassTime"
                                                    placeholder="Class date time"/>
                                             <label htmlFor="floatingClassTime">Batch</label>
                                         </div>
+
+                                        {(selectedClassData?.class_timetable_with_class_batch_assigned?.map((data,key)=>(
+                                            <div key={key} className="form-floating">
+                                                <div>{moment(data?.start_from_date_time).format('dddd ,Do MMMM HH:mm a')}</div>
+                                            </div>
+                                        )))}
                                         <button type="button" onClick={callFunctionToAssignClassData}
                                                 className="btn btn-primary mt-30">
                                             Assign

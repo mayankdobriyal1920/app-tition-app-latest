@@ -134,9 +134,9 @@ export const actionToGetPrevCallOnGroupClassApiCall = (body) => {
     })
 }
 export const actionToAlreadyCreatedClassAccordingToTheConditionApiCall = (body) => {
-    let {subject_id,student_class,school_board,batch} = body;
+    let {weekStartDate,weekEndDate,subject_id,student_class,school_board,batch} = body;
     return new Promise(function(resolve, reject) {
-        const query = actionToAlreadyCreatedClassAccordingToTheConditionQuery(subject_id,student_class,school_board,batch);
+        const query = actionToAlreadyCreatedClassAccordingToTheConditionQuery(weekStartDate,weekEndDate,subject_id,student_class,school_board,batch);
         pool.query(query, (error, results) => {
             if (error) {
                 reject(error)

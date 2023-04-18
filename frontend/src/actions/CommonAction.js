@@ -291,7 +291,11 @@ export const actionToSearchTeacherAccordingToTheCondition = (payload) => async (
 }
 export const actionToAlreadyCreatedClassAccordingToTheCondition = (payload) => async (dispatch) => {
     dispatch({type: ALL_CLASS_TO_ASSIGN_CLASS_REQUEST});
+    let weekStartDate = moment().startOf('week').format('YYYY-MM-DD')
+    let weekEndDate = moment().endOf('week').format('YYYY-MM-DD')
+
     const {data} = await api.post(`common/actionToAlreadyCreatedClassAccordingToTheConditionApiCall`, {
+        weekStartDate,weekEndDate,
         subject_id: payload?.subject_id,
         school_board: payload?.school_board,
         student_class: payload?.student_class,
@@ -300,6 +304,9 @@ export const actionToAlreadyCreatedClassAccordingToTheCondition = (payload) => a
     let finalData = [];
     if(data?.response){
         data?.response?.map((classData)=>{
+            if(classData?.class_timetable_with_class_batch_assigned){
+                classData.class_timetable_with_class_batch_assigned = JSON.parse(classData.class_timetable_with_class_batch_assigned);
+            }
             if(classData?.batch === 2 && classData?.class_count < 3){
                 finalData.push(classData);
             }else if(classData?.batch === 3 && classData?.class_count < 5) {
@@ -307,6 +314,7 @@ export const actionToAlreadyCreatedClassAccordingToTheCondition = (payload) => a
             }
         })
     }
+    console.log(finalData);
     dispatch({type: ALL_CLASS_TO_ASSIGN_CLASS_SUCCESS, payload:[...finalData]});
 }
 export const actionToGetAllDemoClassesDetails = (idLoaderDisable = false) => async (dispatch) => {

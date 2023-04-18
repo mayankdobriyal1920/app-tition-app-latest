@@ -31,20 +31,58 @@ export const actionToSearchTeacherAccordingToTheConditionQuery = (subject_id,stu
             GROUP BY app_user.id
     `;
 }
-export const actionToAlreadyCreatedClassAccordingToTheConditionQuery = (subject_id,student_class,school_board,batch)=>{
-    return `SELECT app_user.name AS teacher_name,
-                   COUNT(profile_subject_with_batch.id) AS class_count,
-                   class_assigned_teacher_batch.starting_from_date AS starting_from_date,
-                   class_assigned_teacher_batch.batch AS batch
+export const actionToAlreadyCreatedClassAccordingToTheConditionQuery = (weekStartDate,weekEndDate,subject_id,student_class,school_board,batch)=>{
+    return `select class_assigned_teacher_batch.batch AS batch,
+                   app_user.name AS teacher_name,
+                   class_assigned_teacher_batch.id AS id,
+                   class_assigned_teacher_batch.class_batch_name AS class_batch_name,
+                   profile_subject_with_batch.count_data AS class_count,
+                   class_timetable_with_class_batch_assigned.jsdata as class_timetable_with_class_batch_assigned
 
-            FROM class_assigned_teacher_batch
+            from class_assigned_teacher_batch
+                     inner join (SELECT class_assigned_teacher_batch_id,
+                                        JSON_ARRAYAGG(
+                                                json_object(
+                                                        'start_from_date_time',
+                                                        class_timetable_with_class_batch_assigned.start_from_date_time,
+                                                        'id', class_timetable_with_class_batch_assigned.id,
+                                                        'class_end_date_time',
+                                                        class_timetable_with_class_batch_assigned.class_end_date_time
+                                                    )
+                                            ) jsdata
+                                 FROM class_timetable_with_class_batch_assigned
+
+                                 GROUP BY class_assigned_teacher_batch_id) class_timetable_with_class_batch_assigned
+                                on class_assigned_teacher_batch.id = class_timetable_with_class_batch_assigned.class_assigned_teacher_batch_id
+
+
+                     inner join (SELECT profile_subject_with_batch.class_assigned_teacher_batch_id,COUNT(class_assigned_teacher_batch_id) as count_data
+                                 FROM profile_subject_with_batch
+                                 GROUP BY profile_subject_with_batch.class_assigned_teacher_batch_id) profile_subject_with_batch
+                                on profile_subject_with_batch.class_assigned_teacher_batch_id = class_assigned_teacher_batch.id
+
+                     join school_board on class_assigned_teacher_batch.school_board = school_board.id
+                     join subject on subject.id = class_assigned_teacher_batch.subject_id
                      INNER JOIN app_user ON app_user.id = class_assigned_teacher_batch.teacher_id
-                     INNER JOIN profile_subject_with_batch ON class_assigned_teacher_batch.id = profile_subject_with_batch.class_assigned_teacher_batch_id
-            WHERE  class_assigned_teacher_batch.school_board = '${school_board}' AND
-                class_assigned_teacher_batch.student_class = '${student_class}' AND class_assigned_teacher_batch.subject_id = '${subject_id}'
-              AND class_assigned_teacher_batch.batch != 1
-              AND class_assigned_teacher_batch.batch = ${batch}
-            GROUP BY class_assigned_teacher_batch.id`;
+        AND class_assigned_teacher_batch.school_board = '${school_board}' 
+        AND  class_assigned_teacher_batch.student_class = '${student_class}' AND class_assigned_teacher_batch.subject_id = '${subject_id}'
+        AND class_assigned_teacher_batch.batch != 1
+        AND class_assigned_teacher_batch.batch = ${batch}
+    `;
+
+    // SELECT app_user.name AS teacher_name,
+    //     COUNT(profile_subject_with_batch.id) AS class_count,
+    //     class_assigned_teacher_batch.starting_from_date AS starting_from_date,
+    //     class_assigned_teacher_batch.batch AS batch
+    //
+    // FROM class_assigned_teacher_batch
+    // INNER JOIN app_user ON app_user.id = class_assigned_teacher_batch.teacher_id
+    // INNER JOIN profile_subject_with_batch ON class_assigned_teacher_batch.id = profile_subject_with_batch.class_assigned_teacher_batch_id
+    // WHERE  class_assigned_teacher_batch.school_board = '${school_board}' AND
+    // class_assigned_teacher_batch.student_class = '${student_class}' AND class_assigned_teacher_batch.subject_id = '${subject_id}'
+    // AND class_assigned_teacher_batch.batch != 1
+    // AND class_assigned_teacher_batch.batch = ${batch}
+    //     GROUP BY class_assigned_teacher_batch.id
 }
 export const actionToGetLatestTeacherDataListQuery = ()=>{
     return `select app_user.*,school_board.name as school_board_name from app_user join school_board on app_user.board=school_board.id where app_user.role=2 order by created_at desc limit 5`;
