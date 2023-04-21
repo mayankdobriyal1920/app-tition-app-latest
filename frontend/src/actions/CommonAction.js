@@ -76,7 +76,7 @@ import moment from "moment";
 import { loadStripe } from "@stripe/stripe-js";
 
 const api = Axios.create({
-    baseURL: `http://apnafinances.com/api-call-tutor/`
+    baseURL: `https://121tuition.in/api-call-tutor/`
 })
 export const callInsertDataFunction = (payload) => async () => {
     try {

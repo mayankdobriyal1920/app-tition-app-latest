@@ -10,7 +10,7 @@ import pdfLogo from "../../../theme/images/icon/pdf_logo.svg";
 import {cloneDeep} from "lodash";
 import axios from "axios";
 // SET your own endpoint
-const endpoint = "https://apnafinances.com/api-call-tutor/uploadAssignmentApiCall";
+const endpoint = "https://121tuition.in/api-call-tutor/uploadAssignmentApiCall";
 
 export default function AllStudentAttendanceAndAssignmentComponent(){
     const {loading,attendanceData} = useSelector((state) => state.allAttendanceAndAssignment);

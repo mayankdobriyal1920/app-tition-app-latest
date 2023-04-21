@@ -68,7 +68,7 @@ function setupWebSocket() {
                     }else{
                         allChanelWhiteBoardEditingData[dataToSend.groupId].push(dataToSend);
                     }
-                    if(dataToSend?.canvasReservedJson[dataToSend.groupId] && canvasReservedJsonActiveIndex[dataToSend.groupId] !== undefined){
+                    if(canvasReservedJson[dataToSend.groupId] && canvasReservedJsonActiveIndex[dataToSend.groupId] !== undefined){
                         canvasReservedJson[dataToSend.groupId][canvasReservedJsonActiveIndex[dataToSend.groupId]] = dataToSend?.canvasReservedJson;
                     }
                     break;
@@ -167,7 +167,7 @@ app.use(express.json({limit: '250mb'}));
 ///////// USER API GET ////////////////
 app.use('/api-call-tutor/common', commonRouter);
 ///////// USER API GET ////////////////
-const uploadPath = "/var/www/html/mrtutor/upload";
+const uploadPath = "/var/www/html/recording-upload-data";
 let chunks = [];
 app.post('/api-call-tutor/recording-video-chuncks', (req, res) => {
     const dataBuffer = new Buffer(req.body.data, 'base64');
@@ -185,8 +185,8 @@ app.post('/api-call-tutor/recording-video-finish', (req, res) => {
         fs.writeFile(`${uploadPath}/${name}`, buf, (err) => {});
         res.send({save: true, name: name})
         delete chunks[req.body.groupId];
-    }
-    res.send({save: true, name: ''})
+    }else
+      res.send({save: true, name: ''})
 });
 app.get('/api-call-tutor/getFineByName', function(req, res){
     const file = `${uploadPath}/${req.query.name}`;

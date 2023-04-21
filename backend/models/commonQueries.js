@@ -309,7 +309,7 @@ export const actionToGetAllClassWithAssignmentQuery = (profileId)=>{
 }
 
 export const actionToGetUserAllClassesQuery = (userId)=>{
-    return `SELECT JSON_OBJECT('id',student_profile.id,
+    return `SELECT json_object('id',student_profile.id,
                                'father_name',student_profile.father_name,
                                'mother_name',student_profile.mother_name, 
                                'name',student_profile.name,
@@ -477,7 +477,6 @@ export const actionToGetTeacherAllClassesQuery = (userId)=>{
                                'starting_from_date', class_assigned_teacher_batch.starting_from_date,
                                'class_end_time', class_assigned_teacher_batch.class_end_time,
                                'class_batch_name', class_assigned_teacher_batch.class_batch_name,
-                               'profile_subject_with_batch', profile_subject_with_batch.jsdata,
                                'subject_name', subject.name,
                                'student_class', class_assigned_teacher_batch.student_class,
                                'teacher_id', class_assigned_teacher_batch.teacher_id,
@@ -485,17 +484,5 @@ export const actionToGetTeacherAllClassesQuery = (userId)=>{
             from class_assigned_teacher_batch
                      INNER JOIN school_board ON class_assigned_teacher_batch.school_board = school_board.id
                      INNER JOIN subject ON class_assigned_teacher_batch.subject_id = subject.id
-                     INNER JOIN (SELECT profile_subject_with_batch.class_assigned_teacher_batch_id,
-                                        json_arrayagg(
-                                                json_object(
-                                                        'id', profile_subject_with_batch.id,
-                                                        'student_name', student_profile.name,
-                                                        'student_id', student_profile.id
-                                                    )
-                                            ) jsdata
-                                 FROM profile_subject_with_batch
-                                          INNER JOIN student_profile ON profile_subject_with_batch.profile_id = student_profile.id
-                                 GROUP BY profile_subject_with_batch.class_assigned_teacher_batch_id) profile_subject_with_batch
-                                ON profile_subject_with_batch.class_assigned_teacher_batch_id = class_assigned_teacher_batch.id
             WHERE class_assigned_teacher_batch.teacher_id = '${userId}' AND class_assigned_teacher_batch.is_demo_class = 0`;
 }

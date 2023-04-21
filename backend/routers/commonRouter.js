@@ -440,15 +440,15 @@ commonRouter.post(
             let finalData = {};
             if(data && data?.length){
                 finalData = JSON.parse(data[0].profile_data)
+                if(finalData.profile_subject_with_batch)
+                  finalData.profile_subject_with_batch = JSON.parse(finalData.profile_subject_with_batch)
             }
             res.status(200).send({
                 response: finalData,
             });
-
+        }).catch(error => {
+            res.status(500).send(error);
         })
-            .catch(error => {
-                res.status(500).send(error);
-            })
     })
 );
 commonRouter.post(
@@ -458,7 +458,10 @@ commonRouter.post(
             let finalData = [];
             if(data && data?.length){
                 data?.map((resData)=>{
-                    finalData.push(JSON.parse(resData.teacher_classes_data));
+                    let classData = JSON.parse(resData.teacher_classes_data);
+                    if(classData) {
+                        finalData.push(classData);
+                    }
                 })
             }
             res.status(200).send({
@@ -476,7 +479,17 @@ commonRouter.post(
             let finalData = [];
             if(data && data?.length){
                 data?.map((resData)=>{
-                    finalData.push(JSON.parse(resData.teacher_classes_data));
+                    let classData = JSON.parse(resData.teacher_classes_data);
+                    if(classData) {
+                        if (classData.profile_subject_with_batch) {
+                            let allProfileData = JSON.parse(classData.profile_subject_with_batch)
+                            allProfileData?.map((profileData,profileDataKey)=>{
+                                allProfileData[profileDataKey] = JSON.parse(profileData);
+                            })
+                            classData.profile_subject_with_batch = allProfileData;
+                        }
+                        finalData.push(classData);
+                    }
                 })
             }
             res.status(200).send({
@@ -530,7 +543,17 @@ commonRouter.post(
             let finalData = [];
             if(data && data?.length){
                 data?.map((resData)=>{
-                    finalData.push(JSON.parse(resData.teacher_classes_data));
+                    let classData = JSON.parse(resData.teacher_classes_data);
+                    if(classData) {
+                        if (classData.profile_subject_with_batch) {
+                            let allProfileData = JSON.parse(classData.profile_subject_with_batch)
+                            allProfileData?.map((profileData,profileDataKey)=>{
+                                allProfileData[profileDataKey] = JSON.parse(profileData);
+                            })
+                            classData.profile_subject_with_batch = allProfileData;
+                        }
+                        finalData.push(classData);
+                    }
                 })
             }
             res.status(200).send({
@@ -555,7 +578,7 @@ commonRouter.post(
 );
 
 /////////// UPLOAD FILE ///////////////
-const uploadPath = "/var/www/html/mrtutor/upload";
+const uploadPath = "/var/www/html/recording-upload-data";
 // const storage = multer.diskStorage({
 //     destination: function(req, file, cb) {
 //         cb(null, uploadPath);

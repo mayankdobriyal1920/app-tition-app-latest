@@ -117,9 +117,8 @@ function TeacherMainDesktopDashboardComponentFunction(){
                             memberData.isTeacher = true;
 
                             let myPeer = new Peer(memberData.peer_connection_id, {
-                                host: 'apnafinances.com',
-                                secure: false,
-                                port: 80,
+                                host: '121tuition.in',
+                                secure: true,
                                 config: {'iceServers': iceServers},
                                 path: '/peerApp',
                             });

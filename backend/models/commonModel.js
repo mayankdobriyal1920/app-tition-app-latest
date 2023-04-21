@@ -319,7 +319,7 @@ export const actionToGetUserAllClassesApiCall = (body) => {
         const query = actionToGetUserAllClassesQuery(userId);
         pool.query(query, (error, results) => {
             if (error) {
-                reject(query)
+                reject(error)
             }
             resolve(results);
         })

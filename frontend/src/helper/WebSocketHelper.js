@@ -31,7 +31,7 @@ export function getWebsocketConnectedMessage(W3CWebSocket,dispatch,userData) {
         webSocketClient.onerror = webSocketClient.onopen = webSocketClient.onclose = null;
         webSocketClient.close();
     }
-    let wsUrl = `ws://apnafinances.com/api-call-tutor`;
+    let wsUrl = `wss://121tuition.in/api-call-tutor`;
 
     webSocketClient = new W3CWebSocket(wsUrl, null, {
         headers: {
