@@ -20,9 +20,9 @@ const DesktopHeaderContainerComponent=({scrollBodyValue}) => {
                     <div className="row align-items-center">
                         <div className="col-xl-2 col-lg-2 col-5">
                             <div className="logo">
-                                <a>
+                                <NavLink to={`home`} className="nav-item nav-link">
                                   <img src={headerLogoOne} alt=""/>
-                                </a>
+                                </NavLink>
                             </div>
                         </div>
                         <div className="col-xl-7 col-lg-8 d-none d-lg-block">

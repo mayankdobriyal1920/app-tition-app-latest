@@ -42,7 +42,7 @@ import {
     teacherAllTodayClassesListReducer,
     teacherAllDemoClassesListReducer,
     allStudentDemoDataListReducer,
-    allStudentTodayDataListReducer, editorActiveEditorJsonReducer,
+    allStudentTodayDataListReducer, editorActiveEditorJsonReducer, teacherClassAttendWithAssignmentDataReducer,
 } from "./reducers/CommonReducers";
 
 const initialState = {
@@ -73,7 +73,7 @@ const initialState = {
     teacherAllTodayClassesList:{prevId:'',loading:true,classData:[]},
     allDemoClasses:{prevId:'',loading:true,classData:[]},
     allRecordedClasses:{prevId:'',loading:true,classData:[]},
-    studentAllTimeClassList:[],
+    studentAllTimeClassList:{prevId:'',loading:true,classData:[]},
     chatModuleAllGroupStartedCall:[],
     chatModuleCurrentCallGroupData:{},
     chatModuleIncomingCallGroupData:{},
@@ -93,11 +93,13 @@ const initialState = {
     teacherAllDemoClassesList:{prevId:'',loading:true,classesData:[]},
     allStudentDemoDataList:{prevId:'',loading:true,classesData:[]},
     allStudentTodayDataList:{prevId:'',loading:true,classesData:[]},
+    teacherClassAttendWithAssignmentData:{prevId:'',loading:true,classData:[]},
 };
 export const rootReducer = combineReducers({
     editorActiveEditorJson: editorActiveEditorJsonReducer,
     allStudentDemoDataList: allStudentDemoDataListReducer,
     allStudentTodayDataList: allStudentTodayDataListReducer,
+    teacherClassAttendWithAssignmentData: teacherClassAttendWithAssignmentDataReducer,
     allClassToAssignClass: allClassToAssignClassReducer,
     openCloseClassAssignPopup: openCloseClassAssignPopupReducer,
     allTeacherDataToAssignClass: allTeacherDataToAssignClassReducer,

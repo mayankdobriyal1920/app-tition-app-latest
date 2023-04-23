@@ -56,15 +56,25 @@ const DesktopMainBodyContainerComponent=() => {
                                 <div className="slider__content pt-15">
                                     <h1 className="main-title mb-40 wow fadeInUp2  animated" data-wow-delay=".1s"
                                         style={{visibility: "visible" ,animationDelay: '0.1s' , animationName: 'fadeInUp2'}}>
-                                        121 Tuition live class program is a unique blend of conventional.
+                                        121 Tuition live class.
                                     </h1>
-                                    <h5 className="mb-35 wow fadeInUp2  animated" data-wow-delay=".2s"
-                                        style={{visibility: "visible" ,animationDelay: '0.2s' , animationName: 'fadeInUp2'}}>
-                                        Easy and user-friendly access to live classes along with interactive doubt
-                                        solving sessions help students to achieve their goals.
-                                        We believe not only in improving the grades of children but also in the holistic
-                                        development of the child by arousing interest in studies.
-                                    </h5>
+                                    <div className="chose-wrapper pl-25 pl-lg-0 pl-md-0 pl-xs-0">
+                                        <div className="section-title mb-30 wow fadeInUp2  animated"
+                                             data-wow-delay=".1s"
+                                             style={{visibility: 'visible', 'animationDelay': '0.2s' , 'animationName': 'fadeInUp2'}}>
+                                            <h2 className="mb-25">Why Choose 121 Tuition?</h2>
+                                            <p>Get the same learning experience as school with the comfort of being at home with Extramarks. Learn from top faculty anytime, anywhere</p>
+                                        </div>
+                                        <ul className="text-list mb-40 wow fadeInUp2  animated" data-wow-delay=".2s"
+                                            style={{visibility: 'visible', 'animationDelay': '0.2s' , 'animationName': 'fadeInUp2'}}>
+                                            <li>Accessibility: anyone with a good internet connection can have access to online classes with a click of a button.</li>
+                                            <li>Cost-effective classes at affordable prices.</li>
+                                            <li>Quality courses are available anytime, anywhere.</li>
+                                            <li>In Class Doubts Solving.</li>
+                                            <li>Test & Analysis – Proper tests after completion of each chapter for progress tracking.</li>
+                                            <li>Students will also get help in the completion of homework and project work.</li>
+                                        </ul>
+                                    </div>
                                     <ul className="search__area d-md-inline-flex align-items-center justify-content-between mb-30">
                                         <li>
                                             <button
@@ -125,7 +135,6 @@ const DesktopMainBodyContainerComponent=() => {
                                             <li>Students will also get help in the completion of homework and project work.</li>
                                         </ul>
                                     </div>
-
                                 </div>
                             </div>
                         </div>

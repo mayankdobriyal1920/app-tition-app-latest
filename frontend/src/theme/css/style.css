@@ -22,7 +22,7 @@ body {
     position: relative;
 }
 .main-header-area .logo img {
-    max-width: 100%;
+    width: 83px;
 }
 .main-header-area.sticky {
     padding-top: 0;
@@ -177,7 +177,7 @@ body {
     display: inline-block;
 }
 .slider__content .highlight-text span {
-    color: #FF723A;
+    color: #f7931e;
 }
 .search__area {
     width: 100%;
@@ -200,7 +200,7 @@ body {
     position: absolute;
     width: 572px;
     height: 479px;
-    background-color: #FF723A;
+    background-color: #f7931e;
     border-radius: 40px;
     left: 63px;
     top: auto;
@@ -227,7 +227,7 @@ body {
     z-index: 1;
 }
 .text-list li:nth-child(2)::before {
-    background-color: #FF723A;
+    background-color: #f7931e;
 }
 .text-list li:last-child::before {
     background-color: #F14D5D;
@@ -265,7 +265,7 @@ body {
     line-height: 39px;
 }
 .social-media a {
-    color: #FF723A;
+    color: #f7931e;
     font-size: 19px;
     background-color: #ffffff;
     width: 45px;
@@ -297,7 +297,7 @@ body {
     font-weight: 700;
 }
 .fot-list a:hover {
-    color: #FF723A;
+    color: #f7931e;
 }
 div#main_signup_component {
     position: fixed;
@@ -521,7 +521,7 @@ span.sapater_otp {
     color: #3c3c3c;
 }
 .menu_loop_section_inner_section.active svg {
-    fill: #ff723a!important;
+    fill: #f7931e!important;
 }
 
 .menu_loop_section_inner_section.active .left_menu_item_2 {
@@ -529,7 +529,7 @@ span.sapater_otp {
 }
 .main_body_content_section {
     box-shadow: 1px 0px 3px 0px #afafaf;
-    background-image: linear-gradient(180deg, #ffc0a7, #ffe9e0);
+    background-image: linear-gradient(180deg, #ffb967, #fff0df);
     height: 100vh;
     padding: 40px 17px;
     overflow: auto;
@@ -647,7 +647,7 @@ span.sapater_otp {
 }
 
 .class_star_rating_component .class_star_rating_component_inner .star_rating_main_div_with_stars i.active {
-    color: #ff723a;
+    color: #f7931e;
 }
 
 .class_star_rating_component .class_star_rating_component_inner .star_rating_main_div_with_stars i {
@@ -702,8 +702,8 @@ span.sapater_otp {
 }
 .profile_form_main_inner_body .form-group  input:focus {
     box-shadow: none!important;
-    border-color: #FF723A!important;
-    outline: #FF723A!important;
+    border-color: #f7931e!important;
+    outline: #f7931e!important;
 }
 
 .profile_form_main_inner_body2 .form-group  input,.profile_form_main_inner_body2 .form-group  select {
@@ -714,8 +714,8 @@ span.sapater_otp {
 }
 .profile_form_main_inner_body2 .form-group  input:focus,.profile_form_main_inner_body2 .form-group  select:focus {
     box-shadow: none!important;
-    border-color: #FF723A!important;
-    outline: #FF723A!important;
+    border-color: #f7931e!important;
+    outline: #f7931e!important;
 }
 
 .no_demo_classes_div_section {
@@ -747,7 +747,7 @@ span.sapater_otp {
 .class_list_table.header_row {
     border-bottom: 1px solid #ccc;
     line-height: 48px;
-    color: #ff723a;
+    color: #f7931e;
     font-weight: 600;
     font-size: 2vh;
 }
@@ -956,14 +956,34 @@ div#teacher_video_class_container {
 .student_attendance_assignment_main_container {
     padding: 0 139px;
     overflow: auto;
-    height: 100vh;
+    height: calc(100vh - 65px);
 }
 .student_payment_subscription_plan_success_main_section {
     display: flex;
     width: 100%;
     height: 100vh;
 }
+.assignment_section .assignment_project_list a {
+    display: flex;
+    cursor: pointer;
+}
 
+.assignment_project_list_for_student {
+    display: flex;
+    padding: 5px 10px;
+}
+
+.assignment_project_list_for_student a {
+    display: flex;
+    margin: 0px;
+}
+.assignment_section .assignment_project_list {
+    display: flex;
+    padding: 4px 10px;
+}
+.assignment_section .assignment_project_list img {
+    width: 21px;
+}
 .student_payment_subscription_plan_success_main_section .student_payment_subscription_plan_inner_div {
     margin: auto;
     text-align: center;
@@ -1032,7 +1052,7 @@ div#teacher_video_class_container {
     font-size: 1.9vh;
     font-weight: 600;
     padding-left: 13px;
-    color: #ff723a;
+    color: #f7931e;
 }
 
 .demo_classes_section_teacher_icon_name .teacher_detail_section {
@@ -1063,9 +1083,30 @@ div#teacher_video_class_container {
     height: 100vh;
     overflow: auto;
     width: 30%;
-    background-image: linear-gradient(180deg, #ff804d, #ffe9e0);
+    background-image: linear-gradient(180deg, #ffa236, #ffdcb4);
+}
+.student_statur.present {
+    color: #588f00;
+    font-size: 12px;
+    font-weight: 600;
+}
+.accordion-body hr {
+    background: #767676!important;
+    width: 100%;
 }
 
+.accordion-body {
+    padding: 10px;
+}
+.accordion-body .accordion-body-inner-data {
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+.student_statur.absent {
+    color: #ff0404;
+    font-size: 12px;
+    font-weight: 600;
+}
 .user_profile_fixed_section_main_container .user_profile_main_section {
     margin-top: 10vh;
     padding: 0px 45px;
@@ -1699,19 +1740,15 @@ div#main_user_video_call_video_section video.my_video_peer_connection {
     font-size: 4vh;
 }
 a.nav-item.nav-link.active {
-    color: #ff723a!important;
+    color: #f7931e!important;
 }
 .user_profile_edit_main_container_inner_section .personal_prof_form_2 {
     height: 100vh;
     padding: 124px!important;
     border-radius: 0px!important;
 }
-.fc .fc-scrollgrid-section-body table tbody{
-    display: block!important;
-}
-.fc .fc-scrollgrid-section .fc-scroller{
-    overflow: auto auto!important;
-}
+
+
 .user_profile_edit_main_container_inner_section button.theme_btn {
     width: 100%;
 }
@@ -1729,6 +1766,28 @@ a.nav-item.nav-link.active {
 }
 .accordion-body h6{
     font-size: 2.4vh;
+}
+.text-list li:nth-child(3)::before {
+    background-color: #bf31b0;
+}
+.text-list li:nth-child(4)::before {
+    background-color: #36bf31;
+}
+.text-list li:nth-child(5)::before {
+    background-color: #1e8df7;
+}
+.text-list li:nth-child(6)::before {
+    background-color: #6d19d1;
+}
+.text-list li:nth-child(7)::before {
+    background-color: #8d8d8d;
+}
+.text-list li:nth-child(8)::before {
+    background-color: #852c2c;
+}
+
+.footer-log a.logo img {
+    width: 87px;
 }
 .accordion-item:first-of-type .accordion-button{
     font-size: 2.4vh;
@@ -1853,7 +1912,7 @@ a.nav-item.nav-link.active {
     background-color: rgba(255, 255, 255, 0.03);
 }
 .chose-img-wrapper .video-wrapper .popup-video {
-    color: #FF723A;
+    color: #f7931e;
     width: 90px;
     height: 90px;
     line-height: 90px;
@@ -1863,7 +1922,7 @@ a.nav-item.nav-link.active {
 }
 .popup-video {
     color: #ffffff;
-    background: #FF723A;
+    background: #f7931e;
     border-radius: 50%;
     font-size: 14px;
     line-height: 100px;
@@ -1915,7 +1974,7 @@ a.nav-item.nav-link.active {
     display: inline-block;
     text-align: center;
     line-height: 50px;
-    background-color: #FF723A;
+    background-color: #f7931e;
     margin-right: 23px;
 }
 .feature {
@@ -1955,7 +2014,6 @@ button.submit:hover {
 .inputfile-4 + label{
     font-size: 2.4vh;
 }
-.assignment_file_pdf_section a {margin-top: 21px;font-size: 2.3vh;}
 .edit_teacher_main_popup_outer_container {
     position: fixed;
     background: #ffffffeb;
@@ -1964,6 +2022,12 @@ button.submit:hover {
     width: 100%;
     height: 100vh;
     display: flex;
+}
+.student_assignment_section {
+    border: 1px solid #ccc;
+    padding: 6px;
+    margin: 6px;
+    border-radius: 10px;
 }
 .edit_teacher_main_popup_outer_container .edit_teacher_main_main_popup_inner_container {
     margin: auto;
@@ -2027,7 +2091,7 @@ button.submit:hover {
     width: 50px;
     height: 50px;
     border-radius: 100%;
-    background: #FF723A;
+    background: #f7931e;
     -webkit-animation: preloader 1.3s linear infinite;
     animation: preloader 1.3s linear infinite;
 }
@@ -2041,7 +2105,7 @@ button.submit:hover {
     width: 50px;
     height: 50px;
     border-radius: 100%;
-    background: #FF723A;
+    background: #f7931e;
     -webkit-animation: preloader 1.3s linear infinite;
     animation: preloader 1.3s linear infinite;
 }
@@ -2066,7 +2130,7 @@ button.submit:hover {
     border-radius: 5px;
     width: 100%!important;
     height: auto!important;
-    border: 3px dashed #ff723a;
+    border: 3px dashed #f7931e;
 }
 .blog-details-title {
     font-size: 30px;
@@ -2155,7 +2219,7 @@ section.page-title-area {
 }
 
 .plan-2 {
-    background-color: #FF723A;
+    background-color: #f7931e;
 }
 .plan-2a {
     background-color: #F14D5D;
@@ -2239,7 +2303,7 @@ section.page-title-area {
     border-radius: 5px;
 }
 .cb-3 .contact__iocn {
-    background-color: #FF723A;
+    background-color: #f7931e;
 }
 .single-contact-box .contact__iocn {
     background: #8E66FF;

@@ -3,18 +3,19 @@ import {useDispatch, useSelector} from "react-redux";
 import {FacebookLoader} from "../../Loader/FacebookLoader";
 import noClassFound from "../../../theme/images/chose/no_classes_found.png";
 import {
-    actionToGetAllAttendClassWithAssignment, actionToStoreAssignmentData,
+    actionToGetTeacherClassAttendWithAssignmentData,
+    actionToStoreAssignmentData, actionToStoreAssignmentDataForTeacher,
 } from "../../../actions/CommonAction";
 import moment from "moment";
-import pdfLogo from "../../../theme/images/icon/pdf_logo.svg";
+import pdfLogo from "../../../theme/images/file_icon.svg";
 import {cloneDeep} from "lodash";
 import axios from "axios";
+import {isTeacherMasterLogin} from "../../../middlewear/auth";
 // SET your own endpoint
 const endpoint = "https://121tuition.in/api-call-tutor/uploadAssignmentApiCall";
 
 export default function StudentAttendanceAndAssignmentComponent({isMobile}){
-    const {loading,attendanceData} = useSelector((state) => state.allAttendanceAndAssignment);
-    const {classData} = useSelector((state) => state.studentAllClassesList);
+    const {loading,classData} = useSelector((state) => state.teacherClassAttendWithAssignmentData);
     const [selectedFile,setSelectedFile] = useState({});
     const [loaded,setLoaded] = useState({});
     const [message,setMessage] = useState({});
@@ -46,8 +47,9 @@ export default function StudentAttendanceAndAssignmentComponent({isMobile}){
         setUploading(uploading);
         // define upload
         const data = new FormData();
-        let fileName = Date.now() + "_" + selectedFile[id]?.name;
-        data.append("file", selectedFile[id], fileName);
+        let pathName = Date.now() + "_assignment_file_data_" + selectedFile[id]?.name.replace(/ /g,"_");
+        let fileName = selectedFile[id]?.name;
+        data.append("file", selectedFile[id], pathName);
         data.append("id", id);
 
         axios.post(endpoint, data, {
@@ -61,11 +63,15 @@ export default function StudentAttendanceAndAssignmentComponent({isMobile}){
                 setSelectedFile(cloneDeep(selectedFile));
                 loaded[id] = 0;
                 setLoaded(cloneDeep(loaded));
-                message[id] = "Uploaded successfully";
+                message[id] = "";
                 setMessage(cloneDeep(message));
                 uploading[id] = false;
                 setUploading(uploading);
-                dispatch(actionToStoreAssignmentData(selectedFile[id]?.name,fileName,id,classData?.id))
+                if(isTeacherMasterLogin()){
+                    dispatch(actionToStoreAssignmentDataForTeacher(fileName,pathName,id))
+                }else{
+                    dispatch(actionToStoreAssignmentData(fileName,pathName,id))
+                }
             })
             .catch(err => {
                 message[id] = "Failed to upload";
@@ -75,11 +81,6 @@ export default function StudentAttendanceAndAssignmentComponent({isMobile}){
             });
     };
 
-    useEffect(()=>{
-        if(classData?.id) {
-            dispatch(actionToGetAllAttendClassWithAssignment(classData?.id))
-        }
-    },[classData])
     return(
         <div className={"student_attendance_assignment_main_container mt-65 "+(isMobile ? 'mobile' : '')}>
             {(!isMobile) &&
@@ -91,60 +92,150 @@ export default function StudentAttendanceAndAssignmentComponent({isMobile}){
                     <FacebookLoader type={"facebookStyle"} item={7}/>
                     :
                     <FacebookLoader type={"facebookStyle"} item={2}/>
-                : (attendanceData?.length) ?
+                : (classData?.length) ?
                     <div className="accordion accordion-two" id="accoedion-ex-two">
-                        {(attendanceData?.map((userClassData,key)=>(
+                        {(classData?.map((dateData,key)=>(
                             <div key={key} className="accordion-item mb-30">
                                 <h2 className="accordion-header" id="headingOne">
-                                    <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target={"#collapseOne"+(key)} aria-expanded="false" aria-controls="collapseOne">
-                                        {moment(userClassData?.class_assigned_teacher_batch?.class_end_time).format('LLL')} Class attend
+                                    <button className="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target={"#collapseOne"+(key)} aria-expanded="true">
+                                        {(moment(dateData.date).format('YYYY-MM-DD') === moment().format('YYYY-MM-DD')) ? 'Today' :(moment(dateData.date).format('YYYY-MM-DD') === moment().subtract(1,'day').format('YYYY-MM-DD')) ? 'Yesterday' : moment(dateData.date).format('LL')}
                                     </button>
                                 </h2>
-                                <div id={"collapseOne"+(key)} className="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accoedion-ex-two">
-                                    <div className="accordion-body">
+                                <div id={"collapseOne"+(key)} className="accordion-collapse collapse show">
+                                    {(dateData?.classData?.map((classData,classDataKey)=>(
+                                       <div key={classDataKey} className="accordion-body">
+                                          <div className="accordion-body-inner-data">
                                         <a>
-                                            <p>Subject Name : {userClassData?.class_assigned_teacher_batch?.subject_name}</p>
-                                            <p>Teacher Name : {userClassData?.class_assigned_teacher_batch?.teacher_name}</p>
-                                            <p>Subject Name : {userClassData?.class_assigned_teacher_batch?.subject_name}</p>
+                                            <p>Batch Name : {classData?.class_batch_name}</p>
+                                            <p>Batch Type : {classData?.batch === 1 ? '1 to 1' :(classData?.batch === 2) ? '1 to 3' : '1 to 5'}</p>
+                                            <p>Subject Name : {classData?.subject_name}</p>
                                         </a>
+                                        <hr/>
                                         <div className={"assignment_section mt-10"}>
-                                            <h6>Assignment :</h6>
-                                            {userClassData?.student_class_attend_assignment ? (
-                                                <div className={"assignment_file_pdf_section"}>
-                                                    {(userClassData?.student_class_attend_assignment?.map((studentAssignment,index)=>(
-                                                        <a key={index}>
-                                                            <img src={pdfLogo} alt={'pdfLogo'}/>
-                                                            {studentAssignment?.name}
-                                                        </a>
-                                                    )))}
-                                                </div>
-                                            ) :
-                                                <div className={"upload container_section"}>
-                                                    <form className="box">
-                                                        <input
-                                                            type="file"
-                                                            name="file-5[]"
-                                                            id="file-5"
-                                                            className="inputfile inputfile-4"
-                                                            onChange={(e)=>handleFileChange(e,userClassData?.id)}
-                                                        />
-                                                        <label htmlFor="file-5">
-                                                            <figure>
-                                                               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="17" viewBox="0 0 20 17"><path d="M10 0l-5.2 4.9h3.3v5.1h3.8v-5.1h3.3l-5.2-4.9zm9.3 11.5l-3.2-2.1h-2l3.4 2.6h-3.5c-.1 0-.2.1-.2.1l-.8 2.3h-6l-.8-2.2c-.1-.1-.1-.2-.2-.2h-3.6l3.4-2.6h-2l-3.2 2.1c-.4.3-.7 1-.6 1.5l.6 3.1c.1.5.7.9 1.2.9h16.3c.6 0 1.1-.4 1.3-.9l.6-3.1c.1-.5-.2-1.2-.7-1.5z"></path></svg>
-                                                            </figure>
-                                                            <span>
-                                                                {uploading[userClassData?.id]
-                                                                    ? loaded[userClassData?.id] + "%"
-                                                                    : message[userClassData?.id]
-                                                                }
-                                                              </span>
-                                                        </label>
-                                                        <button className="submit" type={"button"} onClick={(e)=>handleUpload(e,userClassData?.id)}>Upload</button>
-                                                    </form>
-                                                </div>
-                                            }
+                                            <h6>All Students:</h6>
+                                            <div className={"assignment_file_pdf_section"}>
+                                                {(classData?.profile_subject_with_batch?.map((studentData,index)=>(
+                                                   <div key={index}>
+                                                       <p>{studentData?.student_name} <span className={'student_statur '+(Number(studentData?.attend_class_count) >= 1 ? 'present' : 'absent')}>{Number(studentData?.attend_class_count) >= 1 ? '(PRESENT)' : '(ABSENT)'}</span></p>
+                                                   </div>
+                                                )))}
+                                            </div>
                                         </div>
-                                    </div>
+                                           <hr/>
+                                              <div className={"assignment_section mt-10"}>
+                                                  <h6>Student Assignments:</h6>
+                                                  {classData?.student_class_attend ? (
+                                                          <div className={"assignment_file_pdf_section"}>
+                                                              {(classData?.student_class_attend?.map((studentClassAttend,index)=>(
+                                                                  <div className={"student_assignment_section"} key={index}>
+                                                                      <p>Student Name : {studentClassAttend?.student_name}</p>
+                                                                      {studentClassAttend?.student_class_attend_assignment ?
+                                                                          <div>
+                                                                              {studentClassAttend?.student_class_attend_assignment?.map((assignment,assignmentKey)=>(
+                                                                                  <div className={"assignment_project_list_for_student"} key={assignmentKey}>
+                                                                                      <a href={`/api-call-tutor/getFineByName?name=${assignment?.path}`} target={"_blank"}>
+                                                                                          <img alt={'pdfLogo'} src={pdfLogo}/>
+                                                                                          <p>{assignment?.name}</p>
+                                                                                      </a>
+                                                                                  </div>
+                                                                              ))}
+                                                                          </div>
+                                                                          :
+                                                                          <div>
+                                                                              <p>No Assignments Submitted</p>
+                                                                          </div>
+                                                                      }
+                                                                      {(!isTeacherMasterLogin()) ?
+                                                                          <div className={"assignment_section mt-10"}>
+                                                                          <h6>Upload Assignment:</h6>
+                                                                          <div className={"upload container_section"}>
+                                                                              <form className="box">
+                                                                                  <input
+                                                                                      type="file"
+                                                                                      accept="image/png, image/gif, image/jpeg ,application/pdf,"
+                                                                                      id="file-5"
+                                                                                      className="inputfile inputfile-4"
+                                                                                      onChange={(e) => handleFileChange(e, studentClassAttend?.id)}
+                                                                                  />
+                                                                                  <label htmlFor="file-5">
+                                                                                      <figure>
+                                                                                          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="17" viewBox="0 0 20 17"><path d="M10 0l-5.2 4.9h3.3v5.1h3.8v-5.1h3.3l-5.2-4.9zm9.3 11.5l-3.2-2.1h-2l3.4 2.6h-3.5c-.1 0-.2.1-.2.1l-.8 2.3h-6l-.8-2.2c-.1-.1-.1-.2-.2-.2h-3.6l3.4-2.6h-2l-3.2 2.1c-.4.3-.7 1-.6 1.5l.6 3.1c.1.5.7.9 1.2.9h16.3c.6 0 1.1-.4 1.3-.9l.6-3.1c.1-.5-.2-1.2-.7-1.5z"></path></svg>
+                                                                                      </figure>
+                                                                                      <span>
+                                                                                      {uploading[studentClassAttend?.id]
+                                                                                          ? loaded[studentClassAttend?.id] + "%"
+                                                                                          : message[studentClassAttend?.id]
+                                                                                      }
+                                                                                    </span>
+                                                                                  </label>
+                                                                                  <button className="submit" type={"button"}
+                                                                                          onClick={(e) => handleUpload(e, studentClassAttend?.id)}>Upload
+                                                                                  </button>
+                                                                              </form>
+                                                                          </div>
+                                                                      </div>
+                                                                          :''}
+                                                                  </div>
+                                                              )))}
+                                                          </div>
+                                                      ) :''
+                                                  }
+                                              </div>
+                                              <hr/>
+                                              <div className={"assignment_section mt-10"}>
+                                                  <h6>Teacher Assignments:</h6>
+                                                  {classData?.teacher_class_attend_assignment ?
+                                                      <div>
+                                                          {classData?.teacher_class_attend_assignment?.map((assignment,assignmentKey)=>(
+                                                              <div className={"assignment_project_list"} key={assignmentKey}>
+                                                                  <a href={`/api-call-tutor/getFineByName?name=${assignment?.path}`} target={"_blank"}>
+                                                                      <img alt={'pdfLogo'} src={pdfLogo}/>
+                                                                      <p>&nbsp;&nbsp;{assignment?.name}</p>
+                                                                  </a>
+                                                              </div>
+                                                          ))}
+                                                      </div>
+                                                      :
+                                                      <div>
+                                                          <p>No Assignments Submitted</p>
+                                                      </div>
+                                                  }
+                                              </div>
+                                              {(isTeacherMasterLogin()) ?
+                                                  <>
+                                                  <hr/>
+                                                  <div className={"assignment_section mt-10"}>
+                                                      <h6>Upload Assignment:</h6>
+                                                      <div className={"upload container_section"}>
+                                                          <form className="box">
+                                                              <input
+                                                                  type="file"
+                                                                  id="file-5"
+                                                                  accept="image/png, image/gif, image/jpeg ,application/pdf,"
+                                                                  className="inputfile inputfile-4"
+                                                                  onChange={(e) => handleFileChange(e, classData?.class_id)}
+                                                              />
+                                                              <label htmlFor="file-5">
+                                                                  <figure>
+                                                                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="17" viewBox="0 0 20 17"><path d="M10 0l-5.2 4.9h3.3v5.1h3.8v-5.1h3.3l-5.2-4.9zm9.3 11.5l-3.2-2.1h-2l3.4 2.6h-3.5c-.1 0-.2.1-.2.1l-.8 2.3h-6l-.8-2.2c-.1-.1-.1-.2-.2-.2h-3.6l3.4-2.6h-2l-3.2 2.1c-.4.3-.7 1-.6 1.5l.6 3.1c.1.5.7.9 1.2.9h16.3c.6 0 1.1-.4 1.3-.9l.6-3.1c.1-.5-.2-1.2-.7-1.5z"></path></svg>
+                                                                  </figure>
+                                                                  <span>
+                                                                      {uploading[classData?.class_id]
+                                                                          ? loaded[classData?.class_id] + "%"
+                                                                          : message[classData?.class_id]
+                                                                      }
+                                                                    </span>
+                                                              </label>
+                                                              <button className="submit" type={"button"}
+                                                                      onClick={(e) => handleUpload(e, classData?.class_id)}>Upload
+                                                              </button>
+                                                          </form>
+                                                      </div>
+                                                  </div>
+                                              </>:''}
+                                           </div>
+                                       </div>
+                                    )))}
                                 </div>
                             </div>
                         )))}

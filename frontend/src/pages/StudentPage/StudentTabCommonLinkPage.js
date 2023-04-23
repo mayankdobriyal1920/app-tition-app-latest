@@ -9,7 +9,7 @@ import {
     actionToGetAllSchoolBoardDataList,
     actionToGetAllSubjectDataList,
     actionToGetStudentAllDemoClasses,
-    actionToGetStudentAllTodayClasses,
+    actionToGetStudentAllTodayClasses, actionToGetStudentTimetableData, actionToGetTeacherClassAttendWithAssignmentData,
     actionToGetUserAllClasses,
     actionToGetUserFreshData
 } from "../../actions/CommonAction";
@@ -26,6 +26,8 @@ export default function StudentTabCommonLinkEntryPage() {
             dispatch(actionToGetAllSubjectDataList());
             dispatch(actionToGetAllSchoolBoardDataList());
             dispatch(actionToGetUserFreshData(userInfo?.id));
+            dispatch(actionToGetStudentTimetableData());
+            dispatch(actionToGetTeacherClassAttendWithAssignmentData());
             dispatch(actionToGetUserAllClasses());
             dispatch(actionToGetStudentAllTodayClasses());
             dispatch(actionToGetStudentAllDemoClasses());

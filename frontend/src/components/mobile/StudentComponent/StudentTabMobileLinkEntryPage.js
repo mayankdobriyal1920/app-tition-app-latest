@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {IonPage, IonFooter, IonRow, IonCol, IonAlert} from "@ionic/react";
 import {NavLink, Redirect} from "react-router-dom";
-import siteLogo from "../../../theme/images/header_logo_mini.svg";
+import siteLogo from "../../../theme/images/header_logo_one.png";
 import logoutLogo from "../../../theme/images/icon/logout_logo.svg";
 import {useDispatch, useSelector} from "react-redux";
 

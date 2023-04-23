@@ -46,7 +46,7 @@ const PricingMainBodyContainerComponent=() => {
                                             </h2>
                                             <h2 className="mb-10">
                                                 <b>
-                                                    <sup>₹</sup>2000<span className="new-price">/ Monthly</span>
+                                                    <span className="old-price">₹2500</span><sup>₹</sup>2000<span className="new-price">/ Monthly</span>
                                                 </b>
                                             </h2>
                                             <h2 className="mb-10">
@@ -56,7 +56,7 @@ const PricingMainBodyContainerComponent=() => {
                                             </h2>
                                             <h2 className="mb-10">
                                                 <b>
-                                                    <sup>₹</sup>2500<span className="new-price">/ Monthly</span>
+                                                    <span className="old-price">₹2800</span><sup>₹</sup>2500<span className="new-price">/ Monthly</span>
                                                 </b>
                                             </h2>
                                             <h2 className="mb-10">
@@ -66,7 +66,7 @@ const PricingMainBodyContainerComponent=() => {
                                             </h2>
                                             <h2 className="mb-10">
                                                 <b>
-                                                    <sup>₹</sup>3000<span className="new-price">/ Monthly</span>
+                                                    <span className="old-price">₹3200</span><sup>₹</sup>3000<span className="new-price">/ Monthly</span>
                                                 </b>
                                             </h2>
                                         </div>
@@ -87,7 +87,7 @@ const PricingMainBodyContainerComponent=() => {
                                             </h2>
                                             <h2 className="mb-10">
                                                 <b>
-                                                    <sup>₹</sup>1800<span className="new-price">/ Monthly</span>
+                                                    <span className="old-price">₹2200</span><sup>₹</sup>1800<span className="new-price">/ Monthly</span>
                                                 </b>
                                             </h2>
                                             <h2 className="mb-10">
@@ -97,7 +97,7 @@ const PricingMainBodyContainerComponent=() => {
                                             </h2>
                                             <h2 className="mb-10">
                                                 <b>
-                                                    <sup>₹</sup>2200<span className="new-price">/ Monthly</span>
+                                                    <span className="old-price">₹2200</span><sup>₹</sup>2200<span className="new-price">/ Monthly</span>
                                                 </b>
                                             </h2>
                                             <h2 className="mb-10">
@@ -107,7 +107,7 @@ const PricingMainBodyContainerComponent=() => {
                                             </h2>
                                             <h2 className="mb-10">
                                                 <b>
-                                                    <sup>₹</sup>2700<span className="new-price">/ Monthly</span>
+                                                    <span className="old-price">₹3000</span><sup>₹</sup>2700<span className="new-price">/ Monthly</span>
                                                 </b>
                                             </h2>
                                         </div>
@@ -128,7 +128,7 @@ const PricingMainBodyContainerComponent=() => {
                                             </h2>
                                             <h2 className="mb-10">
                                                 <b>
-                                                    <sup>₹</sup>1700<span className="new-price">/ Monthly</span>
+                                                    <span className="old-price">₹2100</span><sup>₹</sup>1700<span className="new-price">/ Monthly</span>
                                                 </b>
                                             </h2>
                                             <h2 className="mb-10">
@@ -138,7 +138,7 @@ const PricingMainBodyContainerComponent=() => {
                                             </h2>
                                             <h2 className="mb-10">
                                                 <b>
-                                                    <sup>₹</sup>2100<span className="new-price">/ Monthly</span>
+                                                    <span className="old-price">₹2100</span><sup>₹</sup>2100<span className="new-price">/ Monthly</span>
                                                 </b>
                                             </h2>
                                             <h2 className="mb-10">
@@ -148,7 +148,7 @@ const PricingMainBodyContainerComponent=() => {
                                             </h2>
                                             <h2 className="mb-10">
                                                 <b>
-                                                    <sup>₹</sup>2500<span className="new-price">/ Monthly</span>
+                                                    <span className="old-price">₹2800</span><sup>₹</sup>2500<span className="new-price">/ Monthly</span>
                                                 </b>
                                             </h2>
                                         </div>

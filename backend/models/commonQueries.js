@@ -48,10 +48,9 @@ export const actionToAlreadyCreatedClassAccordingToTheConditionQuery = (weekStar
                                                         'id', class_timetable_with_class_batch_assigned.id,
                                                         'class_end_date_time',
                                                         class_timetable_with_class_batch_assigned.class_end_date_time
-                                                    )
+                                                    ) order by class_timetable_with_class_batch_assigned.start_from_date_time
                                             ) jsdata
                                  FROM class_timetable_with_class_batch_assigned
-
                                  GROUP BY class_assigned_teacher_batch_id) class_timetable_with_class_batch_assigned
                                 on class_assigned_teacher_batch.id = class_timetable_with_class_batch_assigned.class_assigned_teacher_batch_id
 
@@ -67,8 +66,7 @@ export const actionToAlreadyCreatedClassAccordingToTheConditionQuery = (weekStar
         AND class_assigned_teacher_batch.school_board = '${school_board}' 
         AND  class_assigned_teacher_batch.student_class = '${student_class}' AND class_assigned_teacher_batch.subject_id = '${subject_id}'
         AND class_assigned_teacher_batch.batch != 1
-        AND class_assigned_teacher_batch.batch = ${batch}
-    `;
+        AND class_assigned_teacher_batch.batch = ${batch}`;
 
     // SELECT app_user.name AS teacher_name,
     //     COUNT(profile_subject_with_batch.id) AS class_count,
@@ -119,7 +117,7 @@ export const actionToGetAllClassesDataListQuery = (weekStartDate,weekEndDate)=>{
                                                    )
                                            ) jsdata
                                 FROM class_timetable_with_class_batch_assigned
-                                WHERE DATE (start_from_date_time) > '${weekStartDate}' AND DATE(start_from_date_time) < '${weekEndDate}'
+                                WHERE DATE (start_from_date_time) >= '${weekStartDate}' AND DATE(start_from_date_time) <= '${weekEndDate}'
                                 GROUP BY class_assigned_teacher_batch_id) class_timetable_with_class_batch_assigned
                                on class_assigned_teacher_batch.id =
                                   class_timetable_with_class_batch_assigned.class_assigned_teacher_batch_id
@@ -485,4 +483,205 @@ export const actionToGetTeacherAllClassesQuery = (userId)=>{
                      INNER JOIN school_board ON class_assigned_teacher_batch.school_board = school_board.id
                      INNER JOIN subject ON class_assigned_teacher_batch.subject_id = subject.id
             WHERE class_assigned_teacher_batch.teacher_id = '${userId}' AND class_assigned_teacher_batch.is_demo_class = 0`;
+}
+export const actionToGetAllClassAssignmentDataWithClassAttendQuery = (userId,weekStartDate,weekEndDate)=>{
+    return `SELECT JSON_OBJECT('id',class_timetable_with_class_batch_assigned.class_assigned_teacher_batch_id,
+                               'class_id', class_timetable_with_class_batch_assigned.id,
+                               'subject_id', class_assigned_teacher_batch.subject_id,
+                               'batch', class_assigned_teacher_batch.batch,
+                               'start_from_date_time', class_timetable_with_class_batch_assigned.start_from_date_time,
+                               'class_end_date_time', class_timetable_with_class_batch_assigned.class_end_date_time,
+                               'profile_subject_with_batch', profile_subject_with_batch.jsdata,
+                               'student_class_attend', student_class_attend.jsdata,
+                               'class_batch_name', class_assigned_teacher_batch.class_batch_name,
+                               'teacher_class_attend_assignment', teacher_class_attend_assignment.jsdata,
+                               'subject_name', subject.name,
+                               'teacher_id', class_assigned_teacher_batch.teacher_id,
+                               'school_board', school_board.name) AS teacher_classes_data
+            from class_timetable_with_class_batch_assigned
+                     INNER JOIN class_assigned_teacher_batch on class_timetable_with_class_batch_assigned.class_assigned_teacher_batch_id = class_assigned_teacher_batch.id
+                     INNER JOIN school_board ON class_assigned_teacher_batch.school_board = school_board.id
+                     INNER JOIN subject ON class_assigned_teacher_batch.subject_id = subject.id
+
+                     INNER JOIN (SELECT student_class_attend.class_timetable_with_class_batch_assigned_id,
+                                        json_arrayagg(
+                                                json_object(
+                                                        'id', student_class_attend.id,
+                                                        'profile_subject_with_batch_id', student_class_attend.profile_subject_with_batch_id,
+                                                        'student_class_attend_assignment',student_class_attend_assignment.jsdata,
+                                                        'student_name', student_profile.name
+                                                    )
+                                            ) jsdata
+                                 FROM student_class_attend
+                                          INNER JOIN student_profile ON student_class_attend.student_profile_id = student_profile.id
+                                          left JOIN (SELECT student_class_attend_assignment.student_class_attend_id,
+                                                            json_arrayagg(
+                                                                    json_object(
+                                                                            'id', student_class_attend_assignment.id,
+                                                                            'path', student_class_attend_assignment.path,
+                                                                            'name', student_class_attend_assignment.name,
+                                                                            'created_at', student_class_attend_assignment.created_at
+                                                                        )
+                                                                ) jsdata
+                                                     FROM student_class_attend_assignment
+                                                     GROUP BY student_class_attend_assignment.student_class_attend_id) student_class_attend_assignment
+                                                    ON student_class_attend_assignment.student_class_attend_id = student_class_attend.id
+
+                                 GROUP BY student_class_attend.class_timetable_with_class_batch_assigned_id) student_class_attend
+                                ON student_class_attend.class_timetable_with_class_batch_assigned_id = class_timetable_with_class_batch_assigned.id
+
+                     left JOIN (SELECT teacher_class_attend_assignment.class_timetable_with_class_batch_assigned_id,
+                                       json_arrayagg(
+                                               json_object(
+                                                       'id', teacher_class_attend_assignment.id,
+                                                       'path', teacher_class_attend_assignment.path,
+                                                       'name', teacher_class_attend_assignment.name,
+                                                       'created_at', teacher_class_attend_assignment.created_at
+                                                   )
+                                           ) jsdata
+                                FROM teacher_class_attend_assignment
+
+                                GROUP BY teacher_class_attend_assignment.class_timetable_with_class_batch_assigned_id) teacher_class_attend_assignment
+                               ON teacher_class_attend_assignment.class_timetable_with_class_batch_assigned_id = class_timetable_with_class_batch_assigned.id
+
+                     INNER JOIN (SELECT profile_subject_with_batch.class_assigned_teacher_batch_id,
+                                        json_arrayagg(
+                                                json_object(
+                                                        'id', profile_subject_with_batch.id,
+                                                        'student_name', student_profile.name,
+                                                        'student_class', student_profile.student_class,
+                                                        'student_id', student_profile.id,
+                                                        'attend_class_count',(SELECT COUNT(student_class_attend.id) FROM student_class_attend WHERE student_class_attend.profile_subject_with_batch_id = profile_subject_with_batch.id)
+                                                    )
+                                            ) jsdata
+                                 FROM profile_subject_with_batch
+
+                                          INNER JOIN student_profile ON profile_subject_with_batch.profile_id = student_profile.id
+                                 GROUP BY profile_subject_with_batch.class_assigned_teacher_batch_id) profile_subject_with_batch
+                                ON profile_subject_with_batch.class_assigned_teacher_batch_id = class_assigned_teacher_batch.id
+            WHERE class_assigned_teacher_batch.teacher_id = '${userId}'
+              AND (DATE(class_timetable_with_class_batch_assigned.start_from_date_time) >= '${weekStartDate}' AND DATE(class_timetable_with_class_batch_assigned.start_from_date_time) <= '${weekEndDate}')`;
+}
+export const actionToGetStudentClassAssignmentDataWithClassAttendQuery = (userId,weekStartDate,weekEndDate)=>{
+    return `SELECT JSON_OBJECT('id',class_timetable_with_class_batch_assigned.class_assigned_teacher_batch_id,
+                               'class_id', class_timetable_with_class_batch_assigned.id,
+                               'subject_id', class_assigned_teacher_batch.subject_id,
+                               'batch', class_assigned_teacher_batch.batch,
+                               'start_from_date_time', class_timetable_with_class_batch_assigned.start_from_date_time,
+                               'class_end_date_time', class_timetable_with_class_batch_assigned.class_end_date_time,
+                               'profile_subject_with_batch', profile_subject_with_batch.jsdata,
+                               'student_class_attend', student_class_attend.jsdata,
+                               'class_batch_name', class_assigned_teacher_batch.class_batch_name,
+                               'teacher_class_attend_assignment', teacher_class_attend_assignment.jsdata,
+                               'subject_name', subject.name,
+                               'teacher_id', class_assigned_teacher_batch.teacher_id,
+                               'school_board', school_board.name) AS teacher_classes_data
+            from class_timetable_with_class_batch_assigned
+                     INNER JOIN class_assigned_teacher_batch on class_timetable_with_class_batch_assigned.class_assigned_teacher_batch_id = class_assigned_teacher_batch.id
+                     INNER JOIN school_board ON class_assigned_teacher_batch.school_board = school_board.id
+                     INNER JOIN subject ON class_assigned_teacher_batch.subject_id = subject.id
+
+                     INNER JOIN (SELECT student_class_attend.class_timetable_with_class_batch_assigned_id,
+                                        json_arrayagg(
+                                                json_object(
+                                                        'id', student_class_attend.id,
+                                                        'profile_subject_with_batch_id', student_class_attend.profile_subject_with_batch_id,
+                                                        'student_class_attend_assignment',student_class_attend_assignment.jsdata,
+                                                        'student_name', student_profile.name
+                                                    )
+                                            ) jsdata
+                                 FROM student_class_attend
+                                          INNER JOIN student_profile ON student_class_attend.student_profile_id = student_profile.id
+                                          left JOIN (SELECT student_class_attend_assignment.student_class_attend_id,
+                                                            json_arrayagg(
+                                                                    json_object(
+                                                                            'id', student_class_attend_assignment.id,
+                                                                            'path', student_class_attend_assignment.path,
+                                                                            'name', student_class_attend_assignment.name,
+                                                                            'created_at', student_class_attend_assignment.created_at
+                                                                        )
+                                                                ) jsdata
+                                                     FROM student_class_attend_assignment
+                                                     GROUP BY student_class_attend_assignment.student_class_attend_id) student_class_attend_assignment
+                                                    ON student_class_attend_assignment.student_class_attend_id = student_class_attend.id
+                                 WHERE student_profile.created_by = '${userId}'
+                                 GROUP BY student_class_attend.class_timetable_with_class_batch_assigned_id) student_class_attend
+                                ON student_class_attend.class_timetable_with_class_batch_assigned_id = class_timetable_with_class_batch_assigned.id
+
+                     left JOIN (SELECT teacher_class_attend_assignment.class_timetable_with_class_batch_assigned_id,
+                                       json_arrayagg(
+                                               json_object(
+                                                       'id', teacher_class_attend_assignment.id,
+                                                       'path', teacher_class_attend_assignment.path,
+                                                       'name', teacher_class_attend_assignment.name,
+                                                       'created_at', teacher_class_attend_assignment.created_at
+                                                   )
+                                           ) jsdata
+                                FROM teacher_class_attend_assignment
+
+                                GROUP BY teacher_class_attend_assignment.class_timetable_with_class_batch_assigned_id) teacher_class_attend_assignment
+                               ON teacher_class_attend_assignment.class_timetable_with_class_batch_assigned_id = class_timetable_with_class_batch_assigned.id
+
+                     INNER JOIN (SELECT profile_subject_with_batch.class_assigned_teacher_batch_id,
+                                        json_arrayagg(
+                                                json_object(
+                                                        'id', profile_subject_with_batch.id,
+                                                        'student_name', student_profile.name,
+                                                        'student_class', student_profile.student_class,
+                                                        'student_id', student_profile.id,
+                                                        'attend_class_count',(SELECT COUNT(student_class_attend.id) FROM student_class_attend WHERE student_class_attend.profile_subject_with_batch_id = profile_subject_with_batch.id)
+                                                    )
+                                            ) jsdata
+                                 FROM profile_subject_with_batch
+                                          
+                                          INNER JOIN student_profile ON profile_subject_with_batch.profile_id = student_profile.id
+                                 GROUP BY profile_subject_with_batch.class_assigned_teacher_batch_id) profile_subject_with_batch
+                                ON profile_subject_with_batch.class_assigned_teacher_batch_id = class_assigned_teacher_batch.id
+            WHERE (DATE(class_timetable_with_class_batch_assigned.start_from_date_time) >= '${weekStartDate}' AND DATE(class_timetable_with_class_batch_assigned.start_from_date_time) <= '${weekEndDate}')`;
+}
+
+export const actionToGetTeacherAllTimetableClassesQuery = (userId)=>{
+    return `SELECT JSON_OBJECT('id',class_timetable_with_class_batch_assigned.class_assigned_teacher_batch_id,
+                               'class_id', class_timetable_with_class_batch_assigned.id,
+                               'subject_id', class_assigned_teacher_batch.subject_id,
+                               'batch', class_assigned_teacher_batch.batch,
+                               'start_from_date_time', class_timetable_with_class_batch_assigned.start_from_date_time,
+                               'class_end_date_time', class_timetable_with_class_batch_assigned.class_end_date_time,
+                               'class_end_time', class_assigned_teacher_batch.class_end_time,
+                               'is_demo_class', class_assigned_teacher_batch.is_demo_class,
+                               'subject_name', subject.name,
+                               'student_class', class_assigned_teacher_batch.student_class,
+                               'teacher_id', class_assigned_teacher_batch.teacher_id,
+                               'school_board', school_board.name) AS classes_data
+            from class_timetable_with_class_batch_assigned
+                     INNER JOIN class_assigned_teacher_batch on class_timetable_with_class_batch_assigned.class_assigned_teacher_batch_id = class_assigned_teacher_batch.id
+                     INNER JOIN school_board ON class_assigned_teacher_batch.school_board = school_board.id
+                     INNER JOIN subject ON class_assigned_teacher_batch.subject_id = subject.id
+                    
+            WHERE class_assigned_teacher_batch.teacher_id = '${userId}'`;
+}
+
+export const actionToGetStudentAllTimetableClassesQuery = (userId)=>{
+    return `SELECT JSON_OBJECT('class_id', class_timetable_with_class_batch_assigned.id,
+                               'id',class_timetable_with_class_batch_assigned.class_assigned_teacher_batch_id,
+                               'subject_id', class_assigned_teacher_batch.subject_id,
+                               'batch', class_assigned_teacher_batch.batch,
+                               'profile_subject_with_batch_id', profile_subject_with_batch.id,
+                               'start_from_date_time', class_timetable_with_class_batch_assigned.start_from_date_time,
+                               'class_end_date_time', class_timetable_with_class_batch_assigned.class_end_date_time,
+                               'class_end_time', class_assigned_teacher_batch.class_end_time,
+                               'is_demo_class', class_assigned_teacher_batch.is_demo_class,
+                               'subject_name', subject.name,
+                               'teacher_name', app_user.name,
+                               'student_class', class_assigned_teacher_batch.student_class,
+                               'teacher_id', class_assigned_teacher_batch.teacher_id,
+                               'school_board', school_board.name) AS classes_data
+            from class_timetable_with_class_batch_assigned
+                     INNER JOIN class_assigned_teacher_batch on class_timetable_with_class_batch_assigned.class_assigned_teacher_batch_id = class_assigned_teacher_batch.id
+                     INNER JOIN school_board ON class_assigned_teacher_batch.school_board = school_board.id
+                     INNER JOIN subject ON class_assigned_teacher_batch.subject_id = subject.id
+                     LEFT JOIN app_user ON class_assigned_teacher_batch.teacher_id = app_user.id
+                     INNER JOIN  profile_subject_with_batch ON profile_subject_with_batch.class_assigned_teacher_batch_id = class_assigned_teacher_batch.id
+                     INNER JOIN  student_profile ON student_profile.id = profile_subject_with_batch.profile_id
+            WHERE student_profile.created_by = '${userId}'`;
 }

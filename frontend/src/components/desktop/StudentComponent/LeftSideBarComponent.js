@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import siteLogo from "../../../theme/images/header_logo_mini.svg";
+import siteLogo from "../../../theme/images/header_logo_one.png";
 import {useDispatch} from "react-redux";
 import {IonAlert} from "@ionic/react";
 import {NavLink} from "react-router-dom";
@@ -44,8 +44,6 @@ function LeftSideBarComponentFunction({isTeacherLeftSideBar}){
             <div className={"left_side_bar_logo_section"}>
                 <div className={"logo_main_div"}>
                     <img src={siteLogo}/>
-                    <br/>
-                    121 Tuition
                 </div>
             </div>
            <div className={"left_side_content_menu_section"}>
@@ -62,21 +60,20 @@ function LeftSideBarComponentFunction({isTeacherLeftSideBar}){
                             </div>
                         </NavLink>
                     </div>
-               {(!isTeacherLeftSideBar) ?
-                    <div className={"menu_loop_section"}>
-                        <NavLink to={`${path}/student-scheduled-classes`} activeClassName={"active"} className={"menu_loop_section_inner_section"}>
-                            <div className={"left_menu_item"}>
-                                <div className={"left_menu_item_1"}>
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30.14 30.14">
-                                        <path d="M0 24.881h30.14v5.256H0zM3.095 4.327h4.324v19.007H3.095zm6.643 4.947h4.329v14.061H9.738zm6.491-3.556h4.327v17.615h-4.327zm6.7-5.716h4.324v23.331h-4.324z"/>
-                                    </svg>
-                                </div>
-                                <div className={"left_menu_item_2"}>
-                                    Scheduled classes
-                                </div>
-                            </div>
-                        </NavLink>
-                    </div>:''}
+                  <div className={"menu_loop_section"}>
+                       <NavLink to={`${path}/student-scheduled-classes`} activeClassName={"active"} className={"menu_loop_section_inner_section"}>
+                           <div className={"left_menu_item"}>
+                               <div className={"left_menu_item_1"}>
+                                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30.14 30.14">
+                                       <path d="M0 24.881h30.14v5.256H0zM3.095 4.327h4.324v19.007H3.095zm6.643 4.947h4.329v14.061H9.738zm6.491-3.556h4.327v17.615h-4.327zm6.7-5.716h4.324v23.331h-4.324z"/>
+                                   </svg>
+                               </div>
+                               <div className={"left_menu_item_2"}>
+                                   Scheduled classes
+                               </div>
+                           </div>
+                       </NavLink>
+                  </div>
                   {(!isTeacherLeftSideBar) ?
                     <div className={"menu_loop_section"}>
                         <NavLink to={`${path}/student-profile-page`} activeClassName={"active"}
@@ -94,7 +91,6 @@ function LeftSideBarComponentFunction({isTeacherLeftSideBar}){
                             </div>
                         </NavLink>
                     </div>:''}
-                   {(!isTeacherLeftSideBar) ?
                    <div className={"menu_loop_section"}>
                         <NavLink to={`${path}/student-attendance-assignment`} activeClassName={"active"}
                                  className={"menu_loop_section_inner_section"}>
@@ -110,7 +106,7 @@ function LeftSideBarComponentFunction({isTeacherLeftSideBar}){
                                 </div>
                             </div>
                         </NavLink>
-                    </div>:''}
+                    </div>
                     <div className={"menu_loop_section"}>
                         <div className={"menu_loop_section_inner_section"}>
                                 <div onClick={() => setShowAlert(true)} className={"left_menu_item"}>

@@ -56,7 +56,7 @@ const MainLoginWithDetailPageMobileComponent=() => {
                                        <img className="slide-shape img-eight" src={earthBg} alt=""/>
                                        <div className={"inner_slide_text_section_main"}>
                                            <p className={"heading_text"}>
-                                               121 Tuition live class program is a unique blend of conventional.
+                                               121 Tuition live class.
                                            </p>
                                            <p className={"heading_text_p"}>
                                                Easy and user-friendly access to live classes along with interactive doubt solving sessions help students to achieve their goals
@@ -79,11 +79,15 @@ const MainLoginWithDetailPageMobileComponent=() => {
                                                        <h2 className="mb-25">Why Choose 121 Tuition?</h2>
                                                        <p>Get the same learning experience as school with the comfort of being at home with Extramarks. Learn from top faculty anytime, anywhere</p>
                                                    </div>
-                                                   <ul className="text-list wow fadeInUp2  animated" data-wow-delay=".2s"
+
+                                                   <ul className="text-list mb-40 wow fadeInUp2  animated" data-wow-delay=".2s"
                                                        style={{visibility: 'visible', 'animationDelay': '0.2s' , 'animationName': 'fadeInUp2'}}>
-                                                       <li>There are many variations of passages of Lorem Ipsum.</li>
-                                                       <li>The majority have suffered alteration in some form.</li>
-                                                       <li>There are many variations of passages of Lorem Ipsum.</li>
+                                                       <li>Accessibility: anyone with a good internet connection can have access to online classes with a click of a button.</li>
+                                                       <li>Cost-effective classes at affordable prices.</li>
+                                                       <li>Quality courses are available anytime, anywhere.</li>
+                                                       <li>In Class Doubts Solving.</li>
+                                                       <li>Test & Analysis – Proper tests after completion of each chapter for progress tracking.</li>
+                                                       <li>Students will also get help in the completion of homework and project work.</li>
                                                    </ul>
                                                </div>
                                            </div>

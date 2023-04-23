@@ -64,16 +64,20 @@ import {
     TEACHER_ALL_TODAY_CLASS_LIST_SUCCESS,
     TEACHER_ALL_DEMO_CLASS_LIST_REQUEST,
     STUDENT_ALL_DEMO_CLASS_LIST_REQUEST,
-    STUDENT_ALL_TODAY_CLASS_LIST_REQUEST, STUDENT_ALL_DEMO_CLASS_LIST_SUCCESS, EDITOR_ACTIVE_EDITOR_JSON
+    STUDENT_ALL_TODAY_CLASS_LIST_REQUEST,
+    STUDENT_ALL_DEMO_CLASS_LIST_SUCCESS,
+    EDITOR_ACTIVE_EDITOR_JSON,
+    TEACHER_CLASS_ATTEND_WITH_ASSIGNMENT_DATA_REQUEST, STUDENT_ALL_TIME_CLASS_LIST_REQUEST
 } from "../constants/CommonConstants";
 
 import Axios from "axios";
 import {handleWebSocketEvent, sendWebsocketRequest} from "../helper/WebSocketHelper";
-import {setAuthSignInByRole} from "./helper/CommonActionHelper";
+import {formatTeacherAssignmentDataByDate, setAuthSignInByRole} from "./helper/CommonActionHelper";
 import {cloneDeep} from "lodash";
 import {_generateUniqueId} from "../helper/CommonHelper";
 import moment from "moment";
 import { loadStripe } from "@stripe/stripe-js";
+import {isTeacherMasterLogin} from "../middlewear/auth";
 
 const api = Axios.create({
     baseURL: `https://121tuition.in/api-call-tutor/`
@@ -174,14 +178,15 @@ export const actionToGetWhiteBoardPrevDataForGroupId = (groupDataId) => async (d
         dispatch(actionToSetCaptureAnnotatorJSONData(anData.jsonObject, anData.type));
     })
 }
-export const actionToUpdateAttendanceClassStatus = (profileData,classData) => async (dispatch) => {
+export const actionToUpdateAttendanceClassStatus = (profileData,classData,demoClass) => async (dispatch) => {
     if(!profileData?.taken_single_demo) {
         let setData = `taken_single_demo = ?`;
         let whereCondition = `id = '${profileData?.id}'`;
         let dataToSend = {column: setData, value: [1], whereCondition: whereCondition, tableName: 'student_profile'};
         dispatch(commonUpdateFunction(dataToSend));
     }
-    if(!classData?.has_taken_demo) {
+    console.log('classData',classData);
+    if(demoClass) {
         let setData = `has_taken_demo = ?`;
         let whereCondition = `id = '${classData?.profile_subject_with_batch_id}'`;
         let dataToSend = {column: setData, value: [1], whereCondition: whereCondition, tableName: 'profile_subject_with_batch'};
@@ -225,8 +230,6 @@ export const actionToUpdateTeacherProfile = (payload) => async (dispatch) => {
     await dispatch(commonUpdateFunction(dataToSend));
     dispatch(actionToOpenCloseEditTeacherPopup(false,{}));
     dispatch(actionToGetAllTeacherDataList());
-
-
 }
 export const actionToUpdateUserProfile = (payload,setUpdateProfileLoader) => async (dispatch) => {
     let setData = `name = ?,email = ?,father_name = ?,mother_name = ?,school_name = ?,school_board = ?,state = ?,city = ?`;
@@ -294,6 +297,9 @@ export const actionToAlreadyCreatedClassAccordingToTheCondition = (payload) => a
     let weekStartDate = moment().startOf('week').format('YYYY-MM-DD')
     let weekEndDate = moment().endOf('week').format('YYYY-MM-DD')
 
+    console.log('weekStartDate',weekStartDate);
+    console.log('weekEndDate',weekEndDate);
+
     const {data} = await api.post(`common/actionToAlreadyCreatedClassAccordingToTheConditionApiCall`, {
         weekStartDate,weekEndDate,
         subject_id: payload?.subject_id,
@@ -338,16 +344,29 @@ export const actionToGetLatestDemoClassesDetails = (idLoaderDisable = false) => 
     const {data} = await api.post(`common/actionToGetLatestDemoClassesDetailsApiCall`);
     dispatch({type: LATEST_DEMO_CLASSES_SUCCESS, payload:[...data?.response]});
 }
-export const actionToGetAllAttendClassWithAssignment = (profile_id) => async (dispatch) => {
-    dispatch({type: ALL_ATTENDANCE_AND_ASSIGNMENT_REQUEST});
-    const {data} = await api.post(`common/actionToGetAllAttendClassWithAssignmentApiCall`,{profile_id});
-    dispatch({type: ALL_ATTENDANCE_AND_ASSIGNMENT_SUCCESS, payload:[...data?.response]});
-}
-export const actionToGetAllStudentAttendClassWithAssignment = () => async (dispatch,getState) => {
+export const actionToGetTeacherClassAttendWithAssignmentData = (isLoaderDisable = false) => async (dispatch,getState) => {
     const userInfo = getState().userSignin.userInfo;
-    dispatch({type: ALL_ATTENDANCE_AND_ASSIGNMENT_REQUEST});
-    const {data} = await api.post(`common/actionToGetAllStudentClassAttendWithAssignmentApiCall`,{teacher_id:userInfo?.id});
-    dispatch({type: ALL_ATTENDANCE_AND_ASSIGNMENT_SUCCESS, payload:[...data?.response]});
+
+    if(!isLoaderDisable)
+        dispatch({type: TEACHER_CLASS_ATTEND_WITH_ASSIGNMENT_DATA_REQUEST});
+
+    let weekStartDate = moment().startOf('week').format('YYYY-MM-DD')
+    let weekEndDate = moment().endOf('week').format('YYYY-MM-DD')
+    if(!isTeacherMasterLogin()) {
+        const {data} = await api.post(`common/actionToGetStudentClassAssignmentDataWithClassAttendApiCall`, {
+            userId: userInfo?.id,
+            weekStartDate,
+            weekEndDate
+        });
+        formatTeacherAssignmentDataByDate(data.response,dispatch);
+    }else{
+        const {data} = await api.post(`common/actionToGetAllClassAssignmentDataWithClassAttendApiCall`, {
+            userId: userInfo?.id,
+            weekStartDate,
+            weekEndDate
+        });
+        formatTeacherAssignmentDataByDate(data.response,dispatch);
+    }
 }
 export const actionToGetAllSchoolBoardDataList = () => async (dispatch) => {
     dispatch({type: ALL_SCHOOL_BOARD_DATA_LIST_REQUEST});
@@ -433,28 +452,42 @@ export const actionToGetUserAllClasses = (isLoaderDisable = false) => async (dis
 
     const {data} = await api.post(`common/actionToGetUserAllClassesApiCall`,{userId:userInfo?.id});
     dispatch({type: STUDENT_ALL_CLASS_LIST_SUCCESS, payload:cloneDeep(data?.response)});
+}
+export const actionToGetStudentTimetableData = (isLoaderDisable = false) => async (dispatch,getState) => {
+    const userInfo = getState().userSignin.userInfo;
+
+    if(!isLoaderDisable)
+      dispatch({type: STUDENT_ALL_TIME_CLASS_LIST_REQUEST});
 
     let eventData = [];
-    data?.response?.profile_subject_with_batch?.map((allUserClasses)=>{
-        if(allUserClasses?.class_assigned_teacher_batch?.is_demo_class === 0) {
-            let nowDate = moment(allUserClasses?.starting_from_date).format('YYYY-MM-DD');
-            let i = 30;
-            do {
-                eventData.push({
-                        title: JSON.stringify({
-                            subject_name: allUserClasses?.subject_name,
-                            teacher_name: allUserClasses?.class_assigned_teacher_batch?.teacher_name,
-                            time: moment(allUserClasses?.class_assigned_teacher_batch?.starting_from_date).format('hh:mm a')
-                        }),
-                        date: nowDate,
-                    }
-                )
-                nowDate = moment(nowDate).add(1, 'days').format('YYYY-MM-DD');
-                i--;
-            } while (i > 0)
-        }
-    })
-    dispatch({type: STUDENT_ALL_TIME_CLASS_LIST_SUCCESS, payload:[...eventData]});
+    if(isTeacherMasterLogin()) {
+        const {data} = await api.post(`common/actionToGetTeacherAllTimetableClassesApiCall`, {userId: userInfo?.id});
+        data?.response?.map((allUserClasses) => {
+            eventData.push({
+                    title: JSON.stringify({
+                        subject_name: allUserClasses?.subject_name,
+                        teacher_name: allUserClasses?.teacher_name,
+                        time: moment(allUserClasses?.start_from_date_time).format('hh:mm a')
+                    }),
+                    date: moment(allUserClasses?.start_from_date_time).format('YYYY-MM-DD'),
+                }
+            )
+        })
+    }else{
+        const {data} = await api.post(`common/actionToGetStudentAllTimetableClassesApiCall`, {userId: userInfo?.id});
+        data?.response?.map((allUserClasses,key) => {
+            eventData.push({
+                    title: JSON.stringify({
+                        subject_name: allUserClasses?.subject_name,
+                        teacher_name: allUserClasses?.teacher_name,
+                        time: moment(allUserClasses?.start_from_date_time).format('hh:mm a')
+                    }),
+                    date: moment(allUserClasses?.start_from_date_time).format('YYYY-MM-DD'),
+                }
+            )
+        })
+    }
+    dispatch({type: STUDENT_ALL_TIME_CLASS_LIST_SUCCESS, payload: [...eventData]});
 }
 export const actionToSendFabricDataToOtherUser = (jsonObject) => async ()=> {
     sendWebsocketRequest(JSON.stringify({
@@ -524,6 +557,7 @@ export const actionToGetStudentAllTodayClasses = (isLoaderDisable = false) => as
     const {data} = await api.post(`common/actionToGetStudentAllTodayClassesApiCall`,{userId:userInfo?.id,todayDate});
     dispatch({type: STUDENT_ALL_TODAY_CLASS_LIST_SUCCESS, payload:[...data?.response]});
 }
+
 export const actionToGetStudentAllDemoClasses = (isLoaderDisable = false) => async (dispatch,getState) => {
     const userInfo = getState().userSignin.userInfo;
 
@@ -650,13 +684,21 @@ export const actionToRateCurrentClass = (rating,classData) => async (dispatch,ge
     dispatch(actionToOpenRatingModalPopup(false,{}));
 }
 
-export const actionToStoreAssignmentData = (fileName,pathName,id,profileId) => async (dispatch) => {
+export const actionToStoreAssignmentDataForTeacher = (fileName,pathName,id) => async (dispatch) => {
+    const aliasArray = ['?','?','?','?'];
+    const columnArray = ['id','class_timetable_with_class_batch_assigned_id','path','name'];
+    const valuesArray = [_generateUniqueId(),id,pathName,fileName];
+    const insertData = {alias:aliasArray,column:columnArray,values:valuesArray,tableName:'teacher_class_attend_assignment'};
+    await dispatch(callInsertDataFunction(insertData));
+    dispatch(actionToGetTeacherClassAttendWithAssignmentData(false))
+}
+export const actionToStoreAssignmentData = (fileName,pathName,id) => async (dispatch) => {
     const aliasArray = ['?','?','?','?'];
     const columnArray = ['id','student_class_attend_id','path','name'];
     const valuesArray = [_generateUniqueId(),id,pathName,fileName];
     const insertData = {alias:aliasArray,column:columnArray,values:valuesArray,tableName:'student_class_attend_assignment'};
     await dispatch(callInsertDataFunction(insertData));
-    dispatch(actionToGetAllAttendClassWithAssignment(profileId))
+    dispatch(actionToGetTeacherClassAttendWithAssignmentData(false))
 }
 export const actionToEndCurrentCurrentCall = (groupId,classId,startDate) => async (dispatch) => {
     dispatch(actionToEndCurrentCurrentCallLocally(groupId));

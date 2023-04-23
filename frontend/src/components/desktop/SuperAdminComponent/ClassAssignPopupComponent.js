@@ -57,23 +57,40 @@ export default function ClassAssignPopupComponent(){
                 allClassDateTime.push(moment(dateTime).format('YYYY-MM-DD HH:mm:ss'));
             }
         })
-        if(selectedTeacherId && allClassDateTime?.length && classBatchName?.trim()?.length){
-            if(!selectedClassAssignId && !classBatchName?.trim()?.length) return;
-            let payload = {
-                profile_subject_with_batch_id:dropdownData?.profile_subject_with_batch_id,
-                class_assign_id:selectedClassAssignId,
-                class_batch_name:classBatchName,
-                teacher_id:selectedTeacherId,
-                all_class_date_time:allClassDateTime,
-                batch:dropdownData?.batch,
-                is_demo_class:dropdownData?.has_taken_demo ? 0 : 1,
-                subject_id:dropdownData?.subject_id,
-                school_board:dropdownData?.school_board,
-                student_class:dropdownData?.student_class,
-            }
-            dispatch(actionToCreateAndAssignClassData(payload));
-            closeClassAssignPopup();
+
+        if(selectedClassAssignId){
+            selectedClassData?.class_timetable_with_class_batch_assigned?.map((data)=>{
+                let weekDay = moment(data?.start_from_date_time).weekday();
+                let startOfWeek = moment().startOf('week').format('YYYY-MM-DD');
+                allClassDateTime.push(moment(startOfWeek).add(weekDay,'days').format('YYYY-MM-DD')+' '+moment(data?.start_from_date_time).add(weekDay,'days').format('HH:mm:ss'));
+            })
         }
+
+        let validate = false;
+        if(allClassDateTime?.length){
+            if(selectedClassAssignId) {
+                validate = true;
+            }else if(classBatchName?.trim()?.length && selectedTeacherId){
+                validate = true;
+            }
+        }
+
+       if(validate){
+           let payload = {
+               profile_subject_with_batch_id: dropdownData?.profile_subject_with_batch_id,
+               class_assign_id: selectedClassAssignId,
+               class_batch_name: classBatchName,
+               teacher_id: selectedTeacherId,
+               all_class_date_time: allClassDateTime,
+               batch: dropdownData?.batch,
+               is_demo_class: dropdownData?.has_taken_demo ? 0 : 1,
+               subject_id: dropdownData?.subject_id,
+               school_board: dropdownData?.school_board,
+               student_class: dropdownData?.student_class,
+           }
+           dispatch(actionToCreateAndAssignClassData(payload));
+           closeClassAssignPopup();
+       }
     }
     const assignCreateButton = (type)=>{
         setSelectedClassAssignId(null);
@@ -166,7 +183,7 @@ export default function ClassAssignPopupComponent(){
 
                                         {(selectedClassData?.class_timetable_with_class_batch_assigned?.map((data,key)=>(
                                             <div key={key} className="form-floating">
-                                                <div>{moment(data?.start_from_date_time).format('dddd ,Do MMMM HH:mm a')}</div>
+                                                <div>{moment(data?.start_from_date_time).format('dddd HH:mm a')}</div>
                                             </div>
                                         )))}
                                         <button type="button" onClick={callFunctionToAssignClassData}

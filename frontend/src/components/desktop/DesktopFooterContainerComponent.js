@@ -24,8 +24,8 @@ const DesktopHeaderContainerComponent=() => {
                         <div className="footer__widget mb-30 pl-40 pl-md-0 pl-xs-0">
                             <h6 className="widget-title mb-35">Contact us</h6>
                             <ul className="fot-list">
-                                <li><a href="#">info@example.com</a></li>
-                                <li><a href="#">+00 652 54 432</a></li>
+                                <li><a>info@example.com</a></li>
+                                <li><a>+00 652 54 432</a></li>
                             </ul>
                         </div>
                     </div>

@@ -3,7 +3,6 @@ import {NavLink} from "react-router-dom";
 import {signout} from "../../../actions/CommonAction";
 import {IonAlert} from "@ionic/react";
 import {useDispatch} from "react-redux";
-import siteLogo from '../../../theme/images/header_logo_mini.svg'
 
 export default function SuperAdminLeftSideBarComponent(){
     const path = '/dashboard';

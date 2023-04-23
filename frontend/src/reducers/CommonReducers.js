@@ -65,7 +65,12 @@ import {
     TEACHER_ALL_TODAY_CLASS_LIST_REQUEST,
     TEACHER_ALL_DEMO_CLASS_LIST_REQUEST,
     STUDENT_ALL_DEMO_CLASS_LIST_REQUEST,
-    STUDENT_ALL_DEMO_CLASS_LIST_SUCCESS, STUDENT_ALL_TODAY_CLASS_LIST_REQUEST, EDITOR_ACTIVE_EDITOR_JSON
+    STUDENT_ALL_DEMO_CLASS_LIST_SUCCESS,
+    STUDENT_ALL_TODAY_CLASS_LIST_REQUEST,
+    EDITOR_ACTIVE_EDITOR_JSON,
+    TEACHER_CLASS_ATTEND_WITH_ASSIGNMENT_DATA_REQUEST,
+    TEACHER_CLASS_ATTEND_WITH_ASSIGNMENT_DATA_SUCCESS,
+    STUDENT_ALL_TIME_CLASS_LIST_REQUEST
 } from "../constants/CommonConstants";
 
 export const userSigninReducer = (state = {}, action) => {
@@ -126,6 +131,16 @@ export const allStudentTodayDataListReducer = (state = {}, action) => {
         case STUDENT_ALL_TODAY_CLASS_LIST_REQUEST:
             return { loading: true,classData:[] ,prevId:action.payload};
         case STUDENT_ALL_TODAY_CLASS_LIST_SUCCESS:
+            return { loading: false,classData:action.payload ,prevId:state.prevId};
+        default:
+            return state;
+    }
+};
+export const teacherClassAttendWithAssignmentDataReducer = (state = {}, action) => {
+    switch (action.type) {
+        case TEACHER_CLASS_ATTEND_WITH_ASSIGNMENT_DATA_REQUEST:
+            return { loading: true,classData:[] ,prevId:action.payload};
+        case TEACHER_CLASS_ATTEND_WITH_ASSIGNMENT_DATA_SUCCESS:
             return { loading: false,classData:action.payload ,prevId:state.prevId};
         default:
             return state;
@@ -357,8 +372,10 @@ export const getIPAddressDataReducer = (state = {}, action) => {
 
 export const studentAllTimeClassListReducer = (state = {}, action) => {
     switch (action.type) {
+        case STUDENT_ALL_TIME_CLASS_LIST_REQUEST:
+            return { loading: true,classData:[] ,prevId:action.payload};
         case STUDENT_ALL_TIME_CLASS_LIST_SUCCESS:
-            return action.payload;
+            return { loading: false,classData:action.payload ,prevId:state.prevId};
         default:
             return state;
     }

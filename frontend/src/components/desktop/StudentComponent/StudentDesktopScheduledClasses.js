@@ -5,10 +5,8 @@ import {FacebookLoader} from "../../Loader/FacebookLoader";
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 
-
 export default function StudentDesktopScheduledClasses({isMobile}){
-    const {loading} = useSelector((state) => state.studentAllClassesList);
-    const studentAllTimeClassList = useSelector((state) => state.studentAllTimeClassList);
+    const {loading,classData} = useSelector((state) => state.studentAllTimeClassList);
 
     function renderEventContent(eventInfo) {
         let eventData = JSON.parse(eventInfo?.event?.title);
@@ -16,7 +14,7 @@ export default function StudentDesktopScheduledClasses({isMobile}){
             <div className={"time_text_event_container_in_calander"}>
                 <p><span>Time :- </span>{eventData?.time}</p>
                 <p><span>Subject :- </span>{eventData?.subject_name}</p>
-                <p><span>Teacher Name :- </span>{eventData?.teacher_name}</p>
+                <p>{eventData?.teacher_name}</p>
             </div>
         )
     }
@@ -32,13 +30,13 @@ export default function StudentDesktopScheduledClasses({isMobile}){
                                 <FacebookLoader type={"facebookStyle"} item={7}/>
                                 :
                                 <FacebookLoader type={"facebookStyle"} item={2}/>
-                            : (studentAllTimeClassList?.length) ?
+                            : (classData?.length) ?
                                 <div className={""}>
                                     <FullCalendar
                                         plugins={[ dayGridPlugin ]}
                                         initialView="dayGridMonth"
                                         weekends={true}
-                                        events={studentAllTimeClassList}
+                                        events={classData}
                                         eventContent={renderEventContent}
                                     />
                                 </div>

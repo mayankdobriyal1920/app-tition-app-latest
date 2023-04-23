@@ -1,7 +1,7 @@
 import pool from './connection.js';
 import {
     actionToAlreadyCreatedClassAccordingToTheConditionQuery,
-    actionToGetAllAttendClassWithAssignmentQuery,
+    actionToGetAllAttendClassWithAssignmentQuery, actionToGetAllClassAssignmentDataWithClassAttendQuery,
     actionToGetAllClassesDataListQuery,
     actionToGetAllDemoClassesDetailsQuery,
     actionToGetAllNewStudentProfileDataListQuery,
@@ -16,10 +16,10 @@ import {
     actionToGetLatestStudentProfileDataListQuery,
     actionToGetLatestSubscriptionDataListQuery,
     actionToGetLatestTeacherDataListQuery,
-    actionToGetStudentAllDemoClassesQuery,
-    actionToGetStudentAllTodayClassesQuery,
+    actionToGetStudentAllDemoClassesQuery, actionToGetStudentAllTimetableClassesQuery,
+    actionToGetStudentAllTodayClassesQuery, actionToGetStudentClassAssignmentDataWithClassAttendQuery,
     actionToGetTeacherAllClassesQuery,
-    actionToGetTeacherAllDemoClassesQuery,
+    actionToGetTeacherAllDemoClassesQuery, actionToGetTeacherAllTimetableClassesQuery,
     actionToGetTeacherAllTodayClassesQuery,
     actionToGetTodayProfileDataListQuery,
     actionToGetUserAllClassesQuery,
@@ -376,6 +376,56 @@ export const actionToGetTeacherAllClassesApiCall = (body) => {
     return new Promise(function(resolve, reject) {
         const query = actionToGetTeacherAllClassesQuery(userId);
 
+        pool.query(query, (error, results) => {
+            if (error) {
+                reject(query)
+            }
+            resolve(results);
+        })
+    })
+}
+export const actionToGetTeacherAllTimetableClassesApiCall = (body) => {
+    const {userId} = body;
+    return new Promise(function(resolve, reject) {
+        const query = actionToGetTeacherAllTimetableClassesQuery(userId);
+
+        pool.query(query, (error, results) => {
+            if (error) {
+                reject(query)
+            }
+            resolve(results);
+        })
+    })
+}
+export const actionToGetStudentAllTimetableClassesApiCall = (body) => {
+    const {userId} = body;
+    return new Promise(function(resolve, reject) {
+        const query = actionToGetStudentAllTimetableClassesQuery(userId);
+
+        pool.query(query, (error, results) => {
+            if (error) {
+                reject(query)
+            }
+            resolve(results);
+        })
+    })
+}
+export const actionToGetAllClassAssignmentDataWithClassAttendApiCall = (body) => {
+    const {userId,weekStartDate,weekEndDate} = body;
+    return new Promise(function(resolve, reject) {
+        const query = actionToGetAllClassAssignmentDataWithClassAttendQuery(userId,weekStartDate,weekEndDate);
+        pool.query(query, (error, results) => {
+            if (error) {
+                reject(query)
+            }
+            resolve(results);
+        })
+    })
+}
+export const actionToGetStudentClassAssignmentDataWithClassAttendApiCall = (body) => {
+    const {userId,weekStartDate,weekEndDate} = body;
+    return new Promise(function(resolve, reject) {
+        const query = actionToGetStudentClassAssignmentDataWithClassAttendQuery(userId,weekStartDate,weekEndDate);
         pool.query(query, (error, results) => {
             if (error) {
                 reject(query)

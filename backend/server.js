@@ -109,7 +109,6 @@ function setupWebSocket() {
                     break;
                 case 'actionToChangeActiveIndexEditorJson':
                     canvasReservedJsonActiveIndex[dataToSend.groupId] = dataToSend.newIndex;
-                    console.log('canvasReservedJsonActiveIndex[dataToSend.groupId]',canvasReservedJsonActiveIndex[dataToSend.groupId]);
                     break;
                 case 'actionToEndCurrentCurrentCall':
                     if(membersInChannelWithDetails[dataToSend.groupId] !== undefined && membersInChannelWithDetails[dataToSend.groupId].length){
@@ -203,10 +202,6 @@ app.post("/api-call-tutor/uploadAssignmentApiCall", upload.single("file"), funct
 })
 app.get('/api-call-tutor', (req, res) => {
     res?.status(200).send({message:`Node Server is ready port ${port}`});
-});
-
-app.use((err, req, res) => {
-    res?.send({ message: err.message });
 });
 
 server.listen(port,host, function() {

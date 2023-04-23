@@ -3,11 +3,10 @@ import {useDispatch, useSelector} from "react-redux";
 import TeacherTabDesktopLinkEntryPage from "../../components/desktop/TeacherComponent/TeacherTabDesktopLinkEntryPage";
 import {
     actionToGetAllSchoolBoardDataList,
-    actionToGetAllStudentAttendClassWithAssignment,
-    actionToGetAllSubjectDataList,
+    actionToGetAllSubjectDataList, actionToGetStudentTimetableData,
     actionToGetTeacherAllClasses,
     actionToGetTeacherAllDemoClasses,
-    actionToGetTeacherAllTodayClasses,
+    actionToGetTeacherAllTodayClasses, actionToGetTeacherClassAttendWithAssignmentData,
     actionToGetUserFreshData
 } from "../../actions/CommonAction";
 import {useEffectOnce} from "../../helper/UseEffectOnce";
@@ -26,9 +25,10 @@ export default function TeacherTabCommonLinkEntryPage() {
             dispatch(actionToGetTeacherAllClasses());
             dispatch(actionToGetTeacherAllTodayClasses());
             dispatch(actionToGetTeacherAllDemoClasses());
-            dispatch(actionToGetAllStudentAttendClassWithAssignment());
             getWebsocketConnectedMessage(W3CWebSocket, dispatch, userInfo);
             dispatch(actionToGetAllSubjectDataList());
+            dispatch(actionToGetStudentTimetableData());
+            dispatch(actionToGetTeacherClassAttendWithAssignmentData());
             dispatch(actionToGetAllSchoolBoardDataList());
             dispatch(actionToGetUserFreshData(userInfo?.id));
             loadOnce = false;

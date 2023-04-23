@@ -61,7 +61,7 @@ export default function StudentTodayClassesComponent(){
         //dispatch(actionToRemoveDataFromIncomingCall({}));
     }
 
-    const pickCallInGroup = (e,myClasses)=>{
+    const pickCallInGroup = (e,myClasses,demoClass)=>{
         e.preventDefault();
         if(!navigator?.mediaDevices?.getDisplayMedia){
             alert('Sorry!!! screen recording is not support on your device please try in WINDOWS and MACOS');
@@ -106,7 +106,7 @@ export default function StudentTodayClassesComponent(){
                         console.log('[PEER CONNECTION OPEN IN ID]', id);
                         setMyStream(stream);
                         setInCallStatus('INCALL');
-                        dispatch(actionToUpdateAttendanceClassStatus(studentAllClassesList?.classData,myClasses))
+                        dispatch(actionToUpdateAttendanceClassStatus(studentAllClassesList?.classData,myClasses,demoClass))
                         setTimeout(function(){
                             setCallLoading(null);
                             dispatch(actionToGetWhiteBoardPrevDataForGroupId(myClasses?.id))
@@ -223,7 +223,7 @@ export default function StudentTodayClassesComponent(){
                                                                 <div data-id={myClasses?.id} data-cur-class={chatModuleCurrentCallGroupData?.id}>
                                                                     {(chatModuleCurrentCallGroupData?.id === myClasses?.id) ?
                                                                         <div
-                                                                            onClick={(e) => pickCallInGroup(e,myClasses)}
+                                                                            onClick={(e) => pickCallInGroup(e,myClasses,false)}
                                                                             className={"take_demo_button"}>
                                                                             <button className={"theme_btn"}>
                                                                                 {callLoading === myClasses?.id ? 'Joining class...' :
@@ -307,7 +307,7 @@ export default function StudentTodayClassesComponent(){
                                                                 <div data-id={myClasses?.id} data-cur-class={chatModuleCurrentCallGroupData?.id}>
                                                                     {(chatModuleCurrentCallGroupData?.id === myClasses?.id) ?
                                                                         <div
-                                                                            onClick={(e) => pickCallInGroup(e,myClasses, chatModuleCurrentCallGroupData)}
+                                                                            onClick={(e) => pickCallInGroup(e,myClasses,true)}
                                                                             className={"take_demo_button"}>
                                                                             <button className={"theme_btn"}>
                                                                                 {callLoading === myClasses?.id ? 'Joining class...' :
