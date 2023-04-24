@@ -2,8 +2,8 @@ import React from '@ionic/react';
 import {useDispatch, useSelector} from "react-redux";
 import {
     actionToCreateUserSignupRequest,
-    actionToGetUserByMobileNumber,
-    actionToOpenCloseSignupPopup
+    actionToGetUserByMobileNumber, actionToLoginUserByUserData,
+    actionToOpenCloseSignupPopup, actionToSendOtpInMobileNumber, actionToVerifyUserOtpByMobileNumber
 } from "../../actions/CommonAction";
 import {useEffect, useRef, useState} from "react";
 import OTPInput from "react-otp-input";
@@ -45,10 +45,8 @@ const DesktopSignUpComponent=() => {
                         setPhoneNumberValidationError('Mobile number already exist please try with another!!');
                         setVerifyDataLoader(false);
                     } else {
+                        dispatch(actionToSendOtpInMobileNumber(mobile));
                         setHeaderTitle('Verify Account');
-                        //userOtp = Math.floor(100000 + Math.random() * 900000);
-                        userOtp = 123456;
-                        console.log('userOtp',userOtp)
                         setStep(2);
                         setVerifyDataLoader(false);
                     }
@@ -62,22 +60,25 @@ const DesktopSignUpComponent=() => {
         setOtpError(false);
         if(!verifyData) {
             if (OTP.length === 6) {
-                if (Number(OTP) === Number(userOtp)) {
-                    setVerifyData(true);
-                    let payload = {
-                        id: _generateUniqueId(),
-                        name,
-                        email,
-                        address,
-                        mobile,
-                        password,
-                        role:1,
-                        has_profile:0,
+                dispatch(actionToVerifyUserOtpByMobileNumber(mobile, OTP)).then((data) => {
+                    if (Number(data.status) === 1) {
+                        setVerifyData(true);
+                        setVerifyData(true);
+                        let payload = {
+                            id: _generateUniqueId(),
+                            name,
+                            email,
+                            address,
+                            mobile,
+                            password,
+                            role:1,
+                            has_profile:0,
+                        }
+                        dispatch(actionToCreateUserSignupRequest(payload));
+                    } else {
+                        setOtpError(true);
                     }
-                    dispatch(actionToCreateUserSignupRequest(payload));
-                } else {
-                    setOtpError(true);
-                }
+                })
             }
         }
     }

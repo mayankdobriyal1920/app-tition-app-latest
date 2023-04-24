@@ -1,7 +1,10 @@
 import React from '@ionic/react';
 import {useDispatch, useSelector} from "react-redux";
 import {
-    actionToGetUserByMobileNumber, actionToLoginUserByUserData, actionToOpenCloseLoginPopup,
+    actionToGetUserByMobileNumber,
+    actionToLoginUserByUserData,
+    actionToOpenCloseLoginPopup, actionToSendOtpInMobileNumber,
+    actionToVerifyUserOtpByMobileNumber,
 } from "../../actions/CommonAction";
 import {useEffect, useRef, useState} from "react";
 import OTPInput from "react-otp-input";
@@ -41,8 +44,7 @@ const DesktopLoginComponent=() => {
                     } else {
                         userDataForLogin = data;
                         setHeaderTitle('Verify Account');
-                        userOtp = 123456;
-                        console.log('userOtp',userOtp)
+                        dispatch(actionToSendOtpInMobileNumber(mobile));
                         setStep(2);
                         setVerifyDataLoader(false);
                     }
@@ -56,12 +58,14 @@ const DesktopLoginComponent=() => {
         setOtpError(false);
         if(!verifyData) {
             if (OTP.length === 6) {
-                if (Number(OTP) === Number(userOtp)) {
-                    setVerifyData(true);
-                    dispatch(actionToLoginUserByUserData(userDataForLogin));
-                } else {
-                    setOtpError(true);
-                }
+                dispatch(actionToVerifyUserOtpByMobileNumber(mobile,OTP)).then((data) => {
+                    if(Number(data.status) === 1){
+                        setVerifyData(true);
+                        dispatch(actionToLoginUserByUserData(userDataForLogin));
+                    }else{
+                        setOtpError(true);
+                    }
+                })
             }
         }
     }

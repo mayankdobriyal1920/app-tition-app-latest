@@ -1,11 +1,13 @@
 import React from '@ionic/react';
 import {useDispatch, useSelector} from "react-redux";
 import {
-    actionToGetUserByMobileNumber, actionToLoginUserByUserData, actionToOpenCloseLoginPopup,
+    actionToGetUserByMobileNumber,
+    actionToLoginUserByUserData,
+    actionToOpenCloseLoginPopup, actionToSendOtpInMobileNumber,
+    actionToVerifyUserOtpByMobileNumber,
 } from "../../actions/CommonAction";
 import {useEffect, useRef, useState} from "react";
 import OTPInput from "react-otp-input";
-let userOtp = 123456;
 let userDataForLogin = null;
 const LoginMobileComponent=() => {
     const {isOpen} = useSelector((state) => state.openCloseLoginPopup);
@@ -39,10 +41,9 @@ const LoginMobileComponent=() => {
                         setPhoneNumberValidationError('Mobile number not exist!!');
                         setVerifyDataLoader(false);
                     } else {
+                        dispatch(actionToSendOtpInMobileNumber(mobile));
                         userDataForLogin = data;
                         setHeaderTitle('Verify Account');
-                        userOtp = 123456;
-                        console.log('userOtp',userOtp)
                         setStep(2);
                         setVerifyDataLoader(false);
                     }
@@ -56,12 +57,14 @@ const LoginMobileComponent=() => {
         setOtpError(false);
         if(!verifyData) {
             if (OTP.length === 6) {
-                if (Number(OTP) === Number(userOtp)) {
-                    setVerifyData(true);
-                    dispatch(actionToLoginUserByUserData(userDataForLogin));
-                } else {
-                    setOtpError(true);
-                }
+                dispatch(actionToVerifyUserOtpByMobileNumber(mobile,OTP)).then((data) => {
+                    if(Number(data.status) === 1){
+                        setVerifyData(true);
+                        dispatch(actionToLoginUserByUserData(userDataForLogin));
+                    }else{
+                        setOtpError(true);
+                    }
+                })
             }
         }
     }

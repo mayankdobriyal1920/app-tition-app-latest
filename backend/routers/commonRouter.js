@@ -39,7 +39,9 @@ import {
     actionToGetAllClassAssignmentDataWithClassAttendApiCall,
     actionToGetStudentClassAssignmentDataWithClassAttendApiCall,
     actionToGetTeacherAllTimetableClassesApiCall,
-    actionToGetStudentAllTimetableClassesApiCall
+    actionToGetStudentAllTimetableClassesApiCall,
+    actionToVerifyUserOtpByMobileNumberApiCall,
+    actionToSendOtpInMobileNumberApiCall
 } from "../models/commonModel.js";
 import {canvasReservedJson, canvasReservedJsonActiveIndex} from "../server.js";
 const commonRouter = express.Router();
@@ -759,6 +761,30 @@ commonRouter.post(
     '/actionToValidateMobileNumberApiCall',
     expressAsyncHandler(async (req, res) => {
         actionToValidateMobileNumberApiCall(req.body).then((data) => {
+            res.status(200).send({
+                response: data,
+            });
+        }).catch(error => {
+            res.status(500).send(error);
+        })
+    })
+);
+commonRouter.post(
+    '/actionToVerifyUserOtpByMobileNumberApiCall',
+    expressAsyncHandler(async (req, res) => {
+        actionToVerifyUserOtpByMobileNumberApiCall(req.body).then((data) => {
+            res.status(200).send({
+                response: data,
+            });
+        }).catch(error => {
+            res.status(500).send(error);
+        })
+    })
+);
+commonRouter.post(
+    '/actionToSendOtpInMobileNumberApiCall',
+    expressAsyncHandler(async (req, res) => {
+        actionToSendOtpInMobileNumberApiCall(req.body).then((data) => {
             res.status(200).send({
                 response: data,
             });

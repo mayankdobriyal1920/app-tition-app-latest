@@ -172,6 +172,14 @@ export const actionToGetUserByMobileNumber = (mobileNumber) => async () => {
     const {data} = await api.post(`common/actionToValidateMobileNumberApiCall`,{mobileNumber});
     return data.response;
 };
+export const actionToVerifyUserOtpByMobileNumber = (mobileNumber,otp) => async () => {
+    const {data} = await api.post(`common/actionToVerifyUserOtpByMobileNumberApiCall`,{mobileNumber,otp});
+    return data.response;
+};
+export const actionToSendOtpInMobileNumber = (mobileNumber) => async () => {
+    const {data} = await api.post(`common/actionToSendOtpInMobileNumberApiCall`,{mobileNumber});
+    return data.response;
+};
 export const actionToGetWhiteBoardPrevDataForGroupId = (groupDataId) => async (dispatch) => {
     const {data} = await api.post(`common/actionToGetWhiteBoardPrevDataForGroupIdApiCall`,{groupDataId});
     data?.response?.map((anData)=>{

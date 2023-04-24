@@ -28,7 +28,8 @@ import {
 import PaytmChecksum from 'paytmchecksum';
 import request from 'request';
 import {allChanelWhiteBoardEditingData, allChannelsInGroupCallData, membersInChannelWithDetails} from "../server.js";
-
+const accountSid = 'ACd7685ffcc9a6c19827617afc7be10c51';
+const authToken = '2f1303839ce746bdfaa95b68f9844b1c';
 export const insertCommonApiCall = (body) => {
     const {column,alias,tableName,values} = body;
     return new Promise(function(resolve, reject) {
@@ -497,6 +498,46 @@ export const actionToSendVideoChunkDataToServerApiCall = (body) => {
         //     }
         //     resolve(results);
         // })
+    })
+}
+let userOtpData = {};
+export const actionToSendOtpInMobileNumberApiCall = (body) => {
+    const {mobileNumber} = body;
+    return new Promise(function(resolve, reject) {
+        let userOtp = Math.floor(100000 + Math.random() * 900000);
+        userOtpData[mobileNumber] = userOtp;
+
+        let payload = {
+            body: `Very 121 tuition account use this otp ${userOtp}`,
+            from: '7017935899',
+            to: mobileNumber
+        }
+        let formData = JSON.stringify(payload);
+        let contentLength = formData.length;
+        request({
+            headers: {
+                'Content-Length': contentLength,
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Authorization':`Bearer ${accountSid}:${authToken}`
+            },
+            uri: `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`,
+            body: formData,
+            method: 'POST'
+        }, function (err, res, body) {
+            console.log(err, res);
+        });
+        resolve({success:1});
+    })
+}
+
+export const actionToVerifyUserOtpByMobileNumberApiCall = (body) => {
+    const {mobileNumber,otp} = body;
+    return new Promise(function(resolve, reject) {
+        let data = {statue:0};
+        if(userOtpData[mobileNumber] && Number(userOtpData[mobileNumber]) === Number(otp)){
+            data = {statue:1};
+        }
+        resolve(data);
     })
 }
 export const actionToValidateMobileNumberApiCall = (body) => {
