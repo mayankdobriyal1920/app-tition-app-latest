@@ -24,24 +24,39 @@ import StudentPayForSubscriptionComponent from "../../desktop/StudentComponent/S
 import TeacherStudentVideoCallMobileComponent from "../TeacherStudentVideoCallMobileComponent";
 import {CHAT_MODULE_CURRENT_CALL_ALL_MEMBERS} from "../../../constants/CommonConstants";
 
+// const iceServers= [
+//     {
+//         urls: "stun:openrelay.metered.ca:80",
+//     },
+//     {
+//         urls: "turn:openrelay.metered.ca:80",
+//         username: "openrelayproject",
+//         credential: "openrelayproject",
+//     },
+//     {
+//         urls: "turn:openrelay.metered.ca:443",
+//         username: "openrelayproject",
+//         credential: "openrelayproject",
+//     },
+//     {
+//         urls: "turn:openrelay.metered.ca:443?transport=tcp",
+//         username: "openrelayproject",
+//         credential: "openrelayproject",
+//     },
+// ];
 const iceServers= [
     {
-        urls: "stun:openrelay.metered.ca:80",
+        urls: "stun:stun.l.google.com:19302",
     },
     {
-        urls: "turn:openrelay.metered.ca:80",
-        username: "openrelayproject",
-        credential: "openrelayproject",
+        urls: "turn:121tuition.in:3478?transport=tcp",
+        username: "121tuition",
+        credential: "121tuition123",
     },
     {
-        urls: "turn:openrelay.metered.ca:443",
-        username: "openrelayproject",
-        credential: "openrelayproject",
-    },
-    {
-        urls: "turn:openrelay.metered.ca:443?transport=tcp",
-        username: "openrelayproject",
-        credential: "openrelayproject",
+        urls: "turn:121tuition.in:5349?transport=tcp",
+        username: "121tuition",
+        credential: "121tuition123",
     },
 ];
 let currentClassId = null;
