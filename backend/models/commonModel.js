@@ -504,27 +504,27 @@ let userOtpData = {};
 export const actionToSendOtpInMobileNumberApiCall = (body) => {
     const {mobileNumber} = body;
     return new Promise(function(resolve, reject) {
-        let userOtp = Math.floor(100000 + Math.random() * 900000);
+        //let userOtp = Math.floor(100000 + Math.random() * 900000);
+
+        let userOtp = 123456;
         userOtpData[mobileNumber] = userOtp;
 
         let payload = {
-            body: `Very 121 tuition account use this otp ${userOtp}`,
-            from: '7017935899',
-            to: mobileNumber
+            body: `Verify 121 tuition account use this otp ${userOtp}`,
+            from: '447520662112',
+            to: ['91'+mobileNumber]
         }
-        let formData = JSON.stringify(payload);
-        let contentLength = formData.length;
+        //https://us.sms.api.sinch.com/xms/v1
         request({
             headers: {
-                'Content-Length': contentLength,
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'Authorization':`Bearer ${accountSid}:${authToken}`
+                'Content-Type': 'application/json',
+                'Authorization':`Bearer ${authToken}`
             },
-            uri: `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`,
-            body: formData,
+            uri: `https://sms.api.sinch.com/xms/v1/${accountSid}/batches`,
+            body: JSON.stringify(payload),
             method: 'POST'
         }, function (err, res, body) {
-            console.log(err, res);
+            console.log(res);
         });
         resolve({success:1});
     })
