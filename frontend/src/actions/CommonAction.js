@@ -142,16 +142,23 @@ export const actionToCreateAndAssignClassData = (payload) => async (dispatch) =>
     }
 
 
-    await Promise.all(
-        payload?.all_class_date_time?.map(async (dateTime)=>{
-            let timetableId = _generateUniqueId()
-            let aliasArray = ['?','?','?'];
-            let columnArray = ['id','start_from_date_time','class_assigned_teacher_batch_id'];
-            let valuesArray = [timetableId,dateTime,classAssignId];
-            let insertData = {alias:aliasArray,column:columnArray,values:valuesArray,tableName:'class_timetable_with_class_batch_assigned'};
-            await dispatch(callInsertDataFunction(insertData));
-        })
-    )
+    if(!payload?.is_demo_class) {
+        await Promise.all(
+            payload?.all_class_date_time?.map(async (dateTime) => {
+                let timetableId = _generateUniqueId()
+                let aliasArray = ['?', '?', '?'];
+                let columnArray = ['id', 'start_from_date_time', 'class_assigned_teacher_batch_id'];
+                let valuesArray = [timetableId, dateTime, classAssignId];
+                let insertData = {
+                    alias: aliasArray,
+                    column: columnArray,
+                    values: valuesArray,
+                    tableName: 'class_timetable_with_class_batch_assigned'
+                };
+                await dispatch(callInsertDataFunction(insertData));
+            })
+        )
+    }
 
 
     let setData = `class_assigned_teacher_batch_id = ?`;

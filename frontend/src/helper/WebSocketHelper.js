@@ -1,6 +1,11 @@
 import {
-    actionToEndCurrentCurrentCallLocally, actionToGetActiveEditorJson,
+    actionToEndCurrentCurrentCallLocally,
+    actionToGetActiveEditorJson,
+    actionToGetStudentAllDemoClasses,
+    actionToGetStudentAllTodayClasses,
     actionToGetTeacherAllClasses,
+    actionToGetTeacherAllDemoClasses,
+    actionToGetTeacherAllTodayClasses,
     actionToGetUserAllClasses,
     actionToMuteUnmuteUserCallLocally,
     actionToOpenRatingModalPopup,
@@ -11,6 +16,7 @@ import {
 } from "../actions/CommonAction";
 import {CHAT_MODULE_CURRENT_CALL_ALL_MEMBERS} from "../constants/CommonConstants";
 import {cloneDeep} from "lodash";
+import {isTeacherMasterLogin} from "../middlewear/auth";
 
 
 let timeInterval = null;
@@ -166,8 +172,15 @@ export function handleWebSocketEvent(dispatch,state,data){
             break;
         }
         case 'refreshClassListDataForUser': {
-            dispatch(actionToGetUserAllClasses(true));
-            dispatch(actionToGetTeacherAllClasses(true));
+            if(isTeacherMasterLogin()) {
+                dispatch(actionToGetTeacherAllClasses(true));
+                dispatch(actionToGetTeacherAllTodayClasses(true));
+                dispatch(actionToGetTeacherAllDemoClasses(true));
+            }else {
+                dispatch(actionToGetStudentAllDemoClasses(true));
+                dispatch(actionToGetStudentAllTodayClasses(true));
+                dispatch(actionToGetUserAllClasses(true));
+            }
             break;
         }
     }

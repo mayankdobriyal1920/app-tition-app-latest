@@ -16,6 +16,7 @@ export default function ClassAssignPopupComponent(){
     const [selectedClassData,setSelectedClassData] = useState(null);
     const [classBatchName,setClassBatchName] = useState('');
     let [classStartFromDateTime,setClassStartFromDateTime] = useState({});
+    const [classStartFromDateTimeDemo,setClassStartFromDateTimeDemo] = useState(null);
     const [selAssignCreateButon,setSelAssignCreateButon] = useState('create');
     const {isOpen,dropdownData} = useSelector((state) => state.openCloseClassAssignPopup);
     const allTeacherDataToAssignClass = useSelector((state) => state.allTeacherDataToAssignClass);
@@ -67,10 +68,14 @@ export default function ClassAssignPopupComponent(){
         }
 
         let validate = false;
-        if(allClassDateTime?.length){
+        if(dropdownData?.has_taken_demo && allClassDateTime?.length){
             if(selectedClassAssignId) {
                 validate = true;
             }else if(classBatchName?.trim()?.length && selectedTeacherId){
+                validate = true;
+            }
+        }else if(!dropdownData?.has_taken_demo){
+            if(classStartFromDateTimeDemo){
                 validate = true;
             }
         }
@@ -82,6 +87,7 @@ export default function ClassAssignPopupComponent(){
                class_batch_name: classBatchName,
                teacher_id: selectedTeacherId,
                all_class_date_time: allClassDateTime,
+               classStartFromDateTimeDemo:moment(classStartFromDateTimeDemo).format('YYYY-MM-DD HH:mm:ss'),
                batch: dropdownData?.batch,
                is_demo_class: dropdownData?.has_taken_demo ? 0 : 1,
                subject_id: dropdownData?.subject_id,
@@ -126,8 +132,8 @@ export default function ClassAssignPopupComponent(){
                                 </div>
                                 <div className="form-floating mb-3">
                                     <input type="datetime-local"
-                                           value={classStartFromDateTime}
-                                           onChange={(e) => setClassStartFromDateTime(e.target.value)}
+                                           value={classStartFromDateTimeDemo}
+                                           onChange={(e) => setClassStartFromDateTimeDemo(e.target.value)}
                                            className="form-control" id="floatingClassTime"
                                            placeholder="Class date time"/>
                                     <label htmlFor="floatingClassTime">Class date time</label>
