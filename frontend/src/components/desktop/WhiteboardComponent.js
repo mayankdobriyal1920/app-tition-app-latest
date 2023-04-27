@@ -384,6 +384,7 @@ export default function WhiteboardComponent({groupId}){
                         data.append("file", file, pathName);
                         axios.post(endpoint, data).then(res => {
                             let url = `https://121tuition.in/api-call-tutor/getFineByName?name=${pathName}`;
+                            console.log(url);
                             setTimeout(function (){
                                 addUrlInFabricImage(url);
                             });
