@@ -217,7 +217,8 @@ export default function WhiteboardComponent({groupId}){
     }
     const sendToWebsocketFabricToOtherUser = (userPointer,type)=>{
         if(userPointer?.id){
-            let canvas_object = {height:window.fabricCanvas.height,width:window.fabricCanvas.width};
+            let zoom=window.fabricCanvas.getZoom();
+            let canvas_object = {height:window.fabricCanvas.height/zoom,width:window.fabricCanvas.width/zoom};
             let jsonObject = JSON.stringify(canvas_object).toString();
             let currentIndex = window.fabricCanvas.getObjects().indexOf(userPointer);
             if(userInfo?.role === 2) {
@@ -307,23 +308,20 @@ export default function WhiteboardComponent({groupId}){
 
     const drawFromWebSocket = (jsonObject,type,userPointer,sizeArray,currentIndex) =>{
         if(jsonObject != null){
-            let scaledHeight = jsonObject.height;
-            let scaledWidth = jsonObject.width;
-            let originalHeight = window.fabricCanvas.height;
-            let originalWidth = window.fabricCanvas.width;
-            let widthRatio = 0;
-            let heightRatio = 0;
-            widthRatio = originalWidth / scaledWidth;
-            heightRatio = originalHeight / scaledHeight;
-            let scale = Math.min(widthRatio, heightRatio);
-            let fabricCanvas = window.fabricCanvas;
+            let zoom = window.fabricCanvas.getZoom();
+            let fabricHeight = window.fabricCanvas.height/zoom;
+            let fabricWidth = window.fabricCanvas.width/zoom;
+            if(jsonObject.height !== fabricHeight || jsonObject.width !== fabricWidth){
+                let scaledHeight = jsonObject.height*zoom;
+                let scaledWidth = jsonObject.width*zoom;
+                window.fabricCanvas.setHeight(scaledHeight);
+                window.fabricCanvas.setWidth(scaledWidth);
+            }
 
             switch(type){
                 case 'add':
                     fabric.util.enlivenObjects([userPointer], function(objects) {
                         objects.forEach(function(o) {
-                            o.left = o.left * scale;
-                            o.top = o.top * scale;
                             window.fabricCanvas.add(o);
                             window.fabricCanvas.renderAll();
                         });
