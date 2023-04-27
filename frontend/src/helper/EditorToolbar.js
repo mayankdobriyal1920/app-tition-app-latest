@@ -483,14 +483,12 @@ export function createCopyOfFreeDraw(selected_canvas, oldPath,shapeName){
             transparentCorners:false,
         });
         selected_canvas.remove(oldPath);
-        setTimeout(()=>{
-            selected_canvas.add(clone);
-            //selected_canvas.setActiveObject(clone);
-            selected_canvas.renderAll();
-            const canvasIndex = selected_canvas?.lowerCanvasEl?.getAttribute('data-index');
-            const captureId = selected_canvas?.lowerCanvasEl?.getAttribute('data-capture-id');
-            eventBus.dispatch('send-to-websocket-fabric',{type:'add',userPointer:clone, fabricCanvas: selected_canvas,canvasIndex,captureId});
-        },20);
+        selected_canvas.add(clone);
+        //selected_canvas.setActiveObject(clone);
+        selected_canvas.renderAll();
+        const canvasIndex = selected_canvas?.lowerCanvasEl?.getAttribute('data-index');
+        const captureId = selected_canvas?.lowerCanvasEl?.getAttribute('data-capture-id');
+        eventBus.dispatch('send-to-websocket-fabric',{type:'add',userPointer:clone, fabricCanvas: selected_canvas,canvasIndex,captureId});
     });
     //}
 }
