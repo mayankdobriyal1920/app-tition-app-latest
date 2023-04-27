@@ -377,7 +377,7 @@ export default function WhiteboardComponent({groupId}){
                 type = items[i].type;
             if(type.includes('image') && file ) {
                 // load image if there is a pasted image
-                if (file !== null) {
+                if (file) {
                     if(file.size < 10485760){
                         const data = new FormData();
                         const pathName = 'editor-annotator-' + Math.floor(Math.random() * 100001)+'.png';
