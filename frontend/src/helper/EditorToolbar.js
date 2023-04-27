@@ -492,6 +492,32 @@ export function createCopyOfFreeDraw(selected_canvas, oldPath,shapeName){
     });
     //}
 }
+export function autoAdjustCanvasToScreenByAdjustZoom(clientWidth,clientHeight,canvasWidthAndWidth,canvasWidthAndHeight){
+
+
+    let scaledHeight = clientHeight;
+    let scaledWidth = clientWidth;
+    let originalHeight = canvasWidthAndHeight;
+    let originalWidth = canvasWidthAndWidth;
+    let widthRatio = 0;
+    let heightRatio = 0;
+    widthRatio = originalWidth / scaledWidth;
+    heightRatio = originalHeight / scaledHeight;
+    let SCALE_FACTOR = Math.min(widthRatio, heightRatio);
+
+    console.log('SCALE_FACTOR',SCALE_FACTOR);
+
+    let selectedCanvas = window.fabricCanvas;
+    let zoom = selectedCanvas.getZoom();
+    let zoomScale,zoomHeight,zoomWeight;
+    zoomScale= zoom * SCALE_FACTOR;
+    zoomHeight= selectedCanvas.getHeight() * SCALE_FACTOR;
+    zoomWeight= selectedCanvas.getWidth() * SCALE_FACTOR;
+    selectedCanvas.setZoom(zoomScale);
+    selectedCanvas.setHeight(zoomHeight);
+    selectedCanvas.setWidth(zoomWeight);
+    selectedCanvas.renderAll();
+}
 export function returnPathShapeName(path = ''){
     if(path)
         pathShapeName = path;

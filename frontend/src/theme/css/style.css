@@ -1338,7 +1338,7 @@ div#main_user_video_call_video_section video.my_video_peer_connection {
     border: 7px solid #4c4c4c;
     border-radius: 21px;
     overflow: hidden;
-    height: calc(100vh - 300px);
+    height: calc(100vh - 250px);
 }
 .modal_screenshot_image_canvas{
     height: calc(100vh - 300px)!important;

@@ -6,7 +6,7 @@ import {
     drawLineArrow,
     drawObjectInCanvas,
     setUserId,
-    returnPathShapeName, setSelectToolColorToEditor
+    returnPathShapeName, setSelectToolColorToEditor, autoAdjustCanvasToScreenByAdjustZoom
 } from "../../helper/EditorToolbar";
 import {eventBus} from "../../helper/EventBus";
 import {useEffectOnce} from "../../helper/UseEffectOnce";
@@ -192,10 +192,15 @@ export default function WhiteboardComponent({groupId}){
         let clientWidth = document.querySelector('.center_white_board_video_main_container').clientWidth;
         let clientHeight = document.querySelector('.center_white_board_video_main_container').clientHeight;
 
+        let canvasWidthAndWidth = 700;
+        let canvasWidthAndHeight = 500;
+
+        autoAdjustCanvasToScreenByAdjustZoom(clientWidth,clientHeight,canvasWidthAndWidth,canvasWidthAndHeight);
+
         setTimeout(function(){
             let rect = new fabric.Rect({
-                width: clientWidth,
-                height: clientHeight,
+                width: canvasWidthAndWidth,
+                height: canvasWidthAndHeight,
                 fill: 'white'
             });
             window.fabricCanvas.setDimensions({width: clientWidth, height: clientHeight});
