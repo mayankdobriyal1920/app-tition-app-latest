@@ -104,8 +104,8 @@ export default function TeacherDashboardMobile() {
             alert('Sorry!!! screen recording is not support on your device please try in WINDOWS and MACOS');
             return false;
         }
-        if (callLoading) return;
-          setCallLoading(classGroupData?.id);
+        if (callLoading) return false;
+        setCallLoading(classGroupData?.id);
 
         let getUserMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia).bind(navigator);
         if(getUserMedia) {
@@ -114,116 +114,113 @@ export default function TeacherDashboardMobile() {
                     video: true
                 },
                 function(stream){
+                    // navigator.mediaDevices.getDisplayMedia({preferCurrentTab:true})
+                    //     .then(recordStream => {
+                    setInCallStatus('JOINING');
 
-                    navigator.mediaDevices.getDisplayMedia({preferCurrentTab:true})
-                        .then(recordStream => {
+                    let memberData = cloneDeep(userInfo);
+                    memberData.id = classGroupData?.id;
+                    memberData.peer_connection_id = 'teacher_' + _generateUniqueId()+'_'+classGroupData?.id;
+                    memberData.mute = false;
+                    memberData.isTeacher = true;
 
+                    let myPeer = new Peer(memberData.peer_connection_id, {
+                        host: '121tuition.in',
+                        secure: true,
+                        config: {'iceServers': iceServers},
+                        path: '/peerApp',
+                    });
+                    setMyPeerConnectionId(memberData.peer_connection_id);
+                    setMyPeer(myPeer);
+                    currentClassId = cloneDeep(classGroupData?.id);
+                    console.log('classGroupData',classGroupData);
 
+                    dispatch(actionToSetCurrentCallDataGroupData(classGroupData));
+                    console.log('[ PEER JS CONNECTION INSTANCE ]', myPeer,memberData.peer_connection_id);
 
-                            setInCallStatus('JOINING');
+                    myPeer?.on('open', id => {
+                        console.log('[PEER CONNECTION OPEN IN ID]', id);
+                        console.log('[PEER CONNECTION USER MEDIA]', getUserMedia);
+                        navigator.mediaDevices.enumerateDevices()
+                            .then(sourceInfos => {
+                                let audioSource = null;
+                                let videoSource = null;
 
-                            let memberData = cloneDeep(userInfo);
-                            memberData.id = classGroupData?.id;
-                            memberData.peer_connection_id = 'teacher_' + _generateUniqueId()+'_'+classGroupData?.id;
-                            memberData.mute = false;
-                            memberData.isTeacher = true;
+                                for (let i = 0; i !== sourceInfos.length; ++i) {
+                                    let sourceInfo = sourceInfos[i];
+                                    if (sourceInfo?.kind === 'audioinput') {
+                                        audioSource = sourceInfo.deviceId;
+                                    } else if (sourceInfo?.kind === 'videoinput') {
+                                        videoSource = sourceInfo.deviceId;
+                                        console.log(sourceInfo)
+                                    }
+                                }
+                                setMyStream(stream);
 
-                            let myPeer = new Peer(memberData.peer_connection_id, {
-                                host: '121tuition.in',
-                                secure: true,
-                                config: {'iceServers': iceServers},
-                                path: '/peerApp',
-                            });
-                            setMyPeerConnectionId(memberData.peer_connection_id);
-                            setMyPeer(myPeer);
-                            currentClassId = cloneDeep(classGroupData?.id);
+                                console.log('[PEER CONNECTION USER STREAM]', stream);
+                                let finalClassGroupData = classGroupData;
+                                finalClassGroupData.started_at = new Date().toISOString();
+                                let allMembersInCall = [memberData];
+                                finalClassGroupData.allMembers = allMembersInCall;
+                                classGroupData?.profile_subject_with_batch?.map((studentProfile) => {
+                                    allMembersInCall.push({
+                                        id: studentProfile.student_id,
+                                        name: studentProfile.student_name,
+                                        mute:true,
+                                        isTeacher:false
+                                    });
+                                })
 
-                            dispatch(actionToSetCurrentCallDataGroupData(classGroupData));
-                            console.log('[ PEER JS CONNECTION INSTANCE ]', myPeer,memberData.peer_connection_id);
+                                dispatch(actionToSetCurrentCallDataGroupData(classGroupData));
+                                dispatch({type: CHAT_MODULE_CURRENT_CALL_ALL_MEMBERS, payload: [...allMembersInCall]});
 
-                            myPeer?.on('open', id => {
-                                console.log('[PEER CONNECTION OPEN IN ID]', id);
-                                console.log('[PEER CONNECTION USER MEDIA]', getUserMedia);
-                                navigator.mediaDevices.enumerateDevices()
-                                    .then(sourceInfos => {
-                                        let audioSource = null;
-                                        let videoSource = null;
+                                sendWebsocketRequest(JSON.stringify({
+                                    clientId: localStorage.getItem('clientId'),
+                                    groupId: classGroupData?.id,
+                                    classGroupData: finalClassGroupData,
+                                    members: allMembersInCall,
+                                    memberData: memberData,
+                                    type: "startNewCallInGroupChannel"
+                                }));
 
-                                        for (let i = 0; i !== sourceInfos.length; ++i) {
-                                            let sourceInfo = sourceInfos[i];
-                                            if (sourceInfo?.kind === 'audioinput') {
-                                                audioSource = sourceInfo.deviceId;
-                                            } else if (sourceInfo?.kind === 'videoinput') {
-                                                videoSource = sourceInfo.deviceId;
-                                                console.log(sourceInfo)
-                                            }
-                                        }
-                                        setMyStream(stream);
+                                setTimeout(function(){
+                                    addVideoStream(memberData.peer_connection_id, stream,true);
+                                    setCallLoading(null);
+                                    setInCallStatus('INCALL');
+                                },1000)
 
-                                        console.log('[PEER CONNECTION USER STREAM]', stream);
-                                        let finalClassGroupData = classGroupData;
-                                        finalClassGroupData.started_at = new Date().toISOString();
-                                        let allMembersInCall = [memberData];
-                                        finalClassGroupData.allMembers = allMembersInCall;
-                                        classGroupData?.profile_subject_with_batch?.map((studentProfile) => {
-                                            allMembersInCall.push({
-                                                id: studentProfile.student_id,
-                                                name: studentProfile.student_name,
-                                                mute:true,
-                                                isTeacher:false
-                                            });
-                                        })
-
-                                        dispatch(actionToSetCurrentCallDataGroupData(classGroupData));
-                                        dispatch({type: CHAT_MODULE_CURRENT_CALL_ALL_MEMBERS, payload: [...allMembersInCall]});
-
-                                        sendWebsocketRequest(JSON.stringify({
-                                            clientId: localStorage.getItem('clientId'),
-                                            groupId: classGroupData?.id,
-                                            classGroupData: finalClassGroupData,
-                                            members: allMembersInCall,
-                                            memberData: memberData,
-                                            type: "startNewCallInGroupChannel"
-                                        }));
-
-                                        setTimeout(function(){
-                                            addVideoStream(memberData.peer_connection_id, stream,true);
-                                            setCallLoading(null);
-                                            setInCallStatus('INCALL');
-                                        },1000)
-
-                                        myPeer.on('call', call => {
-                                            console.log('[PEER JS INCOMMING CALL]', call);
-                                            call.answer(stream);
-                                            addCallSubscriptionEvents(call);
-                                        })
-                                    })
+                                myPeer.on('call', call => {
+                                    console.log('[PEER JS INCOMMING CALL]', call);
+                                    call.answer(stream);
+                                    addCallSubscriptionEvents(call);
+                                })
                             })
+                    })
 
 
-                            const mediaSource = new MediaSource();
-                            mediaSource.addEventListener('sourceopen', handleSourceOpen, false);
-                            let sourceBuffer;
+                    const mediaSource = new MediaSource();
+                    mediaSource.addEventListener('sourceopen', handleSourceOpen, false);
+                    let sourceBuffer;
 
-                            function handleSourceOpen(event) {
-                                sourceBuffer = mediaSource.addSourceBuffer('video/webm; codecs="vp8"');
-                            }
+                    function handleSourceOpen(event) {
+                        sourceBuffer = mediaSource.addSourceBuffer('video/webm; codecs="vp8"');
+                    }
 
-                            ////// record current call //////////
-                            const chunks = [];
-                            let options = { mimeType: 'video/webm;codecs=vp9' };
-                            const recorder = new MediaRecorder(recordStream,options);
-                            recorder.ondataavailable = (e) => {
-                                callFunctionToUploadDataChunk(e.data);
-                                chunks.push(e.data);
-                            }
-                            recorder.onstop = e => callFunctionToExportRecordedVideo(new Blob(chunks));
-                            recorder.start(5000);
-                            setMyMediaRecorder(recorder);
-                            setMyShareScreenStream(recordStream);
-                        }, error => {
-                            console.log("Unable to acquire screen capture", error);
-                        });
+                    ////// record current call //////////
+                    const chunks = [];
+                    let options = { mimeType: 'video/webm;codecs=vp9' };
+                    const recorder = new MediaRecorder(stream,options);
+                    recorder.ondataavailable = (e) => {
+                        callFunctionToUploadDataChunk(e.data);
+                        chunks.push(e.data);
+                    }
+                    recorder.onstop = e => callFunctionToExportRecordedVideo(new Blob(chunks));
+                    recorder.start(5000);
+                    setMyMediaRecorder(recorder);
+                    setMyShareScreenStream(stream);
+                    // }, error => {
+                    //     console.log("Unable to acquire screen capture", error);
+                    // });
                 })
         }else{
             alert('Media Not Supported In Insecure Url');
