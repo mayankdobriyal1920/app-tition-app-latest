@@ -27,7 +27,7 @@ export function setUserId(id){
 export function drawObjectInCanvas(id,selectedCanvas){
     selectedCanvas.isDrawingMode = true;
     selectedCanvas.freeDrawingBrush = new fabric.PencilBrush(selectedCanvas);
-    selectedCanvas.freeDrawingBrush.color = selectedToolColor;
+    selectedCanvas.freeDrawingBrush.color = "#f1f1f100";
     selectedCanvas.freeDrawingBrush.width = 0;
     drawActive= false;
 
@@ -88,7 +88,6 @@ export function setSelectToolColorToEditor(selected_canvas,color){
 }
 export function enableFreeDrawing(selected_canvas,shapeName){
     removeEvents(selected_canvas);
-    console.log('selectedToolColor',selectedToolColor);
     selected_canvas.freeDrawingBrush.color = selectedToolColor;
     selected_canvas.isDrawingMode = true;
 
@@ -483,11 +482,6 @@ export function createCopyOfFreeDraw(selected_canvas, oldPath,shapeName){
             LockRotation: true,
             transparentCorners:false,
         });
-        if(shapeName === 'fabric brush'){
-            clone.set({
-                fill: selectedToolColor,
-            })
-        }
         selected_canvas.remove(oldPath);
         setTimeout(()=>{
             selected_canvas.add(clone);
