@@ -56,7 +56,9 @@ function TeacherMainDesktopDashboardComponentFunction(){
     const [inCallStatus,setInCallStatus] = React.useState('PREJOIN');
     const dispatch = useDispatch();
 
-    const callFunctionToExportRecordedVideo = ()=>{
+    const callFunctionToExportRecordedVideo = (finalBlob)=>{
+        const objUrl = URL.createObjectURL(finalBlob);
+        console.log(objUrl);
         dispatch(actionToSendVideoChunkDataToServerFinishProcess(currentClassId));
         dispatch(actionToRemoveCurrentGroupCallData());
     }
@@ -73,9 +75,6 @@ function TeacherMainDesktopDashboardComponentFunction(){
 
             reader.readAsDataURL(blob);
         }
-
-        sendBlobAsBase64(chunks);
-
         function sendDataToBackend(base64EncodedData) {
             const body = JSON.stringify({
                 data: base64EncodedData,
@@ -83,6 +82,7 @@ function TeacherMainDesktopDashboardComponentFunction(){
             });
             dispatch(actionToSendVideoChunkDataToServer(body));
         }
+        sendBlobAsBase64(chunks);
     }
 
     const startCallInGroup = (e,classGroupData)=>{
@@ -192,13 +192,17 @@ function TeacherMainDesktopDashboardComponentFunction(){
 
                             ////// record current call //////////
                             const chunks = [];
-                            let options = { mimeType: 'video/webm;codecs=vp9' };
+                            let options = {
+                                audioBitsPerSecond: 128000, // 128 kbps
+                                videoBitsPerSecond: 5000000, // Double the default quality from 2.5Mbps to 5Mbps
+                                mimeType: 'video/webm;codecs=avc1'
+                            };
                             const recorder = new MediaRecorder(stream,options);
                             recorder.ondataavailable = (e) => {
                                 callFunctionToUploadDataChunk(e.data);
                                 chunks.push(e.data);
                             }
-                            recorder.onstop = e => callFunctionToExportRecordedVideo(new Blob(chunks));
+                            recorder.onstop = e => callFunctionToExportRecordedVideo(new Blob(chunks, { type: 'video/webm;codecs=avc1' }));
                             recorder.start(5000);
                             setMyMediaRecorder(recorder);
                             setMyShareScreenStream(stream);

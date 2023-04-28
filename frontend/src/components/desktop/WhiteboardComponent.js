@@ -418,7 +418,6 @@ export default function WhiteboardComponent({groupId}){
                         data.append("file", file, pathName);
                         axios.post(endpoint, data).then(res => {
                             let url = `https://121tuition.in/api-call-tutor/getFineByName?name=${pathName}`;
-                            console.log(url);
                             setTimeout(function (){
                                 addUrlInFabricImage(url);
                             });
@@ -431,10 +430,10 @@ export default function WhiteboardComponent({groupId}){
     const addUrlInFabricImage = async function (url){
         let userId = userInfo ? userInfo.id : '';
         fabric.Image.fromURL(url, function (img) {
-            let leftPosition= window.cursorPosition ? window.cursorPosition.x :img.left+20;
-            let topPosition= window.cursorPosition ? window.cursorPosition.y-122 :img.top+20;
-            let canvasHeight = window.innerHeight *0.75;
-            let canvasWidth = window.innerWidth *0.5;
+            let leftPosition= 0;
+            let topPosition= 0;
+            let canvasHeight = window.fabricCanvas.height *0.75;
+            let canvasWidth = window.fabricCanvas.width *0.5;
             let ratio = 0;
             let imageHeight = img.height;
             let imageWidth = img.width;
