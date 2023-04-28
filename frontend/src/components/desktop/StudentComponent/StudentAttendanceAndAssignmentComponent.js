@@ -3,7 +3,6 @@ import {useDispatch, useSelector} from "react-redux";
 import {FacebookLoader} from "../../Loader/FacebookLoader";
 import noClassFound from "../../../theme/images/chose/no_classes_found.png";
 import {
-    actionToGetTeacherClassAttendWithAssignmentData,
     actionToStoreAssignmentData, actionToStoreAssignmentDataForTeacher,
 } from "../../../actions/CommonAction";
 import moment from "moment";
@@ -47,7 +46,7 @@ export default function StudentAttendanceAndAssignmentComponent({isMobile}){
         setUploading(uploading);
         // define upload
         const data = new FormData();
-        let pathName = Date.now() + "_assignment_file_data_" + selectedFile[id]?.name.replace(/ /g,"_");
+        let pathName = Date.now() + "_assignment_file_data_" + selectedFile[id]?.name.replace(/ /g,"_")+selectedFile[id]?.name;
         let fileName = selectedFile[id]?.name;
         data.append("file", selectedFile[id], pathName);
         data.append("id", id);
@@ -152,7 +151,7 @@ export default function StudentAttendanceAndAssignmentComponent({isMobile}){
                                                                               <form className="box">
                                                                                   <input
                                                                                       type="file"
-                                                                                      accept="image/png, image/gif, image/jpeg ,application/pdf,"
+                                                                                      accept="application/pdf"
                                                                                       id="file-5"
                                                                                       className="inputfile inputfile-4"
                                                                                       onChange={(e) => handleFileChange(e, studentClassAttend?.id)}
@@ -211,7 +210,7 @@ export default function StudentAttendanceAndAssignmentComponent({isMobile}){
                                                               <input
                                                                   type="file"
                                                                   id="file-5"
-                                                                  accept="image/png, image/gif, image/jpeg ,application/pdf,"
+                                                                  accept="application/pdf"
                                                                   className="inputfile inputfile-4"
                                                                   onChange={(e) => handleFileChange(e, classData?.class_id)}
                                                               />
