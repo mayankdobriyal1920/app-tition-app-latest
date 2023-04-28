@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {fabric} from 'fabric';
 import {
@@ -42,6 +42,20 @@ export default function WhiteboardComponent({groupId}){
     redo = captureAnnotatorUndoRedoArray.redo;
     undo = captureAnnotatorUndoRedoArray.undo;
     const dispatch = useDispatch();
+
+    useEffect(()=>{
+        const setWindowDimensions = ()=> {
+            let clientWidth = document.querySelector('.center_white_board_video_main_container').clientWidth;
+            let clientHeight = document.querySelector('.center_white_board_video_main_container').clientHeight;
+            let canvasWidthAndWidth = 700;
+            let canvasWidthAndHeight = 500;
+            autoAdjustCanvasToScreenByAdjustZoom(clientWidth, clientHeight, canvasWidthAndWidth, canvasWidthAndHeight);
+        }
+        window.addEventListener('resize', setWindowDimensions);
+        return () => {
+            window.removeEventListener('resize', setWindowDimensions)
+        }
+    },[])
 
     const editCanvasRef = useRef();
 

@@ -21,7 +21,6 @@ import StudentPaymentConfirmMobileComponent from "./StudentPaymentConfirmMobileC
 export default function StudentTabMobileLinkEntryPage() {
 
     const openCloseTeacherRatingPopup = useSelector((state) => state.openCloseTeacherRatingPopup);
-    const [inCallStatus] = React.useState('PREJOIN');
     const dispatch = useDispatch();
     const { path } = useRouteMatch();
 
@@ -120,9 +119,7 @@ export default function StudentTabMobileLinkEntryPage() {
 
     return (
         <IonPage>
-            {(inCallStatus === 'PREJOIN') && (
-                <MainHeaderComponent/>
-            )}
+            <MainHeaderComponent/>
             {(openCloseTeacherRatingPopup?.isOpen) && (
                 <StarRatingOnEndCallComponent classCallData={openCloseTeacherRatingPopup?.dropdownData}/>
             )}
@@ -144,9 +141,7 @@ export default function StudentTabMobileLinkEntryPage() {
                 </Route>
                 <Redirect exact from="/dashboard" to={`${path}/home`} />
             </Switch>
-            {(inCallStatus === 'PREJOIN') && (
-                <FooterTabComponent/>
-            )}
+            <FooterTabComponent/>
         </IonPage>
     )
 }

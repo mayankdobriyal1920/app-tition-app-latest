@@ -662,8 +662,8 @@ span.sapater_otp {
     font-size: 16px!important;
 }
 .call_ent_button_section button.tap_to_speak_button {
-    width: 100px;
-    height: 100px;
+    width: 10vh;
+    height: 10vh;
     border-radius: 100%;
     background: #838383;
 }
