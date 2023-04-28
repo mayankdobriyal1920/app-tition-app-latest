@@ -494,6 +494,7 @@ export function createCopyOfFreeDraw(selected_canvas, oldPath,shapeName){
 }
 export function autoAdjustCanvasToScreenByAdjustZoom(clientWidth,clientHeight,canvasWidthAndWidth,canvasWidthAndHeight){
 
+    console.log('clientWidth,clientHeight,canvasWidthAndWidth,canvasWidthAndHeight',clientWidth,clientHeight,canvasWidthAndWidth,canvasWidthAndHeight);
     let scaledHeight = canvasWidthAndHeight;
     let scaledWidth = canvasWidthAndWidth;
     let originalHeight = clientHeight;

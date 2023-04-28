@@ -19,6 +19,7 @@ export default function TeacherStudentVideoCallComponent({inCallStatus,setInCall
     const studentAllClassesList = useSelector((state) => state.studentAllClassesList);
     const userInfo = useSelector((state) => state.userSignin.userInfo);
     let [timerTimeInterval,setTimerTimeInterval] = useState(0);
+    let [potrateMode,setPotrateMode] = useState(false);
     const dispatch = useDispatch();
     let [isMutedCall,setIsMutedCall] = useState(!isTeacher);
 
@@ -79,14 +80,33 @@ export default function TeacherStudentVideoCallComponent({inCallStatus,setInCall
     },[])
 
     useEffect(()=>{
-       if(!chatModuleCurrentCallGroupData?.id){
-           leaveCallFunctionCall();
-       }
+        if(!chatModuleCurrentCallGroupData?.id){
+            leaveCallFunctionCall();
+        }
     },[chatModuleCurrentCallGroupData])
+
+    useEffect(()=>{
+        const windowResized = ()=>{
+            if(window.innerHeight > window.innerWidth){
+                setPotrateMode(true);
+            }else{
+                setPotrateMode(false);
+            }
+        }
+        window.addEventListener('resize', windowResized);
+        return () => {
+            window.removeEventListener('resize', windowResized)
+        }
+    },[])
 
 
     return(
         <div id={"teacher_video_class_container"} className={"video_call_white_board_main_container"}>
+            <div style={{display:potrateMode ? 'block' : 'none'}} className={"potrate_mode_popup"}>
+                <p>
+                    Please use landscape mode to enter in class
+                </p>
+            </div>
             <div style={{display:inCallStatus === 'INCALL' ? 'flex' : 'none'}} className={"row teacher_video_class_container_inner_row"}>
                 <div className={"col-3 side_my_video_with_details"}>
                     {/*Important div for call*/}

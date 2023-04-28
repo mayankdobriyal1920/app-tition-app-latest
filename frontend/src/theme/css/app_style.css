@@ -132,10 +132,11 @@
     bottom: 0px;
     background: #ffffffa6;
     padding: 18px;
-    width: 88vw;
     box-shadow: 1px -20px 20px 0px #c1c1c126;
 }
-
+.main_signup_component_body_inner form.row.gx-3.comments-form.contact-form div {
+    margin: auto;
+}
 .main_body_content_login_mobile .inner_slide_text_section_main .heading_text {
     font-size: 20px;
     font-weight: 600;
