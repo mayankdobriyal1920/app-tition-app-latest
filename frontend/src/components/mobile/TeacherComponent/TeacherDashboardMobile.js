@@ -20,9 +20,8 @@ import {
 } from "../../../actions/CommonAction";
 import {sendWebsocketRequest} from "../../../helper/WebSocketHelper";
 import {cloneDeep} from "lodash";
-import StudentPayForSubscriptionComponent from "../../desktop/StudentComponent/StudentPayForSubscriptionComponent";
-import TeacherStudentVideoCallMobileComponent from "../TeacherStudentVideoCallMobileComponent";
 import {CHAT_MODULE_CURRENT_CALL_ALL_MEMBERS} from "../../../constants/CommonConstants";
+import TeacherStudentVideoCallComponent from "../../desktop/TeacherComponent/TeacherStudentVideoCallComponent";
 
 // const iceServers= [
 //     {
@@ -100,10 +99,7 @@ export default function TeacherDashboardMobile() {
     }
     const startCallInGroup = (e,classGroupData)=>{
         e.preventDefault();
-        if(!navigator?.mediaDevices?.getDisplayMedia){
-            alert('Sorry!!! screen recording is not support on your device please try in WINDOWS and MACOS');
-            return false;
-        }
+
         if (callLoading) return false;
         setCallLoading(classGroupData?.id);
 
@@ -437,7 +433,7 @@ export default function TeacherDashboardMobile() {
                     </div>
                 </IonContent>
                 :
-                <TeacherStudentVideoCallMobileComponent isTeacher={true} setInCallStatus={setInCallStatus} inCallStatus={inCallStatus}/>
+                <TeacherStudentVideoCallComponent isTeacher={true} setInCallStatus={setInCallStatus} inCallStatus={inCallStatus}/>
             }
         </>
     )

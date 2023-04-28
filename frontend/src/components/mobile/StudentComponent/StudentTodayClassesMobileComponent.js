@@ -1,8 +1,7 @@
 import React from "react";
-import {IonContent} from "@ionic/react";
 import {useDispatch, useSelector} from "react-redux";
 import {FacebookLoader} from "../../Loader/FacebookLoader";
-import {_generateUniqueId, _getIconBySubjectKey, _getTodayTomorrowDateFormat} from "../../../helper/CommonHelper";
+import {_generateUniqueId, _getIconBySubjectKey} from "../../../helper/CommonHelper";
 import moment from "moment";
 import noClassFound from "../../../theme/images/chose/no_classes_found.png";
 
@@ -21,9 +20,8 @@ import {
 } from "../../../actions/CommonAction";
 import {sendWebsocketRequest} from "../../../helper/WebSocketHelper";
 import {cloneDeep} from "lodash";
-import StudentPayForSubscriptionComponent from "../../desktop/StudentComponent/StudentPayForSubscriptionComponent";
-import TeacherStudentVideoCallMobileComponent from "../TeacherStudentVideoCallMobileComponent";
 import StudentPayForSubscriptionMobileComponent from "./StudentPayForSubscriptionMobileComponent";
+import TeacherStudentVideoCallComponent from "../../desktop/TeacherComponent/TeacherStudentVideoCallComponent";
 let allowOnce = true;
 const iceServers= [
     {
@@ -65,10 +63,7 @@ export default function StudentTodayClassesMobileComponent() {
 
     const pickCallInGroup = (e,myClasses)=>{
         e.preventDefault();
-        if(!navigator?.mediaDevices?.getDisplayMedia){
-            alert('Sorry!!! screen recording is not support on your device please try in WINDOWS and MACOS');
-            return false;
-        }
+
         if (callLoading) return false;
         setCallLoading(myClasses?.id);
         let getUserMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia).bind(navigator);
@@ -378,7 +373,7 @@ export default function StudentTodayClassesMobileComponent() {
                             </div>
                         </div>
                         :
-                        <TeacherStudentVideoCallMobileComponent setInCallStatus={setInCallStatus} inCallStatus={inCallStatus}/>
+                        <TeacherStudentVideoCallComponent setInCallStatus={setInCallStatus} inCallStatus={inCallStatus}/>
                     }
                 </>
             }

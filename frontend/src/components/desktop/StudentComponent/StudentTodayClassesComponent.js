@@ -58,10 +58,7 @@ export default function StudentTodayClassesComponent(){
 
     const pickCallInGroup = (e,myClasses,demoClass)=>{
         e.preventDefault();
-        if(!navigator?.mediaDevices?.getDisplayMedia){
-            alert('Sorry!!! screen recording is not support on your device please try in WINDOWS and MACOS');
-            return false;
-        }
+
         if (callLoading) return false;
         setCallLoading(myClasses?.id);
         let getUserMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia).bind(navigator);

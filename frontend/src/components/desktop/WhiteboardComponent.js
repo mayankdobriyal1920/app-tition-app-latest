@@ -323,6 +323,7 @@ export default function WhiteboardComponent({groupId}){
                 window.fabricCanvas.setHeight(scaledHeight);
                 window.fabricCanvas.setWidth(scaledWidth);
             }
+            let fabricCanvas =  window.fabricCanvas;
 
             switch(type){
                 case 'add':
@@ -439,8 +440,7 @@ export default function WhiteboardComponent({groupId}){
             window.fabricCanvas.isDrawingMode = false;
             //Changing cursor of canvas brush
             changeObjectSelection(true, window.fabricCanvas);
-            drawObjectInCanvas('select', '', window.fabricCanvas);
-            $('.edit_screenshot_action_tools').removeClass('active');
+            drawObjectInCanvas('select', window.fabricCanvas);
             window.fabricCanvas.setActiveObject(window.fabricCanvas._objects[window.fabricCanvas._objects.length - 1]);
             window.fabricCanvas.renderAll();
             eventBus.dispatch('send-to-websocket-fabric', {
@@ -496,13 +496,13 @@ export default function WhiteboardComponent({groupId}){
     return(
         <div>
             {(canvasLoading) ?
-                <div style={{background:'#fff'}} className={"canvas_editor_tools_main_section mt-55"}>
+                <div style={{background:'#fff'}} className={"canvas_editor_tools_main_section"}>
                   <FacebookLoader type={"facebookStyle"} item={5}/>
                 </div>
                 :''
             }
             <div>
-                <div className={"canvas_editor_tools_main_section mt-30"}>
+                <div className={"canvas_editor_tools_main_section"}>
                     <div className={"canvas_editor_inner_main_section"}>
                     <button onClick={()=>callFunctionToActiveSelectTool('draw')} className={"canvas_tool "+(activeSelectedTool === 'draw' ? 'active' : '')}>
                         <svg width="18" height="18" viewBox="0 0 20 20.002"><path d="M144,345.24a1,1,0,0,0-.29-.71l-4.24-4.24a1.014,1.014,0,0,0-1.42,0l-2.83,2.83h0l-10.93,10.93a1,1,0,0,0-.29.71V359a1,1,0,0,0,1,1h4.24a1,1,0,0,0,.76-.29l10.87-10.93h0l2.84-2.78a1.183,1.183,0,0,0,.22-.33.963.963,0,0,0,0-.24.654.654,0,0,0,0-.14ZM128.83,358H126v-2.83l9.93-9.93,2.83,2.83Zm11.34-11.34-2.83-2.83,1.42-1.41,2.82,2.82Z" transform="translate(-124 -340)" fill="#fff"></path></svg>
@@ -536,7 +536,7 @@ export default function WhiteboardComponent({groupId}){
                                    onChange={(e) => updateUploadedImageIntoCanvas(e)}
                                    id="upload_image_in_canvas"
                                    style={{display:"none"}}/>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="18" viewBox="0 0 20 20"><path id="image-upload" d="M18.186,12.432a.952.952,0,0,0-.952.953v.362l-1.409-1.41a2.655,2.655,0,0,0-3.742,0L11.416,13,9.055,10.641a2.713,2.713,0,0,0-3.742,0L3.9,12.05V6.716a.952.952,0,0,1,.952-.953h6.665a.953.953,0,0,0,0-1.905H4.856A2.857,2.857,0,0,0,2,6.716V18.147A2.857,2.857,0,0,0,4.856,21H16.282a2.857,2.857,0,0,0,2.856-2.858V13.384A.952.952,0,0,0,18.186,12.432ZM4.856,19.1a.952.952,0,0,1-.952-.953v-3.4l2.761-2.763a.752.752,0,0,1,1.038,0L10.721,15h0l4.094,4.1Zm12.378-.953a.848.848,0,0,1-.171.5l-4.294-4.315.666-.667a.733.733,0,0,1,1.047,0l2.752,2.772ZM21.718,4.134,18.862,1.276a.984.984,0,0,0-1.352,0L14.654,4.134a.956.956,0,0,0,1.352,1.353l1.228-1.238V9.574a.952.952,0,1,0,1.9,0V4.249l1.228,1.238a.956.956,0,1,0,1.352-1.353Z" transform="translate(-2 -1.005)" fill="#404040"/></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="18" viewBox="0 0 20 20"><path  id="image-upload" d="M18.186,12.432a.952.952,0,0,0-.952.953v.362l-1.409-1.41a2.655,2.655,0,0,0-3.742,0L11.416,13,9.055,10.641a2.713,2.713,0,0,0-3.742,0L3.9,12.05V6.716a.952.952,0,0,1,.952-.953h6.665a.953.953,0,0,0,0-1.905H4.856A2.857,2.857,0,0,0,2,6.716V18.147A2.857,2.857,0,0,0,4.856,21H16.282a2.857,2.857,0,0,0,2.856-2.858V13.384A.952.952,0,0,0,18.186,12.432ZM4.856,19.1a.952.952,0,0,1-.952-.953v-3.4l2.761-2.763a.752.752,0,0,1,1.038,0L10.721,15h0l4.094,4.1Zm12.378-.953a.848.848,0,0,1-.171.5l-4.294-4.315.666-.667a.733.733,0,0,1,1.047,0l2.752,2.772ZM21.718,4.134,18.862,1.276a.984.984,0,0,0-1.352,0L14.654,4.134a.956.956,0,0,0,1.352,1.353l1.228-1.238V9.574a.952.952,0,1,0,1.9,0V4.249l1.228,1.238a.956.956,0,1,0,1.352-1.353Z" transform="translate(-2 -1.005)" fill="#ffffff"/></svg>
                         </button>
                 </div>
                     <div className="supported_tools_main_ctrl test">

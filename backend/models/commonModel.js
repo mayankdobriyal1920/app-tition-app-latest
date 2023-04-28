@@ -28,8 +28,8 @@ import {
 import PaytmChecksum from 'paytmchecksum';
 import request from 'request';
 import {allChanelWhiteBoardEditingData, allChannelsInGroupCallData, membersInChannelWithDetails} from "../server.js";
-const accountSid = 'ACd7685ffcc9a6c19827617afc7be10c51';
-const authToken = '2f1303839ce746bdfaa95b68f9844b1c';
+const accountSid = '8e228d73929b4842b54d9fe5059a35df';
+const authToken = '70848b2f2a0e47a495ffc6cb75ed51f3';
 export const insertCommonApiCall = (body) => {
     const {column,alias,tableName,values} = body;
     return new Promise(function(resolve, reject) {
@@ -535,7 +535,7 @@ export const actionToVerifyUserOtpByMobileNumberApiCall = (body) => {
     return new Promise(function(resolve, reject) {
         let data = {statue:0};
         if(userOtpData[mobileNumber] && Number(userOtpData[mobileNumber]) === Number(otp)){
-            data = {statue:1};
+            data = {status:1};
         }
         resolve(data);
     })

@@ -87,10 +87,7 @@ function TeacherMainDesktopDashboardComponentFunction(){
 
     const startCallInGroup = (e,classGroupData)=>{
         e.preventDefault();
-        if(!navigator?.mediaDevices?.getDisplayMedia){
-            alert('Sorry!!! screen recording is not support on your device please try in WINDOWS and MACOS');
-            return false;
-        }
+
         if (callLoading) return false;
         setCallLoading(classGroupData?.id);
 
