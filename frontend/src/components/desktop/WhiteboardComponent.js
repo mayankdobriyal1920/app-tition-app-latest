@@ -47,7 +47,7 @@ export default function WhiteboardComponent({groupId}){
         const setWindowDimensions = ()=> {
             let clientWidth = document.querySelector('.center_white_board_video_main_container').clientWidth;
             let clientHeight = document.querySelector('.center_white_board_video_main_container').clientHeight;
-
+            let canvas = window.fabricCanvas;
             const newWidth = clientWidth;
             const newHeight = clientHeight;
 
