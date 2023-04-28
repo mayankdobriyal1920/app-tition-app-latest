@@ -47,9 +47,28 @@ export default function WhiteboardComponent({groupId}){
         const setWindowDimensions = ()=> {
             let clientWidth = document.querySelector('.center_white_board_video_main_container').clientWidth;
             let clientHeight = document.querySelector('.center_white_board_video_main_container').clientHeight;
-            let canvasWidthAndWidth = 700;
-            let canvasWidthAndHeight = 500;
-            autoAdjustCanvasToScreenByAdjustZoom(clientWidth, clientHeight, canvasWidthAndWidth, canvasWidthAndHeight);
+
+            const newWidth = clientWidth;
+            const newHeight = clientHeight;
+
+            if (canvas.width !== newWidth || canvas.height !== newHeight) {
+                const scaleX = newWidth / canvas.width;
+                const scaleY = newHeight / canvas.height;
+                let objects = canvas.getObjects();
+                for (let i in objects) {
+                    objects[i].scaleX = objects[i].scaleX * scaleX;
+                    objects[i].scaleY = objects[i].scaleY * scaleY;
+                    objects[i].left = objects[i].left * scaleX;
+                    objects[i].top = objects[i].top * scaleY;
+                    objects[i].setCoords();
+                }
+
+                canvas.discardActiveObject();
+                canvas.setWidth(canvas.getWidth() * scaleX);
+                canvas.setHeight(canvas.getHeight() * scaleY);
+                canvas.renderAll();
+                canvas.calcOffset();
+            }
         }
         window.addEventListener('resize', setWindowDimensions);
         return () => {
