@@ -19,7 +19,7 @@ export default function TeacherStudentVideoCallComponent({inCallStatus,setInCall
     const studentAllClassesList = useSelector((state) => state.studentAllClassesList);
     const userInfo = useSelector((state) => state.userSignin.userInfo);
     let [timerTimeInterval,setTimerTimeInterval] = useState(0);
-    let [potrateMode,setPotrateMode] = useState(false);
+    let [isPortraitMode,setIsPortraitMode] = useState(false);
     const dispatch = useDispatch();
     let [isMutedCall,setIsMutedCall] = useState(!isTeacher);
 
@@ -88,9 +88,9 @@ export default function TeacherStudentVideoCallComponent({inCallStatus,setInCall
     useEffect(()=>{
         const windowResized = ()=>{
             if(window.innerHeight > window.innerWidth){
-                setPotrateMode(true);
+                setIsPortraitMode(true);
             }else{
-                setPotrateMode(false);
+                setIsPortraitMode(false);
             }
         }
         window.addEventListener('resize', windowResized);
@@ -102,7 +102,7 @@ export default function TeacherStudentVideoCallComponent({inCallStatus,setInCall
 
     return(
         <div id={"teacher_video_class_container"} className={"video_call_white_board_main_container"}>
-            <div style={{display:potrateMode ? 'block' : 'none'}} className={"potrate_mode_popup"}>
+            <div style={{display:isPortraitMode ? 'block' : 'none'}} className={"isPortraitMode_mode_popup"}>
                 <p>
                     Please use landscape mode to enter in class
                 </p>

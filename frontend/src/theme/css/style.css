@@ -1319,6 +1319,19 @@ div#main_user_video_call_video_section video.my_video_peer_connection {
     padding: 6px;
     margin-right: 9px;
 }
+.isPortraitMode_mode_popup{
+    display: flex;
+    width: 100%;
+    height: 100vh;
+    background: #fff;
+    text-align: center;
+    color: #1a1e21;
+    font-size: 20px;
+    font-weight: bold;
+}
+.isPortraitMode_mode_popup p{
+    margin: auto;
+}
 
 .video_class_all_students_loop .student_name {
     margin-top: 4px;
