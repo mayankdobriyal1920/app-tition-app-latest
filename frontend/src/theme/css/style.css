@@ -1358,6 +1358,9 @@ div#main_user_video_call_video_section video.my_video_peer_connection {
     font-size: 2.8vh;
     color: #fff;
 }
+.ion-page:has(#teacher_video_class_container) .footer_main_tab_section {
+    display: none!important;
+}
 .side_other_video_with_details .other_video_peer_connection {
     width: 100%;
     margin-top: 15px;
