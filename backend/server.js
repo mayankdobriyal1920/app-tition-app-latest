@@ -170,7 +170,6 @@ const uploadPath = "/var/www/html/recording-upload-data";
 let chunks = [];
 app.post('/api-call-tutor/recording-video-chuncks', (req, res) => {
     const dataBuffer = new Buffer(req.body.data, 'base64');
-    console.log(req.body.data);
     let chunkBuff = Buffer.from(dataBuffer) // This code throwing Error
     if(!chunks[req.body.groupId]){
         chunks[req.body.groupId] = [];
@@ -179,14 +178,35 @@ app.post('/api-call-tutor/recording-video-chuncks', (req, res) => {
     res.status(200).send({message:`success ${port}`});
 });
 app.post('/api-call-tutor/recording-video-finish', (req, res) => {
-    if(chunks[req.body.groupId]) {
-        let buf = Buffer.concat(chunks[req.body.groupId]);
-        const name = `RecordingVideo_new_${new Date().getTime()}.webm`;
-        fs.writeFile(`${uploadPath}/${name}`, buf, (err) => {});
-        res.send({save: true, name: name})
-        delete chunks[req.body.groupId];
-    }else
-      res.send({save: true, name: ''})
+
+
+    const base64String = req.body.base64String;
+    console.log('base64String',base64String);
+    const binaryData = Buffer.from(base64String, 'base64');
+
+    const name = `RecordingVideo_new_123_${new Date().getTime()}.webm`;
+    fs.writeFile(`${uploadPath}/${name}`, binaryData, (err) => {
+        if (err) throw err;
+        console.log('Video file created successfully');
+    });
+    res.send({save: true, name: name})
+
+    // if(chunks[req.body.groupId]) {
+    //     let buffer = Buffer.concat(chunks[req.body.groupId]);
+    //     console.log(chunks[req.body.groupId]);
+    //     const name = `RecordingVideo_new_123_${new Date().getTime()}.webm`;
+    //     fs.writeFileSync(`${uploadPath}/${name}`, buffer, (err) => {});
+    //     res.send({save: true, name: name})
+    //     delete chunks[req.body.groupId];
+    // }else
+    //   res.send({save: true, name: ''})
+
+
+
+
+
+
+
 });
 app.get('/api-call-tutor/getFineByName', function(req, res){
     const file = `${uploadPath}/${req.query.name}`;
