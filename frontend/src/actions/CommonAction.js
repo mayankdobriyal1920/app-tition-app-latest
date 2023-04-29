@@ -645,12 +645,12 @@ export const actionToSendVideoChunkDataToServer = (videoData) => async () => {
         }
     });
 }
-export const actionToSendVideoChunkDataToServerFinishProcess = (groupId,base64String) => async (dispatch) => {
+export const actionToSendVideoChunkDataToServerFinishProcess = (classId,base64String) => async (dispatch) => {
     const {data} = await api.post(`recording-video-finish`,{base64String});
     if(data?.name) {
         const aliasArray = ['?', '?', '?'];
-        const columnArray = ['id', 'name', 'class_assigned_teacher_batch_id'];
-        const valuesArray = [_generateUniqueId(), data.name, groupId];
+        const columnArray = ['id', 'name', 'class_timetable_with_class_batch_assigned_id'];
+        const valuesArray = [_generateUniqueId(), data.name, classId];
         const insertData = {
             alias: aliasArray,
             column: columnArray,

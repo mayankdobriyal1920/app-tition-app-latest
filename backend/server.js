@@ -183,7 +183,7 @@ app.post('/api-call-tutor/recording-video-finish', (req, res) => {
     const base64String = req.body.base64String;
     const binaryData = Buffer.from(base64String, 'base64');
 
-    const name = `RecordingVideo_new_12322_${new Date().getTime()}.mp4`;
+    const name = `RecordingVideo_new_12322_${new Date().getTime()}.webm`;
     fs.writeFile(`${uploadPath}/${name}`, binaryData, (err) => {
         if (err) throw err;
         console.log('Video file created successfully');
