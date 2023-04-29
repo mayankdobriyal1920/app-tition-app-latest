@@ -181,7 +181,7 @@ app.post('/api-call-tutor/recording-video-chuncks', (req, res) => {
 app.post('/api-call-tutor/recording-video-finish', (req, res) => {
     if(chunks[req.body.groupId]) {
         let buf = Buffer.concat(chunks[req.body.groupId]);
-        const name = `RecordingVideo_${new Date().getTime()}.webm`;
+        const name = `RecordingVideo_new_${new Date().getTime()}.webm`;
         fs.writeFile(`${uploadPath}/${name}`, buf, (err) => {});
         res.send({save: true, name: name})
         delete chunks[req.body.groupId];
