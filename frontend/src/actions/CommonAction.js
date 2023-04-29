@@ -183,6 +183,17 @@ export const actionToVerifyUserOtpByMobileNumber = (mobileNumber,otp) => async (
     const {data} = await api.post(`common/actionToVerifyUserOtpByMobileNumberApiCall`,{mobileNumber,otp});
     return data.response;
 };
+export const actionToSigninWithPassword = (mobileNumber,password,setVerifyDataLoader,setPasswordValidationError) => async (dispatch) => {
+    const {data} = await api.post(`common/actionToSigninWithPasswordApiCall`,{mobileNumber,password});
+
+    if(data.response?.status){
+        dispatch(actionToLoginUserByUserData(data.response));
+    }else{
+        setPasswordValidationError('Sorry password you have entered is wrong!!')
+    }
+    setVerifyDataLoader(false);
+    return data.response;
+};
 export const actionToSendOtpInMobileNumber = (mobileNumber) => async () => {
     const {data} = await api.post(`common/actionToSendOtpInMobileNumberApiCall`,{mobileNumber});
     return data.response;

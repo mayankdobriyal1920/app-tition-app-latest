@@ -3,25 +3,37 @@ import {useDispatch, useSelector} from "react-redux";
 import {
     actionToGetUserByMobileNumber,
     actionToLoginUserByUserData,
-    actionToOpenCloseLoginPopup, actionToSendOtpInMobileNumber,
+    actionToOpenCloseLoginPopup, actionToSendOtpInMobileNumber, actionToSigninWithPassword,
     actionToVerifyUserOtpByMobileNumber,
 } from "../../actions/CommonAction";
 import {useEffect, useRef, useState} from "react";
 import OTPInput from "react-otp-input";
-let userOtp = 123456;
 let userDataForLogin = null;
 const DesktopLoginComponent=() => {
     const {isOpen} = useSelector((state) => state.openCloseLoginPopup);
     const dispatch = useDispatch();
     const [step,setStep] = useState(1);
     const [mobile,setMobile] = useState('');
+    const [password,setPassword] = useState('');
     const [OTP, setOTP] = useState("");
     const [verifyData, setVerifyData] = useState(false);
     const [phoneNumberValidationError, setPhoneNumberValidationError] = useState('');
+    const [passwordValidationError, setPasswordValidationError] = useState('');
     const [verifyDataLoader, setVerifyDataLoader] = useState(false);
     const [otpError, setOtpError] = useState(false);
     const [headerTitle, setHeaderTitle] = useState("Login");
     const mobileNumberRef = useRef();
+
+    const onEnterPressedInPassword = (e) =>{
+        if(e.keyCode ===13){
+            loginWithPassword();
+        }
+    }
+    const loginWithPassword = () =>{
+        setVerifyDataLoader(true);
+        setPasswordValidationError('');
+        dispatch(actionToSigninWithPassword(mobile,password,setVerifyDataLoader,setPasswordValidationError))
+    }
 
     const callFunctionToOpenLoginPopup = ()=>{
         dispatch(actionToOpenCloseLoginPopup(false));
@@ -151,6 +163,23 @@ const DesktopLoginComponent=() => {
                                             <p><a className={"theme_color"} role={"button"}>Resend</a></p>
                                         </>
                                     }
+                                    <hr/>
+                                    <h4 className={"text-center"}>OR</h4>
+                                    <hr/>
+                                    <div className="col-lg-12 col-md-12 mb-30">
+                                        <input type="password" placeholder="Password"
+                                               onChange={(e)=>setPassword(e.target.value)}
+                                               onKeyDown={(e)=>onEnterPressedInPassword(e)}
+                                               value={password}
+                                               required/>
+                                    </div>
+                                    {(passwordValidationError) ?
+                                        <p className={"error"}>{passwordValidationError}</p>
+                                        : ''
+                                    }
+                                    <button type={"button"} onClick={loginWithPassword}  className="theme_btn message_btn">
+                                        {verifyDataLoader ? 'Wait...' : 'Login with password'}
+                                    </button>
                                 </div>
                             </form>
                         }

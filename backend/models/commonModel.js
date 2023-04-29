@@ -556,6 +556,22 @@ export const actionToValidateMobileNumberApiCall = (body) => {
         })
     })
 }
+export const actionToSigninWithPasswordApiCall = (body) => {
+    const {mobileNumber,password} = body;
+    return new Promise(function(resolve, reject) {
+        const query = `SELECT 1 as status,id,name,address,email,mobile,is_active,has_profile,role from app_user where mobile = '${mobileNumber}' AND password = '${password}'`;
+        pool.query(query, (error, results) => {
+            if (error) {
+                reject(error)
+            }
+            let data = {status:0};
+            if(results?.length){
+                data = results[0];
+            }
+            resolve(data);
+        })
+    })
+}
 export const actionToGetUserFreshDataApiCall = (body) => {
     const {id} = body;
     return new Promise(function(resolve, reject) {

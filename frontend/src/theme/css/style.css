@@ -2021,6 +2021,7 @@ button.submit:hover {
 }
 .assignment_file_pdf_section {
     display: flex;
+    flex-wrap: wrap;
 }
 
 .assignment_file_pdf_section img {
