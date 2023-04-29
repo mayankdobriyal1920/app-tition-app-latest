@@ -181,7 +181,6 @@ app.post('/api-call-tutor/recording-video-finish', (req, res) => {
 
 
     const base64String = req.body.base64String;
-    console.log('base64String',base64String);
     const binaryData = Buffer.from(base64String, 'base64');
 
     const name = `RecordingVideo_new_12322_${new Date().getTime()}.webm`;
