@@ -27,9 +27,8 @@ import axios from "axios";
 
 let undo,redo,undoArray=[];
 const customAnnotationId = _generateUniqueId();
-let canvasReservedJson = [];
 const endpoint = "https://121tuition.in/api-call-tutor/uploadAssignmentApiCall";
-export default function WhiteboardComponent({groupId}){
+export default function WhiteboardComponent({groupId,canvasReservedJson}){
     const captureAnnotatorJSONData = useSelector((state) => state.captureAnnotatorJSONData);
     const editorActiveEditorJson = useSelector((state) => state.editorActiveEditorJson);
     const userInfo = useSelector((state) => state.userSignin.userInfo);
@@ -42,6 +41,10 @@ export default function WhiteboardComponent({groupId}){
     redo = captureAnnotatorUndoRedoArray.redo;
     undo = captureAnnotatorUndoRedoArray.undo;
     const dispatch = useDispatch();
+
+
+
+
 
     useEffect(()=>{
         const setWindowDimensions = ()=> {
@@ -272,6 +275,9 @@ export default function WhiteboardComponent({groupId}){
                     objectId: userPointer?.id,
                     currentIndex: currentIndex
                 }));
+                setTimeout(function (){
+                    callFunctionToGetCanvasReserve();
+                },2000)
             }else{
                 dispatch(actionToSendFabricDataToOtherUser({
                     groupId: groupId,
@@ -498,7 +504,7 @@ export default function WhiteboardComponent({groupId}){
         }
     },[editCanvasRef]);
 
-    useEffectOnce(()=>{
+    const callFunctionToGetCanvasReserve = ()=>{
         if(userInfo?.role === 2) {
             dispatch(actionToGetEditorCompleteJsonDataWithIndex(groupId)).then((returnData) => {
                 if (returnData?.data) {
@@ -507,6 +513,10 @@ export default function WhiteboardComponent({groupId}){
                 }
             })
         }
+    }
+
+    useEffectOnce(()=>{
+        callFunctionToGetCanvasReserve();
     },[groupId]);
 
     React.useEffect(()=>{

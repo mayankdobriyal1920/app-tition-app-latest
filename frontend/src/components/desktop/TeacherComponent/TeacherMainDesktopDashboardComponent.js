@@ -46,6 +46,7 @@ const iceServers= [
     },
 ];
 let currentClassId = null;
+let currentClassAssignedId = null;
 function TeacherMainDesktopDashboardComponentFunction(){
     const chatModuleNewUserAddedInCurrentCall = useSelector((state) => state.chatModuleNewUserAddedInCurrentCall);
     const teacherAllClassesList = useSelector((state) => state.teacherAllClassesList);
@@ -92,7 +93,7 @@ function TeacherMainDesktopDashboardComponentFunction(){
             reader.readAsDataURL(seekableBlob);
             reader.onload = () => {
                 const base64String = reader.result.split(',')[1];
-                dispatch(actionToSendVideoChunkDataToServerFinishProcess(currentClassId,base64String));
+                dispatch(actionToSendVideoChunkDataToServerFinishProcess(currentClassAssignedId,base64String));
             };
             dispatch(actionToRemoveCurrentGroupCallData());
         });
@@ -130,6 +131,7 @@ function TeacherMainDesktopDashboardComponentFunction(){
                             setMyPeerConnectionId(memberData.peer_connection_id);
                             setMyPeer(myPeer);
                             currentClassId = cloneDeep(classGroupData?.id);
+                            currentClassAssignedId = cloneDeep(classGroupData?.class_id);
                             console.log('classGroupData',classGroupData);
 
                             dispatch(actionToSetCurrentCallDataGroupData(classGroupData));
