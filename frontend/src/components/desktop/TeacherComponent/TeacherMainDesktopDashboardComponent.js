@@ -5,7 +5,8 @@ import {_generateUniqueId, _getIconBySubjectKey, _getTodayTomorrowDateFormat} fr
 import noClassFound from "../../../theme/images/chose/no_classes_found.png";
 import {StudentDashHeaderComponent} from "../StudentComponent/StudentDashHeaderComponent";
 import moment from "moment";
-import { Decoder, tools, Reader } from 'ts-ebml';
+import * as EBML from 'ts-ebml';
+import {Decoder, Encoder, tools, Reader} from 'ts-ebml';
 import {
     addCallSubscriptionEvents,
     addVideoStream,
@@ -87,16 +88,32 @@ function TeacherMainDesktopDashboardComponentFunction(){
     }
 
 
-    const callFunctionToExportRecordedVideo = (blob)=>{
-        injectMetadata(blob).then(seekableBlob=> {
-            const reader = new FileReader();
+    const callFunctionToExportRecordedVideo = (webM)=>{
+
+        const reader = new Reader();
+        const refinedMetadataBuf = tools.makeMetadataSeekable(reader.metadatas, reader.duration, reader.cues);
+
+        readAsArrayBuffer(webM).then((webMBuf)=> {
+            const body = webMBuf.slice(reader.metadataSize);
+            const seekableBlob = new Blob([refinedMetadataBuf, body], {type: webM.type});
             reader.readAsDataURL(seekableBlob);
             reader.onload = () => {
                 const base64String = reader.result.split(',')[1];
                 dispatch(actionToSendVideoChunkDataToServerFinishProcess(currentClassId,base64String));
             };
             dispatch(actionToRemoveCurrentGroupCallData());
-        });
+        })
+        //
+        //
+        // injectMetadata(blob).then(seekableBlob=> {
+        //     const reader = new FileReader();
+        //     reader.readAsDataURL(seekableBlob);
+        //     reader.onload = () => {
+        //         const base64String = reader.result.split(',')[1];
+        //         dispatch(actionToSendVideoChunkDataToServerFinishProcess(currentClassId,base64String));
+        //     };
+        //     dispatch(actionToRemoveCurrentGroupCallData());
+        // });
     }
 
     const callFunctionToUploadDataChunk =  (chunks)=>{
@@ -218,12 +235,26 @@ function TeacherMainDesktopDashboardComponentFunction(){
                             ////// record current call //////////
                             const chunks = [];
                             const mimeType= 'video/webm;codecs=vp9';
+
+                            let tasks = Promise.resolve();
+                            let webM = new Blob([], {type: "video/webm"});
                             const recorder = new MediaRecorder(stream,{mimeType});
+
+
+                            const decoder = new Decoder();
+                            const reader = new Reader();
                             recorder.ondataavailable = (e) => {
                                 //callFunctionToUploadDataChunk(e.data);
                                 chunks.push(e.data);
+                                const chunk = e.data;
+                                webM = new Blob([webM, chunk], {type: chunk.type});
+                                const task = ()=> readAsArrayBuffer(chunk).then((buf)=>{
+                                    const elms = decoder.decode(buf);
+                                    elms.forEach((elm)=>{ reader.read(elm); });
+                                });
+                                tasks = tasks.then(()=>task());
                             }
-                            recorder.onstop = e => callFunctionToExportRecordedVideo(new Blob(chunks, { type: mimeType }));
+                            recorder.onstop = e => callFunctionToExportRecordedVideo(webM);
                             recorder.start(1000);
                             setMyMediaRecorder(recorder);
                             setMyShareScreenStream(stream);
