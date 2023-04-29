@@ -70,6 +70,7 @@ export default function StudentTodayClassesComponent(){
                 function(stream){
                     setInCallStatus('JOINING');
                     let memberData = cloneDeep(myClasses);
+                    console.log('memberData',memberData);
                     memberData.id = myClasses?.id;
                     //// Member profile name
                     memberData.name = studentAllClassesList?.classData?.name;
