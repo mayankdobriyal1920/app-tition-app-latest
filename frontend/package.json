@@ -29,6 +29,7 @@
     "axios": "^0.27.2",
     "bootstrap": "^5.2.3",
     "bootstrap-select": "^1.13.18",
+    "buffer": "^6.0.3",
     "fabric": "^5.2.4",
     "fetch": "^1.1.0",
     "font-awesome": "^4.7.0",

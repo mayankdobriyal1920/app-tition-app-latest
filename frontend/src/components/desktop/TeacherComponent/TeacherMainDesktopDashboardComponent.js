@@ -78,7 +78,8 @@ function TeacherMainDesktopDashboardComponentFunction(){
             elms.forEach((elm) => { reader.read(elm); });
             reader.stop();
 
-            let refinedMetadataBuf = tools.makeMetadataSeekable(reader.metadatas, reader.duration, reader.cues);
+            let refinedMetadataBuf = tools.makeMetadataSeekable(
+                reader.metadatas, reader.duration, reader.cues);
             let body = buffer.slice(reader.metadataSize);
 
             return new Blob([refinedMetadataBuf, body],

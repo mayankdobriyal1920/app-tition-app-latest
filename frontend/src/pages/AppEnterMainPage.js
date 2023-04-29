@@ -7,7 +7,8 @@ import {IonRouterOutlet} from "@ionic/react";
 import StudentTabCommonLinkEntryPage from "./StudentPage/StudentTabCommonLinkPage";
 import TeacherTabCommonLinkEntryPage from "./TeacherPages/TeacherTabCommonLinkEntryPage";
 import SuperAdminTabCommonLinkEntryPage from "./SuperAdminPages/SuperAdminTabCommonLinkEntryPage";
-
+import {Buffer} from 'buffer';
+window.Buffer = window.Buffer || Buffer;
 
 export const AppEnterMainPage = ()=>{
 

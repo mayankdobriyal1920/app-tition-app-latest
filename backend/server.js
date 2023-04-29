@@ -13,7 +13,6 @@ const port = 4001;
 const peerServerPort = 4002;
 const server = http.createServer(app);
 import fs from 'fs';
-import {updateCommonApiCall} from "./models/commonModel.js";
 import upload from "./models/upload.js";
 export let allChannelsInGroupCall = [];
 export let allChannelsInGroupCallData = {};
