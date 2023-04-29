@@ -5,6 +5,7 @@ import {_generateUniqueId, _getIconBySubjectKey, _getTodayTomorrowDateFormat} fr
 import noClassFound from "../../../theme/images/chose/no_classes_found.png";
 import {StudentDashHeaderComponent} from "../StudentComponent/StudentDashHeaderComponent";
 import moment from "moment";
+import { Decoder, tools, Reader } from 'ts-ebml';
 import {
     addCallSubscriptionEvents,
     addVideoStream,
@@ -56,14 +57,46 @@ function TeacherMainDesktopDashboardComponentFunction(){
     const [inCallStatus,setInCallStatus] = React.useState('PREJOIN');
     const dispatch = useDispatch();
 
+    const readAsArrayBuffer = (blob) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsArrayBuffer(blob);
+            reader.onloadend = () => { resolve(reader.result); };
+            reader.onerror = (ev) => { reject(ev.error); };
+        });
+    }
+
+    const injectMetadata = blob => {
+        const decoder = new Decoder();
+        const reader = new Reader();
+        reader.logging = false;
+        reader.drop_default_duration = false;
+
+        return readAsArrayBuffer(blob)
+            .then(buffer => {
+                const elms = decoder.decode(buffer);
+                elms.forEach((elm) => { reader.read(elm); });
+                reader.stop();
+
+                const refinedMetadataBuf =
+                    tools.makeMetadataSeekable(reader.metadatas, reader.duration, reader.cues);
+                const body = buffer.slice(reader.metadataSize);
+
+                return new Blob([ refinedMetadataBuf, body ], { type: blob.type });
+            });
+    }
+
+
     const callFunctionToExportRecordedVideo = (blob)=>{
-        const reader = new FileReader();
-        reader.readAsDataURL(blob);
-        reader.onload = () => {
-            const base64String = reader.result.split(',')[1];
-            dispatch(actionToSendVideoChunkDataToServerFinishProcess(currentClassId,base64String));
-        };
-        dispatch(actionToRemoveCurrentGroupCallData());
+        injectMetadata(blob).then(seekableBlob=> {
+            const reader = new FileReader();
+            reader.readAsDataURL(seekableBlob);
+            reader.onload = () => {
+                const base64String = reader.result.split(',')[1];
+                dispatch(actionToSendVideoChunkDataToServerFinishProcess(currentClassId,base64String));
+            };
+            dispatch(actionToRemoveCurrentGroupCallData());
+        });
     }
 
     const callFunctionToUploadDataChunk =  (chunks)=>{
