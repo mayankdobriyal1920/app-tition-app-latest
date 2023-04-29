@@ -184,7 +184,7 @@ app.post('/api-call-tutor/recording-video-finish', (req, res) => {
     console.log('base64String',base64String);
     const binaryData = Buffer.from(base64String, 'base64');
 
-    const name = `RecordingVideo_new_123_${new Date().getTime()}.webm`;
+    const name = `RecordingVideo_new_12322_${new Date().getTime()}.webm`;
     fs.writeFile(`${uploadPath}/${name}`, binaryData, (err) => {
         if (err) throw err;
         console.log('Video file created successfully');
@@ -200,13 +200,6 @@ app.post('/api-call-tutor/recording-video-finish', (req, res) => {
     //     delete chunks[req.body.groupId];
     // }else
     //   res.send({save: true, name: ''})
-
-
-
-
-
-
-
 });
 app.get('/api-call-tutor/getFineByName', function(req, res){
     const file = `${uploadPath}/${req.query.name}`;

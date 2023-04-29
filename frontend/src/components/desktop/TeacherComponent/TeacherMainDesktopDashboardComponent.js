@@ -187,14 +187,14 @@ function TeacherMainDesktopDashboardComponentFunction(){
                             let options = {
                                 audioBitsPerSecond: 128000, // 128 kbps
                                 videoBitsPerSecond: 5000000, // Double the default quality from 2.5Mbps to 5Mbps
-                                mimeType: 'video/webm'
+                                mimeType: 'video/webm;codecs=avc1'
                             };
                             const recorder = new MediaRecorder(stream,options);
                             recorder.ondataavailable = (e) => {
                                 //callFunctionToUploadDataChunk(e.data);
                                 chunks.push(e.data);
                             }
-                            recorder.onstop = e => callFunctionToExportRecordedVideo(new Blob(chunks, { type: 'video/webm' }));
+                            recorder.onstop = e => callFunctionToExportRecordedVideo(new Blob(chunks, { type: 'video/webm;codecs=avc1' }));
                             recorder.start(5000);
                             setMyMediaRecorder(recorder);
                             setMyShareScreenStream(stream);
