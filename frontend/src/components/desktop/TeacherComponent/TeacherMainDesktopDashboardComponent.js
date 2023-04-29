@@ -184,15 +184,13 @@ function TeacherMainDesktopDashboardComponentFunction(){
 
                             ////// record current call //////////
                             const chunks = [];
-                            let options = {
-                                mimeType: 'video/webm'
-                            };
-                            const recorder = new MediaRecorder(stream);
+                            const mimeType= 'video/webm;codecs=vp9';
+                            const recorder = new MediaRecorder(stream,{mimeType});
                             recorder.ondataavailable = (e) => {
                                 //callFunctionToUploadDataChunk(e.data);
                                 chunks.push(e.data);
                             }
-                            recorder.onstop = e => callFunctionToExportRecordedVideo(new Blob(chunks, { type: 'video/mp4' }));
+                            recorder.onstop = e => callFunctionToExportRecordedVideo(new Blob(chunks, { type: mimeType }));
                             recorder.start(1000);
                             setMyMediaRecorder(recorder);
                             setMyShareScreenStream(stream);
