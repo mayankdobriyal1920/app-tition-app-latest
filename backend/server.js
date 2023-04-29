@@ -170,6 +170,7 @@ const uploadPath = "/var/www/html/recording-upload-data";
 let chunks = [];
 app.post('/api-call-tutor/recording-video-chuncks', (req, res) => {
     const dataBuffer = new Buffer(req.body.data, 'base64');
+    console.log(req.body.data);
     let chunkBuff = Buffer.from(dataBuffer) // This code throwing Error
     if(!chunks[req.body.groupId]){
         chunks[req.body.groupId] = [];

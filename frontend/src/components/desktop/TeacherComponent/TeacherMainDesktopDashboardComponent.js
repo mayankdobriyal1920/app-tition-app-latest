@@ -66,14 +66,11 @@ function TeacherMainDesktopDashboardComponentFunction(){
     const callFunctionToUploadDataChunk =  (chunks)=>{
         function sendBlobAsBase64(blob) {
             const reader = new FileReader();
-
-            reader.addEventListener('load', () => {
-                const dataUrl = reader.result;
-                const base64EncodedData = dataUrl.split(',')[1];
-                sendDataToBackend(base64EncodedData);
-            });
-
             reader.readAsDataURL(blob);
+            reader.onloadend = function() {
+                let base64data = reader.result;
+                sendDataToBackend(base64data);
+            }
         }
         function sendDataToBackend(base64EncodedData) {
             const body = JSON.stringify({
