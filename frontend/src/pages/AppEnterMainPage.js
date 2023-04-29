@@ -3,7 +3,6 @@ import {isStudentLogin, isSuperAdminLogin, isTeacherMasterLogin} from "../middle
 import {IonReactRouter} from "@ionic/react-router";
 import {Redirect, Route} from "react-router-dom";
 import {IonRouterOutlet} from "@ionic/react";
-
 import StudentTabCommonLinkEntryPage from "./StudentPage/StudentTabCommonLinkPage";
 import TeacherTabCommonLinkEntryPage from "./TeacherPages/TeacherTabCommonLinkEntryPage";
 import SuperAdminTabCommonLinkEntryPage from "./SuperAdminPages/SuperAdminTabCommonLinkEntryPage";

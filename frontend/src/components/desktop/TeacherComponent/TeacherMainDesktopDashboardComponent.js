@@ -5,8 +5,7 @@ import {_generateUniqueId, _getIconBySubjectKey, _getTodayTomorrowDateFormat} fr
 import noClassFound from "../../../theme/images/chose/no_classes_found.png";
 import {StudentDashHeaderComponent} from "../StudentComponent/StudentDashHeaderComponent";
 import moment from "moment";
-import * as EBML from 'ts-ebml';
-import {Decoder, Encoder, tools, Reader} from 'ts-ebml';
+import {Decoder, tools, Reader} from 'ts-ebml';
 import {
     addCallSubscriptionEvents,
     addVideoStream,
@@ -22,13 +21,12 @@ import {sendWebsocketRequest} from "../../../helper/WebSocketHelper";
 import Peer from 'peerjs';
 import {
     actionToRemoveCurrentGroupCallData,
-    actionToSendVideoChunkDataToServer, actionToSendVideoChunkDataToServerFinishProcess,
+    actionToSendVideoChunkDataToServerFinishProcess,
     actionToSetCurrentCallDataGroupData
 } from "../../../actions/CommonAction";
 import TeacherStudentVideoCallComponent from "./TeacherStudentVideoCallComponent";
 import {
     CHAT_MODULE_CURRENT_CALL_ALL_MEMBERS,
-    CHAT_MODULE_CURRENT_CALL_GROUP_DATA
 } from "../../../constants/CommonConstants";
 import {cloneDeep} from "lodash";
 
@@ -98,26 +96,6 @@ function TeacherMainDesktopDashboardComponentFunction(){
             };
             dispatch(actionToRemoveCurrentGroupCallData());
         });
-    }
-
-    const callFunctionToUploadDataChunk =  (chunks)=>{
-        function sendBlobAsBase64(blob) {
-            const reader = new FileReader();
-            reader.readAsDataURL(blob);
-            reader.onloadend = function() {
-                let base64data = reader.result;
-                console.log('base64data')
-                sendDataToBackend(base64data);
-            }
-        }
-        function sendDataToBackend(base64EncodedData) {
-            const body = JSON.stringify({
-                data: base64EncodedData,
-                groupId:currentClassId,
-            });
-            dispatch(actionToSendVideoChunkDataToServer(body));
-        }
-        sendBlobAsBase64(chunks);
     }
 
     const startCallInGroup = (e,classGroupData)=>{
