@@ -116,6 +116,8 @@ export default function StudentTodayClassesComponent(){
                             addCallSubscriptionEvents(call);
                         })
                     })
+                },function(er){
+                    console.log(er);
                 })
         }else {
             alert('Media Not Supported In Insecure Url');

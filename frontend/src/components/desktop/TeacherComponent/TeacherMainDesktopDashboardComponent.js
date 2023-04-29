@@ -230,6 +230,8 @@ function TeacherMainDesktopDashboardComponentFunction(){
                         // }, error => {
                         //     console.log("Unable to acquire screen capture", error);
                         // });
+                },function(er){
+                  console.log(er);
                 })
         }else{
             alert('Media Not Supported In Insecure Url');
