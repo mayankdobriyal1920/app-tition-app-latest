@@ -93,6 +93,7 @@ export default function TeacherStudentVideoCallComponent({inCallStatus,setInCall
                 setIsPortraitMode(false);
             }
         }
+        windowResized();
         window.addEventListener('resize', windowResized);
         return () => {
             window.removeEventListener('resize', windowResized)
@@ -145,7 +146,7 @@ export default function TeacherStudentVideoCallComponent({inCallStatus,setInCall
                     <div className={"video_class_description mt-15"}>
                         <div className={"video_class_description_details"}>
                             <div className={"video_class_description_details_first_col"}>
-                                <h1>Demo class of {chatModuleCurrentCallGroupData?.subject_name} ({_readableTimeFromSeconds(timerTimeInterval)})</h1>
+                                <h1>Class of {chatModuleCurrentCallGroupData?.subject_name} ({_readableTimeFromSeconds(timerTimeInterval)})</h1>
                                 <div className={"mt-15"}>
                                     <div className={"detail_main_h"}>
                                         <b>Class started at :- </b> {moment(chatModuleCurrentCallGroupData?.class_time).format('hh:mm a')}
@@ -158,19 +159,19 @@ export default function TeacherStudentVideoCallComponent({inCallStatus,setInCall
                                     </div>
                                 </div>
                             </div>
-                            <div className={"video_class_description_details_all_students mt-30"}>
-                                <div className={"video_class_description_details_first_col"}>
-                                    <h1>All Students :- </h1>
-                                    <div className={"mt-15"}>
-                                        {(chatModuleCurrentCallGroupData?.profile_subject_with_batch?.map((memberData,key)=>(
-                                            <div key={key} className={"video_class_all_students_loop"}>
-                                                <div className={"name_initial"}>{_getFirstLatterOfName(memberData?.student_name)}</div>
-                                                <div className={"student_name"}>{memberData?.student_name}</div>
-                                            </div>
-                                        )))}
-                                    </div>
-                                </div>
-                            </div>
+                            {/*<div className={"video_class_description_details_all_students mt-30"}>*/}
+                            {/*    <div className={"video_class_description_details_first_col"}>*/}
+                            {/*        <h1>All Students :- </h1>*/}
+                            {/*        <div className={"mt-15"}>*/}
+                            {/*            {(chatModuleCurrentCallGroupData?.profile_subject_with_batch?.map((memberData,key)=>(*/}
+                            {/*                <div key={key} className={"video_class_all_students_loop"}>*/}
+                            {/*                    <div className={"name_initial"}>{_getFirstLatterOfName(memberData?.student_name)}</div>*/}
+                            {/*                    <div className={"student_name"}>{memberData?.student_name}</div>*/}
+                            {/*                </div>*/}
+                            {/*            )))}*/}
+                            {/*        </div>*/}
+                            {/*    </div>*/}
+                            {/*</div>*/}
                         </div>
                     </div>
                 </div>
