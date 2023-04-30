@@ -51,6 +51,10 @@ export const actionToAlreadyCreatedClassAccordingToTheConditionQuery = (weekStar
                                                     ) order by class_timetable_with_class_batch_assigned.start_from_date_time
                                             ) jsdata
                                  FROM class_timetable_with_class_batch_assigned
+                                 WHERE WEEK(class_timetable_with_class_batch_assigned.start_from_date_time) = (SELECT WEEK(start_from_date_time)
+                                                                                                               FROM class_timetable_with_class_batch_assigned as ctwcba
+                                                                                                               where ctwcba.id = class_timetable_with_class_batch_assigned.id
+                                                                                                               ORDER BY ctwcba.start_from_date_time DESC LIMIT 1)
                                  GROUP BY class_assigned_teacher_batch_id) class_timetable_with_class_batch_assigned
                                 on class_assigned_teacher_batch.id = class_timetable_with_class_batch_assigned.class_assigned_teacher_batch_id
 
@@ -152,6 +156,7 @@ WHERE profile_subject_with_batch.has_taken_demo = 0`;
 export const actionToGetAllRecordedClassesDetailsQuery = ()=>{
     return `SELECT
                 class_call_recording.name AS recorded_video_title,
+                class_call_recording.name AS recorded_video_title,
                 class_call_recording.created_at AS class_recorded_at,
                 class_call_recording.id AS class_call_recording_id,
                 class_assigned_teacher_batch.batch AS classes_assigned_to_teacher_batch,
@@ -163,14 +168,21 @@ export const actionToGetAllRecordedClassesDetailsQuery = ()=>{
                 app_user.email AS teacher_email
             FROM
                 class_call_recording
+
+
                     JOIN
-                class_assigned_teacher_batch ON class_call_recording.class_assigned_teacher_batch_id = class_assigned_teacher_batch.id
+                class_timetable_with_class_batch_assigned ON class_call_recording.class_timetable_with_class_batch_assigned_id = class_timetable_with_class_batch_assigned.id
+
+                    JOIN
+                class_assigned_teacher_batch ON class_timetable_with_class_batch_assigned.class_assigned_teacher_batch_id = class_assigned_teacher_batch.id
+
+
                     JOIN
                 school_board ON school_board.id = class_assigned_teacher_batch.school_board
                     JOIN
                 subject ON subject.id = class_assigned_teacher_batch.subject_id
                     JOIN
-                app_user ON app_user.id = class_assigned_teacher_batch.teacher_id  order by class_call_recording.created_at desc `;
+                app_user ON app_user.id = class_assigned_teacher_batch.teacher_id  order by class_call_recording.created_at desc`;
 }
 
 export const actionToGetLatestDemoClassesDetailsQuery = ()=>{

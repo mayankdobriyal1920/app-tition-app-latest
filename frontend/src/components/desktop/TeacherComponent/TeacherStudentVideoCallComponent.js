@@ -9,6 +9,7 @@ import jsPDF from "jspdf";
 import {
     actionToEndCurrentCurrentCall,
     actionToMuteUnmuteUserCall,
+    actionToStoreAssignmentData,
     actionToStoreAssignmentDataForTeacher,
 } from "../../../actions/CommonAction";
 import $ from 'jquery';
@@ -48,6 +49,8 @@ export default function TeacherStudentVideoCallComponent({inCallStatus,setInCall
 
         if($('#student_all_class_group_data_videos_section')?.length)
             $('#student_all_class_group_data_videos_section').html('');
+
+        setInCallStatus('PREJOIN');
 
         if(myMediaRecorder)
             myMediaRecorder?.stop();

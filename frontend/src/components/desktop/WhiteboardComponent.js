@@ -479,6 +479,7 @@ export default function WhiteboardComponent({groupId,canvasReservedJson}){
             //Changing cursor of canvas brush
             changeObjectSelection(true, window.fabricCanvas);
             drawObjectInCanvas('select', window.fabricCanvas);
+            setActiveSelectedTool('');
             window.fabricCanvas.setActiveObject(window.fabricCanvas._objects[window.fabricCanvas._objects.length - 1]);
             window.fabricCanvas.renderAll();
             eventBus.dispatch('send-to-websocket-fabric', {

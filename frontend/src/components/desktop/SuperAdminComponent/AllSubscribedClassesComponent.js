@@ -30,10 +30,6 @@ export default function AllSubscribedClassesComponent(){
             name: "Subscription End Date",
             selector: (row) => moment(row?.subscription_end_date).format('D MMM YYYY, hh:mm a'),
             sortable: true,
-        },
-        {
-            name: "Action",
-            cell: (row) => <button class='btn btn-primary' onClick={() => alert(row?.id)}> Edit</button>,
         }
     ]
     useEffectOnce(() =>{
@@ -48,7 +44,7 @@ export default function AllSubscribedClassesComponent(){
     }, [search,studentListArray]);
 
     return (
-        <div className={"container-fluid pt-4 px-4"}>
+        <div className={"container-fluid pt-4 px-4 datatable_container_main_div_section"}>
             <div className={"bg-light rounded h-100 p-4"}>
                 {(studentListArray?.loading) ?
                     <div className={"d-flex justify-content-center h-100"}>

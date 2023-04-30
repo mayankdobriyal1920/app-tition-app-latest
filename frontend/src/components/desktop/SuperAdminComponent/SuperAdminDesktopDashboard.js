@@ -1,12 +1,5 @@
 import React from 'react';
-import {useDispatch, useSelector} from "react-redux";
-import {useEffectOnce} from "../../../helper/UseEffectOnce";
-import {
-    actionToGetAllStudentSubscriptionDataList,
-    actionToGetLatestDemoClassesDetails,
-    actionToGetLatestStudentProfileDataList, actionToGetLatestSubscriptionsDataList,
-    actionToGetLatestTeachersDataList, actionToGetTodayProfileDataList
-} from "../../../actions/CommonAction";
+import {useSelector} from "react-redux";
 import moment from "moment/moment";
 import {useHistory} from "react-router";
 
@@ -89,7 +82,7 @@ export default function SuperAdminDesktopDashboard() {
                             </thead>
                             <tbody>
                             {(subscriptionListArray?.subscriptionData?.map((subscriptionData,index)=>(
-                                <tr>
+                                <tr key={index}>
                                     <td>{subscriptionData?.name}</td>
                                     <td>{subscriptionData?.email}</td>
                                     <td>{subscriptionData?.student_class}th</td>
@@ -120,7 +113,7 @@ export default function SuperAdminDesktopDashboard() {
                             </thead>
                             <tbody>
                             {(subscriptionListArray?.subscriptionData?.map((subscriptionData,index)=>(
-                            <tr>
+                            <tr key={index}>
                                 <td>{subscriptionData?.name}</td>
                                 <td>{subscriptionData?.email}</td>
                                 <td>{subscriptionData?.student_class}th</td>
@@ -153,7 +146,7 @@ export default function SuperAdminDesktopDashboard() {
                             </thead>
                             <tbody>
                             {(demoClassListArray?.classesData?.map((classData,index)=>(
-                                <tr>
+                                <tr key={index}>
                                     <td>{classData?.student_name}</td>
                                     <td>{classData?.student_email}</td>
                                     <td>{classData?.student_class}th</td>
@@ -177,7 +170,7 @@ export default function SuperAdminDesktopDashboard() {
                                 <a onClick={()=>openKinkTab("/dashboard/teacher-datatable")}>Show All</a>
                             </div>
                             {(teacherListArray?.teacherData?.map((teacherData,index)=>(
-                                <div className="d-flex align-items-center border-bottom py-3">
+                                <div key={index} className="d-flex align-items-center border-bottom py-3">
                                     {/*<div className={"name_initial rounded-circle flex-shrink-0"}>{_getFirstLatterOfName(teacherData?.name)}</div>*/}
                                     <div className="w-100 ms-3">
                                         <div className="d-flex w-100 justify-content-between">
@@ -197,7 +190,7 @@ export default function SuperAdminDesktopDashboard() {
                                 <a onClick={()=>openKinkTab("/dashboard/all-demo-classes")}>Show All</a>
                             </div>
                             {(studentListArray?.studentData?.map((studentData,index)=>(
-                                <div className="d-flex align-items-center border-bottom py-3">
+                                <div skey={index} className="d-flex align-items-center border-bottom py-3">
 
                                     {/*<div className={"name_initial name_initial rounded-circle flex-shrink-0"}>{_getFirstLatterOfName(studentData?.name)}*/}
                                     {/*</div>*/}

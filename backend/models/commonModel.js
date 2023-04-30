@@ -140,7 +140,7 @@ export const actionToAlreadyCreatedClassAccordingToTheConditionApiCall = (body) 
         const query = actionToAlreadyCreatedClassAccordingToTheConditionQuery(weekStartDate,weekEndDate,subject_id,student_class,school_board,batch);
         pool.query(query, (error, results) => {
             if (error) {
-                reject(error)
+                reject(query)
             }
             resolve(results);
         })
@@ -504,25 +504,15 @@ let userOtpData = {};
 export const actionToSendOtpInMobileNumberApiCall = (body) => {
     const {mobileNumber} = body;
     return new Promise(function(resolve, reject) {
-        //let userOtp = Math.floor(100000 + Math.random() * 900000);
-
-        let userOtp = 123456;
+        let userOtp = Math.floor(100000 + Math.random() * 900000);
+        //let userOtp = 123456;
         userOtpData[mobileNumber] = userOtp;
 
-        let payload = {
-            body: `Verify 121 tuition account use this otp ${userOtp}`,
-            from: '447520662112',
-            to: ['91'+mobileNumber]
-        }
+        let NUMBER = '+91'+mobileNumber;
         //https://us.sms.api.sinch.com/xms/v1
         request({
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization':`Bearer ${authToken}`
-            },
-            uri: `https://sms.api.sinch.com/xms/v1/${accountSid}/batches`,
-            body: JSON.stringify(payload),
-            method: 'POST'
+            uri: `https://2factor.in/API/V1/ed771608-e72a-11ed-addf-0200cd936042/SMS/${NUMBER}/${userOtp}/OTP1`,
+            method: 'GET'
         }, function (err, res, body) {
             console.log(res);
         });

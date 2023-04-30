@@ -854,9 +854,12 @@ div#teacher_video_class_container {
 }
 .datatable_container_main_div_section {
     margin-top: 40px;
-    width: calc(100vw - 325px)!important;
+    width: 80%;
     margin-right: 0px;
 }
+.assign_create_section button {
+    width: 100%;
+}
 .assign_class_main_popup_outer_container {
     position: fixed;
     background: #ffffffeb;
@@ -866,32 +869,18 @@ div#teacher_video_class_container {
     height: 100vh;
     display: flex;
 }
-.assign_class_main_popup_outer_container {
-    position: fixed;
-    background: #ffffffeb;
-    left: 0px;
-    top: 0px;
-    width: 100%;
-    height: 100vh;
-    display: flex;
+.assign_class_main_popup_outer_container.video_player_main_section {
+    z-index: 9999999!important;
 }
-
-.assign_class_main_popup_outer_container .assign_class_main_popup_inner_container {
-    margin: auto;
-    border-radius: 4px;
-    background: rgb(255, 255, 255);
-    box-shadow: rgb(0 0 0 / 10%) 0px 1px 3px 0px;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    position: relative;
-    width: 398px;
-    min-height: 335px;
+.assign_class_main_popup_outer_container.video_player_main_section .assign_class_main_popup_inner_container {
+    width: 72%!important;
 }
-
 .assign_class_main_popup_outer_container .assign_class_main_popup_inner_container .close_popup_button {
     position: absolute;
     top: 0px;
     right: 0px;
     width: 23px;
+    z-index: 99999999!important;
     height: 23px;
     text-align: center;
     background: rgb(255, 255, 255);
@@ -1352,11 +1341,14 @@ div#main_user_video_call_video_section video.my_video_peer_connection {
 .center_white_board_video_with_details .center_white_board_video_main_container {
     background: #fff;
     overflow: hidden;
-    height: calc(100vh - 120px);
+    height: calc(100vh - 160px);
     border: 2px solid #4c4c4c;
 }
 .modal_screenshot_image_canvas{
     height: calc(100vh - 300px)!important;
+}
+.assign_class_main_popup_inner_container button {
+    width: 100%;
 }
 .video_class_all_students_loop .student_name {
     margin-top: 4px;
