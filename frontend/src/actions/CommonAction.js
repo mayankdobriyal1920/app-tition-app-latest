@@ -67,7 +67,9 @@ import {
     STUDENT_ALL_TODAY_CLASS_LIST_REQUEST,
     STUDENT_ALL_DEMO_CLASS_LIST_SUCCESS,
     EDITOR_ACTIVE_EDITOR_JSON,
-    TEACHER_CLASS_ATTEND_WITH_ASSIGNMENT_DATA_REQUEST, STUDENT_ALL_TIME_CLASS_LIST_REQUEST
+    TEACHER_CLASS_ATTEND_WITH_ASSIGNMENT_DATA_REQUEST,
+    STUDENT_ALL_TIME_CLASS_LIST_REQUEST,
+    ZOOM_IN_ZOOM_OUT_TEACHER_VIDEO
 } from "../constants/CommonConstants";
 
 import Axios from "axios";
@@ -111,6 +113,18 @@ export const callDeleteDataFunction = (payload) => async () => {
 
 export const handleWebSocketEventCall = (data) => async (dispatch,getState) => {
     handleWebSocketEvent(dispatch,getState(),data);
+}
+export const actionToSetTeacherZoomInOut = (groupId) => async (dispatch) => {
+    dispatch(actionToSetTeacherZoomInOutLocally());
+    sendWebsocketRequest(JSON.stringify({
+        clientId: localStorage.getItem('clientId'),
+        type: 'actionToSetTeacherZoomInOutLocally',
+        groupId:groupId
+    }));
+}
+export const actionToSetTeacherZoomInOutLocally = () => async (dispatch,getState) => {
+    const zoomInZoomOutTeacherVideo = getState().zoomInZoomOutTeacherVideo;
+    dispatch({type: ZOOM_IN_ZOOM_OUT_TEACHER_VIDEO, payload:!zoomInZoomOutTeacherVideo});
 }
 export const actionToSetWindowSizeCount = (count) => async (dispatch) => {
     dispatch({type: WINDOW_RESIZE_COUNT, payload:count});

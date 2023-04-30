@@ -8,19 +8,21 @@ import {myStream, myShareScreenStream, myPeer, myMediaRecorder} from "../../../h
 import jsPDF from "jspdf";
 import {
     actionToEndCurrentCurrentCall,
-    actionToMuteUnmuteUserCall,
+    actionToMuteUnmuteUserCall, actionToSetTeacherZoomInOut,
     actionToStoreAssignmentData,
     actionToStoreAssignmentDataForTeacher,
 } from "../../../actions/CommonAction";
 import $ from 'jquery';
 import {useEffectOnce} from "../../../helper/UseEffectOnce";
 import axios from "axios";
+import {isTeacherMasterLogin} from "../../../middlewear/auth";
 
 let loadOnce = false;
 let canvasReservedJson = [];
 let allImagesUrlArray = [];
 export default function TeacherStudentVideoCallComponent({inCallStatus,setInCallStatus,isTeacher}){
     const chatModuleCurrentCallGroupData = useSelector((state) => state.chatModuleCurrentCallGroupData);
+    const zoomInZoomOutTeacherVideo = useSelector((state) => state.zoomInZoomOutTeacherVideo);
     const chatModuleCurrentCallGroupMembers = useSelector((state) => state.chatModuleCurrentCallGroupMembers);
     const studentAllClassesList = useSelector((state) => state.studentAllClassesList);
     const userInfo = useSelector((state) => state.userSignin.userInfo);
@@ -123,6 +125,11 @@ export default function TeacherStudentVideoCallComponent({inCallStatus,setInCall
 
     };
 
+    const zoomInZoomOutVideoPanel = async  ()=>{
+        if(isTeacherMasterLogin()) {
+            dispatch(actionToSetTeacherZoomInOut(chatModuleCurrentCallGroupData?.id));
+        }
+    }
     const endCallFunctionCall = async  (groupId,classId,startDateTime)=>{
         setInCallStatus('JOINING');
         await makePdfOfCanvases();
@@ -183,12 +190,14 @@ export default function TeacherStudentVideoCallComponent({inCallStatus,setInCall
                         {(chatModuleCurrentCallGroupMembers?.map((groupMembers,key)=>(
                             (groupMembers?.isTeacher) ?
                                 <video key={key} loop={true} playsInline={true}
+                                       onClick={()=>zoomInZoomOutVideoPanel()}
+                                       style={{}}
                                        id={groupMembers?.id}
                                        data-user-id={userInfo?.id}
                                        data-teacher-id={chatModuleCurrentCallGroupData?.teacher_id}
                                        muted={(userInfo?.id === chatModuleCurrentCallGroupData?.teacher_id) ? true : groupMembers?.mute}
                                        data-muted={(userInfo?.id === chatModuleCurrentCallGroupData?.teacher_id) ? true : groupMembers?.mute}
-                                       autoPlay={true} className={'my_video_peer_connection'}></video>
+                                       autoPlay={true} className={'my_video_peer_connection '+(zoomInZoomOutTeacherVideo ? 'zoom' : '')}></video>
                                 :''
                         )))}
                         {(isTeacher) ?

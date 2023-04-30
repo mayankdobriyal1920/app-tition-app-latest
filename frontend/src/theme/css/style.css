@@ -875,6 +875,10 @@ div#teacher_video_class_container {
 .assign_class_main_popup_outer_container.video_player_main_section .assign_class_main_popup_inner_container {
     width: 72%!important;
 }
+.main_user_video_call_video_section .zoom{
+    position: absolute!important;
+    z-index: 9999999999!important;
+}
 .assign_class_main_popup_outer_container .assign_class_main_popup_inner_container .close_popup_button {
     position: absolute;
     top: 0px;
