@@ -153,9 +153,13 @@ export default function StudentTodayClassesMobileComponent() {
         <>
             {(studentAllClassesList?.classData?.taken_single_demo && !studentAllClassesList?.classData?.subscription_end_date) ?
                 <div className={"main_container_app_section"}>
-                    <StudentPayForSubscriptionMobileComponent/>
+                    <StudentPayForSubscriptionMobileComponent isEnd={false}}/>
                 </div>
-                :
+                :(studentAllClassesList?.classData?.taken_single_demo && moment(new Date(studentAllClassesList?.classData?.subscription_end_date)).format('YYYY-MM-DD') < moment().format('YYYY-MM-DD')) ?
+                    <div className={"main_container_app_section"}>
+                        <StudentPayForSubscriptionMobileComponent isEnd={false}/>
+                    </div>
+                    :
                 <>
                     {(inCallStatus === 'PREJOIN') ?
                         <div className={"main_container_app_section"}>
@@ -180,7 +184,7 @@ export default function StudentTodayClassesMobileComponent() {
                                                                     </div>
                                                                     <div className={"name_section"}>
                                                                         <div className={"name_section1"}>{myClasses?.subject_name}</div>
-                                                                        <div className={"name_section2"}>{myClasses?.school_board}</div>
+                                                                        <div className={"name_section2"}>{myClasses?.class_batch_name}</div>
                                                                     </div>
                                                                 </div>
                                                                 <div className={"col-5"}>
@@ -260,7 +264,7 @@ export default function StudentTodayClassesMobileComponent() {
                                                                     </div>
                                                                     <div className={"name_section"}>
                                                                         <div className={"name_section1"}>{myClasses?.subject_name}</div>
-                                                                        <div className={"name_section2"}>{myClasses?.school_board}</div>
+                                                                        <div className={"name_section2"}>{myClasses?.class_batch_name}</div>
                                                                     </div>
                                                                 </div>
                                                                 <div className={"col-5"}>

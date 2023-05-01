@@ -22,6 +22,26 @@ export default function AllDemoClassDataTableComponent(){
             student_class:data?.student_class,
             batch:data?.profile_subject_with_batch_batch_type,
             has_taken_demo:0,
+            isEdit:0,
+        }
+
+        dispatch(actionToSearchTeacherAccordingToTheCondition(payload));
+        dispatch(actionToAlreadyCreatedClassAccordingToTheCondition(payload));
+        dispatch(actionToOpenCloseClassAssignPopup(true,payload));
+    }
+    const openClassEditAssignPopUp=(data)=>{
+        let payload = {
+            profile_subject_with_batch_id:data?.profile_subject_with_batch_id,
+            subject_id:data?.subject_id,
+            school_board:data?.school_board_id,
+            class_assigned_teacher_batch_id:data?.class_assigned_teacher_batch_id,
+            student_class:data?.student_class,
+            class_batch_name:data?.class_batch_name,
+            batch:data?.profile_subject_with_batch_batch_type,
+            teacher_id:data?.teacher_id,
+            class_timetable_with_class_batch_assigned:data?.class_timetable_with_class_batch_assigned,
+            has_taken_demo:1,
+            isEdit:1,
         }
 
         dispatch(actionToSearchTeacherAccordingToTheCondition(payload));
@@ -57,16 +77,16 @@ export default function AllDemoClassDataTableComponent(){
         {
             name:"Action",
             cell:(row) => (row?.class_assigned_teacher_batch_id) ?
-                <div className={"btn btn-success"}>Class assigned</div>
+                <button className='btn btn-danger' onClick={() => openClassEditAssignPopUp(row)}>Edit</button>
                  :
-                <button className='btn btn-primary' onClick={() => openClassAssignPopUp(row)}>Assign Class</button>
+                <button className='btn btn-primary' onClick={() => openClassAssignPopUp(row)}>Assign</button>
 
         }
     ]
     useEffect(() =>{
         if(allDemoClasses?.classesData) {
             const result = allDemoClasses?.classesData?.filter((classes) => {
-                return classes?.subject_name?.toLowerCase().match(search.toLowerCase());
+                return classes?.subject_name?.toLowerCase().match(search.toLowerCase()) || classes?.student_name?.toLowerCase().match(search.toLowerCase());
             });
             setFilterClasses(result);
         }

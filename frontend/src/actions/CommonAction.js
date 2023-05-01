@@ -143,6 +143,19 @@ export const actionToOpenCloseEditTeacherPopup = (action,data) => async (dispatc
     let payload = {isOpen:action,dropdownData:data};
     dispatch({ type: OPEN_CLOSE_TEACHER_EDIT_POPUP, payload: cloneDeep(payload)});
 };
+export const actionToUpdateClassAssignedBatchData = (selectedClassAssignId,profile_subject_with_batch_id,selectedTeacherId,classBatchName) => async (dispatch) => {
+    let setData = `class_batch_name = ?,teacher_id = ?`;
+    let whereCondition = `id = '${selectedClassAssignId}'`;
+    let dataToSend = {column: setData, value: [classBatchName,selectedTeacherId], whereCondition: whereCondition, tableName: 'class_assigned_teacher_batch'};
+    await dispatch(commonUpdateFunction(dataToSend));
+    dispatch(actionToGetAllDemoClassesDetails(true));
+    dispatch(actionToGetAllClassesDataList(true));
+    sendWebsocketRequest(JSON.stringify({
+        clientId: localStorage.getItem('clientId'),
+        type: 'refreshClassListDataForUser',
+        profile_subject_with_batch_id:profile_subject_with_batch_id
+    }));
+}
 export const actionToCreateAndAssignClassData = (payload) => async (dispatch) => {
     let classAssignId = _generateUniqueId();
     if(payload?.class_assign_id){

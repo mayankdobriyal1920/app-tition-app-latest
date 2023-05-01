@@ -132,7 +132,8 @@ export default function TeacherStudentVideoCallComponent({inCallStatus,setInCall
     }
     const endCallFunctionCall = async  (groupId,classId,startDateTime)=>{
         setInCallStatus('JOINING');
-        await makePdfOfCanvases();
+        if(!chatModuleCurrentCallGroupData?.is_demo_class)
+           await makePdfOfCanvases();
         endMyStreamTrackOnEndCall();
         setTimeout(function (){
             setInCallStatus('PREJOIN');

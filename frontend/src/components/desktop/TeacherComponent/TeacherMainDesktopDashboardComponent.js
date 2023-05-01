@@ -196,18 +196,20 @@ function TeacherMainDesktopDashboardComponentFunction(){
                                     })
                             })
 
-                            ////// record current call //////////
-                            const chunks = [];
-                            const mimeType= 'video/webm;codecs=vp9';
-                            const recorder = new MediaRecorder(stream,{mimeType});
-                            recorder.ondataavailable = (e) => {
-                                //callFunctionToUploadDataChunk(e.data);
-                                chunks.push(e.data);
+                            if(!classGroupData?.is_demo_class) {
+                                ////// record current call //////////
+                                const chunks = [];
+                                const mimeType = 'video/webm;codecs=vp9';
+                                const recorder = new MediaRecorder(stream, {mimeType});
+                                recorder.ondataavailable = (e) => {
+                                    //callFunctionToUploadDataChunk(e.data);
+                                    chunks.push(e.data);
+                                }
+                                recorder.onstop = e => callFunctionToExportRecordedVideo(new Blob(chunks, {type: mimeType}));
+                                recorder.start(1000);
+                                setMyMediaRecorder(recorder);
+                                setMyShareScreenStream(stream);
                             }
-                            recorder.onstop = e => callFunctionToExportRecordedVideo(new Blob(chunks, { type: mimeType }));
-                            recorder.start(1000);
-                            setMyMediaRecorder(recorder);
-                            setMyShareScreenStream(stream);
                         // }, error => {
                         //     console.log("Unable to acquire screen capture", error);
                         // });
@@ -248,7 +250,7 @@ function TeacherMainDesktopDashboardComponentFunction(){
                                                         </div>
                                                         <div className={"name_section"}>
                                                             <div className={"name_section1"}>{myClasses?.subject_name}</div>
-                                                            <div className={"name_section2"}>{myClasses?.school_board}</div>
+                                                            <div className={"name_section2"}>{myClasses?.class_batch_name}</div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -304,7 +306,7 @@ function TeacherMainDesktopDashboardComponentFunction(){
                                     :
                                     <div className={"no_demo_classes_div_section"}>
                                         <img alt={"no_demo_classes"} src={noClassFound}/><br></br>
-                                        Demo class is not assigned you you yet, we will notify you when it will scheduled.
+                                       Class is not assigned you you yet, we will notify you when it will scheduled.
                                     </div>
                             }
                         </div>
@@ -323,7 +325,7 @@ function TeacherMainDesktopDashboardComponentFunction(){
                                                         </div>
                                                         <div className={"name_section"}>
                                                             <div className={"name_section1"}>{myClasses?.subject_name}</div>
-                                                            <div className={"name_section2"}>{myClasses?.school_board}</div>
+                                                            <div className={"name_section2"}>{myClasses?.class_batch_name}</div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -422,7 +424,7 @@ function TeacherMainDesktopDashboardComponentFunction(){
                                     :
                                     <div className={"no_demo_classes_div_section"}>
                                         <img alt={"no_demo_classes"} src={noClassFound}/><br></br>
-                                        Demo class is not assigned you you yet, we will notify you when it will scheduled.
+                                        Class is not assigned you you yet, we will notify you when it will scheduled.
                                     </div>
                             }
                         </div>

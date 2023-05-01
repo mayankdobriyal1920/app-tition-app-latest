@@ -190,10 +190,7 @@ export default function SuperAdminDesktopDashboard() {
                                 <a onClick={()=>openKinkTab("/dashboard/all-demo-classes")}>Show All</a>
                             </div>
                             {(studentListArray?.studentData?.map((studentData,index)=>(
-                                <div skey={index} className="d-flex align-items-center border-bottom py-3">
-
-                                    {/*<div className={"name_initial name_initial rounded-circle flex-shrink-0"}>{_getFirstLatterOfName(studentData?.name)}*/}
-                                    {/*</div>*/}
+                                <div key={index} className="d-flex align-items-center border-bottom py-3">
                                     <div className="w-100 ms-3">
                                         <div className="d-flex w-100 justify-content-between">
                                             <h6 className="mb-0">{studentData?.name}</h6>
