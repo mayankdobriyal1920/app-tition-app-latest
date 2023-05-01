@@ -151,9 +151,9 @@ export default function StudentTodayClassesComponent(){
             }
             <div className={"student_demo_classes_main_page"}>
                 {(studentAllClassesList?.classData?.taken_single_demo && !studentAllClassesList?.classData?.subscription_end_date) ?
-                    <StudentPayForSubscriptionComponent/>
+                    <StudentPayForSubscriptionComponent isEnd={false}/>
                     :(studentAllClassesList?.classData?.taken_single_demo && moment(new Date(studentAllClassesList?.classData?.subscription_end_date)).format('YYYY-MM-DD') < moment().format('YYYY-MM-DD')) ?
-                        <StudentPayForSubscriptionComponent/>
+                        <StudentPayForSubscriptionComponent isEnd={true}/>
                         :
                         <>
                             {(inCallStatus === 'PREJOIN') ?
