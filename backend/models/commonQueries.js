@@ -51,6 +51,10 @@ export const actionToAlreadyCreatedClassAccordingToTheConditionQuery = (weekStar
                                                     ) order by class_timetable_with_class_batch_assigned.start_from_date_time
                                             ) jsdata
                                  FROM class_timetable_with_class_batch_assigned
+                                 WHERE WEEK(class_timetable_with_class_batch_assigned.start_from_date_time) = (SELECT WEEK(start_from_date_time)
+                                                                                                               FROM class_timetable_with_class_batch_assigned as ctwcba
+                                                                                                               where ctwcba.id = class_timetable_with_class_batch_assigned.id
+                                                                                                               ORDER BY ctwcba.start_from_date_time DESC LIMIT 1)
                                  GROUP BY class_assigned_teacher_batch_id) class_timetable_with_class_batch_assigned
                                 on class_assigned_teacher_batch.id = class_timetable_with_class_batch_assigned.class_assigned_teacher_batch_id
 
@@ -92,6 +96,7 @@ export const actionToGetAllClassesDataListQuery = (weekStartDate,weekEndDate)=>{
                    profile_subject_with_batch.class_assigned_teacher_batch_id as class_assigned_teacher_batch_id,
                    class_assigned_teacher_batch.is_demo_class                 as is_demo_class,
                    class_assigned_teacher_batch.class_batch_name              as class_batch_name,
+                   class_assigned_teacher_batch.teacher_id              as teacher_id,
                    student_profile.id                                         as student_id,
                    student_profile.name                                       as student_name,
                    student_profile.email                                      as student_email,
@@ -133,7 +138,9 @@ export const actionToGetAllDemoClassesDetailsQuery = ()=>{
     return `select profile_subject_with_batch.id as  profile_subject_with_batch_id,
                    profile_subject_with_batch.batch as  profile_subject_with_batch_batch_type,
                    profile_subject_with_batch.has_taken_demo as  profile_subject_with_batch_has_taken_demo,
-                   profile_subject_with_batch.class_assigned_teacher_batch_id as  class_assigned_teacher_batch_id,
+                   profile_subject_with_batch.class_assigned_teacher_batch_id as class_assigned_teacher_batch_id,
+                   class_assigned_teacher_batch.teacher_id as teacher_id,
+                   class_assigned_teacher_batch.class_batch_name as class_batch_name,
                    student_profile.id as student_id,
                    student_profile.name as student_name,
                    student_profile.email as student_email,
@@ -145,12 +152,15 @@ export const actionToGetAllDemoClassesDetailsQuery = ()=>{
 
      from profile_subject_with_batch
      join student_profile on profile_subject_with_batch.profile_id =student_profile.id
+     left join class_assigned_teacher_batch on profile_subject_with_batch.class_assigned_teacher_batch_id =
+                                          class_assigned_teacher_batch.id
      join school_board on student_profile.school_board=school_board.id
      join subject on subject.id=profile_subject_with_batch.subject_id 
 WHERE profile_subject_with_batch.has_taken_demo = 0`;
 }
 export const actionToGetAllRecordedClassesDetailsQuery = ()=>{
     return `SELECT
+                class_call_recording.name AS recorded_video_title,
                 class_call_recording.name AS recorded_video_title,
                 class_call_recording.created_at AS class_recorded_at,
                 class_call_recording.id AS class_call_recording_id,
@@ -163,14 +173,21 @@ export const actionToGetAllRecordedClassesDetailsQuery = ()=>{
                 app_user.email AS teacher_email
             FROM
                 class_call_recording
+
+
                     JOIN
-                class_assigned_teacher_batch ON class_call_recording.class_assigned_teacher_batch_id = class_assigned_teacher_batch.id
+                class_timetable_with_class_batch_assigned ON class_call_recording.class_timetable_with_class_batch_assigned_id = class_timetable_with_class_batch_assigned.id
+
+                    JOIN
+                class_assigned_teacher_batch ON class_timetable_with_class_batch_assigned.class_assigned_teacher_batch_id = class_assigned_teacher_batch.id
+
+
                     JOIN
                 school_board ON school_board.id = class_assigned_teacher_batch.school_board
                     JOIN
                 subject ON subject.id = class_assigned_teacher_batch.subject_id
                     JOIN
-                app_user ON app_user.id = class_assigned_teacher_batch.teacher_id  order by class_call_recording.created_at desc `;
+                app_user ON app_user.id = class_assigned_teacher_batch.teacher_id  order by class_call_recording.created_at desc`;
 }
 
 export const actionToGetLatestDemoClassesDetailsQuery = ()=>{
@@ -361,6 +378,7 @@ export const actionToGetStudentAllTodayClassesQuery = (userId,todayDate)=>{
                                'id',class_timetable_with_class_batch_assigned.class_assigned_teacher_batch_id,
                                'subject_id', class_assigned_teacher_batch.subject_id,
                                'batch', class_assigned_teacher_batch.batch,
+                               'class_batch_name',class_assigned_teacher_batch.class_batch_name,
                                'profile_subject_with_batch_id', profile_subject_with_batch.id,
                                'start_from_date_time', class_timetable_with_class_batch_assigned.start_from_date_time,
                                'class_end_date_time', class_timetable_with_class_batch_assigned.class_end_date_time,
@@ -387,6 +405,7 @@ export const actionToGetStudentAllDemoClassesQuery = (userId)=>{
                                'batch', class_assigned_teacher_batch.batch,
                                'profile_subject_with_batch_id', profile_subject_with_batch.id,
                                'starting_from_date', class_assigned_teacher_batch.starting_from_date,
+                               'class_batch_name',class_assigned_teacher_batch.class_batch_name,
                                'class_end_time', class_assigned_teacher_batch.class_end_time,
                                'is_demo_class', class_assigned_teacher_batch.is_demo_class,
                                'subject_name', subject.name,
@@ -409,6 +428,7 @@ export const actionToGetTeacherAllTodayClassesQuery = (userId,todayDate)=>{
                                'class_id', class_timetable_with_class_batch_assigned.id,
                                'subject_id', class_assigned_teacher_batch.subject_id,
                                'batch', class_assigned_teacher_batch.batch,
+                               'class_batch_name',class_assigned_teacher_batch.class_batch_name,
                                'start_from_date_time', class_timetable_with_class_batch_assigned.start_from_date_time,
                                'class_end_date_time', class_timetable_with_class_batch_assigned.class_end_date_time,
                                'class_end_time', class_assigned_teacher_batch.class_end_time,
@@ -442,6 +462,7 @@ export const actionToGetTeacherAllDemoClassesQuery = (userId)=>{
     return `SELECT JSON_OBJECT('id', class_assigned_teacher_batch.id,
                                'subject_id', class_assigned_teacher_batch.subject_id,
                                'batch', class_assigned_teacher_batch.batch,
+                               'class_batch_name',class_assigned_teacher_batch.class_batch_name,
                                'starting_from_date', class_assigned_teacher_batch.starting_from_date,
                                'class_end_time', class_assigned_teacher_batch.class_end_time,
                                'is_demo_class', class_assigned_teacher_batch.is_demo_class,

@@ -18,6 +18,7 @@ const io = new Server(server, { cors: { origin: '*' }});
 
 import fs from 'fs';
 import upload from "./models/upload.js";
+import {updateCommonApiCall} from "./models/commonModel.js";
 export let allChannelsInGroupCall = [];
 export let allChannelsInGroupCallData = {};
 export let allChanelWhiteBoardEditingData = {};
@@ -127,22 +128,22 @@ function setupWebSocket() {
                                 if (allChanelWhiteBoardEditingData[dataToSend.groupId] !== undefined)
                                     delete allChanelWhiteBoardEditingData[dataToSend.groupId];
 
-                                    // if(!dataToSend.classId) {
-                                    //     let setData = `class_end_time = ?`;
-                                    //     let whereCondition = `id = '${dataToSend.groupId}'`;
-                                    //     let updateData = {
-                                    //         column: setData,
-                                    //         value: [dataToSend?.classEndTime],
-                                    //         whereCondition: whereCondition,
-                                    //         tableName: 'class_assigned_teacher_batch'
-                                    //     };
-                                    //     updateCommonApiCall(updateData);
-                                    // }else{
-                                    //     let setData = `class_end_date_time = ?`;
-                                    //     let whereCondition = `class_assigned_teacher_batch_id = '${dataToSend.groupId}' AND DATE(start_from_date_time) = '${dataToSend?.startDate}'`;
-                                    //     let updateData = {column: setData, value: [dataToSend?.classEndTime], whereCondition: whereCondition, tableName: 'class_timetable_with_class_batch_assigned'};
-                                    //     updateCommonApiCall(updateData);
-                                    // }
+                                    if(!dataToSend.classId) {
+                                        let setData = `class_end_time = ?`;
+                                        let whereCondition = `id = '${dataToSend.groupId}'`;
+                                        let updateData = {
+                                            column: setData,
+                                            value: [dataToSend?.classEndTime],
+                                            whereCondition: whereCondition,
+                                            tableName: 'class_assigned_teacher_batch'
+                                        };
+                                        updateCommonApiCall(updateData);
+                                    }else{
+                                        let setData = `class_end_date_time = ?`;
+                                        let whereCondition = `class_assigned_teacher_batch_id = '${dataToSend.groupId}' AND DATE(start_from_date_time) = '${dataToSend?.startDate}'`;
+                                        let updateData = {column: setData, value: [dataToSend?.classEndTime], whereCondition: whereCondition, tableName: 'class_timetable_with_class_batch_assigned'};
+                                        updateCommonApiCall(updateData);
+                                    }
                         }
                     }
                     break;

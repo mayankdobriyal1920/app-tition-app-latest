@@ -15,13 +15,14 @@ import {
 } from "../../../helper/CallModuleHelper";
 import Peer from "peerjs";
 import {
-    actionToRemoveCurrentGroupCallData, actionToSendVideoChunkDataToServer,
+    actionToRemoveCurrentGroupCallData,
     actionToSendVideoChunkDataToServerFinishProcess, actionToSetCurrentCallDataGroupData,
 } from "../../../actions/CommonAction";
 import {sendWebsocketRequest} from "../../../helper/WebSocketHelper";
 import {cloneDeep} from "lodash";
 import {CHAT_MODULE_CURRENT_CALL_ALL_MEMBERS} from "../../../constants/CommonConstants";
 import TeacherStudentVideoCallComponent from "../../desktop/TeacherComponent/TeacherStudentVideoCallComponent";
+import {Decoder, Reader, tools} from "ts-ebml";
 
 // const iceServers= [
 //     {
@@ -69,34 +70,47 @@ export default function TeacherDashboardMobile() {
     const [inCallStatus,setInCallStatus] = React.useState('PREJOIN');
     const dispatch = useDispatch();
 
-    const callFunctionToExportRecordedVideo = ()=>{
-        dispatch(actionToSendVideoChunkDataToServerFinishProcess(currentClassId));
-        dispatch(actionToRemoveCurrentGroupCallData());
-    }
-
-    const callFunctionToUploadDataChunk =  (chunks)=>{
-        function sendBlobAsBase64(blob) {
+    const readAsArrayBuffer = (blob) => {
+        return new Promise((resolve, reject) => {
             const reader = new FileReader();
-
-            reader.addEventListener('load', () => {
-                const dataUrl = reader.result;
-                const base64EncodedData = dataUrl.split(',')[1];
-                sendDataToBackend(base64EncodedData);
-            });
-
-            reader.readAsDataURL(blob);
-        }
-
-        sendBlobAsBase64(chunks);
-
-        function sendDataToBackend(base64EncodedData) {
-            const body = JSON.stringify({
-                data: base64EncodedData,
-                groupId:currentClassId,
-            });
-            dispatch(actionToSendVideoChunkDataToServer(body));
-        }
+            reader.readAsArrayBuffer(blob);
+            reader.onloadend = () => { resolve(reader.result); };
+            reader.onerror = (ev) => { reject(ev.error); };
+        });
     }
+
+    const injectMetadata = blob => {
+        const decoder = new Decoder();
+        const reader = new Reader();
+        reader.logging = false;
+        reader.drop_default_duration = false;
+
+        return readAsArrayBuffer(blob).then((buffer) => {
+            const elms = decoder.decode(buffer);
+            elms.forEach((elm) => { reader.read(elm); });
+            reader.stop();
+
+            let refinedMetadataBuf = tools.makeMetadataSeekable(reader.metadatas, reader.duration, reader.cues);
+            let body = buffer.slice(reader.metadataSize);
+
+            return new Blob([refinedMetadataBuf, body],
+                {type: blob.type});
+        });
+    }
+
+
+    const callFunctionToExportRecordedVideo = (blob)=>{
+        injectMetadata(blob).then(seekableBlob=> {
+            const reader = new FileReader();
+            reader.readAsDataURL(seekableBlob);
+            reader.onload = () => {
+                const base64String = reader.result.split(',')[1];
+                dispatch(actionToSendVideoChunkDataToServerFinishProcess(currentClassId,base64String));
+            };
+            dispatch(actionToRemoveCurrentGroupCallData());
+        });
+    }
+
     const startCallInGroup = (e,classGroupData)=>{
         e.preventDefault();
 
@@ -192,31 +206,25 @@ export default function TeacherDashboardMobile() {
                                 })
                             })
                     })
-
-
-                    const mediaSource = new MediaSource();
-                    mediaSource.addEventListener('sourceopen', handleSourceOpen, false);
-                    let sourceBuffer;
-
-                    function handleSourceOpen(event) {
-                        sourceBuffer = mediaSource.addSourceBuffer('video/webm; codecs="vp8"');
+                    if(!classGroupData?.is_demo_class) {
+                        ////// record current call //////////
+                        const chunks = [];
+                        const mimeType = 'video/webm;codecs=vp9';
+                        const recorder = new MediaRecorder(stream, {mimeType});
+                        recorder.ondataavailable = (e) => {
+                            //callFunctionToUploadDataChunk(e.data);
+                            chunks.push(e.data);
+                        }
+                        recorder.onstop = e => callFunctionToExportRecordedVideo(new Blob(chunks, {type: mimeType}));
+                        recorder.start(1000);
+                        setMyMediaRecorder(recorder);
+                        setMyShareScreenStream(stream);
                     }
-
-                    ////// record current call //////////
-                    const chunks = [];
-                    let options = { mimeType: 'video/webm;codecs=vp9' };
-                    const recorder = new MediaRecorder(stream,options);
-                    recorder.ondataavailable = (e) => {
-                        callFunctionToUploadDataChunk(e.data);
-                        chunks.push(e.data);
-                    }
-                    recorder.onstop = e => callFunctionToExportRecordedVideo(new Blob(chunks));
-                    recorder.start(5000);
-                    setMyMediaRecorder(recorder);
-                    setMyShareScreenStream(stream);
                     // }, error => {
                     //     console.log("Unable to acquire screen capture", error);
                     // });
+                },function(er){
+                    console.log(er);
                 })
         }else{
             alert('Media Not Supported In Insecure Url');
@@ -260,7 +268,7 @@ export default function TeacherDashboardMobile() {
                                                                 </div>
                                                                 <div className={"name_section"}>
                                                                     <div className={"name_section1"}>{myClasses?.subject_name}</div>
-                                                                    <div className={"name_section2"}>{myClasses?.school_board}</div>
+                                                                    <div className={"name_section2"}>{myClasses?.class_batch_name}</div>
                                                                 </div>
                                                             </div>
                                                             <div className={"col-5"}>
@@ -310,7 +318,7 @@ export default function TeacherDashboardMobile() {
                                             :
                                             <div className={"no_demo_classes_div_section"}>
                                                 <img alt={"no_demo_classes"} src={noClassFound}/><br></br>
-                                                Demo class is not assigned you you yet, we will notify you when it will scheduled.
+                                               Class is not assigned you you yet, we will notify you when it will scheduled.
                                             </div>
                                     }
                                 </div>
@@ -331,7 +339,7 @@ export default function TeacherDashboardMobile() {
                                                                 </div>
                                                                 <div className={"name_section"}>
                                                                     <div className={"name_section1"}>{myClasses?.subject_name}</div>
-                                                                    <div className={"name_section2"}>{myClasses?.school_board}</div>
+                                                                    <div className={"name_section2"}>{myClasses?.class_batch_name}</div>
                                                                 </div>
                                                             </div>
                                                             <div className={"col-5"}>
@@ -425,7 +433,7 @@ export default function TeacherDashboardMobile() {
                                         :
                                         <div className={"no_demo_classes_div_section"}>
                                             <img alt={"no_demo_classes"} src={noClassFound}/><br></br>
-                                            Demo class is not assigned you you yet, we will notify you when it will scheduled.
+                                            Class is not assigned you you yet, we will notify you when it will scheduled.
                                         </div>
                                 }
                             </div>

@@ -2,19 +2,27 @@ import React,{useState,useEffect} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import WhiteboardComponent from "../WhiteboardComponent";
 import moment from "moment";
-import {_getFirstLatterOfName, _readableTimeFromSeconds} from "../../../helper/CommonHelper";
+import {_readableTimeFromSeconds} from "../../../helper/CommonHelper";
 import SpinnerLoader from "../../Loader/SpinnerLoader";
 import {myStream, myShareScreenStream, myPeer, myMediaRecorder} from "../../../helper/CallModuleHelper.js";
+import jsPDF from "jspdf";
 import {
-    actionToEndCurrentCurrentCall, actionToMuteUnmuteUserCall,
+    actionToEndCurrentCurrentCall,
+    actionToMuteUnmuteUserCall, actionToSetTeacherZoomInOut,
+    actionToStoreAssignmentData,
+    actionToStoreAssignmentDataForTeacher,
 } from "../../../actions/CommonAction";
 import $ from 'jquery';
 import {useEffectOnce} from "../../../helper/UseEffectOnce";
+import axios from "axios";
+import {isTeacherMasterLogin} from "../../../middlewear/auth";
 
 let loadOnce = false;
-
+let canvasReservedJson = [];
+let allImagesUrlArray = [];
 export default function TeacherStudentVideoCallComponent({inCallStatus,setInCallStatus,isTeacher}){
     const chatModuleCurrentCallGroupData = useSelector((state) => state.chatModuleCurrentCallGroupData);
+    const zoomInZoomOutTeacherVideo = useSelector((state) => state.zoomInZoomOutTeacherVideo);
     const chatModuleCurrentCallGroupMembers = useSelector((state) => state.chatModuleCurrentCallGroupMembers);
     const studentAllClassesList = useSelector((state) => state.studentAllClassesList);
     const userInfo = useSelector((state) => state.userSignin.userInfo);
@@ -59,11 +67,79 @@ export default function TeacherStudentVideoCallComponent({inCallStatus,setInCall
         setIsMutedCall(!isMutedCall);
     }
 
-    const endCallFunctionCall = (groupId,classId,startDateTime)=>{
+    const makePdfOfCanvases = async ()=>{
+        const canvas = window.fabricCanvas;
+        const json = canvasReservedJson;
+        async function makeallImage(){
+            for (let v = 0; v < json.length; v++){
+                convertImgToBase64(v, "jpg");
+            }
+            await generatePdfFromImages(allImagesUrlArray);
+        }
+        function convertImgToBase64(number){
+            let tmpData = canvas.loadFromJSON(json[number]);
+            toImg(tmpData);
+        }
+        function toImg(){
+            let url = canvas.toDataURL();
+            allImagesUrlArray.push(url);
+        }
+        makeallImage();
+    }
+
+    const generatePdfFromImages = (images) => {
+
+            // Default export is A4 paper, portrait, using millimeters for units.
+            const doc = new jsPDF();
+            const width = doc.internal.pageSize.getWidth();
+            const height = doc.internal.pageSize.getHeight();
+
+            doc.deletePage(1);
+            images.forEach((image) => {
+                doc.addPage();
+                doc.addImage(
+                    image,
+                    'jpeg',
+                    0, 0,
+                    width,
+                    height
+                );
+            });
+
+            // Creates a PDF and opens it in a new browser tab.
+            const myBlob = doc.output("blob");
+            let fileName = Date.now() + "_whiteboard_data.pdf";
+            const myFile = new File([myBlob], fileName, {
+                type: myBlob.type,
+            });
+            const data = new FormData();
+            data.append("file", myFile, fileName);
+            data.append("id", chatModuleCurrentCallGroupData?.class_id);
+
+            axios.post('https://121tuition.in/api-call-tutor/uploadAssignmentApiCall', data)
+                .then(res => {
+                    dispatch(actionToStoreAssignmentDataForTeacher(fileName, fileName, chatModuleCurrentCallGroupData?.class_id))
+                })
+                .catch(err => {
+                });
+
+    };
+
+    const zoomInZoomOutVideoPanel = async  ()=>{
+        if(isTeacherMasterLogin()) {
+            dispatch(actionToSetTeacherZoomInOut(chatModuleCurrentCallGroupData?.id));
+        }
+    }
+    const endCallFunctionCall = async  (groupId,classId,startDateTime)=>{
+        setInCallStatus('JOINING');
+        if(!chatModuleCurrentCallGroupData?.is_demo_class)
+           await makePdfOfCanvases();
         endMyStreamTrackOnEndCall();
-        setInCallStatus('PREJOIN');
-        let startDate = moment(startDateTime).format('YYYY-MM-DD');
-        dispatch(actionToEndCurrentCurrentCall(groupId,classId,startDate));
+        setTimeout(function (){
+            setInCallStatus('PREJOIN');
+            let startDate = moment(startDateTime).format('YYYY-MM-DD');
+            dispatch(actionToEndCurrentCurrentCall(groupId,classId,startDate));
+        },5000)
     }
     const leaveCallFunctionCall = ()=>{
         endMyStreamTrackOnEndCall();
@@ -103,7 +179,7 @@ export default function TeacherStudentVideoCallComponent({inCallStatus,setInCall
 
     return(
         <div id={"teacher_video_class_container"} className={"video_call_white_board_main_container"}>
-            <div style={{display:isPortraitMode ? 'block' : 'none'}} className={"isPortraitMode_mode_popup"}>
+            <div style={{display:isPortraitMode ? 'flex' : 'none'}} className={"isPortraitMode_mode_popup"}>
                 <p>
                     Please use landscape mode to enter in class
                 </p>
@@ -115,12 +191,14 @@ export default function TeacherStudentVideoCallComponent({inCallStatus,setInCall
                         {(chatModuleCurrentCallGroupMembers?.map((groupMembers,key)=>(
                             (groupMembers?.isTeacher) ?
                                 <video key={key} loop={true} playsInline={true}
+                                       onClick={()=>zoomInZoomOutVideoPanel()}
+                                       style={{}}
                                        id={groupMembers?.id}
                                        data-user-id={userInfo?.id}
                                        data-teacher-id={chatModuleCurrentCallGroupData?.teacher_id}
                                        muted={(userInfo?.id === chatModuleCurrentCallGroupData?.teacher_id) ? true : groupMembers?.mute}
                                        data-muted={(userInfo?.id === chatModuleCurrentCallGroupData?.teacher_id) ? true : groupMembers?.mute}
-                                       autoPlay={true} className={'my_video_peer_connection'}></video>
+                                       autoPlay={true} className={'my_video_peer_connection '+(zoomInZoomOutTeacherVideo ? 'zoom' : '')}></video>
                                 :''
                         )))}
                         {(isTeacher) ?
@@ -177,7 +255,7 @@ export default function TeacherStudentVideoCallComponent({inCallStatus,setInCall
                 </div>
                 <div className={"col-7 center_white_board_video_with_details"}>
                     {(inCallStatus === 'INCALL') ?
-                        <WhiteboardComponent groupId={chatModuleCurrentCallGroupData.id}/>
+                        <WhiteboardComponent groupId={chatModuleCurrentCallGroupData.id} canvasReservedJson={canvasReservedJson}/>
                         : ''
                     }
                 </div>

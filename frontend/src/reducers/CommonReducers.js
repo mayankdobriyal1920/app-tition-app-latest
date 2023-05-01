@@ -70,7 +70,7 @@ import {
     EDITOR_ACTIVE_EDITOR_JSON,
     TEACHER_CLASS_ATTEND_WITH_ASSIGNMENT_DATA_REQUEST,
     TEACHER_CLASS_ATTEND_WITH_ASSIGNMENT_DATA_SUCCESS,
-    STUDENT_ALL_TIME_CLASS_LIST_REQUEST
+    STUDENT_ALL_TIME_CLASS_LIST_REQUEST, ZOOM_IN_ZOOM_OUT_TEACHER_VIDEO
 } from "../constants/CommonConstants";
 
 export const userSigninReducer = (state = {}, action) => {
@@ -121,6 +121,14 @@ export const allStudentDemoDataListReducer = (state = {}, action) => {
 export const editorActiveEditorJsonReducer = (state = {}, action) => {
     switch (action.type) {
         case EDITOR_ACTIVE_EDITOR_JSON:
+            return action.payload;
+        default:
+            return state;
+    }
+};
+export const zoomInZoomOutTeacherVideoReducer = (state = {}, action) => {
+    switch (action.type) {
+        case ZOOM_IN_ZOOM_OUT_TEACHER_VIDEO:
             return action.payload;
         default:
             return state;

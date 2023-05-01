@@ -5,22 +5,27 @@ import {_getFirstLatterOfName, _readableTimeFromSeconds} from "../../helper/Comm
 import SpinnerLoader from "../Loader/SpinnerLoader";
 import {myStream, myShareScreenStream, myPeer, myMediaRecorder} from "../../helper/CallModuleHelper.js";
 import {
-    actionToEndCurrentCurrentCall, actionToMuteUnmuteUserCall,
+    actionToEndCurrentCurrentCall, actionToMuteUnmuteUserCall, actionToStoreAssignmentDataForTeacher,
 } from "../../actions/CommonAction";
 import $ from 'jquery';
 import {useEffectOnce} from "../../helper/UseEffectOnce";
 import WhiteBoardMobileComponent from "./StudentComponent/WhiteBoardMobileComponent";
 import {IonCol, IonContent, IonPage, IonRow} from "@ionic/react";
 import WhiteboardComponent from "../desktop/WhiteboardComponent";
-let loadOnce = false;
+import jsPDF from "jspdf";
+import axios from "axios";
+let loadOnce = false
+let canvasReservedJson = [];
 export default function TeacherStudentVideoCallMobileComponent({inCallStatus,setInCallStatus,isTeacher}){
     const chatModuleCurrentCallGroupData = useSelector((state) => state.chatModuleCurrentCallGroupData);
     const chatModuleCurrentCallGroupMembers = useSelector((state) => state.chatModuleCurrentCallGroupMembers);
     const studentAllClassesList = useSelector((state) => state.studentAllClassesList);
     const userInfo = useSelector((state) => state.userSignin.userInfo);
     let [timerTimeInterval,setTimerTimeInterval] = useState(0);
+    let [isPortraitMode,setIsPortraitMode] = useState(false);
     const dispatch = useDispatch();
     let [isMutedCall,setIsMutedCall] = useState(!isTeacher);
+
 
     const endMyStreamTrackOnEndCall = ()=>{
         if(myStream != null) {
@@ -36,13 +41,11 @@ export default function TeacherStudentVideoCallMobileComponent({inCallStatus,set
         if(myPeer != null){
             myPeer.disconnect();
         }
-        if($('#main_user_video_call_video_section').length)
+        if($('#main_user_video_call_video_section')?.length)
             $('#main_user_video_call_video_section').html('');
 
-        if($('#student_all_class_group_data_videos_section').length)
+        if($('#student_all_class_group_data_videos_section')?.length)
             $('#student_all_class_group_data_videos_section').html('');
-
-        setInCallStatus('PREJOIN');
 
         if(myMediaRecorder)
             myMediaRecorder?.stop();
@@ -57,11 +60,73 @@ export default function TeacherStudentVideoCallMobileComponent({inCallStatus,set
         setIsMutedCall(!isMutedCall);
     }
 
-    const endCallFunctionCall = (groupId,classId,startDateTime)=>{
+    const makePdfOfCanvases = async ()=>{
+        const canvas = window.fabricCanvas;
+        const json = canvasReservedJson;
+        async function makeallImage(){
+            for (let v = 0; v < json.length; v++){
+                convertImgToBase64(v, "jpg");
+            }
+            await generatePdfFromImages(allImagesUrlArray);
+        }
+        function convertImgToBase64(number){
+            let tmpData = canvas.loadFromJSON(json[number]);
+            toImg(tmpData);
+        }
+        function toImg(){
+            let url = canvas.toDataURL();
+            allImagesUrlArray.push(url);
+        }
+        makeallImage();
+    }
+
+    const generatePdfFromImages = (images) => {
+
+        // Default export is A4 paper, portrait, using millimeters for units.
+        const doc = new jsPDF();
+        const width = doc.internal.pageSize.getWidth();
+        const height = doc.internal.pageSize.getHeight();
+
+        doc.deletePage(1);
+        images.forEach((image) => {
+            doc.addPage();
+            doc.addImage(
+                image,
+                'jpeg',
+                0, 0,
+                width,
+                height
+            );
+        });
+
+        // Creates a PDF and opens it in a new browser tab.
+        const myBlob = doc.output("blob");
+        let fileName = Date.now() + "_whiteboard_data.pdf";
+        const myFile = new File([myBlob], fileName, {
+            type: myBlob.type,
+        });
+        const data = new FormData();
+        data.append("file", myFile, fileName);
+        data.append("id", chatModuleCurrentCallGroupData?.class_id);
+
+        axios.post('https://121tuition.in/api-call-tutor/uploadAssignmentApiCall', data)
+            .then(res => {
+                dispatch(actionToStoreAssignmentDataForTeacher(fileName, fileName, chatModuleCurrentCallGroupData?.class_id))
+            })
+            .catch(err => {
+            });
+
+    };
+
+    const endCallFunctionCall = async  (groupId,classId,startDateTime)=>{
+        setInCallStatus('JOINING');
+        await makePdfOfCanvases();
         endMyStreamTrackOnEndCall();
-        setInCallStatus('PREJOIN');
-        let startDate = moment(startDateTime).format('YYYY-MM-DD');
-        dispatch(actionToEndCurrentCurrentCall(groupId,classId,startDate));
+        setTimeout(function (){
+            setInCallStatus('PREJOIN');
+            let startDate = moment(startDateTime).format('YYYY-MM-DD');
+            dispatch(actionToEndCurrentCurrentCall(groupId,classId,startDate));
+        },5000)
     }
     const leaveCallFunctionCall = ()=>{
         endMyStreamTrackOnEndCall();
@@ -83,6 +148,22 @@ export default function TeacherStudentVideoCallMobileComponent({inCallStatus,set
         }
     },[chatModuleCurrentCallGroupData])
 
+    useEffect(()=>{
+        const windowResized = ()=>{
+            if(window.innerHeight > window.innerWidth){
+                setIsPortraitMode(true);
+            }else{
+                setIsPortraitMode(false);
+            }
+        }
+        windowResized();
+        window.addEventListener('resize', windowResized);
+        return () => {
+            window.removeEventListener('resize', windowResized)
+        }
+    },[])
+
+
 
     return(
         <IonPage>
@@ -97,7 +178,7 @@ export default function TeacherStudentVideoCallMobileComponent({inCallStatus,set
                     <div className={"student_video_call_section_container"}>
                     <div className={"center_white_board_video_with_details"}>
                         {(inCallStatus === 'INCALL') ?
-                            <WhiteboardComponent groupId={chatModuleCurrentCallGroupData.id}/>
+                            <WhiteboardComponent groupId={chatModuleCurrentCallGroupData.id} canvasReservedJson={canvasReservedJson}/>
                             : ''
                         }
                     </div>

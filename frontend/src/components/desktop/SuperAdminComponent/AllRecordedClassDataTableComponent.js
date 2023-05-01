@@ -8,13 +8,18 @@ import {
     actionToSearchTeacherAccordingToTheCondition
 } from "../../../actions/CommonAction";
 import moment from "moment";
-
+import ReactPlayer from 'react-player/lazy'
 
 export default function AllRecordedClassDataTableComponent() {
     const dispatch = useDispatch();
     const allRecordedClasses = useSelector((state) => state.allRecordedClasses);
     const [search,setSearch] = useState("")
     const [filterClass,setFilterClasses] = useState([])
+    const [openReactVideoPlayer,setOpenReactVideoPlayer] = useState('')
+    const viewReccordingOnVideoPlayer = (recording)=>{
+        let url = `https://121tuition.in/api-call-tutor/getFineByName?name=${recording?.recorded_video_title}`;
+        setOpenReactVideoPlayer(url);
+    }
 
     const tableColumns = [
         {
@@ -54,7 +59,7 @@ export default function AllRecordedClassDataTableComponent() {
         },
         {
             name:"Action",
-            selector:(row) =><div className={"btn btn-success"}>View Recording</div>,
+            selector:(row) =><div onClick={()=>viewReccordingOnVideoPlayer(row)} className={"btn btn-success"}>View Recording</div>,
             sortable:true,
         }
     ]
@@ -94,6 +99,17 @@ export default function AllRecordedClassDataTableComponent() {
                     />
                 }
             </div>
+            {openReactVideoPlayer ?
+                <div className={"assign_class_main_popup_outer_container video_player_main_section"}>
+                    <div className={"assign_class_main_popup_inner_container"}>
+                        <div onClick={()=>setOpenReactVideoPlayer('')} className={"close_popup_button"}><i className={"fa fa-times"}></i></div>
+                        <ReactPlayer playing
+                                     width='100%'
+                                     height='100%' url={openReactVideoPlayer} />
+                    </div>
+                </div>
+                :''
+            }
         </div>
 
     )

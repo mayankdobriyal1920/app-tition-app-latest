@@ -11,7 +11,7 @@ import {
     actionToOpenRatingModalPopup,
     actionToSetCaptureAnnotatorJSONData,
     actionToSetCurrentCallDataGroupData,
-    actionToSetMemberInGroupCall,
+    actionToSetMemberInGroupCall, actionToSetTeacherZoomInOutLocally,
     handleWebSocketEventCall
 } from "../actions/CommonAction";
 import {CHAT_MODULE_CURRENT_CALL_ALL_MEMBERS} from "../constants/CommonConstants";
@@ -160,6 +160,11 @@ export function handleWebSocketEvent(dispatch,state,data){
                 if(!chatModuleCurrentCallGroupData?.is_demo_class)
                     dispatch(actionToOpenRatingModalPopup(true,cloneDeep(chatModuleCurrentCallGroupData)));
                 dispatch(actionToEndCurrentCurrentCallLocally(data?.groupId));
+            }
+            break;
+        case 'actionToSetTeacherZoomInOutLocally':
+            if(chatModuleCurrentCallGroupData?.id === data?.groupId) {
+                dispatch(actionToSetTeacherZoomInOutLocally());
             }
             break;
         case 'actionToChangeActiveIndexEditorJson':

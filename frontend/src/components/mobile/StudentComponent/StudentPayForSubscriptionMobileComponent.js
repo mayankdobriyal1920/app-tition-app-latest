@@ -3,7 +3,7 @@ import {useSelector} from "react-redux"
 import PaymentPopupComponent from "../../desktop/StudentComponent/PaymentPopupComponent";
 import {_getClassWisePaymentData} from "../../../helper/CommonHelper";
 
-export default function StudentPayForSubscriptionMobileComponent(){
+export default function StudentPayForSubscriptionMobileComponent({isEnd}){
     const {classData} = useSelector((state) => state.studentAllClassesList);
     const [openClosePaymentPopup,setOpenClosePaymentPopup] = useState(false);
     const [amountToPay,setAmountToPay] = useState(false);
@@ -18,7 +18,11 @@ export default function StudentPayForSubscriptionMobileComponent(){
     return (
         <div className={"student_pay_for_subscription_main_page"}>
             <h1>Subscription plan</h1>
-            <p className={"mb-10"}>Please purchase subscription to continue.</p>
+            {isEnd ?
+                <h3>Your previous subscription plan is ended please purchase to continue services!!</h3>
+                :
+                <p className={"mb-10"}>Please purchase subscription to continue.</p>
+            }
             <h2 className={"mb-10"}>Subscription details :-</h2>
             <h3 className={"mb-10"}>Total Classes(3)</h3>
             <div className={"classes_section"}>

@@ -42,7 +42,10 @@ import {
     teacherAllTodayClassesListReducer,
     teacherAllDemoClassesListReducer,
     allStudentDemoDataListReducer,
-    allStudentTodayDataListReducer, editorActiveEditorJsonReducer, teacherClassAttendWithAssignmentDataReducer,
+    allStudentTodayDataListReducer,
+    editorActiveEditorJsonReducer,
+    teacherClassAttendWithAssignmentDataReducer,
+    zoomInZoomOutTeacherVideoReducer,
 } from "./reducers/CommonReducers";
 
 const initialState = {
@@ -94,8 +97,10 @@ const initialState = {
     allStudentDemoDataList:{prevId:'',loading:true,classesData:[]},
     allStudentTodayDataList:{prevId:'',loading:true,classesData:[]},
     teacherClassAttendWithAssignmentData:{prevId:'',loading:true,classData:[]},
+    zoomInZoomOutTeacherVideo:false,
 };
 export const rootReducer = combineReducers({
+    zoomInZoomOutTeacherVideo: zoomInZoomOutTeacherVideoReducer,
     editorActiveEditorJson: editorActiveEditorJsonReducer,
     allStudentDemoDataList: allStudentDemoDataListReducer,
     allStudentTodayDataList: allStudentTodayDataListReducer,

@@ -20,6 +20,7 @@ fabric.Object.prototype.toObject = (function (toObject) {
     };
 })(fabric.Object.prototype.toObject);
 
+
 export function setUserId(id){
     userId = id;
 }
@@ -41,13 +42,13 @@ export function drawObjectInCanvas(id,selectedCanvas){
             enableFreeDrawing(selectedCanvas,'free draw');
             return;
         case 'delete':
-            removeEvents(selectedCanvas);
-            selectedCanvas.isDrawingMode = false;
             //Changing cursor of canvas brush
-            $(".modal_screenshot_image").addClass('modal_screenshot_image_cursor_move');
-            $(".modal_screenshot_image").removeClass('modal_screenshot_image_cursor_crosshair');
-            changeObjectSelection(true, selectedCanvas);
-            deleteElementObject(selectedCanvas);
+            changeObjectSelection(false, selectedCanvas);
+            drawActive= true;
+            selectedCanvas.freeDrawingBrush = new fabric.PencilBrush(selectedCanvas);
+            selectedCanvas.freeDrawingBrush.width = 30;
+            selectedCanvas.freeDrawingBrush.color = "#ffffff";
+            enableFreeDrawing(selectedCanvas,'free draw');
             return;
         case 'undo':
         case 'redo':
@@ -57,8 +58,6 @@ export function drawObjectInCanvas(id,selectedCanvas){
             removeEvents(selectedCanvas);
             selectedCanvas.isDrawingMode = false;
             //Changing cursor of canvas brush
-            $(".modal_screenshot_image").addClass('modal_screenshot_image_cursor_move');
-            $(".modal_screenshot_image").removeClass('modal_screenshot_image_cursor_crosshair');
             changeObjectSelection(true, selectedCanvas);
             break;
         case 'circle':
@@ -88,7 +87,6 @@ export function setSelectToolColorToEditor(selected_canvas,color){
 }
 export function enableFreeDrawing(selected_canvas,shapeName){
     removeEvents(selected_canvas);
-    selected_canvas.freeDrawingBrush.color = selectedToolColor;
     selected_canvas.isDrawingMode = true;
 
     let isDown;
@@ -101,41 +99,9 @@ export function enableFreeDrawing(selected_canvas,shapeName){
         isDown = false;
     });
 }
-export function deleteElementObject(selected_canvas){
-    let isDown;
-    selected_canvas.on('mouse:down', function () {
-        isDown= true;
-    });
-    selected_canvas.on('mouse:up', function () {
-        if (!isDown) return;
-        setTimeout(function (){
-            let activeObjectElement= selected_canvas.getActiveObject();
-            if(activeObjectElement) {
-                selected_canvas.remove(activeObjectElement);
-                selected_canvas.renderAll()
-                eventBus.dispatch('send-to-websocket-fabric', {type: 'remove', userPointer: activeObjectElement});
-            }
-        })
-        isDown = false;
-    });
-}
 export function changeObjectSelection(value, selected_canvas) {
-    if(value){
-        $(".modal_screenshot_image").addClass('modal_screenshot_image_cursor_move');
-        $(".modal_screenshot_image").removeClass('modal_screenshot_image_cursor_crosshair');
-    }else{
-        window.fabricCanvas._activeObject = null;
-    }
-
     selected_canvas.forEachObject(function (obj) {
-        if (obj.stroke == '#f1f1f100') {
-            obj.selectable = false;
-            selected_canvas.sendToBack(obj);
-        }else if(obj.shapeName == 'polygon-start'){
-            selected_canvas.remove(obj);
-        }else if(obj.backgroundColor == '#capture') {
-            obj.selectable = false;
-        } else {
+        if (obj.shapeName === 'image') {
             obj.selectable = value;
             obj.hasControls = value;
             obj.hasBorders = value;
@@ -271,8 +237,8 @@ export function drawLineArrow(selected_canvas){
                 customEditorId:custom_editor_id,
                 shapeName:'line arrow',
                 lastModifiedTime:new Date(),
-                selectable:true,
-                hasControls:true,
+                selectable:false,
+                hasControls:false,
                 borderColor:'#000',
                 hasBorders:true,
                 cornerStyle:'circle',
@@ -331,8 +297,8 @@ function drawCircle(selected_canvas) {
             stroke: selectedToolColor,
             shapeName: 'circle',
             lastModifiedTime: new Date(),
-            selectable: true,
-            hasControls: true,
+            selectable: false,
+            hasControls: false,
             borderColor: '#000',
             hasBorders: true,
             cornerStyle: 'circle',
@@ -412,8 +378,8 @@ function drawRectangle(selected_canvas) {
             customEditorId:custom_editor_id,
             shapeName:'rectangle',
             lastModifiedTime:new Date(),
-            selectable:true,
-            hasControls:true,
+            selectable:false,
+            hasControls:false,
             borderColor:'#000',
             hasBorders:true,
             cornerStyle:'circle',
@@ -471,8 +437,8 @@ export function createCopyOfFreeDraw(selected_canvas, oldPath,shapeName){
             customEditorId:custom_editor_id,
             shapeName:shapeName,
             lastModifiedTime:new Date(),
-            selectable:true,
-            hasControls:true,
+            selectable:false,
+            hasControls:false,
             borderColor:'#000',
             hasBorders:true,
             cornerStyle:'circle',
@@ -488,6 +454,7 @@ export function createCopyOfFreeDraw(selected_canvas, oldPath,shapeName){
         selected_canvas.renderAll();
         const canvasIndex = selected_canvas?.lowerCanvasEl?.getAttribute('data-index');
         const captureId = selected_canvas?.lowerCanvasEl?.getAttribute('data-capture-id');
+        console.log('addDrawLineElement');
         eventBus.dispatch('send-to-websocket-fabric',{type:'add',userPointer:clone, fabricCanvas: selected_canvas,canvasIndex,captureId});
     });
     //}
