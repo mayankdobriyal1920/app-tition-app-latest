@@ -17,13 +17,15 @@ import {useEffectOnce} from "../../helper/UseEffectOnce";
 import {cloneDeep} from "lodash";
 import {
     actionToChangeActiveIndexEditorJson, actionToGetActiveEditorJson, actionToGetEditorCompleteJsonDataWithIndex,
-    actionToSendFabricDataToOtherUser,
+    actionToSendFabricDataToOtherUser, actionToSetCaptureAnnotatorJSONData,
     actionToUpdateIpAddress
 } from "../../actions/CommonAction";
 import {ANNOTATOR_UNDO_REDO_CAPTURE, ANNOTATOR_USER_ON_CAPTURE} from "../../constants/CommonConstants";
 import {_generateUniqueId} from "../../helper/CommonHelper";
 import {FacebookLoader} from "../Loader/FacebookLoader";
 import axios from "axios";
+import { io } from 'socket.io-client';
+import {socket} from "../../actions/helper/SocketHelper";
 
 let undo,redo,undoArray=[];
 const customAnnotationId = _generateUniqueId();
@@ -271,7 +273,7 @@ export default function WhiteboardComponent({groupId}){
                     userPointer: userPointer,
                     objectId: userPointer?.id,
                     currentIndex: currentIndex
-                }));
+                },socket));
             }else{
                 dispatch(actionToSendFabricDataToOtherUser({
                     groupId: groupId,
@@ -282,7 +284,7 @@ export default function WhiteboardComponent({groupId}){
                     userPointer: userPointer,
                     objectId: userPointer?.id,
                     currentIndex: currentIndex
-                }));
+                },socket));
             }
         }
     }
@@ -506,6 +508,21 @@ export default function WhiteboardComponent({groupId}){
                     canvasReservedJson = returnData?.data;
                 }
             })
+        }
+    },[groupId]);
+
+    useEffectOnce(()=>{
+        const receiveWebsocketRequest = (data)=>{
+            let message = JSON.parse(data);
+            if(groupId === message?.groupId) {
+                dispatch(actionToSetCaptureAnnotatorJSONData(message.jsonObject));
+            }
+        }
+        socket.on('annotatorImageJson', receiveWebsocketRequest);
+        socket.connect();
+        return ()=>{
+            socket.disconnect();
+            socket.off('annotatorImageJson', receiveWebsocketRequest);
         }
     },[groupId]);
 

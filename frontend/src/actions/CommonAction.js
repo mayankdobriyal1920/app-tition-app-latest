@@ -504,15 +504,9 @@ export const actionToGetStudentTimetableData = (isLoaderDisable = false) => asyn
     }
     dispatch({type: STUDENT_ALL_TIME_CLASS_LIST_SUCCESS, payload: [...eventData]});
 }
-export const actionToSendFabricDataToOtherUser = (jsonObject) => async ()=> {
-    sendWebsocketRequest(JSON.stringify({
-        clientId: localStorage.getItem('clientId'),
-        type: 'annotatorImageJson',
-        userId:jsonObject.userId,
-        canvasReservedJson:jsonObject.canvasReservedJson,
+export const actionToSendFabricDataToOtherUser = (jsonObject,socket) => async ()=> {
+    socket.emit('annotatorImageJson', JSON.stringify({
         groupId:jsonObject.groupId,
-        objectId:jsonObject.objectId,
-        canvasIndex:jsonObject.canvasIndex,
         jsonObject: JSON.stringify(jsonObject)
     }));
 }

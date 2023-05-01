@@ -5,6 +5,7 @@ import cors from 'cors';
 import dotenv  from 'dotenv';
 import commonRouter from "./routers/commonRouter.js";
 import { PeerServer }  from 'peer';
+import {Server} from 'socket.io';
 
 dotenv.config();
 const app = express();
@@ -12,6 +13,9 @@ const host = 'localhost'
 const port = 4001;
 const peerServerPort = 4002;
 const server = http.createServer(app);
+
+const io = new Server(server, { cors: { origin: '*' }});
+
 import fs from 'fs';
 import upload from "./models/upload.js";
 export let allChannelsInGroupCall = [];
@@ -148,7 +152,13 @@ function setupWebSocket() {
     })
 }
 
-
+io.on('connection', (socket) => {
+    console.log('A user has connected');
+    socket.on('message', (message, username) => {
+        console.log(`${username}: ${message}`);
+        io.emit('message', { username, message });
+    });
+});
 
 app.use(cors());
 app.use(function (req, res, next) {
