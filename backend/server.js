@@ -128,22 +128,22 @@ function setupWebSocket() {
                                 if (allChanelWhiteBoardEditingData[dataToSend.groupId] !== undefined)
                                     delete allChanelWhiteBoardEditingData[dataToSend.groupId];
 
-                                    if(!dataToSend.classId) {
-                                        let setData = `class_end_time = ?`;
-                                        let whereCondition = `id = '${dataToSend.groupId}'`;
-                                        let updateData = {
-                                            column: setData,
-                                            value: [dataToSend?.classEndTime],
-                                            whereCondition: whereCondition,
-                                            tableName: 'class_assigned_teacher_batch'
-                                        };
-                                        updateCommonApiCall(updateData);
-                                    }else{
-                                        let setData = `class_end_date_time = ?`;
-                                        let whereCondition = `class_assigned_teacher_batch_id = '${dataToSend.groupId}' AND DATE(start_from_date_time) = '${dataToSend?.startDate}'`;
-                                        let updateData = {column: setData, value: [dataToSend?.classEndTime], whereCondition: whereCondition, tableName: 'class_timetable_with_class_batch_assigned'};
-                                        updateCommonApiCall(updateData);
-                                    }
+                                    // if(!dataToSend.classId) {
+                                    //     let setData = `class_end_time = ?`;
+                                    //     let whereCondition = `id = '${dataToSend.groupId}'`;
+                                    //     let updateData = {
+                                    //         column: setData,
+                                    //         value: [dataToSend?.classEndTime],
+                                    //         whereCondition: whereCondition,
+                                    //         tableName: 'class_assigned_teacher_batch'
+                                    //     };
+                                    //     updateCommonApiCall(updateData);
+                                    // }else{
+                                    //     let setData = `class_end_date_time = ?`;
+                                    //     let whereCondition = `class_assigned_teacher_batch_id = '${dataToSend.groupId}' AND DATE(start_from_date_time) = '${dataToSend?.startDate}'`;
+                                    //     let updateData = {column: setData, value: [dataToSend?.classEndTime], whereCondition: whereCondition, tableName: 'class_timetable_with_class_batch_assigned'};
+                                    //     updateCommonApiCall(updateData);
+                                    // }
                         }
                     }
                     break;
@@ -155,9 +155,17 @@ function setupWebSocket() {
 
 io.on('connection', (socket) => {
     console.log('A user has connected');
-    socket.on('message', (message, username) => {
-        console.log(`${username}: ${message}`);
-        io.emit('message', { username, message });
+    socket.on('annotatorImageJson', (dataToSend) => {
+        console.log('annotatorImageJson');
+        if(!allChanelWhiteBoardEditingData[dataToSend.groupId]){
+            allChanelWhiteBoardEditingData[dataToSend.groupId] = [dataToSend];
+        }else{
+            allChanelWhiteBoardEditingData[dataToSend.groupId].push(dataToSend);
+        }
+        if(canvasReservedJson[dataToSend.groupId] && canvasReservedJsonActiveIndex[dataToSend.groupId] !== undefined){
+            canvasReservedJson[dataToSend.groupId][canvasReservedJsonActiveIndex[dataToSend.groupId]] = dataToSend?.canvasReservedJson;
+        }
+        io.emit('message', dataToSend);
     });
 });
 

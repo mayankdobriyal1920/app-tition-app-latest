@@ -543,6 +543,7 @@ export const actionToGetStudentTimetableData = (isLoaderDisable = false) => asyn
     dispatch({type: STUDENT_ALL_TIME_CLASS_LIST_SUCCESS, payload: [...eventData]});
 }
 export const actionToSendFabricDataToOtherUser = (jsonObject,socket) => async ()=> {
+    console.log('actionToSendFabricDataToOtherUser');
     socket.emit('annotatorImageJson', JSON.stringify({
         groupId:jsonObject.groupId,
         jsonObject: JSON.stringify(jsonObject)

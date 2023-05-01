@@ -513,6 +513,7 @@ export default function WhiteboardComponent({groupId}){
 
     useEffectOnce(()=>{
         const receiveWebsocketRequest = (data)=>{
+            console.log('data',data);
             let message = JSON.parse(data);
             if(groupId === message?.groupId) {
                 dispatch(actionToSetCaptureAnnotatorJSONData(message.jsonObject));
