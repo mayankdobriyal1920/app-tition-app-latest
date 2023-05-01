@@ -156,8 +156,10 @@ function setupWebSocket() {
 }
 
 io.on('connection', (socket) => {
-    console.log('A user has connected');
-    socket.on('annotatorImageJson', (dataToSend) => {
+    // Join a conversation
+    const { roomId } = socket.handshake.query;
+    socket.join(roomId);
+    io.in(roomId).emit('annotatorImageJson', (dataToSend) => {
         console.log('annotatorImageJson');
         if(!allChanelWhiteBoardEditingData[dataToSend.groupId]){
             allChanelWhiteBoardEditingData[dataToSend.groupId] = [dataToSend];
@@ -167,7 +169,10 @@ io.on('connection', (socket) => {
         if(canvasReservedJson[dataToSend.groupId] && canvasReservedJsonActiveIndex[dataToSend.groupId] !== undefined){
             canvasReservedJson[dataToSend.groupId][canvasReservedJsonActiveIndex[dataToSend.groupId]] = dataToSend?.canvasReservedJson;
         }
-        io.emit('message', dataToSend);
+        io.in(roomId).emit('annotatorImageJson', dataToSend);
+    });
+    socket.on("disconnect", () => {
+        socket.leave(roomId);
     });
 });
 
