@@ -25,11 +25,12 @@ import {_generateUniqueId} from "../../helper/CommonHelper";
 import {FacebookLoader} from "../Loader/FacebookLoader";
 import axios from "axios";
 import {socket} from "../../actions/helper/SocketHelper";
+import socketIOClient from "socket.io-client";
+
 let undo,redo,undoArray=[];
 const customAnnotationId = _generateUniqueId();
 let canvasReservedJson = [];
 const endpoint = "https://121tuition.in/api-call-tutor/uploadAssignmentApiCall";
-import socketIOClient from "socket.io-client";
 // "undefined" means the URL will be computed from the `window.location` object
 const SOCKET_SERVER_URL = 'https://121tuition.in/api-call-tutor';
 
