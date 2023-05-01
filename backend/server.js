@@ -3,6 +3,7 @@ import http from 'http';
 import WebSocket from 'ws';
 import cors from 'cors';
 import dotenv  from 'dotenv';
+
 import commonRouter from "./routers/commonRouter.js";
 import { PeerServer }  from 'peer';
 import {Server} from 'socket.io';
@@ -13,9 +14,10 @@ const host = 'localhost'
 const port = 4001;
 const peerServerPort = 4002;
 const server = http.createServer(app);
+const router =  express.Router();
 
 const io = new Server(server, {  cors: {
-        origin: "http://localhost:3000"
+        origin: "*"
     }});
 
 import fs from 'fs';
@@ -175,7 +177,7 @@ io.on('connection', (socket) => {
         socket.leave(roomId);
     });
 });
-
+app.use("/api-call-tutor/socket.io", router);
 app.use(cors());
 app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', '*');
