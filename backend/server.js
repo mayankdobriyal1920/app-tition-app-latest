@@ -14,7 +14,9 @@ const port = 4001;
 const peerServerPort = 4002;
 const server = http.createServer(app);
 
-const io = new Server(server, { cors: { origin: '*' }});
+const io = new Server(server, {  cors: {
+        origin: "http://localhost:3000"
+    }});
 
 import fs from 'fs';
 import upload from "./models/upload.js";

@@ -24,13 +24,15 @@ import {ANNOTATOR_UNDO_REDO_CAPTURE, ANNOTATOR_USER_ON_CAPTURE} from "../../cons
 import {_generateUniqueId} from "../../helper/CommonHelper";
 import {FacebookLoader} from "../Loader/FacebookLoader";
 import axios from "axios";
-import { io } from 'socket.io-client';
 import {socket} from "../../actions/helper/SocketHelper";
-
 let undo,redo,undoArray=[];
 const customAnnotationId = _generateUniqueId();
 let canvasReservedJson = [];
 const endpoint = "https://121tuition.in/api-call-tutor/uploadAssignmentApiCall";
+import socketIOClient from "socket.io-client";
+// "undefined" means the URL will be computed from the `window.location` object
+const SOCKET_SERVER_URL = 'https://121tuition.in/api-call-tutor';
+
 export default function WhiteboardComponent({groupId}){
     const captureAnnotatorJSONData = useSelector((state) => state.captureAnnotatorJSONData);
     const editorActiveEditorJson = useSelector((state) => state.editorActiveEditorJson);
@@ -44,6 +46,7 @@ export default function WhiteboardComponent({groupId}){
     redo = captureAnnotatorUndoRedoArray.redo;
     undo = captureAnnotatorUndoRedoArray.undo;
     const dispatch = useDispatch();
+    const socketRef = useRef();
 
     useEffect(()=>{
         const setWindowDimensions = ()=> {
@@ -519,12 +522,16 @@ export default function WhiteboardComponent({groupId}){
                 dispatch(actionToSetCaptureAnnotatorJSONData(message.jsonObject));
             }
         }
-        socket.on('annotatorImageJson', receiveWebsocketRequest);
-        socket.connect();
-        return ()=>{
-            socket.disconnect();
-            socket.off('annotatorImageJson', receiveWebsocketRequest);
-        }
+        // Creates a WebSocket connection
+        socketRef.current = socketIOClient(SOCKET_SERVER_URL, {
+            query: { groupId },
+        });
+
+        // Listens for incoming messages
+        socketRef?.current?.on('annotatorImageJson', receiveWebsocketRequest);
+        return () => {
+            socketRef?.current?.disconnect();
+        };
     },[groupId]);
 
     React.useEffect(()=>{
