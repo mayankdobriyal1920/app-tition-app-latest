@@ -8,33 +8,25 @@ import {
     setUserId,
     returnPathShapeName,
     setSelectToolColorToEditor,
-    autoAdjustCanvasToScreenByAdjustZoom,
     changeObjectSelection,
     removeEvents
 } from "../../helper/EditorToolbar";
-import {eventBus} from "../../helper/EventBus";
 import {useEffectOnce} from "../../helper/UseEffectOnce";
 import {cloneDeep} from "lodash";
 import {
     actionToChangeActiveIndexEditorJson, actionToGetActiveEditorJson, actionToGetEditorCompleteJsonDataWithIndex,
-    actionToSendFabricDataToOtherUser, actionToSetCaptureAnnotatorJSONData,
+    actionToSendFabricDataToOtherUser,
     actionToUpdateIpAddress
 } from "../../actions/CommonAction";
 import {ANNOTATOR_UNDO_REDO_CAPTURE, ANNOTATOR_USER_ON_CAPTURE} from "../../constants/CommonConstants";
 import {_generateUniqueId} from "../../helper/CommonHelper";
 import {FacebookLoader} from "../Loader/FacebookLoader";
 import axios from "axios";
-import {socket} from "../../actions/helper/SocketHelper";
-import socketIOClient from "socket.io-client";
 
 let undo,redo,undoArray=[];
 const customAnnotationId = _generateUniqueId();
-let canvasReservedJson = [];
 const endpoint = "https://121tuition.in/api-call-tutor/uploadAssignmentApiCall";
-// "undefined" means the URL will be computed from the `window.location` object
-const SOCKET_SERVER_URL = 'https://121tuition.in/api-call-tutor';
-
-export default function WhiteboardComponent({groupId}){
+export default function WhiteboardComponent({groupId,canvasReservedJson}){
     const captureAnnotatorJSONData = useSelector((state) => state.captureAnnotatorJSONData);
     const editorActiveEditorJson = useSelector((state) => state.editorActiveEditorJson);
     const userInfo = useSelector((state) => state.userSignin.userInfo);
@@ -47,45 +39,95 @@ export default function WhiteboardComponent({groupId}){
     redo = captureAnnotatorUndoRedoArray.redo;
     undo = captureAnnotatorUndoRedoArray.undo;
     const dispatch = useDispatch();
-    const socketRef = useRef();
+    const editCanvasRef = useRef();
+
+
+    const setWindowDimensions = ()=> {
+        let clientWidth = document.querySelector('.center_white_board_video_main_container').clientWidth;
+        let clientHeight = document.querySelector('.center_white_board_video_main_container').clientHeight;
+        let canvas = window.fabricCanvas;
+        const newWidth = clientWidth;
+        const newHeight = clientHeight;
+
+        if (canvas.width !== newWidth || canvas.height !== newHeight) {
+            const scaleX = newWidth / canvas.width;
+            const scaleY = newHeight / canvas.height;
+            let objects = canvas.getObjects();
+            for (let i in objects) {
+                objects[i].scaleX = objects[i].scaleX * scaleX;
+                objects[i].scaleY = objects[i].scaleY * scaleY;
+                objects[i].left = objects[i].left * scaleX;
+                objects[i].top = objects[i].top * scaleY;
+                objects[i].setCoords();
+            }
+            let scale = Math.min(scaleX,scaleY);
+            canvas.setWidth(canvas.getWidth() * scaleX);
+            canvas.setHeight(canvas.getHeight() * scaleY);
+            // Calculate the scale factor
+            // Set the scale factor on the canvas
+            // console.log(scale-0.1);
+            // canvas.setZoom(scale-0.1);
+            canvas.renderAll();
+            canvas.calcOffset();
+        }
+    }
 
     useEffect(()=>{
-        const setWindowDimensions = ()=> {
-            let clientWidth = document.querySelector('.center_white_board_video_main_container').clientWidth;
-            let clientHeight = document.querySelector('.center_white_board_video_main_container').clientHeight;
-            let canvas = window.fabricCanvas;
-            const newWidth = clientWidth;
-            const newHeight = clientHeight;
-
-            if (canvas.width !== newWidth || canvas.height !== newHeight) {
-                const scaleX = newWidth / canvas.width;
-                const scaleY = newHeight / canvas.height;
-                let objects = canvas.getObjects();
-                for (let i in objects) {
-                    objects[i].scaleX = objects[i].scaleX * scaleX;
-                    objects[i].scaleY = objects[i].scaleY * scaleY;
-                    objects[i].left = objects[i].left * scaleX;
-                    objects[i].top = objects[i].top * scaleY;
-                    objects[i].setCoords();
-                }
-
-                canvas.discardActiveObject();
-                canvas.setWidth(canvas.getWidth() * scaleX);
-                canvas.setHeight(canvas.getHeight() * scaleY);
-                canvas.renderAll();
-                canvas.calcOffset();
-            }
-        }
         window.addEventListener('resize', setWindowDimensions);
         return () => {
             window.removeEventListener('resize', setWindowDimensions)
         }
     },[])
 
-    const editCanvasRef = useRef();
+
+    useEffectOnce(()=>{
+        const callFunctionToLoadImageInCanvas = ()=>{
+            /////// for same canvas height width for all device
+            let canvasWidthAndWidth = 900;
+            let canvasWidthAndHeight = 600;
+            /////// for same canvas height width for all device
+            window.fabricCanvas = window._canvas = new fabric.Canvas('modal_screenshot_image_canvas');
+            window.fabricCanvas.setWidth(canvasWidthAndWidth);
+            window.fabricCanvas.setHeight(canvasWidthAndHeight);
+            window.fabricCanvas.selection = false;
+            window.fabricCanvas.freeDrawingBrush.color = 'red';
+            window.fabricCanvas.isDrawingMode = true;
+
+          //   let clientWidth = document.querySelector('.center_white_board_video_main_container').clientWidth;
+          //   let clientHeight = document.querySelector('.center_white_board_video_main_container').clientHeight;
+          //   ///// auto adjust
+          //   // autoAdjustCanvasToScreenByAdjustZoom(clientWidth,clientHeight,canvasWidthAndWidth,canvasWidthAndHeight);
+          //
+          //   const scaleFactor = Math.min(clientWidth / canvasWidthAndWidth, clientHeight / canvasWidthAndHeight);
+          //
+          //   ////console.log(clientWidth,clientHeight);
+          // //console.log(scaleFactor);
+
+            setTimeout(function(){
+                let rect = new fabric.Rect({
+                    width: window.fabricCanvas.width,
+                    height: window.fabricCanvas.height,
+                    fill: 'white'
+                });
+                window.fabricCanvas.add(rect);
+                drawLineArrow(window.fabricCanvas);
+                callFunctionToActiveSelectTool('draw');
+                eventOnFabric();
+                dispatch(actionToGetActiveEditorJson(groupId));
+                setTimeout(function (){
+                    setWindowDimensions();
+                    setCanvasLoading(false);
+                })
+            })
+        }
+        callFunctionToLoadImageInCanvas();
+        dispatch(actionToUpdateIpAddress());
+        setUserId(userInfo?.id);
+        setSelectedToolColor('#FF0000');
+    },[editCanvasRef]);
 
     const callFunctionToActiveSelectTool = (id)=>{
-        drawObjectInCanvas(id,window.fabricCanvas)
+        drawObjectInCanvas(id,window.fabricCanvas,sendToWebsocketFabricData)
         setActiveSelectedTool(id);
     }
     const goToPrevCanvasPage = (index)=>{
@@ -222,40 +264,11 @@ export default function WhiteboardComponent({groupId}){
     const addDrawLineElement = (opt) => {
         let pathShapeName = returnPathShapeName();
         if(pathShapeName === 'free draw' && opt.path.shapeName !== 'free draw'){
-            createCopyOfFreeDraw(window.fabricCanvas,opt.path,pathShapeName);
+            createCopyOfFreeDraw(window.fabricCanvas,opt.path,pathShapeName,sendToWebsocketFabricData);
         } else {
             window.fabricCanvas.remove(opt.path);
         }
         returnPathShapeName('path');
-    }
-    const callFunctionToLoadImageInCanvas = ()=>{
-        window.fabricCanvas = window._canvas = new fabric.Canvas('modal_screenshot_image_canvas');
-        window.fabricCanvas.selection = false;
-        window.fabricCanvas.freeDrawingBrush.color = 'red';
-        window.fabricCanvas.isDrawingMode = true;
-
-        let clientWidth = document.querySelector('.center_white_board_video_main_container').clientWidth;
-        let clientHeight = document.querySelector('.center_white_board_video_main_container').clientHeight;
-
-        let canvasWidthAndWidth = 700;
-        let canvasWidthAndHeight = 500;
-
-        autoAdjustCanvasToScreenByAdjustZoom(clientWidth,clientHeight,canvasWidthAndWidth,canvasWidthAndHeight);
-
-        setTimeout(function(){
-            let rect = new fabric.Rect({
-                width: canvasWidthAndWidth,
-                height: canvasWidthAndHeight,
-                fill: 'white'
-            });
-            window.fabricCanvas.setDimensions({width: clientWidth, height: clientHeight});
-            window.fabricCanvas.add(rect);
-            drawLineArrow(window.fabricCanvas);
-            callFunctionToActiveSelectTool('draw');
-            eventOnFabric();
-            setCanvasLoading(false);
-            dispatch(actionToGetActiveEditorJson(groupId));
-        })
     }
     const sendToWebsocketFabric = (userPointer,type)=>{
         sendToWebsocketFabricToOtherUser(userPointer,type);
@@ -269,7 +282,7 @@ export default function WhiteboardComponent({groupId}){
             if(userInfo?.role === 2) {
                 dispatch(actionToSendFabricDataToOtherUser({
                     groupId: groupId,
-                    canvasReservedJson: JSON.stringify(window.fabricCanvas),
+                    //canvasReservedJson: JSON.stringify(window.fabricCanvas),
                     userId: (userInfo != null ? userInfo.id : 0),
                     canvasJson: jsonObject,
                     custom_editor_id: customAnnotationId,
@@ -277,7 +290,10 @@ export default function WhiteboardComponent({groupId}){
                     userPointer: userPointer,
                     objectId: userPointer?.id,
                     currentIndex: currentIndex
-                },socket));
+                }));
+                // setTimeout(function (){
+                //     callFunctionToGetCanvasReserve();
+                // },2000)
             }else{
                 dispatch(actionToSendFabricDataToOtherUser({
                     groupId: groupId,
@@ -288,7 +304,7 @@ export default function WhiteboardComponent({groupId}){
                     userPointer: userPointer,
                     objectId: userPointer?.id,
                     currentIndex: currentIndex
-                },socket));
+                }));
             }
         }
     }
@@ -296,8 +312,8 @@ export default function WhiteboardComponent({groupId}){
         switch(data.type){
             case 'add':
                 if(data.userPointer.shapeName !== 'path'){
-                    sendToWebsocketFabric(data.userPointer,data.type);
-                    storeUndoAndRedo(data.userPointer,data.type);
+                     sendToWebsocketFabric(data.userPointer,data.type);
+                    //storeUndoAndRedo(data.userPointer,data.type);
                 }
                 break;
             case 'remove':
@@ -478,10 +494,10 @@ export default function WhiteboardComponent({groupId}){
             window.fabricCanvas.isDrawingMode = false;
             //Changing cursor of canvas brush
             changeObjectSelection(true, window.fabricCanvas);
-            drawObjectInCanvas('select', window.fabricCanvas);
+            drawObjectInCanvas('select', window.fabricCanvas,sendToWebsocketFabricData);
             window.fabricCanvas.setActiveObject(window.fabricCanvas._objects[window.fabricCanvas._objects.length - 1]);
             window.fabricCanvas.renderAll();
-            eventBus.dispatch('send-to-websocket-fabric', {
+            sendToWebsocketFabricData({
                 type: 'add',
                 userPointer: window.fabricCanvas._objects[window.fabricCanvas._objects.length - 1]
             });
@@ -492,19 +508,7 @@ export default function WhiteboardComponent({groupId}){
         document.querySelector(id).click();
     }
 
-    useEffectOnce(()=>{
-        callFunctionToLoadImageInCanvas();
-        eventBus.remove('send-to-websocket-fabric');
-        eventBus.on('send-to-websocket-fabric',sendToWebsocketFabricData);
-        dispatch(actionToUpdateIpAddress());
-        setUserId(userInfo?.id);
-        setSelectedToolColor('#FF0000');
-        return ()=>{
-            eventBus.remove('send-to-websocket-fabric',sendToWebsocketFabricData);
-        }
-    },[editCanvasRef]);
-
-    useEffectOnce(()=>{
+    const callFunctionToGetCanvasReserve = ()=>{
         if(userInfo?.role === 2) {
             dispatch(actionToGetEditorCompleteJsonDataWithIndex(groupId)).then((returnData) => {
                 if (returnData?.data) {
@@ -513,26 +517,10 @@ export default function WhiteboardComponent({groupId}){
                 }
             })
         }
-    },[groupId]);
+    }
 
     useEffectOnce(()=>{
-        const receiveWebsocketRequest = (data)=>{
-            console.log('data',data);
-            let message = JSON.parse(data);
-            if(groupId === message?.groupId) {
-                dispatch(actionToSetCaptureAnnotatorJSONData(message.jsonObject));
-            }
-        }
-        // Creates a WebSocket connection
-        socketRef.current = socketIOClient(SOCKET_SERVER_URL, {
-            query: { groupId },
-        });
-
-        // Listens for incoming messages
-        socketRef?.current?.on('annotatorImageJson', receiveWebsocketRequest);
-        return () => {
-            socketRef?.current?.disconnect();
-        };
+        callFunctionToGetCanvasReserve();
     },[groupId]);
 
     React.useEffect(()=>{
@@ -543,11 +531,12 @@ export default function WhiteboardComponent({groupId}){
 
     React.useEffect(()=>{
         window.fabricCanvas.clear();
-        if(editorActiveEditorJson?.data) {
-            window.fabricCanvas.loadFromJSON(editorActiveEditorJson?.data, function () {
-                window.fabricCanvas.renderAll();
-            })
-        }
+        editorActiveEditorJson?.map((anData)=> {
+            if (anData.jsonObject) {
+                let captureAnnotatorJSONData = JSON.parse(anData.jsonObject);
+                drawFromWebSocket(JSON.parse(captureAnnotatorJSONData.canvasJson), captureAnnotatorJSONData.type, captureAnnotatorJSONData.userPointer, captureAnnotatorJSONData.sizeArray, captureAnnotatorJSONData.currentIndex);
+            }
+        })
     },[editorActiveEditorJson]);
 
 

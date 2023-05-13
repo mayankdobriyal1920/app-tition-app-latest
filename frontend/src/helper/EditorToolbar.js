@@ -25,7 +25,7 @@ export function setUserId(id){
     userId = id;
 }
 
-export function drawObjectInCanvas(id,selectedCanvas){
+export function drawObjectInCanvas(id,selectedCanvas,sendToWebsocketFabricData){
     selectedCanvas.isDrawingMode = true;
     selectedCanvas.freeDrawingBrush = new fabric.PencilBrush(selectedCanvas);
     selectedCanvas.freeDrawingBrush.color = "#f1f1f100";
@@ -62,15 +62,15 @@ export function drawObjectInCanvas(id,selectedCanvas){
             break;
         case 'circle':
             changeObjectSelection(false, selectedCanvas);
-            drawCircle(selectedCanvas);
+            drawCircle(selectedCanvas,sendToWebsocketFabricData);
             break;
         case 'arrow':
             changeObjectSelection(false, selectedCanvas);
-            drawLineArrow(selectedCanvas);
+            drawLineArrow(selectedCanvas,sendToWebsocketFabricData);
             break;
         case 'rectangle':
             changeObjectSelection(false, selectedCanvas);
-            drawRectangle(selectedCanvas);
+            drawRectangle(selectedCanvas,sendToWebsocketFabricData);
             break;
 
     }
@@ -116,7 +116,7 @@ export function changeObjectSelection(value, selected_canvas) {
     });
     selected_canvas.renderAll();
 }
-export function drawLineArrow(selected_canvas){
+export function drawLineArrow(selected_canvas,sendToWebsocketFabricData){
     removeEvents(selected_canvas);
     selected_canvas.isDrawingMode = true;
     selected_canvas.freeDrawingBrush.color = "#f1f1f100";
@@ -270,12 +270,12 @@ export function drawLineArrow(selected_canvas){
             canvas.add(group);
             //canvas.setActiveObject(group);
             //canvas.isDrawingMode = false;
-            eventBus.dispatch('send-to-websocket-fabric', {type: 'add', userPointer: group});
+            sendToWebsocketFabricData({type: 'add', userPointer: group});
         }
     });
 
 }
-function drawCircle(selected_canvas) {
+function drawCircle(selected_canvas,sendToWebsocketFabricData) {
     let circle, isDown, origX, origY;
     removeEvents(selected_canvas);
     selected_canvas.on('mouse:down', function(o) {
@@ -347,12 +347,12 @@ function drawCircle(selected_canvas) {
                 mtr:false});
             circle.setCoords();
             //selected_canvas.setActiveObject(circle);
-            eventBus.dispatch('send-to-websocket-fabric',{type:'add',userPointer:circle,resize:true});
+            sendToWebsocketFabricData({type:'add',userPointer:circle,resize:true});
         }
         selected_canvas.renderAll();
     });
 }
-function drawRectangle(selected_canvas) {
+function drawRectangle(selected_canvas,sendToWebsocketFabricData) {
     let rect, isDown, origX, origY;
     removeEvents(selected_canvas);
     selected_canvas.on('mouse:down', function(o) {
@@ -423,12 +423,12 @@ function drawRectangle(selected_canvas) {
             selected_canvas.remove(rect);
         }else{
             //selected_canvas.setActiveObject(rect);
-            eventBus.dispatch('send-to-websocket-fabric',{type:'add',userPointer:rect,resize:true});
+            sendToWebsocketFabricData({type:'add',userPointer:rect,resize:true});
         }
         selected_canvas.renderAll();
     });
 }
-export function createCopyOfFreeDraw(selected_canvas, oldPath,shapeName){
+export function createCopyOfFreeDraw(selected_canvas, oldPath,shapeName,sendToWebsocketFabricData){
     // if (fabric.util.getKlass(oldPath.type).async) {
     oldPath.clone(function (clone) {
         clone.set({
@@ -454,14 +454,12 @@ export function createCopyOfFreeDraw(selected_canvas, oldPath,shapeName){
         selected_canvas.renderAll();
         const canvasIndex = selected_canvas?.lowerCanvasEl?.getAttribute('data-index');
         const captureId = selected_canvas?.lowerCanvasEl?.getAttribute('data-capture-id');
-        console.log('addDrawLineElement');
-        eventBus.dispatch('send-to-websocket-fabric',{type:'add',userPointer:clone, fabricCanvas: selected_canvas,canvasIndex,captureId});
-    });
+        sendToWebsocketFabricData({type:'add',userPointer:clone, fabricCanvas: selected_canvas,canvasIndex,captureId});
+      });
     //}
 }
 export function autoAdjustCanvasToScreenByAdjustZoom(clientWidth,clientHeight,canvasWidthAndWidth,canvasWidthAndHeight){
 
-    console.log('clientWidth,clientHeight,canvasWidthAndWidth,canvasWidthAndHeight',clientWidth,clientHeight,canvasWidthAndWidth,canvasWidthAndHeight);
     let scaledHeight = canvasWidthAndHeight;
     let scaledWidth = canvasWidthAndWidth;
     let originalHeight = clientHeight;
