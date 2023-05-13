@@ -451,6 +451,7 @@ export default function WhiteboardComponent({groupId,canvasReservedJson}){
     }
     const addUrlInFabricImage = async function (url){
         let userId = userInfo ? userInfo.id : '';
+
         fabric.Image.fromURL(url, function (img) {
             let leftPosition= 0;
             let topPosition= 0;
@@ -485,9 +486,9 @@ export default function WhiteboardComponent({groupId,canvasReservedJson}){
                 transparentCorners:false,
                 left:leftPosition,
                 top:topPosition,
-                height:imageHeight,
-                width:imageWidth
             });
+            img.scaleToHeight(imageHeight);
+            img.scaleToWidth(imageWidth);
             window.fabricCanvas.add(img);
             img.setCoords();
             removeEvents(window.fabricCanvas);
