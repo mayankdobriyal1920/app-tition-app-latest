@@ -879,6 +879,13 @@ div#teacher_video_class_container {
     position: absolute!important;
     z-index: 9999999999!important;
 }
+p.title_enhanced_desktop {
+    text-align: center;
+    margin-bottom: 14px;
+    font-size: 18px;
+    color: #094af9;
+    font-weight: 600;
+}
 .assign_class_main_popup_outer_container .assign_class_main_popup_inner_container .close_popup_button {
     position: absolute;
     top: 0px;

@@ -202,15 +202,15 @@ export default function StudentTodayClassesComponent(){
                                                                     {(myClasses?.class_end_date_time) ?
                                                                         <>
                                                                             <div className={"class_time_date_demo"}>
-                                                                                Start time : {moment(new Date(myClasses?.start_from_date_time)).format('hh:mm a')}
+                                                                                Start time : {moment(myClasses?.start_from_date_time).format('hh:mm a')}
                                                                             </div>
                                                                             <div className={"class_time_date_demo"}>
-                                                                                Class End : {moment(new Date(myClasses?.class_end_date_time)).format('hh:mm a')}
+                                                                                Class End : {moment(myClasses?.class_end_date_time).format('hh:mm a')}
                                                                             </div>
                                                                         </>
                                                                         :
                                                                         <div className={"class_time_date_demo"}>
-                                                                            Start time : {moment(new Date(myClasses?.start_from_date_time)).format('hh:mm a')}
+                                                                            Start time : {moment(myClasses?.start_from_date_time).format('hh:mm a')}
                                                                         </div>
                                                                     }
                                                                 </div>

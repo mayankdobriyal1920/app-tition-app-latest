@@ -191,15 +191,15 @@ export default function StudentTodayClassesMobileComponent() {
                                                                         {(myClasses?.class_end_date_time) ?
                                                                             <>
                                                                                 <div className={"class_time_date_demo"}>
-                                                                                    Start time : {moment(new Date(myClasses?.start_from_date_time)).format('hh:mm a')}
+                                                                                    Start time : {moment(myClasses?.start_from_date_time).format('hh:mm a')}
                                                                                 </div>
                                                                                 <div className={"class_time_date_demo"}>
-                                                                                    Class End : {moment(new Date(myClasses?.class_end_time)).format('hh:mm a')}
+                                                                                    Class End : {moment(myClasses?.class_end_time).format('hh:mm a')}
                                                                                 </div>
                                                                             </>
                                                                             :
                                                                             <div className={"class_time_date_demo"}>
-                                                                                Start time : {moment(new Date(myClasses?.class_end_date_time)).format('hh:mm a')}
+                                                                                Start time : {moment(myClasses?.class_end_date_time).format('hh:mm a')}
                                                                             </div>
                                                                         }
                                                                     </div>
@@ -271,15 +271,15 @@ export default function StudentTodayClassesMobileComponent() {
                                                                         {(myClasses?.class_end_time) ?
                                                                             <>
                                                                                 <div className={"class_time_date_demo"}>
-                                                                                    Start time : {moment(new Date(myClasses?.starting_from_date)).format('hh:mm a')}
+                                                                                    Start time : {moment(myClasses?.starting_from_date).format('hh:mm a')}
                                                                                 </div>
                                                                                 <div className={"class_time_date_demo"}>
-                                                                                    Class End : {moment(new Date(myClasses?.class_end_time)).format('hh:mm a')}
+                                                                                    Class End : {moment(myClasses?.class_end_time).format('hh:mm a')}
                                                                                 </div>
                                                                             </>
                                                                             :
                                                                             <div className={"class_time_date_demo"}>
-                                                                                Start time : {moment(new Date(myClasses?.starting_from_date)).format('hh:mm a')}
+                                                                                Start time : {moment(myClasses?.starting_from_date).format('hh:mm a')}
                                                                             </div>
                                                                         }
                                                                     </div>
@@ -361,7 +361,7 @@ export default function StudentTodayClassesMobileComponent() {
                                                             <div data-date={studentAllClassesList?.classData?.subscription_end_date} className={"col body"}>
                                                                 {(studentAllClassesList?.classData?.subscription_end_date) ?
                                                                     <>
-                                                                        {moment(new Date(studentAllClassesList?.classData?.subscription_end_date)).format('DD ddd MMM')}
+                                                                        {moment(studentAllClassesList?.classData?.subscription_end_date).format('DD ddd MMM')}
                                                                     </>
                                                                     : 'N/A'
                                                                 }

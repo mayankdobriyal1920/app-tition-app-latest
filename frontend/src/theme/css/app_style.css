@@ -36,6 +36,13 @@
     left: 0px;
     bottom: 0px;
 }
+p.title_enhanced_app {
+    text-align: center;
+    margin-top: 14px;
+    font-size: 16px;
+    color: #094af9;
+    font-weight: 600;
+}
 .main_body_content_login_mobile .title_main_section_container {
     display: flex;
 }

@@ -3,12 +3,10 @@ import {useDispatch, useSelector} from "react-redux";
 import DataTable from 'react-data-table-component';
 import {useEffectOnce} from "../../../helper/UseEffectOnce";
 import {
-    actionToAlreadyCreatedClassAccordingToTheCondition,
-    actionToGetAllRecordedClassesDetails, actionToOpenCloseClassAssignPopup,
-    actionToSearchTeacherAccordingToTheCondition
+    actionToGetAllRecordedClassesDetails
 } from "../../../actions/CommonAction";
 import moment from "moment";
-import ReactPlayer from 'react-player/lazy'
+import ReactPlayer from 'react-player'
 
 export default function AllRecordedClassDataTableComponent() {
     const dispatch = useDispatch();
@@ -105,7 +103,9 @@ export default function AllRecordedClassDataTableComponent() {
                         <div onClick={()=>setOpenReactVideoPlayer('')} className={"close_popup_button"}><i className={"fa fa-times"}></i></div>
                         <ReactPlayer playing
                                      width='100%'
-                                     height='100%' url={openReactVideoPlayer} />
+                                     controls={true}
+                                     height='100%'
+                                     url={openReactVideoPlayer} />
                     </div>
                 </div>
                 :''

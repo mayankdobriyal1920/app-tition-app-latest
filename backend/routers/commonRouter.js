@@ -625,16 +625,21 @@ commonRouter.post(
                     let classData = JSON.parse(resData.teacher_classes_data);
                     if(classData) {
                         if (classData.profile_subject_with_batch) {
-                            let allProfileData = JSON.parse(classData.profile_subject_with_batch)
-                            allProfileData?.map((profileData,profileDataKey)=>{
-                                allProfileData[profileDataKey] = JSON.parse(profileData);
-                            })
+                            let allProfileData = JSON.parse(classData.profile_subject_with_batch);
+                            if(allProfileData?.length && allProfileData[0]?.id){
+                                console.log('ok');
+                            }else {
+                                allProfileData?.map((profileData, profileDataKey) => {
+                                    allProfileData[profileDataKey] = JSON.parse(profileData);
+                                })
+                            }
                             classData.profile_subject_with_batch = allProfileData;
                         }
                         finalData.push(classData);
                     }
                 })
             }
+            //console.log('finalData',finalData);
             res.status(200).send({
                 response: finalData,
             });
@@ -690,9 +695,13 @@ commonRouter.post(
                     if(classData) {
                         if (classData.profile_subject_with_batch) {
                             let allProfileData = JSON.parse(classData.profile_subject_with_batch)
-                            allProfileData?.map((profileData,profileDataKey)=>{
-                                allProfileData[profileDataKey] = JSON.parse(profileData);
-                            })
+                            if(allProfileData?.length && allProfileData[0]?.id){
+                                console.log('ok');
+                            }else {
+                                allProfileData?.map((profileData, profileDataKey) => {
+                                    allProfileData[profileDataKey] = JSON.parse(profileData);
+                                })
+                            }
                             classData.profile_subject_with_batch = allProfileData;
                         }
                         finalData.push(classData);
