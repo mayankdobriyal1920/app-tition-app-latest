@@ -40,7 +40,7 @@ const ContactUsMainBodyContainerComponent=() => {
                                             <img src={materialLocation} alt=""/>
                                         </div>
                                         <div className="contact__text">
-                                            <h5>27/2b , street road -04 ,New York , USA</h5>
+                                            <h5>Kolkata</h5>
                                         </div>
                                     </div>
                                     <div className="single-contact-box cb-2 mb-30">
@@ -48,8 +48,7 @@ const ContactUsMainBodyContainerComponent=() => {
                                             <img src={phoneAlt} alt=""/>
                                         </div>
                                         <div className="contact__text">
-                                            <h5>+000 (125) 3654 34</h5>
-                                            <h5>+000 (125) 3654 34</h5>
+                                            <h5>+91 88009 29105</h5>
                                         </div>
                                     </div>
                                     <div className="single-contact-box cb-3 mb-30">
@@ -57,8 +56,7 @@ const ContactUsMainBodyContainerComponent=() => {
                                             <img src={featherMail} alt=""/>
                                         </div>
                                         <div className="contact__text">
-                                            <h5>info@example.com</h5>
-                                            <h5>info2@example.com</h5>
+                                            <h5>121tution2022@gmail.com</h5>
                                         </div>
                                     </div>
                                 </div>

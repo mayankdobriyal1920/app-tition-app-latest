@@ -27,7 +27,12 @@ import {
 } from "./commonQueries.js";
 import PaytmChecksum from 'paytmchecksum';
 import request from 'request';
-import {allChanelWhiteBoardEditingData, allChannelsInGroupCallData, membersInChannelWithDetails} from "../server.js";
+import {
+    allChanelWhiteBoardEditingData,
+    allChannelsInGroupCallData,
+    canvasReservedJsonActiveIndex,
+    membersInChannelWithDetails
+} from "../server.js";
 const accountSid = '8e228d73929b4842b54d9fe5059a35df';
 const authToken = '70848b2f2a0e47a495ffc6cb75ed51f3';
 export const insertCommonApiCall = (body) => {
@@ -83,9 +88,12 @@ export const actionToGetAllSubjectDataListApiCall = () => {
 export const actionToGetWhiteBoardPrevDataForGroupIdApiCall = (body) => {
     let {groupDataId} = body;
     return new Promise(function(resolve) {
+        let canvasIndex = canvasReservedJsonActiveIndex[groupDataId];
+        let objectKey = `canvas-${canvasIndex}`;
         let results = [];
-        if(allChanelWhiteBoardEditingData[groupDataId])
-            results = allChanelWhiteBoardEditingData[groupDataId];
+        if(allChanelWhiteBoardEditingData[groupDataId] && allChanelWhiteBoardEditingData[groupDataId][objectKey])
+            results = allChanelWhiteBoardEditingData[groupDataId][objectKey];
+
         resolve(results);
     })
 }

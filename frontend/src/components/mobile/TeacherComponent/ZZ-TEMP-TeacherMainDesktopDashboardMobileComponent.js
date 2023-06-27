@@ -254,15 +254,15 @@ function TeacherMainDesktopDashboardMobileComponentFunction(){
                                                             {(myClasses?.class_end_date_time) ?
                                                                 <>
                                                                     <div className={"class_time_date_demo mb-3"}>
-                                                                        Start time : {moment(new Date(myClasses?.start_from_date_time)).format('hh:mm a')}
+                                                                        Start time : {moment(myClasses?.start_from_date_time).format('hh:mm a')}
                                                                     </div>
                                                                     <div className={"class_time_date_demo"}>
-                                                                        Class Taken : {moment(new Date(myClasses?.class_end_date_time)).format('hh:mm a')}
+                                                                        Class Taken : {moment(myClasses?.class_end_date_time).format('hh:mm a')}
                                                                     </div>
                                                                 </>
                                                                 :
                                                                 <div className={"class_time_date_demo mb-3"}>
-                                                                    Start time : {moment(new Date(myClasses?.start_from_date_time)).format('hh:mm a')}
+                                                                    Start time : {moment(myClasses?.start_from_date_time).format('hh:mm a')}
                                                                 </div>
                                                             }
                                                         </div>
@@ -325,15 +325,15 @@ function TeacherMainDesktopDashboardMobileComponentFunction(){
                                                             {(myClasses?.class_end_time) ?
                                                                 <>
                                                                     <div className={"class_time_date_demo mb-3"}>
-                                                                        Start time : {moment(new Date(myClasses?.starting_from_date)).format('hh:mm a')}
+                                                                        Start time : {moment(myClasses?.starting_from_date).format('hh:mm a')}
                                                                     </div>
                                                                     <div className={"class_time_date_demo"}>
-                                                                        Class Taken : {moment(new Date(myClasses?.class_end_time)).format('hh:mm a')}
+                                                                        Class Taken : {moment(myClasses?.class_end_time).format('hh:mm a')}
                                                                     </div>
                                                                 </>
                                                                 :
                                                                 <div className={"class_time_date_demo mb-3"}>
-                                                                    Start time : {moment(new Date(myClasses?.starting_from_date)).format('hh:mm a')}
+                                                                    Start time : {moment(myClasses?.starting_from_date).format('hh:mm a')}
                                                                 </div>
                                                             }
                                                         </div>

@@ -52,7 +52,7 @@ const MainLoginWithDetailPageMobileComponent=() => {
                            <div>
                                <div className={"title_main_section_container"}>
                                    <div className={"slider__img__box"}>
-                                       <img className="img-one" src={slider01} alt=""/>
+                                       <img className="img-one" src={slider01} alt=""/>s
                                        <img className="slide-shape img-eight" src={earthBg} alt=""/>
                                        <div className={"inner_slide_text_section_main"}>
                                            <p className={"heading_text"}>
@@ -60,6 +60,10 @@ const MainLoginWithDetailPageMobileComponent=() => {
                                            </p>
                                            <p className={"heading_text_p"}>
                                                Easy and user-friendly access to live classes along with interactive doubt solving sessions help students to achieve their goals
+                                           </p>
+                                           <p className={"title_enhanced_app"}>
+                                               One student one teacher concept <br/>
+                                               Distance will be no bar now
                                            </p>
                                            <button onClick={()=>setTabName('signup')} className="theme_btn search_btn">Join Us Now</button>
                                        </div>
@@ -77,7 +81,7 @@ const MainLoginWithDetailPageMobileComponent=() => {
                                                         style={{visibility: 'visible', 'animationDelay': '0.2s' , 'animationName': 'fadeInUp2'}}>
                                                        <h5 className="bottom-line mb-25">Explore 121 Tuition</h5>
                                                        <h2 className="mb-25">Why Choose 121 Tuition?</h2>
-                                                       <p>Get the same learning experience as school with the comfort of being at home with Extramarks. Learn from top faculty anytime, anywhere</p>
+                                                       <p>Get the same learning experience as school with the comfort of being at home with 121 Tuition. Learn from top faculty anytime, anywhere</p>
                                                    </div>
 
                                                    <ul className="text-list mb-40 wow fadeInUp2  animated" data-wow-delay=".2s"

@@ -8,8 +8,8 @@ import {myStream, myShareScreenStream, myPeer, myMediaRecorder} from "../../../h
 import jsPDF from "jspdf";
 import {
     actionToEndCurrentCurrentCall,
-    actionToMuteUnmuteUserCall, actionToSetTeacherZoomInOut,
-    actionToStoreAssignmentData,
+    actionToMuteUnmuteUserCall,
+    actionToSetTeacherZoomInOut,
     actionToStoreAssignmentDataForTeacher,
 } from "../../../actions/CommonAction";
 import $ from 'jquery';

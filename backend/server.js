@@ -3,10 +3,8 @@ import http from 'http';
 import WebSocket from 'ws';
 import cors from 'cors';
 import dotenv  from 'dotenv';
-
 import commonRouter from "./routers/commonRouter.js";
 import { PeerServer }  from 'peer';
-import {Server} from 'socket.io';
 
 dotenv.config();
 const app = express();
@@ -14,12 +12,6 @@ const host = 'localhost'
 const port = 4001;
 const peerServerPort = 4002;
 const server = http.createServer(app);
-const router =  express.Router();
-
-const io = new Server(server, {  cors: {
-        origin: "*"
-    }});
-
 import fs from 'fs';
 import upload from "./models/upload.js";
 import {updateCommonApiCall} from "./models/commonModel.js";
@@ -27,7 +19,6 @@ export let allChannelsInGroupCall = [];
 export let allChannelsInGroupCallData = {};
 export let allChanelWhiteBoardEditingData = {};
 export let membersInChannelWithDetails = {};
-export let canvasReservedJson = {};
 export let canvasReservedJsonActiveIndex = {};
 let currentUserIdInGroupCall = {};
 
@@ -62,22 +53,25 @@ function setupWebSocket() {
 
                     if(canvasReservedJsonActiveIndex[dataToSend.groupId] === undefined)
                         canvasReservedJsonActiveIndex[dataToSend.groupId] = 0;
+
                     if(allChanelWhiteBoardEditingData[dataToSend.groupId] === undefined)
-                        allChanelWhiteBoardEditingData[dataToSend.groupId] = [];
-                    if(canvasReservedJson[dataToSend.groupId] === undefined)
-                        canvasReservedJson[dataToSend.groupId] = [];
+                        allChanelWhiteBoardEditingData[dataToSend.groupId] = {};
 
                     membersInChannelWithDetails[dataToSend.groupId] = dataToSend?.members;
                     currentUserIdInGroupCall[userID] = dataToSend.memberData.id;
                     break;
                 case 'annotatorImageJson':
+                    let canvasIndex = canvasReservedJsonActiveIndex[dataToSend.groupId];
+                    let objectKey = `canvas-${canvasIndex}`
                     if(!allChanelWhiteBoardEditingData[dataToSend.groupId]){
-                        allChanelWhiteBoardEditingData[dataToSend.groupId] = [dataToSend];
+                        allChanelWhiteBoardEditingData[dataToSend.groupId] = {};
+                        allChanelWhiteBoardEditingData[dataToSend.groupId][objectKey] = [dataToSend];
                     }else{
-                        allChanelWhiteBoardEditingData[dataToSend.groupId].push(dataToSend);
-                    }
-                    if(canvasReservedJson[dataToSend.groupId] && canvasReservedJsonActiveIndex[dataToSend.groupId] !== undefined){
-                        canvasReservedJson[dataToSend.groupId][canvasReservedJsonActiveIndex[dataToSend.groupId]] = dataToSend?.canvasReservedJson;
+                        if(!allChanelWhiteBoardEditingData[dataToSend.groupId][objectKey]) {
+                            allChanelWhiteBoardEditingData[dataToSend.groupId][objectKey] = [dataToSend];
+                        } else{
+                            allChanelWhiteBoardEditingData[dataToSend.groupId][objectKey].push(dataToSend);
+                        }
                     }
                     break;
                 case 'addNewMemberDataInGroup':
@@ -117,67 +111,66 @@ function setupWebSocket() {
                     break;
                 case 'actionToChangeActiveIndexEditorJson':
                     canvasReservedJsonActiveIndex[dataToSend.groupId] = dataToSend.newIndex;
+                    let newIndexObjectKey = `canvas-${dataToSend.newIndex}`
+                    if(!allChanelWhiteBoardEditingData[dataToSend.groupId]){
+                        allChanelWhiteBoardEditingData[dataToSend.groupId] = {};
+                        allChanelWhiteBoardEditingData[dataToSend.groupId][newIndexObjectKey] = [];
+                    }else{
+                        if(!allChanelWhiteBoardEditingData[dataToSend.groupId][newIndexObjectKey]) {
+                            allChanelWhiteBoardEditingData[dataToSend.groupId][newIndexObjectKey] = [];
+                        }
+                    }
                     break;
                 case 'actionToEndCurrentCurrentCall':
                     if(membersInChannelWithDetails[dataToSend.groupId] !== undefined && membersInChannelWithDetails[dataToSend.groupId].length){
                         if(currentUserIdInGroupCall[userID] !== undefined)
                             delete currentUserIdInGroupCall[userID];
-                            if(allChannelsInGroupCall?.length && allChannelsInGroupCall.includes(dataToSend.groupId))
-                                allChannelsInGroupCall.splice(allChannelsInGroupCall.indexOf(dataToSend.groupId),1);
+                        if(allChannelsInGroupCall?.length && allChannelsInGroupCall.includes(dataToSend.groupId))
+                            allChannelsInGroupCall.splice(allChannelsInGroupCall.indexOf(dataToSend.groupId),1);
 
-                                if(membersInChannelWithDetails[dataToSend.groupId] !== undefined) {
-                                    delete membersInChannelWithDetails[dataToSend.groupId];
-                                if (allChannelsInGroupCallData[dataToSend.groupId] !== undefined)
-                                    delete allChannelsInGroupCallData[dataToSend.groupId];
-                                if (allChanelWhiteBoardEditingData[dataToSend.groupId] !== undefined)
-                                    delete allChanelWhiteBoardEditingData[dataToSend.groupId];
+                        if(membersInChannelWithDetails[dataToSend.groupId] !== undefined) {
+                            delete membersInChannelWithDetails[dataToSend.groupId];
 
-                                    // if(!dataToSend.classId) {
-                                    //     let setData = `class_end_time = ?`;
-                                    //     let whereCondition = `id = '${dataToSend.groupId}'`;
-                                    //     let updateData = {
-                                    //         column: setData,
-                                    //         value: [dataToSend?.classEndTime],
-                                    //         whereCondition: whereCondition,
-                                    //         tableName: 'class_assigned_teacher_batch'
-                                    //     };
-                                    //     updateCommonApiCall(updateData);
-                                    // }else{
-                                    //     let setData = `class_end_date_time = ?`;
-                                    //     let whereCondition = `class_assigned_teacher_batch_id = '${dataToSend.groupId}' AND DATE(start_from_date_time) = '${dataToSend?.startDate}'`;
-                                    //     let updateData = {column: setData, value: [dataToSend?.classEndTime], whereCondition: whereCondition, tableName: 'class_timetable_with_class_batch_assigned'};
-                                    //     updateCommonApiCall(updateData);
-                                    // }
+                            if (allChannelsInGroupCallData[dataToSend.groupId] !== undefined)
+                                delete allChannelsInGroupCallData[dataToSend.groupId];
+
+                            if (allChanelWhiteBoardEditingData[dataToSend.groupId] !== undefined)
+                                delete allChanelWhiteBoardEditingData[dataToSend.groupId];
+
+                            if (canvasReservedJsonActiveIndex[dataToSend.groupId] !== undefined)
+                                delete canvasReservedJsonActiveIndex[dataToSend.groupId];
+
+                            if(!dataToSend.classId) {
+                                let setData = `class_end_time = ?`;
+                                let whereCondition = `id = '${dataToSend.groupId}'`;
+                                let updateData = {
+                                    column: setData,
+                                    value: [dataToSend?.classEndTime],
+                                    whereCondition: whereCondition,
+                                    tableName: 'class_assigned_teacher_batch'
+                                };
+                                updateCommonApiCall(updateData);
+                            }else{
+                                let setData = `class_end_date_time = ?`;
+                                let whereCondition = `class_assigned_teacher_batch_id = '${dataToSend.groupId}' AND DATE(start_from_date_time) = '${dataToSend?.startDate}'`;
+                                let updateData = {column: setData, value: [dataToSend?.classEndTime], whereCondition: whereCondition, tableName: 'class_timetable_with_class_batch_assigned'};
+                                updateCommonApiCall(updateData);
+                            }
                         }
                     }
                     break;
             }
-            sendMessage(dataToSend);
+            wsServer.clients.forEach((client)=>{
+                if(client !== connection){
+                    client.send(JSON.stringify(dataToSend));
+                }
+            })
         })
     })
 }
 
-io.on('connection', (socket) => {
-    // Join a conversation
-    const { roomId } = socket.handshake.query;
-    socket.join(roomId);
-    io.in(roomId).emit('annotatorImageJson', (dataToSend) => {
-        console.log('annotatorImageJson');
-        if(!allChanelWhiteBoardEditingData[dataToSend.groupId]){
-            allChanelWhiteBoardEditingData[dataToSend.groupId] = [dataToSend];
-        }else{
-            allChanelWhiteBoardEditingData[dataToSend.groupId].push(dataToSend);
-        }
-        if(canvasReservedJson[dataToSend.groupId] && canvasReservedJsonActiveIndex[dataToSend.groupId] !== undefined){
-            canvasReservedJson[dataToSend.groupId][canvasReservedJsonActiveIndex[dataToSend.groupId]] = dataToSend?.canvasReservedJson;
-        }
-        io.in(roomId).emit('annotatorImageJson', dataToSend);
-    });
-    socket.on("disconnect", () => {
-        socket.leave(roomId);
-    });
-});
-app.use("/api-call-tutor/socket.io", router);
+
+
 app.use(cors());
 app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', '*');

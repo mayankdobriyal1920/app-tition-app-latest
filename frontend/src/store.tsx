@@ -84,7 +84,7 @@ const initialState = {
     ipAddress:'',
     captureAnnotatorJSONData: {},
     annotatorUserOnCapture:{},
-    editorActiveEditorJson:{},
+    editorActiveEditorJson:[],
     chatModuleCurrentCallGroupMembers:[],
     chatModuleNewUserAddedInCurrentCall:{},
     chatModuleNewUserLeaveUserInCallData:{},

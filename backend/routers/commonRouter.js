@@ -43,7 +43,7 @@ import {
     actionToVerifyUserOtpByMobileNumberApiCall,
     actionToSendOtpInMobileNumberApiCall, actionToSigninWithPasswordApiCall
 } from "../models/commonModel.js";
-import {canvasReservedJson, canvasReservedJsonActiveIndex} from "../server.js";
+import {allChanelWhiteBoardEditingData,canvasReservedJsonActiveIndex} from "../server.js";
 const commonRouter = express.Router();
 
 const stripe = Stripe('sk_test_51ME77cSIFtW1VSPuJqLQWVmK1vmdptG6j457wJlQv98NeRnB2eAdwkbQYWwlNfVIrtuRbNFPZsbKyafCQwdZuT1300SgcSS7AB');
@@ -101,10 +101,12 @@ commonRouter.post(
     '/actionToGetActiveEditorJsonApiCall',
     expressAsyncHandler(async (req, res) => {
         let {groupId} = req.body;
-        let jsonData = {data:'',status:Math.random()};
-        if(canvasReservedJson[groupId] && canvasReservedJson[groupId][canvasReservedJsonActiveIndex[groupId]]){
-            jsonData = {status:Math.random(),data:canvasReservedJson[groupId][canvasReservedJsonActiveIndex[groupId]]}
-        }
+        let jsonData = [];
+        let canvasIndex = canvasReservedJsonActiveIndex[groupId];
+        let objectKey = `canvas-${canvasIndex}`;
+        if(allChanelWhiteBoardEditingData[groupId] && allChanelWhiteBoardEditingData[groupId][objectKey])
+            jsonData = allChanelWhiteBoardEditingData[groupId][objectKey];
+
         res.status(200).send({
             response: jsonData,
         });
@@ -115,8 +117,8 @@ commonRouter.post(
     expressAsyncHandler(async (req, res) => {
         let {groupId} = req.body;
         let jsonData = {data:''};
-        if(canvasReservedJson[groupId]){
-            jsonData = {data:canvasReservedJson[groupId],index:canvasReservedJsonActiveIndex[groupId]}
+        if(allChanelWhiteBoardEditingData[groupId]){
+            jsonData = {data:allChanelWhiteBoardEditingData[groupId],index:canvasReservedJsonActiveIndex[groupId]}
         }
         res.status(200).send({
             response: jsonData,
@@ -130,10 +132,9 @@ commonRouter.post(
             res.status(200).send({
                 response: data,
             });
-        })
-            .catch(error => {
+        }).catch(error => {
                 res.status(500).send(error);
-            })
+        })
     })
 );
 commonRouter.post(
@@ -624,16 +625,21 @@ commonRouter.post(
                     let classData = JSON.parse(resData.teacher_classes_data);
                     if(classData) {
                         if (classData.profile_subject_with_batch) {
-                            let allProfileData = JSON.parse(classData.profile_subject_with_batch)
-                            allProfileData?.map((profileData,profileDataKey)=>{
-                                allProfileData[profileDataKey] = JSON.parse(profileData);
-                            })
+                            let allProfileData = JSON.parse(classData.profile_subject_with_batch);
+                            if(allProfileData?.length && allProfileData[0]?.id){
+                                console.log('ok');
+                            }else {
+                                allProfileData?.map((profileData, profileDataKey) => {
+                                    allProfileData[profileDataKey] = JSON.parse(profileData);
+                                })
+                            }
                             classData.profile_subject_with_batch = allProfileData;
                         }
                         finalData.push(classData);
                     }
                 })
             }
+            //console.log('finalData',finalData);
             res.status(200).send({
                 response: finalData,
             });
@@ -689,9 +695,13 @@ commonRouter.post(
                     if(classData) {
                         if (classData.profile_subject_with_batch) {
                             let allProfileData = JSON.parse(classData.profile_subject_with_batch)
-                            allProfileData?.map((profileData,profileDataKey)=>{
-                                allProfileData[profileDataKey] = JSON.parse(profileData);
-                            })
+                            if(allProfileData?.length && allProfileData[0]?.id){
+                                console.log('ok');
+                            }else {
+                                allProfileData?.map((profileData, profileDataKey) => {
+                                    allProfileData[profileDataKey] = JSON.parse(profileData);
+                                })
+                            }
                             classData.profile_subject_with_batch = allProfileData;
                         }
                         finalData.push(classData);

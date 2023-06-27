@@ -228,7 +228,7 @@ export const actionToSendOtpInMobileNumber = (mobileNumber) => async () => {
 export const actionToGetWhiteBoardPrevDataForGroupId = (groupDataId) => async (dispatch) => {
     const {data} = await api.post(`common/actionToGetWhiteBoardPrevDataForGroupIdApiCall`,{groupDataId});
     data?.response?.map((anData)=>{
-        dispatch(actionToSetCaptureAnnotatorJSONData(anData.jsonObject, anData.type));
+        dispatch(actionToSetCaptureAnnotatorJSONData(anData.jsonObject));
     })
 }
 export const actionToUpdateAttendanceClassStatus = (profileData,classData,demoClass) => async (dispatch) => {
@@ -238,7 +238,7 @@ export const actionToUpdateAttendanceClassStatus = (profileData,classData,demoCl
         let dataToSend = {column: setData, value: [1], whereCondition: whereCondition, tableName: 'student_profile'};
         dispatch(commonUpdateFunction(dataToSend));
     }
-    console.log('classData',classData);
+
     if(demoClass) {
         let setData = `has_taken_demo = ?`;
         let whereCondition = `id = '${classData?.profile_subject_with_batch_id}'`;
@@ -350,8 +350,6 @@ export const actionToAlreadyCreatedClassAccordingToTheCondition = (payload) => a
     let weekStartDate = moment().startOf('week').format('YYYY-MM-DD')
     let weekEndDate = moment().endOf('week').format('YYYY-MM-DD')
 
-    console.log('weekStartDate',weekStartDate);
-    console.log('weekEndDate',weekEndDate);
 
     const {data} = await api.post(`common/actionToAlreadyCreatedClassAccordingToTheConditionApiCall`, {
         weekStartDate,weekEndDate,
@@ -542,10 +540,15 @@ export const actionToGetStudentTimetableData = (isLoaderDisable = false) => asyn
     }
     dispatch({type: STUDENT_ALL_TIME_CLASS_LIST_SUCCESS, payload: [...eventData]});
 }
-export const actionToSendFabricDataToOtherUser = (jsonObject,socket) => async ()=> {
-    console.log('actionToSendFabricDataToOtherUser');
-    socket.emit('annotatorImageJson', JSON.stringify({
+export const actionToSendFabricDataToOtherUser = (jsonObject) => async ()=> {
+    sendWebsocketRequest(JSON.stringify({
+        clientId: localStorage.getItem('clientId'),
+        type: 'annotatorImageJson',
+        userId:jsonObject.userId,
+        //canvasReservedJson:jsonObject.canvasReservedJson,
         groupId:jsonObject.groupId,
+        objectId:jsonObject.objectId,
+        canvasIndex:jsonObject.canvasIndex,
         jsonObject: JSON.stringify(jsonObject)
     }));
 }

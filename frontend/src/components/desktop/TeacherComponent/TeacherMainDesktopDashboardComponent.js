@@ -5,7 +5,7 @@ import {_generateUniqueId, _getIconBySubjectKey, _getTodayTomorrowDateFormat} fr
 import noClassFound from "../../../theme/images/chose/no_classes_found.png";
 import {StudentDashHeaderComponent} from "../StudentComponent/StudentDashHeaderComponent";
 import moment from "moment";
-import {Decoder, tools, Reader} from 'ts-ebml';
+import fixWebmDuration from 'webm-duration-fix';
 import {
     addCallSubscriptionEvents,
     addVideoStream,
@@ -57,46 +57,18 @@ function TeacherMainDesktopDashboardComponentFunction(){
     const [inCallStatus,setInCallStatus] = React.useState('PREJOIN');
     const dispatch = useDispatch();
 
-    const readAsArrayBuffer = (blob) => {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsArrayBuffer(blob);
-            reader.onloadend = () => { resolve(reader.result); };
-            reader.onerror = (ev) => { reject(ev.error); };
-        });
-    }
+    const callFunctionToExportRecordedVideo = async (chunks)=>{
 
-    const injectMetadata = blob => {
-        const decoder = new Decoder();
-        const reader = new Reader();
-        reader.logging = false;
-        reader.drop_default_duration = false;
+        const mimeType = 'video/webm;codecs=vp9';
+        const fixBlob = await fixWebmDuration(new Blob([...chunks], { type: mimeType }));
 
-        return readAsArrayBuffer(blob).then((buffer) => {
-            const elms = decoder.decode(buffer);
-            elms.forEach((elm) => { reader.read(elm); });
-            reader.stop();
-
-            let refinedMetadataBuf = tools.makeMetadataSeekable(
-                reader.metadatas, reader.duration, reader.cues);
-            let body = buffer.slice(reader.metadataSize);
-
-            return new Blob([refinedMetadataBuf, body],
-                {type: blob.type});
-        });
-    }
-
-
-    const callFunctionToExportRecordedVideo = (blob)=>{
-        injectMetadata(blob).then(seekableBlob=> {
-            const reader = new FileReader();
-            reader.readAsDataURL(seekableBlob);
-            reader.onload = () => {
-                const base64String = reader.result.split(',')[1];
-                dispatch(actionToSendVideoChunkDataToServerFinishProcess(currentClassAssignedId,base64String));
-            };
-            dispatch(actionToRemoveCurrentGroupCallData());
-        });
+        const reader = new FileReader();
+        reader.readAsDataURL(fixBlob);
+        reader.onload = () => {
+            const base64String = reader.result.split(',')[1];
+            dispatch(actionToSendVideoChunkDataToServerFinishProcess(currentClassAssignedId,base64String));
+        };
+        dispatch(actionToRemoveCurrentGroupCallData());
     }
 
     const startCallInGroup = (e,classGroupData)=>{
@@ -198,17 +170,33 @@ function TeacherMainDesktopDashboardComponentFunction(){
 
                             if(!classGroupData?.is_demo_class) {
                                 ////// record current call //////////
-                                const chunks = [];
-                                const mimeType = 'video/webm;codecs=vp9';
-                                const recorder = new MediaRecorder(stream, {mimeType});
-                                recorder.ondataavailable = (e) => {
-                                    //callFunctionToUploadDataChunk(e.data);
-                                    chunks.push(e.data);
+
+                                try {
+                                    const chunks = [];
+                                    const mimeType = 'video/webm;codecs=vp9';
+
+                                    const displayMediaStreamConstraints = {
+                                        video: {
+                                            displaySurface: 'monitor', // monitor, window, application, browser
+                                            logicalSurface: true,
+                                            cursor: 'always' // never, always, motion
+                                        },
+                                        audio:true
+                                    }
+                                    navigator.mediaDevices.getDisplayMedia(displayMediaStreamConstraints).then((mediaStream)=>{
+                                        const recorder = new MediaRecorder(mediaStream, {mimeType});
+                                        recorder.ondataavailable = (e) => {
+                                            //callFunctionToUploadDataChunk(e.data);
+                                            chunks.push(e.data);
+                                        }
+                                        recorder.onstop = e => callFunctionToExportRecordedVideo(chunks);
+                                        recorder.start(1000);
+                                        setMyMediaRecorder(recorder);
+                                        setMyShareScreenStream(mediaStream);
+                                    });
+                                } catch (e) {
+                                    alert('SCREEN RECORDING NOT SUPPORTED BY YOUR BROWSER');
                                 }
-                                recorder.onstop = e => callFunctionToExportRecordedVideo(new Blob(chunks, {type: mimeType}));
-                                recorder.start(1000);
-                                setMyMediaRecorder(recorder);
-                                setMyShareScreenStream(stream);
                             }
                         // }, error => {
                         //     console.log("Unable to acquire screen capture", error);
@@ -346,15 +334,15 @@ function TeacherMainDesktopDashboardComponentFunction(){
                                                         {(myClasses?.class_end_time) ?
                                                             <>
                                                                 <div className={"class_time_date_demo mb-3"}>
-                                                                    Start time : {moment(new Date(myClasses?.starting_from_date)).format('hh:mm a')}
+                                                                    Start time : {moment(myClasses?.starting_from_date).format('hh:mm a')}
                                                                 </div>
                                                                 <div className={"class_time_date_demo"}>
-                                                                    Class Taken : {moment(new Date(myClasses?.class_end_time)).format('hh:mm a')}
+                                                                    Class Taken : {moment(myClasses?.class_end_time).format('hh:mm a')}
                                                                 </div>
                                                             </>
                                                             :
                                                             <div className={"class_time_date_demo mb-3"}>
-                                                                Start time : {moment(new Date(myClasses?.starting_from_date)).format('hh:mm a')}
+                                                                Start time : {moment(myClasses?.starting_from_date).format('hh:mm a')}
                                                             </div>
                                                         }
                                                     </div>

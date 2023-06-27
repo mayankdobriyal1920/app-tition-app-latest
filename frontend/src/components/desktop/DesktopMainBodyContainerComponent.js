@@ -62,19 +62,21 @@ const DesktopMainBodyContainerComponent=() => {
                                         <div className="section-title mb-30 wow fadeInUp2  animated"
                                              data-wow-delay=".1s"
                                              style={{visibility: 'visible', 'animationDelay': '0.2s' , 'animationName': 'fadeInUp2'}}>
-                                            <h2 className="mb-25">Why Choose 121 Tuition?</h2>
-                                            <p>Get the same learning experience as school with the comfort of being at home with Extramarks. Learn from top faculty anytime, anywhere</p>
+                                            <h2 className="mb-25">Why it’s India’s No. 1?</h2>
+                                            <p>Get the offline experience in Online Mode</p>
                                         </div>
                                         <ul className="text-list mb-40 wow fadeInUp2  animated" data-wow-delay=".2s"
                                             style={{visibility: 'visible', 'animationDelay': '0.2s' , 'animationName': 'fadeInUp2'}}>
-                                            <li>Accessibility: anyone with a good internet connection can have access to online classes with a click of a button.</li>
-                                            <li>Cost-effective classes at affordable prices.</li>
-                                            <li>Quality courses are available anytime, anywhere.</li>
-                                            <li>In Class Doubts Solving.</li>
-                                            <li>Test & Analysis – Proper tests after completion of each chapter for progress tracking.</li>
-                                            <li>Students will also get help in the completion of homework and project work.</li>
+                                            <li>Student will be fully attentive as video of student will always be on and teacher can monitor the child all time and understand with his/her expressions whether he/she is paying attention or not and also get to know whether he/ she is understanding or not.</li>
+                                            <li>Video of child will always be on so the child cannot distract himself/herself with any other activities like phone, games etc. Teacher will be able to see the child in entire duration of class. </li>
+                                            <li>This app has a unique feature of “ Writing from both sides in Real Time” i.e. teacher can write on the digital white board as well as student can also write on the board. </li>
+                                            <li>The solution to the problem of child opening any other window during online study is solved on this platform as student will not be able to open any other window during the class time and if he/she does teacher will get to know and will warn student to be attentive in class.</li>
                                         </ul>
                                     </div>
+                                    <p className={"title_enhanced_desktop"}>
+                                        One student one teacher concept <br/>
+                                        Distance will be no bar now
+                                    </p>
                                     <ul className="search__area d-md-inline-flex align-items-center justify-content-between mb-30">
                                         <li>
                                             <button
@@ -123,7 +125,7 @@ const DesktopMainBodyContainerComponent=() => {
                                              data-wow-delay=".1s"
                                              style={{visibility: 'visible', 'animationDelay': '0.2s' , 'animationName': 'fadeInUp2'}}>
                                             <h2 className="mb-25">Why Choose 121 Tuition?</h2>
-                                            <p>Get the same learning experience as school with the comfort of being at home with Extramarks. Learn from top faculty anytime, anywhere</p>
+                                            <p>Get the same learning experience as school with the comfort of being at home with 121 Tuition. Learn from top faculty anytime, anywhere</p>
                                         </div>
                                         <ul className="text-list mb-40 wow fadeInUp2  animated" data-wow-delay=".2s"
                                             style={{visibility: 'visible', 'animationDelay': '0.2s' , 'animationName': 'fadeInUp2'}}>
