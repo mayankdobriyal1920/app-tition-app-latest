@@ -109,7 +109,7 @@ export const actionToGetAllClassesDataListQuery = (weekStartDate,weekEndDate)=>{
 
             from profile_subject_with_batch
                      join student_profile on profile_subject_with_batch.profile_id = student_profile.id
-                     join class_assigned_teacher_batch on profile_subject_with_batch.class_assigned_teacher_batch_id =
+                     left join class_assigned_teacher_batch on profile_subject_with_batch.class_assigned_teacher_batch_id =
                                                           class_assigned_teacher_batch.id
                      left join (SELECT class_assigned_teacher_batch_id,
                                        JSON_ARRAYAGG(

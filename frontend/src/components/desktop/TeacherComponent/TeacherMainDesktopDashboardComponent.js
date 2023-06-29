@@ -1,7 +1,7 @@
 import React from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {FacebookLoader} from "../../Loader/FacebookLoader";
-import {_generateUniqueId, _getIconBySubjectKey, _getTodayTomorrowDateFormat} from "../../../helper/CommonHelper";
+import {_generateUniqueId, _getIconBySubjectKey} from "../../../helper/CommonHelper";
 import noClassFound from "../../../theme/images/chose/no_classes_found.png";
 import {StudentDashHeaderComponent} from "../StudentComponent/StudentDashHeaderComponent";
 import moment from "moment";
@@ -22,7 +22,7 @@ import Peer from 'peerjs';
 import {
     actionToRemoveCurrentGroupCallData,
     actionToSendVideoChunkDataToServerFinishProcess,
-    actionToSetCurrentCallDataGroupData
+    actionToSetCurrentCallDataGroupData, actionToSetTeacherStudentInClassStatus
 } from "../../../actions/CommonAction";
 import TeacherStudentVideoCallComponent from "./TeacherStudentVideoCallComponent";
 import {
@@ -52,9 +52,9 @@ function TeacherMainDesktopDashboardComponentFunction(){
     const teacherAllClassesList = useSelector((state) => state.teacherAllClassesList);
     const teacherAllTodayClassesList = useSelector((state) => state.teacherAllTodayClassesList);
     const teacherAllDemoClassesList = useSelector((state) => state.teacherAllDemoClassesList);
+    const inClassStatusTeacherStudent = useSelector((state) => state.inClassStatusTeacherStudent);
     const {userInfo} = useSelector((state) => state.userSignin);
     const [callLoading,setCallLoading] = React.useState(null);
-    const [inCallStatus,setInCallStatus] = React.useState('PREJOIN');
     const dispatch = useDispatch();
 
     const callFunctionToExportRecordedVideo = async (chunks)=>{
@@ -86,7 +86,7 @@ function TeacherMainDesktopDashboardComponentFunction(){
                 function(stream){
                     // navigator.mediaDevices.getDisplayMedia({preferCurrentTab:true})
                     //     .then(recordStream => {
-                            setInCallStatus('JOINING');
+                            dispatch(actionToSetTeacherStudentInClassStatus('JOINING'));
 
                             let memberData = cloneDeep(userInfo);
                             memberData.id = classGroupData?.id;
@@ -157,7 +157,7 @@ function TeacherMainDesktopDashboardComponentFunction(){
                                         setTimeout(function(){
                                             addVideoStream(memberData.peer_connection_id, stream,true);
                                             setCallLoading(null);
-                                            setInCallStatus('INCALL');
+                                            dispatch(actionToSetTeacherStudentInClassStatus('INCALL'));
                                         },1000)
 
                                         myPeer.on('call', call => {
@@ -180,20 +180,26 @@ function TeacherMainDesktopDashboardComponentFunction(){
                                             displaySurface: 'monitor', // monitor, window, application, browser
                                             logicalSurface: true,
                                             cursor: 'always' // never, always, motion
-                                        },
-                                        audio:true
-                                    }
-                                    navigator.mediaDevices.getDisplayMedia(displayMediaStreamConstraints).then((mediaStream)=>{
-                                        const recorder = new MediaRecorder(mediaStream, {mimeType});
-                                        recorder.ondataavailable = (e) => {
-                                            //callFunctionToUploadDataChunk(e.data);
-                                            chunks.push(e.data);
                                         }
-                                        recorder.onstop = e => callFunctionToExportRecordedVideo(chunks);
-                                        recorder.start(1000);
-                                        setMyMediaRecorder(recorder);
-                                        setMyShareScreenStream(mediaStream);
-                                    });
+                                    }
+
+                                    //////// RECORDING SCREEN ///////////
+                                    let audioTrack, videoTrack, mediaStream;
+                                    navigator.mediaDevices.getDisplayMedia(displayMediaStreamConstraints)
+                                        .then(async displayStream => {
+                                            [videoTrack] = displayStream.getVideoTracks();
+                                            [audioTrack] = stream.getAudioTracks();
+                                            mediaStream = new MediaStream([videoTrack, audioTrack]); // do stuff
+                                            const recorder = new MediaRecorder(mediaStream, {mimeType});
+                                            recorder.ondataavailable = (e) => {
+                                                chunks.push(e.data);
+                                            }
+                                            recorder.onstop = e => callFunctionToExportRecordedVideo(chunks);
+                                            recorder.start(1000);
+                                            setMyMediaRecorder(recorder);
+                                            setMyShareScreenStream(mediaStream);
+                                    }).catch(console.error);
+                                    //////// RECORDING SCREEN ///////////
                                 } catch (e) {
                                     alert('SCREEN RECORDING NOT SUPPORTED BY YOUR BROWSER');
                                 }
@@ -218,7 +224,7 @@ function TeacherMainDesktopDashboardComponentFunction(){
 
     return (
         <div className={"main_body_content_section all_student_subject_main_container teacher"}>
-            {(inCallStatus === 'PREJOIN') ?
+            {(inClassStatusTeacherStudent === 'PREJOIN') ?
                 <>
                 <StudentDashHeaderComponent type={"StudentMainDesktopDashboardComponent"}/>
                 <div className={"student_dash_all_courses_main_section mt-60"}>
@@ -420,7 +426,7 @@ function TeacherMainDesktopDashboardComponentFunction(){
                 </div>
                 </>
                 :
-                <TeacherStudentVideoCallComponent inCallStatus={inCallStatus} setInCallStatus={setInCallStatus} isTeacher={true}/>
+                <TeacherStudentVideoCallComponent isTeacher={true}/>
            }
         </div>
     )

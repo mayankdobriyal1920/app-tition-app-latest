@@ -18,7 +18,7 @@ import {cloneDeep} from "lodash";
 import StarRatingOnEndCallComponent from "./StarRatingOnEndCallComponent";
 import {
     actionToGetPrevCallOnGroupClass,
-    actionToGetWhiteBoardPrevDataForGroupId,
+    actionToGetWhiteBoardPrevDataForGroupId, actionToSetTeacherStudentInClassStatus,
     actionToUpdateAttendanceClassStatus
 } from "../../../actions/CommonAction";
 let allowOnce = true;
@@ -46,12 +46,11 @@ export default function StudentTodayClassesComponent(){
 
     const openCloseTeacherRatingPopup = useSelector((state) => state.openCloseTeacherRatingPopup);
     const [callLoading,setCallLoading] = React.useState(null);
-    const [inCallStatus,setInCallStatus] = React.useState('PREJOIN');
     const chatModuleCurrentCallGroupData = useSelector((state) => state.chatModuleCurrentCallGroupData);
     const chatModuleNewUserAddedInCurrentCall = useSelector((state) => state.chatModuleNewUserAddedInCurrentCall);
     const chatModuleNewUserLeaveUserInCallData = useSelector((state) => state.chatModuleNewUserLeaveUserInCallData);
     const dispatch = useDispatch();
-
+    const inClassStatusTeacherStudent = useSelector((state) => state.inClassStatusTeacherStudent);
     const ignoreIncomingCall = ()=>{
         //dispatch(actionToRemoveDataFromIncomingCall({}));
     }
@@ -68,7 +67,8 @@ export default function StudentTodayClassesComponent(){
                     video: true
                 },
                 function(stream){
-                    setInCallStatus('JOINING');
+                    dispatch(actionToSetTeacherStudentInClassStatus('JOINING'));
+
                     let memberData = cloneDeep(myClasses);
                     console.log('memberData',memberData);
                     memberData.id = myClasses?.id;
@@ -98,7 +98,7 @@ export default function StudentTodayClassesComponent(){
                     myPeer?.on('open', id => {
                         console.log('[PEER CONNECTION OPEN IN ID]', id);
                         setMyStream(stream);
-                        setInCallStatus('INCALL');
+                        dispatch(actionToSetTeacherStudentInClassStatus('INCALL'));
                         dispatch(actionToUpdateAttendanceClassStatus(studentAllClassesList?.classData,myClasses,demoClass))
                         setTimeout(function(){
                             setCallLoading(null);
@@ -156,7 +156,7 @@ export default function StudentTodayClassesComponent(){
                         <StudentPayForSubscriptionComponent isEnd={true}/>
                         :
                         <>
-                            {(inCallStatus === 'PREJOIN') ?
+                            {(inClassStatusTeacherStudent === 'PREJOIN') ?
                                 <>
                                     <h2>Today Classes</h2>
                                     <div className={"mt-15 demo_classes_main_section"}>
@@ -376,7 +376,7 @@ export default function StudentTodayClassesComponent(){
                                     </div>
                                 </>
                                 :
-                                <TeacherStudentVideoCallComponent setInCallStatus={setInCallStatus} inCallStatus={inCallStatus}/>
+                                <TeacherStudentVideoCallComponent/>
                             }
                         </>
                 }

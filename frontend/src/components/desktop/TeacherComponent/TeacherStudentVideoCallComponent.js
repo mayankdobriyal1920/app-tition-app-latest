@@ -8,7 +8,7 @@ import {myStream, myShareScreenStream, myPeer, myMediaRecorder} from "../../../h
 import jsPDF from "jspdf";
 import {
     actionToEndCurrentCurrentCall,
-    actionToMuteUnmuteUserCall,
+    actionToMuteUnmuteUserCall, actionToSetTeacherStudentInClassStatus,
     actionToSetTeacherZoomInOut,
     actionToStoreAssignmentDataForTeacher,
 } from "../../../actions/CommonAction";
@@ -16,20 +16,32 @@ import $ from 'jquery';
 import {useEffectOnce} from "../../../helper/UseEffectOnce";
 import axios from "axios";
 import {isTeacherMasterLogin} from "../../../middlewear/auth";
+import {IonAlert} from "@ionic/react";
 
 let loadOnce = false;
 let canvasReservedJson = [];
 let allImagesUrlArray = [];
-export default function TeacherStudentVideoCallComponent({inCallStatus,setInCallStatus,isTeacher}){
+let maxTimeInterval = 3600;
+export default function TeacherStudentVideoCallComponent({isTeacher}){
     const chatModuleCurrentCallGroupData = useSelector((state) => state.chatModuleCurrentCallGroupData);
+    const inClassStatusTeacherStudent = useSelector((state) => state.inClassStatusTeacherStudent);
     const zoomInZoomOutTeacherVideo = useSelector((state) => state.zoomInZoomOutTeacherVideo);
     const chatModuleCurrentCallGroupMembers = useSelector((state) => state.chatModuleCurrentCallGroupMembers);
     const studentAllClassesList = useSelector((state) => state.studentAllClassesList);
     const userInfo = useSelector((state) => state.userSignin.userInfo);
     let [timerTimeInterval,setTimerTimeInterval] = useState(0);
     let [isPortraitMode,setIsPortraitMode] = useState(false);
+    let [showExtendClassAlert,setShowExtendClassAlert] = useState(false);
     const dispatch = useDispatch();
     let [isMutedCall,setIsMutedCall] = useState(!isTeacher);
+
+    useEffect(()=>{
+        if(isTeacher) {
+            if (timerTimeInterval === maxTimeInterval) {
+                setShowExtendClassAlert(true);
+            }
+        }
+    },[timerTimeInterval])
 
 
     const endMyStreamTrackOnEndCall = ()=>{
@@ -52,7 +64,8 @@ export default function TeacherStudentVideoCallComponent({inCallStatus,setInCall
         if($('#student_all_class_group_data_videos_section')?.length)
             $('#student_all_class_group_data_videos_section').html('');
 
-        setInCallStatus('PREJOIN');
+        dispatch(actionToSetTeacherStudentInClassStatus('PREJOIN'));
+
 
         if(myMediaRecorder)
             myMediaRecorder?.stop();
@@ -131,19 +144,29 @@ export default function TeacherStudentVideoCallComponent({inCallStatus,setInCall
         }
     }
     const endCallFunctionCall = async  (groupId,classId,startDateTime)=>{
-        setInCallStatus('JOINING');
+        dispatch(actionToSetTeacherStudentInClassStatus('JOINING'));
         if(!chatModuleCurrentCallGroupData?.is_demo_class)
            await makePdfOfCanvases();
         endMyStreamTrackOnEndCall();
         setTimeout(function (){
-            setInCallStatus('PREJOIN');
+            dispatch(actionToSetTeacherStudentInClassStatus('PREJOIN'));
             let startDate = moment(startDateTime).format('YYYY-MM-DD');
             dispatch(actionToEndCurrentCurrentCall(groupId,classId,startDate));
         },5000)
     }
     const leaveCallFunctionCall = ()=>{
         endMyStreamTrackOnEndCall();
-        setInCallStatus('PREJOIN');
+        dispatch(actionToSetTeacherStudentInClassStatus('PREJOIN'));
+    }
+
+    const closeConfirmPopupAndEndClass = ()=>{
+        endCallFunctionCall(chatModuleCurrentCallGroupData?.id,chatModuleCurrentCallGroupData?.class_id,chatModuleCurrentCallGroupData?.start_from_date_time);
+        setShowExtendClassAlert(false);
+    }
+
+    const closeConfirmPopupAndExtendClass = ()=>{
+        maxTimeInterval += 300;
+        setShowExtendClassAlert(false);
     }
 
     useEffectOnce(()=>{
@@ -184,7 +207,7 @@ export default function TeacherStudentVideoCallComponent({inCallStatus,setInCall
                     Please use landscape mode to enter in class
                 </p>
             </div>
-            <div style={{display:inCallStatus === 'INCALL' ? 'flex' : 'none'}} className={"row teacher_video_class_container_inner_row"}>
+            <div style={{display:inClassStatusTeacherStudent === 'INCALL' ? 'flex' : 'none'}} className={"row teacher_video_class_container_inner_row"}>
                 <div className={"col-3 side_my_video_with_details"}>
                     {/*Important div for call*/}
                     <div id={"main_user_video_call_video_section"} className="main_user_video_call_video_section">
@@ -254,7 +277,7 @@ export default function TeacherStudentVideoCallComponent({inCallStatus,setInCall
                     </div>
                 </div>
                 <div className={"col-7 center_white_board_video_with_details"}>
-                    {(inCallStatus === 'INCALL') ?
+                    {(inClassStatusTeacherStudent === 'INCALL') ?
                         <WhiteboardComponent groupId={chatModuleCurrentCallGroupData.id} canvasReservedJson={canvasReservedJson}/>
                         : ''
                     }
@@ -289,12 +312,35 @@ export default function TeacherStudentVideoCallComponent({inCallStatus,setInCall
                     )))}
                 </div>
             </div>
-            {inCallStatus === 'JOINING' ?
+            {inClassStatusTeacherStudent === 'JOINING' ?
                 <div className={"call_pre_loader_section"}>
                     <SpinnerLoader/>
                 </div>
                 :''
             }
+
+            {isTeacher ?
+                <IonAlert
+                    header="Alert!"
+                    subHeader={"Class time exceed 1 hour do you want to extend class for 5 min?"}
+                    isOpen={showExtendClassAlert}
+                    buttons={[
+                        {
+                            text: 'No, End class',
+                            role: 'cancel',
+                            handler: () => closeConfirmPopupAndEndClass(),
+                        },
+                        {
+                            text: 'Yes, Extend class',
+                            role: 'confirm',
+                            handler: () => closeConfirmPopupAndExtendClass(),
+                        },
+                    ]}
+                    onDidDismiss={() => closeConfirmPopupAndExtendClass()}
+                ></IonAlert>
+                :''
+            }
+
         </div>
     )
 }

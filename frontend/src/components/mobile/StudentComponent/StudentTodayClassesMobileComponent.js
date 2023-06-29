@@ -15,7 +15,7 @@ import {
 import Peer from "peerjs";
 import {
     actionToGetPrevCallOnGroupClass,
-    actionToGetWhiteBoardPrevDataForGroupId,
+    actionToGetWhiteBoardPrevDataForGroupId, actionToSetTeacherStudentInClassStatus,
     actionToUpdateAttendanceClassStatus
 } from "../../../actions/CommonAction";
 import {sendWebsocketRequest} from "../../../helper/WebSocketHelper";
@@ -44,12 +44,12 @@ export default function StudentTodayClassesMobileComponent() {
     const studentAllClassesList = useSelector((state) => state.studentAllClassesList);
     const allStudentDemoDataList = useSelector((state) => state.allStudentDemoDataList);
     const allStudentTodayDataList = useSelector((state) => state.allStudentTodayDataList);
-    const [inCallStatus,setInCallStatus] = React.useState('PREJOIN');
     const [callLoading,setCallLoading] = React.useState(null);
     const chatModuleCurrentCallGroupData = useSelector((state) => state.chatModuleCurrentCallGroupData);
     const chatModuleNewUserAddedInCurrentCall = useSelector((state) => state.chatModuleNewUserAddedInCurrentCall);
     const chatModuleNewUserLeaveUserInCallData = useSelector((state) => state.chatModuleNewUserLeaveUserInCallData);
     const dispatch = useDispatch();
+    const inClassStatusTeacherStudent = useSelector((state) => state.inClassStatusTeacherStudent);
 
 
     const splitFrontName = (name)=>{
@@ -73,7 +73,7 @@ export default function StudentTodayClassesMobileComponent() {
                     video: true
                 },
                 function(stream){
-                    setInCallStatus('JOINING');
+                    dispatch(actionToSetTeacherStudentInClassStatus('JOINING'));
                     let memberData = cloneDeep(myClasses);
                     memberData.id = myClasses?.id;
                     //// Member profile name
@@ -102,7 +102,7 @@ export default function StudentTodayClassesMobileComponent() {
                     myPeer?.on('open', id => {
                         console.log('[PEER CONNECTION OPEN IN ID]', id);
                         setMyStream(stream);
-                        setInCallStatus('INCALL');
+                        dispatch(actionToSetTeacherStudentInClassStatus('INCALL'));
                         dispatch(actionToUpdateAttendanceClassStatus(studentAllClassesList?.classData,myClasses))
                         setTimeout(function(){
                             setCallLoading(null);
@@ -161,7 +161,7 @@ export default function StudentTodayClassesMobileComponent() {
                     </div>
                     :
                     <>
-                        {(inCallStatus === 'PREJOIN') ?
+                        {(inClassStatusTeacherStudent === 'PREJOIN') ?
                             <div className={"main_container_app_section"}>
                                 <div className={"name_tite_section"}>
                                     Hey {splitFrontName(userInfo?.name)},
@@ -194,12 +194,12 @@ export default function StudentTodayClassesMobileComponent() {
                                                                                     Start time : {moment(myClasses?.start_from_date_time).format('hh:mm a')}
                                                                                 </div>
                                                                                 <div className={"class_time_date_demo"}>
-                                                                                    Class End : {moment(myClasses?.class_end_time).format('hh:mm a')}
+                                                                                    Class End : {moment(myClasses?.class_end_date_time).format('hh:mm a')}
                                                                                 </div>
                                                                             </>
                                                                             :
                                                                             <div className={"class_time_date_demo"}>
-                                                                                Start time : {moment(myClasses?.class_end_date_time).format('hh:mm a')}
+                                                                                Start time : {moment(myClasses?.start_from_date_time).format('hh:mm a')}
                                                                             </div>
                                                                         }
                                                                     </div>
@@ -379,7 +379,7 @@ export default function StudentTodayClassesMobileComponent() {
                                 </div>
                             </div>
                             :
-                            <TeacherStudentVideoCallComponent setInCallStatus={setInCallStatus} inCallStatus={inCallStatus}/>
+                            <TeacherStudentVideoCallComponent/>
                         }
                     </>
             }

@@ -20,7 +20,7 @@ import StudentDesktopScheduledClasses from "../../desktop/StudentComponent/Stude
 export default function TeacherTabMobileLinkEntryPage() {
 
     const openCloseTeacherRatingPopup = useSelector((state) => state.openCloseTeacherRatingPopup);
-    const [inCallStatus] = React.useState('PREJOIN');
+    const inClassStatusTeacherStudent = useSelector((state) => state.inClassStatusTeacherStudent);
     const dispatch = useDispatch();
     const { path } = useRouteMatch();
 
@@ -118,7 +118,7 @@ export default function TeacherTabMobileLinkEntryPage() {
 
     return (
         <IonPage>
-            {(inCallStatus === 'PREJOIN') && (
+            {(inClassStatusTeacherStudent === 'PREJOIN') && (
                 <MainHeaderComponent/>
             )}
             {(openCloseTeacherRatingPopup?.isOpen) && (
@@ -136,7 +136,7 @@ export default function TeacherTabMobileLinkEntryPage() {
                     <StudentAttendanceAndAssignmentComponent isMobile={true}/>
                 </Route>
             </Switch>
-            {(inCallStatus === 'PREJOIN') && (
+            {(inClassStatusTeacherStudent === 'PREJOIN') && (
                 <FooterTabComponent/>
             )}
         </IonPage>

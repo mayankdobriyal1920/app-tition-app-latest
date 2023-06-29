@@ -52,7 +52,7 @@ const MainLoginWithDetailPageMobileComponent=() => {
                            <div>
                                <div className={"title_main_section_container"}>
                                    <div className={"slider__img__box"}>
-                                       <img className="img-one" src={slider01} alt=""/>s
+                                       <img className="img-one" src={slider01} alt=""/>
                                        <img className="slide-shape img-eight" src={earthBg} alt=""/>
                                        <div className={"inner_slide_text_section_main"}>
                                            <p className={"heading_text"}>

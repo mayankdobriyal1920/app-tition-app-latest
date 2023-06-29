@@ -869,6 +869,17 @@ div#teacher_video_class_container {
     height: 100vh;
     display: flex;
 }
+.form-floating.class_date_time_sectiob_loop {
+    display: flex;
+}
+
+.form-floating.class_date_time_sectiob_loop input {
+    padding: 6px;
+    width: 99px;
+    margin-left: 10px;
+    height: 27px;
+    border-radius: 6px;
+}
 .assign_class_main_popup_outer_container.video_player_main_section {
     z-index: 9999999!important;
 }

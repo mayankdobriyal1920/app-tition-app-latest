@@ -5,7 +5,10 @@ import {_getFirstLatterOfName, _readableTimeFromSeconds} from "../../helper/Comm
 import SpinnerLoader from "../Loader/SpinnerLoader";
 import {myStream, myShareScreenStream, myPeer, myMediaRecorder} from "../../helper/CallModuleHelper.js";
 import {
-    actionToEndCurrentCurrentCall, actionToMuteUnmuteUserCall, actionToStoreAssignmentDataForTeacher,
+    actionToEndCurrentCurrentCall,
+    actionToMuteUnmuteUserCall,
+    actionToSetTeacherStudentInClassStatus,
+    actionToStoreAssignmentDataForTeacher,
 } from "../../actions/CommonAction";
 import $ from 'jquery';
 import {useEffectOnce} from "../../helper/UseEffectOnce";
@@ -16,7 +19,7 @@ import jsPDF from "jspdf";
 import axios from "axios";
 let loadOnce = false
 let canvasReservedJson = [];
-export default function TeacherStudentVideoCallMobileComponent({inCallStatus,setInCallStatus,isTeacher}){
+export default function TeacherStudentVideoCallMobileComponent({isTeacher}){
     const chatModuleCurrentCallGroupData = useSelector((state) => state.chatModuleCurrentCallGroupData);
     const chatModuleCurrentCallGroupMembers = useSelector((state) => state.chatModuleCurrentCallGroupMembers);
     const studentAllClassesList = useSelector((state) => state.studentAllClassesList);
@@ -25,7 +28,7 @@ export default function TeacherStudentVideoCallMobileComponent({inCallStatus,set
     let [isPortraitMode,setIsPortraitMode] = useState(false);
     const dispatch = useDispatch();
     let [isMutedCall,setIsMutedCall] = useState(!isTeacher);
-
+    const inClassStatusTeacherStudent = useSelector((state) => state.inClassStatusTeacherStudent);
 
     const endMyStreamTrackOnEndCall = ()=>{
         if(myStream != null) {
@@ -119,18 +122,18 @@ export default function TeacherStudentVideoCallMobileComponent({inCallStatus,set
     };
 
     const endCallFunctionCall = async  (groupId,classId,startDateTime)=>{
-        setInCallStatus('JOINING');
+        dispatch(actionToSetTeacherStudentInClassStatus('JOINING'));
         await makePdfOfCanvases();
         endMyStreamTrackOnEndCall();
         setTimeout(function (){
-            setInCallStatus('PREJOIN');
+            dispatch(actionToSetTeacherStudentInClassStatus('PREJOIN'));
             let startDate = moment(startDateTime).format('YYYY-MM-DD');
             dispatch(actionToEndCurrentCurrentCall(groupId,classId,startDate));
         },5000)
     }
     const leaveCallFunctionCall = ()=>{
         endMyStreamTrackOnEndCall();
-        setInCallStatus('PREJOIN');
+        dispatch(actionToSetTeacherStudentInClassStatus('PREJOIN'));
     }
 
     useEffectOnce(()=>{
@@ -174,10 +177,10 @@ export default function TeacherStudentVideoCallMobileComponent({inCallStatus,set
                 </IonRow>
             </div>
             <IonContent>
-                <div style={{display:inCallStatus === 'INCALL' ? 'block' : 'none'}}>
+                <div style={{display:inClassStatusTeacherStudent === 'INCALL' ? 'block' : 'none'}}>
                     <div className={"student_video_call_section_container"}>
                     <div className={"center_white_board_video_with_details"}>
-                        {(inCallStatus === 'INCALL') ?
+                        {(inClassStatusTeacherStudent === 'INCALL') ?
                             <WhiteboardComponent groupId={chatModuleCurrentCallGroupData.id} canvasReservedJson={canvasReservedJson}/>
                             : ''
                         }
@@ -227,7 +230,7 @@ export default function TeacherStudentVideoCallMobileComponent({inCallStatus,set
                     }
                 </div>
                 </div>
-                {inCallStatus === 'JOINING' ?
+                {inClassStatusTeacherStudent === 'JOINING' ?
                     <div className={"call_pre_loader_section"}>
                         <SpinnerLoader/>
                     </div>

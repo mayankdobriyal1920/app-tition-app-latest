@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {
     actionToCreateAndAssignClassData,
-    actionToOpenCloseClassAssignPopup,
+    actionToOpenCloseClassAssignPopup, actionToRescheduleClassTime,
     actionToUpdateClassAssignedBatchData
 } from "../../../actions/CommonAction";
 import moment from "moment";
@@ -21,6 +21,8 @@ export default function ClassAssignPopupComponent(){
     const [classBatchName,setClassBatchName] = useState('');
     let [classStartFromDateTime,setClassStartFromDateTime] = useState({});
     const [classStartFromDateTimeDemo,setClassStartFromDateTimeDemo] = useState(null);
+    const [classTimeEditMode,setClassTimeEditMode] = useState(null);
+    const [classEditTimeValue,setClassEditTimeValue] = useState(null);
     const [selAssignCreateButon,setSelAssignCreateButon] = useState('create');
     const {isOpen,dropdownData} = useSelector((state) => state.openCloseClassAssignPopup);
     const allTeacherDataToAssignClass = useSelector((state) => state.allTeacherDataToAssignClass);
@@ -34,6 +36,23 @@ export default function ClassAssignPopupComponent(){
             return true;
         }
         return false;
+    }
+    const saveSelectedTimeData = (newTime,oldTime)=>{
+        if(newTime && newTime !== oldTime){
+            let newDateTime = moment(classTimeEditMode?.start_from_date_time).format('YYYY-MM-DD')+' '+newTime;
+            dispatch(actionToRescheduleClassTime(
+                    dropdownData?.class_assigned_teacher_batch_id,
+                    dropdownData?.profile_subject_with_batch_id,
+                    classTimeEditMode?.start_from_date_time,
+                    newDateTime
+                ))
+        }
+        setClassTimeEditMode(null);
+        setClassEditTimeValue('00:00');
+    }
+    const editModeActiveForClassTime = (data)=>{
+        setClassTimeEditMode(data);
+        setClassEditTimeValue(moment(data?.start_from_date_time).format('HH:mm'));
     }
     const callFunctionToUpdateAssignClassData = ()=>{
         if(validateEditPopup()){
@@ -351,8 +370,22 @@ export default function ClassAssignPopupComponent(){
                                           </div>
 
                                           {(dropdownData?.class_timetable_with_class_batch_assigned?.map((data,key)=>(
-                                              <div key={key} className="form-floating">
-                                                  <div>{moment(data?.start_from_date_time).format('dddd HH:mm a')}</div>
+                                              <div key={key} className="form-floating class_date_time_sectiob_loop">
+                                                  <div>{moment(data?.start_from_date_time).format('dddd')}</div>
+                                                  {(classTimeEditMode?.id === data?.id) ?
+                                                      <input type="time"
+                                                             value={classEditTimeValue}
+                                                             onChange={(e)=>setClassEditTimeValue(e.target.value)}
+                                                             onBlur={()=>saveSelectedTimeData(classEditTimeValue,moment(data?.start_from_date_time).format('HH:mm'))}
+                                                             autoFocus={true}
+                                                             placeholder="Time"
+                                                             required/>
+                                                      :
+                                                      <input onClick={()=>editModeActiveForClassTime(data)}
+                                                             type={"time"}
+                                                             value={moment(data?.start_from_date_time).format('HH:mm')}
+                                                             readOnly={true}/>
+                                                  }
                                               </div>
                                           )))}
                                           <button type="button" onClick={callFunctionToUpdateAssignClassData}

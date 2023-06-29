@@ -533,7 +533,11 @@ commonRouter.post(
                         if (classData?.profile_subject_with_batch) {
                             let allProfileData = JSON.parse(classData.profile_subject_with_batch)
                             allProfileData?.map((profileData,profileDataKey)=>{
-                                allProfileData[profileDataKey] = JSON.parse(profileData);
+                                if(profileData?.id){
+                                    allProfileData[profileDataKey] = profileData;
+                                }else{
+                                    allProfileData[profileDataKey] = JSON.parse(profileData);
+                                }
                             })
                             classData.profile_subject_with_batch = allProfileData;
                         }
@@ -580,7 +584,11 @@ commonRouter.post(
                         if (classData?.profile_subject_with_batch) {
                             let allProfileData = JSON.parse(classData.profile_subject_with_batch)
                             allProfileData?.map((profileData,profileDataKey)=>{
-                                allProfileData[profileDataKey] = JSON.parse(profileData);
+                                if(profileData?.id){
+                                    allProfileData[profileDataKey] = profileData;
+                                }else{
+                                    allProfileData[profileDataKey] = JSON.parse(profileData);
+                                }
                             })
                             classData.profile_subject_with_batch = allProfileData;
                         }

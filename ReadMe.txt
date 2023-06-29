@@ -4,7 +4,8 @@ RUN `nohup npm start` to build server parmanently
 
 68.178.168.176
 /var/www/vhosts/121tuition.in/httpdocs/tuition
-bf@bmPNo1aY1
+root
+Pa$$W0rd
 
 
 68.178.174.134

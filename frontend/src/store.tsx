@@ -45,7 +45,7 @@ import {
     allStudentTodayDataListReducer,
     editorActiveEditorJsonReducer,
     teacherClassAttendWithAssignmentDataReducer,
-    zoomInZoomOutTeacherVideoReducer,
+    zoomInZoomOutTeacherVideoReducer, inClassStatusTeacherStudentReducer,
 } from "./reducers/CommonReducers";
 
 const initialState = {
@@ -98,8 +98,10 @@ const initialState = {
     allStudentTodayDataList:{prevId:'',loading:true,classesData:[]},
     teacherClassAttendWithAssignmentData:{prevId:'',loading:true,classData:[]},
     zoomInZoomOutTeacherVideo:false,
+    inClassStatusTeacherStudent:'PREJOIN',
 };
 export const rootReducer = combineReducers({
+    inClassStatusTeacherStudent: inClassStatusTeacherStudentReducer,
     zoomInZoomOutTeacherVideo: zoomInZoomOutTeacherVideoReducer,
     editorActiveEditorJson: editorActiveEditorJsonReducer,
     allStudentDemoDataList: allStudentDemoDataListReducer,

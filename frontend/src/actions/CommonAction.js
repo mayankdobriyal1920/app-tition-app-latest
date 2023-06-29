@@ -69,7 +69,7 @@ import {
     EDITOR_ACTIVE_EDITOR_JSON,
     TEACHER_CLASS_ATTEND_WITH_ASSIGNMENT_DATA_REQUEST,
     STUDENT_ALL_TIME_CLASS_LIST_REQUEST,
-    ZOOM_IN_ZOOM_OUT_TEACHER_VIDEO
+    ZOOM_IN_ZOOM_OUT_TEACHER_VIDEO, IN_CLASS_STATUS_TEACHER_STUDENT
 } from "../constants/CommonConstants";
 
 import Axios from "axios";
@@ -139,10 +139,41 @@ export const actionToOpenCloseClassAssignPopup = (action,data) => async (dispatc
     let payload = {isOpen:action,dropdownData:data};
     dispatch({ type: OPEN_CLOSE_CLASS_ASSIGN_POPUP, payload: cloneDeep(payload)});
 };
+
 export const actionToOpenCloseEditTeacherPopup = (action,data) => async (dispatch) => {
     let payload = {isOpen:action,dropdownData:data};
     dispatch({ type: OPEN_CLOSE_TEACHER_EDIT_POPUP, payload: cloneDeep(payload)});
 };
+
+export const actionToSetTeacherStudentInClassStatus = (status) => async (dispatch) => {
+    dispatch({ type: IN_CLASS_STATUS_TEACHER_STUDENT, payload: status});
+};
+export const actionToSetDataInAssignPopupLocally = (selectedClassAssignId,start_from_date_time,dateTime) => async (dispatch,getState) => {
+    let {dropdownData} = getState().openCloseClassAssignPopup;
+    dropdownData?.class_timetable_with_class_batch_assigned?.map((classData,key)=>{
+        if(classData?.start_from_date_time === start_from_date_time){
+            dropdownData.class_timetable_with_class_batch_assigned[key].start_from_date_time = dateTime;
+        }
+    })
+    let payload = {isOpen:true,dropdownData:dropdownData};
+    dispatch({ type: OPEN_CLOSE_CLASS_ASSIGN_POPUP, payload: cloneDeep(payload)});
+}
+
+export const actionToRescheduleClassTime = (selectedClassAssignId,profile_subject_with_batch_id,start_from_date_time,dateTime) => async (dispatch) => {
+    let setData = `start_from_date_time = ?,class_end_date_time = ?`;
+    let whereCondition = `class_assigned_teacher_batch_id = '${selectedClassAssignId}' and start_from_date_time = '${start_from_date_time}'`;
+    let dataToSend = {column: setData, value: [dateTime,null], whereCondition: whereCondition, tableName: 'class_timetable_with_class_batch_assigned'};
+    await dispatch(commonUpdateFunction(dataToSend));
+    dispatch(actionToSetDataInAssignPopupLocally(selectedClassAssignId,start_from_date_time,dateTime));
+    dispatch(actionToGetAllDemoClassesDetails(true));
+    dispatch(actionToGetAllClassesDataList(true));
+    sendWebsocketRequest(JSON.stringify({
+        clientId: localStorage.getItem('clientId'),
+        type: 'refreshClassListDataForUser',
+        profile_subject_with_batch_id:profile_subject_with_batch_id
+    }));
+}
+
 export const actionToUpdateClassAssignedBatchData = (selectedClassAssignId,profile_subject_with_batch_id,selectedTeacherId,classBatchName) => async (dispatch) => {
     let setData = `class_batch_name = ?,teacher_id = ?`;
     let whereCondition = `id = '${selectedClassAssignId}'`;

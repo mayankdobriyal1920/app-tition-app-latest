@@ -16,7 +16,9 @@ import {
 import Peer from "peerjs";
 import {
     actionToRemoveCurrentGroupCallData,
-    actionToSendVideoChunkDataToServerFinishProcess, actionToSetCurrentCallDataGroupData,
+    actionToSendVideoChunkDataToServerFinishProcess,
+    actionToSetCurrentCallDataGroupData,
+    actionToSetTeacherStudentInClassStatus,
 } from "../../../actions/CommonAction";
 import {sendWebsocketRequest} from "../../../helper/WebSocketHelper";
 import {cloneDeep} from "lodash";
@@ -68,8 +70,8 @@ export default function TeacherDashboardMobile() {
     const teacherAllDemoClassesList = useSelector((state) => state.teacherAllDemoClassesList);
     const {userInfo} = useSelector((state) => state.userSignin);
     const [callLoading,setCallLoading] = React.useState(null);
-    const [inCallStatus,setInCallStatus] = React.useState('PREJOIN');
     const dispatch = useDispatch();
+    const inClassStatusTeacherStudent = useSelector((state) => state.inClassStatusTeacherStudent);
 
     const callFunctionToExportRecordedVideo = async (chunks)=>{
 
@@ -100,7 +102,7 @@ export default function TeacherDashboardMobile() {
                 function(stream){
                     // navigator.mediaDevices.getDisplayMedia({preferCurrentTab:true})
                     //     .then(recordStream => {
-                    setInCallStatus('JOINING');
+                    dispatch(actionToSetTeacherStudentInClassStatus('JOINING'));
 
                     let memberData = cloneDeep(userInfo);
                     memberData.id = classGroupData?.id;
@@ -171,7 +173,8 @@ export default function TeacherDashboardMobile() {
                                 setTimeout(function(){
                                     addVideoStream(memberData.peer_connection_id, stream,true);
                                     setCallLoading(null);
-                                    setInCallStatus('INCALL');
+                                    dispatch(actionToSetTeacherStudentInClassStatus('INCALL'));
+
                                 },1000)
 
                                 myPeer.on('call', call => {
@@ -236,7 +239,7 @@ export default function TeacherDashboardMobile() {
 
     return (
         <>
-            {(inCallStatus === 'PREJOIN') ?
+            {(inClassStatusTeacherStudent === 'PREJOIN') ?
                 <IonContent>
                     <div className={"main_container_app_section"}>
                         <div className={"name_tite_section"}>
@@ -433,7 +436,7 @@ export default function TeacherDashboardMobile() {
                     </div>
                 </IonContent>
                 :
-                <TeacherStudentVideoCallComponent isTeacher={true} setInCallStatus={setInCallStatus} inCallStatus={inCallStatus}/>
+                <TeacherStudentVideoCallComponent isTeacher={true}/>
             }
         </>
     )
