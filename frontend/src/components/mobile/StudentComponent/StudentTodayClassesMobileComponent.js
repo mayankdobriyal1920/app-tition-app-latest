@@ -23,21 +23,34 @@ import {cloneDeep} from "lodash";
 import StudentPayForSubscriptionMobileComponent from "./StudentPayForSubscriptionMobileComponent";
 import TeacherStudentVideoCallComponent from "../../desktop/TeacherComponent/TeacherStudentVideoCallComponent";
 let allowOnce = true;
+// const iceServers= [
+//     {
+//         urls: "stun:stun.l.google.com:19302",
+//     },
+//     {
+//         urls: "turn:121tuition.in:3478?transport=tcp",
+//         username: "121tuition",
+//         credential: "121tuition123",
+//     },
+//     {
+//         urls: "turn:121tuition.in:5349?transport=tcp",
+//         username: "121tuition",
+//         credential: "121tuition123",
+//     },
+// ];
+
 const iceServers= [
     {
-        urls: "stun:stun.l.google.com:19302",
+        urls: "stun:numb.viagenie.ca",
+        username: "sultan1640@gmail.com",
+        credential: "98376683"
     },
     {
-        urls: "turn:121tuition.in:3478?transport=tcp",
-        username: "121tuition",
-        credential: "121tuition123",
-    },
-    {
-        urls: "turn:121tuition.in:5349?transport=tcp",
-        username: "121tuition",
-        credential: "121tuition123",
-    },
-];
+        urls: "turn:numb.viagenie.ca",
+        username: "sultan1640@gmail.com",
+        credential: "98376683"
+    }
+]
 
 export default function StudentTodayClassesMobileComponent() {
 
@@ -70,7 +83,15 @@ export default function StudentTodayClassesMobileComponent() {
         if(getUserMedia) {
             getUserMedia({
                     audio: true,
-                    video: true
+                    video: {
+                        mandatory: {
+                            maxWidth: 640,
+                            maxHeight: 360,
+                        },
+                        quality: 7,
+                        width: { ideal: 320 },
+                        height: { ideal: 240 }
+                    }
                 },
                 function(stream){
                     dispatch(actionToSetTeacherStudentInClassStatus('JOINING'));

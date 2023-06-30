@@ -97,7 +97,15 @@ export default function TeacherDashboardMobile() {
         if(getUserMedia) {
             getUserMedia({
                     audio: true,
-                    video: true
+                    video: {
+                        mandatory: {
+                            maxWidth: 640,
+                            maxHeight: 360,
+                        },
+                        quality: 7,
+                        width: { ideal: 320 },
+                        height: { ideal: 240 }
+                    }
                 },
                 function(stream){
                     // navigator.mediaDevices.getDisplayMedia({preferCurrentTab:true})

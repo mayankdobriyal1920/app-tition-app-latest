@@ -30,21 +30,34 @@ import {
 } from "../../../constants/CommonConstants";
 import {cloneDeep} from "lodash";
 
+// const iceServers= [
+//     {
+//         urls: "stun:stun.l.google.com:19302",
+//     },
+//     {
+//         urls: "turn:121tuition.in:3478?transport=tcp",
+//         username: "121tuition",
+//         credential: "121tuition123",
+//     },
+//     {
+//         urls: "turn:121tuition.in:5349?transport=tcp",
+//         username: "121tuition",
+//         credential: "121tuition123",
+//     },
+// ];
+
 const iceServers= [
     {
-        urls: "stun:stun.l.google.com:19302",
+        urls: "stun:numb.viagenie.ca",
+        username: "sultan1640@gmail.com",
+        credential: "98376683"
     },
     {
-        urls: "turn:121tuition.in:3478?transport=tcp",
-        username: "121tuition",
-        credential: "121tuition123",
-    },
-    {
-        urls: "turn:121tuition.in:5349?transport=tcp",
-        username: "121tuition",
-        credential: "121tuition123",
-    },
-];
+        urls: "turn:numb.viagenie.ca",
+        username: "sultan1640@gmail.com",
+        credential: "98376683"
+    }
+]
 let currentClassId = null;
 let currentClassAssignedId = null;
 function TeacherMainDesktopDashboardComponentFunction(){
@@ -81,7 +94,15 @@ function TeacherMainDesktopDashboardComponentFunction(){
         if(getUserMedia) {
             getUserMedia({
                     audio: true,
-                    video: true
+                    video: {
+                        mandatory: {
+                            maxWidth: 640,
+                            maxHeight: 360,
+                        },
+                        quality: 7,
+                        width: { ideal: 320 },
+                        height: { ideal: 240 }
+                    }
                 },
                 function(stream){
                     // navigator.mediaDevices.getDisplayMedia({preferCurrentTab:true})
