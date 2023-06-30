@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jun 30, 2023 at 04:40 AM
+-- Generation Time: Jun 30, 2023 at 08:04 AM
 -- Server version: 10.5.21-MariaDB
 -- PHP Version: 8.0.28
 
@@ -128,14 +128,14 @@ CREATE TABLE `class_call_recording` (
   `id` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `classes_assigned_to_teacher_id` varchar(255) NOT NULL
+  `class_timetable_with_class_batch_assigned_id` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
 -- Dumping data for table `class_call_recording`
 --
 
-INSERT INTO `class_call_recording` (`id`, `name`, `created_at`, `classes_assigned_to_teacher_id`) VALUES
+INSERT INTO `class_call_recording` (`id`, `name`, `created_at`, `class_timetable_with_class_batch_assigned_id`) VALUES
 ('bBFRGCw8X6XiPfP2f23a-kLLiI4J5C5dlXWdSB5CB-zJ2JOeemLBkIThhWV8ra-IIbKFIjJ9z48abP57UkD', 'RecordingVideo_1681551645618.webm', '2023-04-15 09:40:46', 'Vw49IDLhCppLOIRzPdmj-i6TIC5vtOpmjLwDAAv3i-erQcEvsdZTOoiKBjwwKk-vdu3TRXSvbvATPLCn6ot'),
 ('T4xzn8OwsdXgHRJRIgcE-9wg8XRwOul4OPoGhgxYK-ODtGZXFbOBuchXDl4uSh-ol0QWpkKfMphbBZZ6O9n', 'RecordingVideo_1681547427902.webm', '2023-04-15 08:30:28', 'bkXgup8oIWSx1jwOD3z3-cDVoSua7WprxS1DefF9E-oxHpqlvUdtn7cl1ABZfi-faLw5IDO7nQOUGkIB20d');
 
@@ -165,7 +165,7 @@ INSERT INTO `class_timetable_with_class_batch_assigned` (`id`, `start_from_date_
 ('ecTw4yaGCBgLP6OS7bdD-keJUEcd1yAw6g7nM2DCQ-yium88pOOZyMseTMCuJi-hX90jnEFObagHp2Q4DOl', '2023-04-18 11:11:00', NULL, 'ODO4stVRJCKXCp3rXHoC-pLTKB6W0Frd32WJoL9Bd-nrCnO8REM7Q8xCl33gso-OxEeGqolfRmSUw6Vi3rd', '2023-04-17 05:30:44'),
 ('hVf9OVAdvbt0JVwq93ye-W18VbAryoEuQz4YJPz5t-LZzPC4kvqMwgAvQJl4hO-DTvqw9rYzS4Gvqwrwk1k', '2023-04-17 11:11:00', NULL, 'ODO4stVRJCKXCp3rXHoC-pLTKB6W0Frd32WJoL9Bd-nrCnO8REM7Q8xCl33gso-OxEeGqolfRmSUw6Vi3rd', '2023-04-17 05:30:44'),
 ('jEq9HXjRtaZGaAFr7FOG-7XajwleI8Gs9V0l2JeVx-HKeOHjZyJtcheuTdneV9-oPUOzuCz2pnVv5qO2yI9', '2023-04-22 11:11:00', NULL, 'ODO4stVRJCKXCp3rXHoC-pLTKB6W0Frd32WJoL9Bd-nrCnO8REM7Q8xCl33gso-OxEeGqolfRmSUw6Vi3rd', '2023-04-17 05:30:44'),
-('mAjR1hK91SPhxLnBXikD-j8T2J9WSTfPVhTBDIrDF-c3Clo0SzoOLZbklrfpSW-UobIJOAMH0SdeOuqdgZJ', '2023-06-30 11:01:00', NULL, 'pfgvh9JaVxVOz8Y92OVd-o6OrGzc1rtgxVJikfcSM-kRlm4rclyPD4sHbmmUdo-lucsMqKOq5WwhxptHSid', '2023-06-30 04:39:09'),
+('mAjR1hK91SPhxLnBXikD-j8T2J9WSTfPVhTBDIrDF-c3Clo0SzoOLZbklrfpSW-UobIJOAMH0SdeOuqdgZJ', '2023-06-30 11:01:00', '2023-06-30 13:31:02', 'pfgvh9JaVxVOz8Y92OVd-o6OrGzc1rtgxVJikfcSM-kRlm4rclyPD4sHbmmUdo-lucsMqKOq5WwhxptHSid', '2023-06-30 04:39:09'),
 ('rB1FqHqMeCa33yE3BjtP-aznKxXz4ey9r3LKzfEL5-MRHiWcqXFBWa1IeJ2mcs-jIH69ETvYcYp3HwSGjrW', '2023-04-19 11:11:00', NULL, 'ODO4stVRJCKXCp3rXHoC-pLTKB6W0Frd32WJoL9Bd-nrCnO8REM7Q8xCl33gso-OxEeGqolfRmSUw6Vi3rd', '2023-04-17 05:30:44'),
 ('TtoM4yfPJa7SrqcHVrJr-FXPiMAPwSK8KOxpIwACA-HmDOancIfo0aGHCqwkxj-fQatKHPruJsT9LHAWuhd', '2023-04-16 11:11:00', NULL, '5OojCFwdpXwM5e4KCVi3-LB7OzxqMvYbS89BejPYr-SdSKoZOwsFdZVGOyKu97-i2q8eh23fVRtWHZEzDTX', '2023-04-16 06:46:09'),
 ('USAUZdvsTYTpyrbqIZt5-dtVZyHTHMzWqVXVJxroG-r8wHFCCrjaTOiWU3JPzP-UrGmtALGQOCHZArI3U7C', '2023-04-16 11:11:00', NULL, 'mqtTbpUg0w43e6290p3z-czKbtVYkgJgjlGof4btO-qAHeAUk7kfQbmWoHjS8e-t4ESrZa6CPD9ux3MubE9', '2023-04-16 06:45:54'),
@@ -245,6 +245,14 @@ CREATE TABLE `student_class_attend` (
   `student_profile_id` varchar(255) NOT NULL,
   `profile_subject_with_batch_id` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+--
+-- Dumping data for table `student_class_attend`
+--
+
+INSERT INTO `student_class_attend` (`id`, `class_timetable_with_class_batch_assigned_id`, `created_at`, `student_profile_id`, `profile_subject_with_batch_id`) VALUES
+('lp5ysEWCRCvhQGgHPyVg-7yYmx6AnK2f6vmJRfjye-MBaOR54ev80SOyok0Rd6-JaGZeu2HZZFjCw4wyhMJ', 'mAjR1hK91SPhxLnBXikD-j8T2J9WSTfPVhTBDIrDF-c3Clo0SzoOLZbklrfpSW-UobIJOAMH0SdeOuqdgZJ', '2023-06-30 08:00:54', 'Ka8ft1WjOi579eZnI2Bu-bZKsFFk9F9cHoPkr28Eu-DGTz39UP7u8WnMGQ5hSh-D81Os3cFAVl6bSWModx3', '0kXdaIxSphcPbRkCXww4-vf7ORPdubu4LGMhjaq5v-6FEwWEwjdZrhVuAhA227-9soTunF5eELLpzzYGUOi'),
+('pPV3q97eC9nex6LFeIet-PjKEevO2xpMP4T8MtOOh-tvxlpslD5ReIl01Ja3wH-JDUpF5FOqExxTDXeOvrw', 'mAjR1hK91SPhxLnBXikD-j8T2J9WSTfPVhTBDIrDF-c3Clo0SzoOLZbklrfpSW-UobIJOAMH0SdeOuqdgZJ', '2023-06-30 07:56:42', 'Ka8ft1WjOi579eZnI2Bu-bZKsFFk9F9cHoPkr28Eu-DGTz39UP7u8WnMGQ5hSh-D81Os3cFAVl6bSWModx3', '0kXdaIxSphcPbRkCXww4-vf7ORPdubu4LGMhjaq5v-6FEwWEwjdZrhVuAhA227-9soTunF5eELLpzzYGUOi');
 
 -- --------------------------------------------------------
 
@@ -337,6 +345,13 @@ CREATE TABLE `teacher_class_attend_assignment` (
   `name` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+--
+-- Dumping data for table `teacher_class_attend_assignment`
+--
+
+INSERT INTO `teacher_class_attend_assignment` (`id`, `class_timetable_with_class_batch_assigned_id`, `path`, `name`, `created_at`) VALUES
+('Lauuh3dhw7L9JRUrwDTL-rQkiByfhY9hdgGJcQg9d-yqlHp4hwt33CaoJaQoQJ-x0vZgOPtswVLHMbcCmVD', 'mAjR1hK91SPhxLnBXikD-j8T2J9WSTfPVhTBDIrDF-c3Clo0SzoOLZbklrfpSW-UobIJOAMH0SdeOuqdgZJ', '1688112057806_whiteboard_data.pdf', '1688112057806_whiteboard_data.pdf', '2023-06-30 08:00:58');
 
 -- --------------------------------------------------------
 

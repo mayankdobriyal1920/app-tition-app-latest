@@ -738,7 +738,7 @@ commonRouter.post(
 );
 
 /////////// UPLOAD FILE ///////////////
-const uploadPath = "/var/www/html/recording-upload-data";
+const uploadPath = "/var/www/vhosts/121tuition.in/httpdocs/tuition/recording-upload-data";
 // const storage = multer.diskStorage({
 //     destination: function(req, file, cb) {
 //         cb(null, uploadPath);

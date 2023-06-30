@@ -78,7 +78,6 @@ export default function StudentTodayClassesComponent(){
             getUserMedia({
                     audio: true,
                     video: {
-                        
                         quality: 7,
                         width: { ideal: 320 },
                         height: { ideal: 240 }

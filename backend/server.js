@@ -186,7 +186,7 @@ app.use(express.json({limit: '250mb'}));
 ///////// USER API GET ////////////////
 app.use('/api-call-tutor/common', commonRouter);
 ///////// USER API GET ////////////////
-const uploadPath = "/var/www/html/recording-upload-data";
+const uploadPath = "/var/www/vhosts/121tuition.in/httpdocs/tuition/recording-upload-data";
 let chunks = [];
 app.post('/api-call-tutor/recording-video-chuncks', (req, res) => {
     const dataBuffer = new Buffer(req.body.data, 'base64');
