@@ -50,19 +50,19 @@ const iceServers= [
     {
         urls: "stun:stun.l.google.com:19302",
     },
-    {
+      {
         urls: "turn:121tuition.in:3478?transport=tcp",
         username: "121tuition",
         credential: "121tuition123",
-    },
-    {
-        urls: "turn:121tuition.in:5349?transport=tcp",
+    }, {
+        urls: "turn:121tuition.in:3478",
         username: "121tuition",
         credential: "121tuition123",
     },
-];
+   ];
 let currentClassId = null;
 let currentClassAssignedId = null;
+
 export default function TeacherDashboardMobile() {
     const chatModuleNewUserAddedInCurrentCall = useSelector((state) => state.chatModuleNewUserAddedInCurrentCall);
     const teacherAllClassesList = useSelector((state) => state.teacherAllClassesList);

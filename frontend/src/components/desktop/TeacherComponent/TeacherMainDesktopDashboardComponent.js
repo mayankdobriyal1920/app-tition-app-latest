@@ -32,18 +32,17 @@ import {cloneDeep} from "lodash";
 
 const iceServers= [
     {
-         urls: "stun:stun.l.google.com:19302",
-     },
-     {
-         urls: "turn:121tuition.in:3478?transport=tcp",
-         username: "121tuition",
-         credential: "121tuition123",
-     },
-     {
-         urls: "turn:121tuition.in:5349?transport=tcp",
-         username: "121tuition",
-         credential: "121tuition123",
-     },
+        urls: "stun:stun.l.google.com:19302",
+    },
+    {
+        urls: "turn:121tuition.in:3478?transport=tcp",
+        username: "121tuition",
+        credential: "121tuition123",
+    }, {
+        urls: "turn:121tuition.in:3478",
+        username: "121tuition",
+        credential: "121tuition123",
+    },
 ];
 
 
