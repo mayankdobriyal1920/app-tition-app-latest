@@ -165,7 +165,7 @@ export default function TeacherStudentVideoCallComponent({isTeacher}){
     }
 
     const closeConfirmPopupAndExtendClass = ()=>{
-        maxTimeInterval += 300;
+        maxTimeInterval += 3600;
         setShowExtendClassAlert(false);
     }
 
@@ -322,7 +322,7 @@ export default function TeacherStudentVideoCallComponent({isTeacher}){
             {isTeacher ?
                 <IonAlert
                     header="Alert!"
-                    subHeader={"Class time exceed 1 hour do you want to extend class for 5 min?"}
+                    subHeader={"Class time exceed 1 hour do you want to extend class for 1 hour?"}
                     isOpen={showExtendClassAlert}
                     buttons={[
                         {
