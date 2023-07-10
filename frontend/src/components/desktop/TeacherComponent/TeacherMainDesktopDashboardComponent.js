@@ -60,15 +60,15 @@ function TeacherMainDesktopDashboardComponentFunction(){
 
     const callFunctionToExportRecordedVideo = async (chunks)=>{
 
-        const mimeType = 'video/webm;codecs=vp9';
-        const fixBlob = await fixWebmDuration(new Blob([...chunks], { type: mimeType }));
-
-        const reader = new FileReader();
-        reader.readAsDataURL(fixBlob);
-        reader.onload = () => {
-            const base64String = reader.result.split(',')[1];
-            dispatch(actionToSendVideoChunkDataToServerFinishProcess(currentClassAssignedId,base64String));
-        };
+        // const mimeType = 'video/webm;codecs=vp9';
+        // const fixBlob = await fixWebmDuration(new Blob([...chunks], { type: mimeType }));
+        //
+        // const reader = new FileReader();
+        // reader.readAsDataURL(fixBlob);
+        // reader.onload = () => {
+        //     const base64String = reader.result.split(',')[1];
+        //     //dispatch(actionToSendVideoChunkDataToServerFinishProcess(currentClassAssignedId,base64String));
+        // };
         dispatch(actionToRemoveCurrentGroupCallData());
     }
 
