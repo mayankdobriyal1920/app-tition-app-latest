@@ -33,7 +33,8 @@ const AddNewStudyMaterialsDataComponent=() => {
     const [dataAddedSuccess, setDataAddedSuccess] = useState(false);
 
 
-    const saveTeacherDataForm =()=>{
+    const saveTeacherDataForm =(e)=>{
+        e.preventDefault();
         if(!dataAddedSuccess) {
             if (validateForm()) {
                 let payload = {
@@ -52,6 +53,7 @@ const AddNewStudyMaterialsDataComponent=() => {
                 resetForm();
             }
         }
+        return false;
     }
 
     const validateForm =()=>{
@@ -61,8 +63,10 @@ const AddNewStudyMaterialsDataComponent=() => {
             return false;
         }else if(!lectureOrder){
             return false;
-        }else if(!tabType?.trim()?.length){
+        }else if(!tabType){
             return false;
+        }else if(!subTabType){
+        return false;
         }else if(link?.length === 0){
             return false;
         }
@@ -85,11 +89,11 @@ const AddNewStudyMaterialsDataComponent=() => {
                 <form onSubmit={(e)=>saveTeacherDataForm(e)} className="row gx-3 comments-form contact-form">
                     <div className="row g-4">
                         {(dataAddedSuccess) && (
-                            <div className={"success_add_div"}>Teacher added successfully</div>
+                            <div className={"success_add_div"}>Study materials added successfully</div>
                         )}
                         <div className="">
                             <div className="bg-light rounded h-100 p-4">
-                                <h3 className="mb-4">Add New Teacher</h3>
+                                <h3 className="mb-4">Add New Study materials</h3>
                                 <div className="row g-4">
                                     <div className="col">
                                         <div className="form-floating mb-3">
