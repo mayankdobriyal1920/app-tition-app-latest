@@ -1,12 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {
-    actionToCreateAndAssignClassData,
+    actionToCreateAndAssignClassData, actionToInsertRescheduleClassTime,
     actionToOpenCloseClassAssignPopup, actionToRescheduleClassTime,
     actionToUpdateClassAssignedBatchData
 } from "../../../actions/CommonAction";
 import moment from "moment";
 import {cloneDeep} from "lodash";
+import {_generateUniqueId} from "../../../helper/CommonHelper";
 
 let weekDatesArray = [];
 let weekStartDate = moment().startOf('week').format('YYYY-MM-DD');
@@ -28,11 +29,34 @@ export default function ClassAssignPopupComponent(){
     const allTeacherDataToAssignClass = useSelector((state) => state.allTeacherDataToAssignClass);
     const allClassToAssignClass = useSelector((state) => state.allClassToAssignClass);
     const dispatch = useDispatch();
+    const [allRemainingClassDate,setAllRemainingClassDate] = useState([]);
+
+    useEffect(()=>{
+        if(isOpen && dropdownData?.class_timetable_with_class_batch_assigned?.length){
+            let firstClassTime = dropdownData?.class_timetable_with_class_batch_assigned[0]?.start_from_date_time;
+            let startOfWeek = moment(firstClassTime).startOf('week').format('YYYY-MM-DD');
+            let allDatesWeek = [];
+            for(let i = 0; i <=6; i++){
+                allDatesWeek.push(moment(startOfWeek).add(i,'day').format('YYYY-MM-DD'));
+            }
+            dropdownData?.class_timetable_with_class_batch_assigned?.map((classData)=>{
+                if(allDatesWeek.includes(moment(classData?.start_from_date_time).format('YYYY-MM-DD'))){
+                    allDatesWeek.splice(allDatesWeek.indexOf(moment(classData?.start_from_date_time).format('YYYY-MM-DD')),1);
+                }
+            })
+
+            let newData = [];
+            allDatesWeek?.map((date)=>{
+                newData.push({start_from_date_time:date,id:_generateUniqueId()})
+            })
+            setAllRemainingClassDate([...newData]);
+        }
+    },[isOpen])
     const closeClassAssignPopup = ()=>{
         dispatch(actionToOpenCloseClassAssignPopup(false,{}));
     }
     const validateEditPopup = ()=>{
-        if(dropdownData?.teacher_id !== selectedTeacherId || (dropdownData?.class_batch_name !== classBatchName?.trim() && classBatchName?.trim()?.length)){
+        if(dropdownData?.teacher_id !== selectedTeacherId || (classBatchName?.trim()?.length)){
             return true;
         }
         return false;
@@ -41,11 +65,34 @@ export default function ClassAssignPopupComponent(){
         if(newTime && newTime !== oldTime){
             let newDateTime = moment(classTimeEditMode?.start_from_date_time).format('YYYY-MM-DD')+' '+newTime;
             dispatch(actionToRescheduleClassTime(
-                    dropdownData?.class_assigned_teacher_batch_id,
-                    dropdownData?.profile_subject_with_batch_id,
-                    classTimeEditMode?.start_from_date_time,
-                    newDateTime
-                ))
+                dropdownData?.class_assigned_teacher_batch_id,
+                dropdownData?.profile_subject_with_batch_id,
+                classTimeEditMode?.start_from_date_time,
+                newDateTime
+            ))
+        }
+        setClassTimeEditMode(null);
+        setClassEditTimeValue('00:00');
+    }
+    const insertSelectedTimeData = (newTime)=>{
+        if(newTime){
+            let newDateTime = moment(classTimeEditMode?.start_from_date_time).format('YYYY-MM-DD')+' '+newTime;
+            dispatch(actionToInsertRescheduleClassTime(
+                dropdownData?.class_assigned_teacher_batch_id,
+                dropdownData?.profile_subject_with_batch_id,
+                classTimeEditMode?.start_from_date_time,
+                newDateTime
+            ))
+            let foundIndex = null;
+            allRemainingClassDate?.map((reClassData,key)=>{
+                if(reClassData.id === classTimeEditMode?.id){
+                    foundIndex = key;
+                }
+            })
+            if(foundIndex !== null){
+                allRemainingClassDate.splice(foundIndex,1);
+            }
+
         }
         setClassTimeEditMode(null);
         setClassEditTimeValue('00:00');
@@ -388,6 +435,32 @@ export default function ClassAssignPopupComponent(){
                                                   }
                                               </div>
                                           )))}
+
+
+                                          {allRemainingClassDate?.length ?
+                                          <div><b>Not assigned dates</b></div>:''
+                                          }
+
+                                          {allRemainingClassDate?.map((data,key)=>(
+                                              <div key={key} className="form-floating class_date_time_sectiob_loop">
+                                                  <div>{moment(data?.start_from_date_time).format('dddd')}</div>
+                                                  {(classTimeEditMode?.id === data?.id) ?
+                                                      <input type="time"
+                                                             value={classEditTimeValue}
+                                                             onChange={(e)=>setClassEditTimeValue(e.target.value)}
+                                                             onBlur={()=>insertSelectedTimeData(classEditTimeValue)}
+                                                             autoFocus={true}
+                                                             placeholder="Time"
+                                                             required/>
+                                                      :
+                                                      <input onClick={()=>editModeActiveForClassTime(data)}
+                                                             type={"time"}
+                                                             value={moment(data?.start_from_date_time).format('HH:mm')}
+                                                             readOnly={true}/>
+                                                  }
+                                              </div>
+                                          ))}
+
                                           <button type="button" onClick={callFunctionToUpdateAssignClassData}
                                                   disabled={!validateEditPopup()}
                                                   className="btn btn-primary mt-30">

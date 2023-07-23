@@ -150,11 +150,17 @@ export const actionToSetTeacherStudentInClassStatus = (status) => async (dispatc
 };
 export const actionToSetDataInAssignPopupLocally = (selectedClassAssignId,start_from_date_time,dateTime) => async (dispatch,getState) => {
     let {dropdownData} = getState().openCloseClassAssignPopup;
+    let foundIndex = null;
     dropdownData?.class_timetable_with_class_batch_assigned?.map((classData,key)=>{
         if(classData?.start_from_date_time === start_from_date_time){
-            dropdownData.class_timetable_with_class_batch_assigned[key].start_from_date_time = dateTime;
+            foundIndex = key;
         }
     })
+    if(foundIndex !== null){
+        dropdownData.class_timetable_with_class_batch_assigned[foundIndex].start_from_date_time = dateTime;
+    }else{
+        dropdownData.class_timetable_with_class_batch_assigned.push({start_from_date_time:dateTime,id:_generateUniqueId()})
+    }
     let payload = {isOpen:true,dropdownData:dropdownData};
     dispatch({ type: OPEN_CLOSE_CLASS_ASSIGN_POPUP, payload: cloneDeep(payload)});
 }
@@ -164,6 +170,30 @@ export const actionToRescheduleClassTime = (selectedClassAssignId,profile_subjec
     let whereCondition = `class_assigned_teacher_batch_id = '${selectedClassAssignId}' and start_from_date_time = '${start_from_date_time}'`;
     let dataToSend = {column: setData, value: [dateTime,null], whereCondition: whereCondition, tableName: 'class_timetable_with_class_batch_assigned'};
     await dispatch(commonUpdateFunction(dataToSend));
+    dispatch(actionToSetDataInAssignPopupLocally(selectedClassAssignId,start_from_date_time,dateTime));
+    dispatch(actionToGetAllDemoClassesDetails(true));
+    dispatch(actionToGetAllClassesDataList(true));
+    sendWebsocketRequest(JSON.stringify({
+        clientId: localStorage.getItem('clientId'),
+        type: 'refreshClassListDataForUser',
+        profile_subject_with_batch_id:profile_subject_with_batch_id
+    }));
+}
+
+export const actionToInsertRescheduleClassTime = (selectedClassAssignId,profile_subject_with_batch_id,start_from_date_time,dateTime) => async (dispatch) => {
+
+    let timetableId = _generateUniqueId()
+    let aliasArray = ['?', '?', '?'];
+    let columnArray = ['id', 'start_from_date_time', 'class_assigned_teacher_batch_id'];
+    let valuesArray = [timetableId, dateTime, selectedClassAssignId];
+    let insertData = {
+        alias: aliasArray,
+        column: columnArray,
+        values: valuesArray,
+        tableName: 'class_timetable_with_class_batch_assigned'
+    };
+    await dispatch(callInsertDataFunction(insertData));
+
     dispatch(actionToSetDataInAssignPopupLocally(selectedClassAssignId,start_from_date_time,dateTime));
     dispatch(actionToGetAllDemoClassesDetails(true));
     dispatch(actionToGetAllClassesDataList(true));
