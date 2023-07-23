@@ -1,7 +1,8 @@
 import pool from './connection.js';
 import {
     actionToAlreadyCreatedClassAccordingToTheConditionQuery,
-    actionToGetAllAttendClassWithAssignmentQuery, actionToGetAllClassAssignmentDataWithClassAttendQuery,
+    actionToGetAllAttendClassWithAssignmentQuery,
+    actionToGetAllClassAssignmentDataWithClassAttendQuery,
     actionToGetAllClassesDataListQuery,
     actionToGetAllDemoClassesDetailsQuery,
     actionToGetAllNewStudentProfileDataListQuery,
@@ -16,10 +17,14 @@ import {
     actionToGetLatestStudentProfileDataListQuery,
     actionToGetLatestSubscriptionDataListQuery,
     actionToGetLatestTeacherDataListQuery,
-    actionToGetStudentAllDemoClassesQuery, actionToGetStudentAllTimetableClassesQuery,
-    actionToGetStudentAllTodayClassesQuery, actionToGetStudentClassAssignmentDataWithClassAttendQuery,
+    actionToGetStudentAllDemoClassesQuery,
+    actionToGetStudentAllTimetableClassesQuery,
+    actionToGetStudentAllTodayClassesQuery,
+    actionToGetStudentClassAssignmentDataWithClassAttendQuery,
+    actionToGetStudyMaterialByHeadingTabAndSubTabQuery,
     actionToGetTeacherAllClassesQuery,
-    actionToGetTeacherAllDemoClassesQuery, actionToGetTeacherAllTimetableClassesQuery,
+    actionToGetTeacherAllDemoClassesQuery,
+    actionToGetTeacherAllTimetableClassesQuery,
     actionToGetTeacherAllTodayClassesQuery,
     actionToGetTodayProfileDataListQuery,
     actionToGetUserAllClassesQuery,
@@ -77,6 +82,18 @@ export const deleteCommonApiCall = (body) => {
 export const actionToGetAllSubjectDataListApiCall = () => {
     return new Promise(function(resolve, reject) {
         const query = actionToGetAllSubjectDataListQuery();
+        pool.query(query, (error, results) => {
+            if (error) {
+                reject(error)
+            }
+            resolve(results);
+        })
+    })
+}
+export const actionToGetStudyMaterialByHeadingTabAndSubTabApiCall = (body) => {
+    const {condition} = body;
+    return new Promise(function(resolve, reject) {
+        const query = actionToGetStudyMaterialByHeadingTabAndSubTabQuery(condition);
         pool.query(query, (error, results) => {
             if (error) {
                 reject(error)

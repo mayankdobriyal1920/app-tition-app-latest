@@ -75,6 +75,10 @@ export default function SuperAdminLeftSideBarComponent(){
                         <i className="fa fa-eye me-2" aria-hidden="true"></i>
                         Add New Teacher
                     </NavLink>
+                    <NavLink to={`${path}/add-study-material`} activeClassName={"active"} className={"nav-item nav-link"}>
+                        <i className="fa fa-eye me-2" aria-hidden="true"></i>
+                        Add study materials
+                    </NavLink>
                     <a onClick={()=>setShowAlert(true)} style={{cursor:'pointer'}} className="nav-item nav-link">
                         <i className="fa fa-sign-out me-2"></i>
                         Logout

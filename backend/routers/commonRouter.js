@@ -41,7 +41,9 @@ import {
     actionToGetTeacherAllTimetableClassesApiCall,
     actionToGetStudentAllTimetableClassesApiCall,
     actionToVerifyUserOtpByMobileNumberApiCall,
-    actionToSendOtpInMobileNumberApiCall, actionToSigninWithPasswordApiCall
+    actionToSendOtpInMobileNumberApiCall,
+    actionToSigninWithPasswordApiCall,
+    actionToGetStudyMaterialByHeadingTabAndSubTabApiCall
 } from "../models/commonModel.js";
 import {allChanelWhiteBoardEditingData,canvasReservedJsonActiveIndex} from "../server.js";
 const commonRouter = express.Router();
@@ -89,6 +91,18 @@ commonRouter.post(
     '/actionToGetAllSubjectDataListApiCall',
     expressAsyncHandler(async (req, res) => {
         actionToGetAllSubjectDataListApiCall(req.body).then((data) => {
+            res.status(200).send({
+                response: data,
+            });
+        }).catch(error => {
+            res.status(500).send(error);
+        })
+    })
+);
+commonRouter.post(
+    '/actionToGetStudyMaterialByHeadingTabAndSubTabApiCall',
+    expressAsyncHandler(async (req, res) => {
+        actionToGetStudyMaterialByHeadingTabAndSubTabApiCall(req.body).then((data) => {
             res.status(200).send({
                 response: data,
             });

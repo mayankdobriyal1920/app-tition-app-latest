@@ -307,6 +307,13 @@ export const actionToCreateTeacherProfile = (payload) => async (dispatch) => {
         })
     })
 }
+export const actionToSaveStudyMaterialData = (payload) => async (dispatch) => {
+    const aliasArray = ['?','?','?','?','?','?'];
+    const columnArray = ['subject','topic_name','link','lecture_order','tab_type','sub_tab_heading'];
+    const valuesArray = [payload?.subjectName,payload?.topicName,payload?.link,payload?.lectureOrder,payload?.tabType,payload?.subTabType];
+    const insertData = {alias:aliasArray,column:columnArray,values:valuesArray,tableName:'sk_mondal_class_test_study_material'};
+    await dispatch(callInsertDataFunction(insertData));
+}
 export const actionToUpdateTeacherProfile = (payload) => async (dispatch) => {
     let setData = `name = ?,email = ?,password = ?,address = ?`;
     let whereCondition = `id = '${payload?.id}'`;

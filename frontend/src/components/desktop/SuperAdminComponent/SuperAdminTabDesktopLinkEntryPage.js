@@ -12,6 +12,7 @@ import AllDemoClassDataTableComponent from "./AllDemoClassDataTableComponent";
 import AllRecordedClassDataTableComponent from "./AllRecordedClassDataTableComponent";
 import ClassAssignPopupComponent from "./ClassAssignPopupComponent";
 import EditTeacherPopupComponent from "./EditTeacherPopupComponent";
+import AddNewStudyMaterialsDataComponent from "./AddNewStudyMaterialsDataComponent";
 
 
 export default function SuperAdminTabDesktopLinkEntryPage() {
@@ -46,7 +47,10 @@ export default function SuperAdminTabDesktopLinkEntryPage() {
                             <AllRecordedClassDataTableComponent/>
                         </Route>
                         <Route exact path={`${path}/add-new-teacher`}>
-                           <AddNewTeacherComponent/>
+                            <AddNewTeacherComponent/>
+                        </Route>
+                        <Route exact path={`${path}/add-study-material`}>
+                            <AddNewStudyMaterialsDataComponent/>
                         </Route>
                     </Switch>
                 </div>

@@ -1,6 +1,9 @@
 export const actionToGetAllSubjectDataListQuery = ()=>{
     return `SELECT id,name from subject`;
 }
+export const actionToGetStudyMaterialByHeadingTabAndSubTabQuery = (condition)=>{
+    return `SELECT * from sk_mondal_class_test_study_material where ${condition}`;
+}
 export const actionToGetAllStudentDataListQuery = ()=>{
     return `select student_profile.*,school_board.name as school_board_name from student_profile left join  school_board on student_profile.school_board = school_board.id `;
 }
