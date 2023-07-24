@@ -34,6 +34,7 @@ export default function TeacherStudentVideoCallComponent({isTeacher}){
     let [showExtendClassAlert,setShowExtendClassAlert] = useState(false);
     const dispatch = useDispatch();
     let [isMutedCall,setIsMutedCall] = useState(!isTeacher);
+    const [isRenegotiating, setIsRenegotiating] = useState(false);
 
     useEffect(()=>{
         if(isTeacher) {
@@ -198,6 +199,67 @@ export default function TeacherStudentVideoCallComponent({isTeacher}){
             window.removeEventListener('resize', windowResized)
         }
     },[])
+
+
+    // Function to monitor network conditions and trigger re-negotiation
+    useEffect(() => {
+        const monitorNetworkConditions = () => {
+            // Use the Network Information API or a third-party library to get network conditions
+            // For this example, we'll use a simulated function "getNetworkConditions" that returns an object with network information
+            const networkConditions = getNetworkConditions();
+
+            // Check if the network conditions meet your re-negotiation criteria
+            const shouldRenegotiate = checkRenegotiationCriteria(networkConditions);
+
+            // Trigger re-negotiation if the conditions are met and not already re-negotiating
+            if (shouldRenegotiate && !isRenegotiating) {
+                setIsRenegotiating(true);
+                renegotiate();
+            }
+        };
+
+        // Start monitoring network conditions at an interval (e.g., every 5 seconds)
+        const monitoringInterval = setInterval(monitorNetworkConditions, 5000);
+
+        // Cleanup the interval when the component is unmounted
+        return () => clearInterval(monitoringInterval);
+    }, [isRenegotiating]);
+
+    // Function to perform re-negotiation
+    const renegotiate = async () => {
+        const senders = myPeer.getSenders();
+        const newVideoConstraints = {
+            frameRate: 30,
+        };
+
+        // Update the video track with new constraints for each sender
+        senders.forEach(async (sender) => {
+            if (sender.track.kind === 'video') {
+                const newTrack = await localStreamRef.current.getVideoTracks()[0].clone();
+                await newTrack.applyConstraints(newVideoConstraints);
+                await sender.replaceTrack(newTrack);
+            }
+        });
+
+        // After re-negotiation is done, set the state to indicate that re-negotiation is complete
+        setIsRenegotiating(false);
+    };
+
+    // Simulated function to get network conditions
+    const getNetworkConditions = () => {
+        // For this example, we'll simulate network conditions with random values
+        const bandwidth = Math.random() * 1000; // Replace this with actual bandwidth measurement
+        const latency = Math.random() * 100; // Replace this with actual latency measurement
+
+        return { bandwidth, latency };
+    };
+
+    // Simulated function to check re-negotiation criteria
+    const checkRenegotiationCriteria = (networkConditions) => {
+        // Define your re-negotiation criteria based on network conditions
+        // For this example, we'll re-negotiate if bandwidth is below 200 kbps
+        return networkConditions.bandwidth < 200;
+    };
 
 
     return(

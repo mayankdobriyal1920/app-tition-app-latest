@@ -70,12 +70,15 @@ export default function StudentTodayClassesMobileComponent() {
         let getUserMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia).bind(navigator);
         if(getUserMedia) {
             getUserMedia({
-                    audio: true,
+                    audio: {
+                        echoCancellation: true,
+                        noiseSuppression: true,
+                        autoGainControl: true,
+                    },
                     video: {
-                        
-                        quality: 7,
                         width: { ideal: 320 },
-                        height: { ideal: 240 }
+                        height: { ideal: 240 },
+                        frameRate: { ideal: 25 },
                     }
                 },
                 function(stream){
