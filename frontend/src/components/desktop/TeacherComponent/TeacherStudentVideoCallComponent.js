@@ -235,7 +235,7 @@ export default function TeacherStudentVideoCallComponent({isTeacher}){
         // Update the video track with new constraints for each sender
         senders.forEach(async (sender) => {
             if (sender.track.kind === 'video') {
-                const newTrack = await localStreamRef.current.getVideoTracks()[0].clone();
+                const newTrack = await myStream.getVideoTracks()[0].clone();
                 await newTrack.applyConstraints(newVideoConstraints);
                 await sender.replaceTrack(newTrack);
             }
