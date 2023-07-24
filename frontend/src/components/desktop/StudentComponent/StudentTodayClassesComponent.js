@@ -90,10 +90,10 @@ export default function StudentTodayClassesComponent(){
                     setMyPeerConnectionId(memberData.peer_connection_id);
 
                     let myPeer = new Peer(memberData.peer_connection_id, {
-                        host: '121tuition.in',
-                        secure: true,
+                        // host: '121tuition.in',
+                        //secure: true,
                         config: {'iceServers': iceServers},
-                        path: '/peerApp',
+                        // path: '/peerApp',
                     });
 
                     setMyPeer(myPeer);

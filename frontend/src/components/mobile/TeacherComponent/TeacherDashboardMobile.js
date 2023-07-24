@@ -119,11 +119,12 @@ export default function TeacherDashboardMobile() {
                     memberData.isTeacher = true;
 
                     let myPeer = new Peer(memberData.peer_connection_id, {
-                        host: '121tuition.in',
-                        secure: true,
+                        // host: '121tuition.in',
+                        //secure: true,
                         config: {'iceServers': iceServers},
-                        path: '/peerApp',
+                        // path: '/peerApp',
                     });
+
                     setMyPeerConnectionId(memberData.peer_connection_id);
                     setMyPeer(myPeer);
                     currentClassId = cloneDeep(classGroupData?.id);
