@@ -76,9 +76,9 @@ export default function StudentTodayClassesMobileComponent() {
                         autoGainControl: true,
                     },
                     video: {
-                        width: { ideal: 320 },
-                        height: { ideal: 240 },
-                        frameRate: { ideal: 25 },
+                        width:320,
+                        height:240,
+                        frameRate:30,
                     }
                 },
                 function(stream){
