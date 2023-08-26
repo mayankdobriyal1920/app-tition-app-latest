@@ -29,6 +29,7 @@ import {
     CHAT_MODULE_CURRENT_CALL_ALL_MEMBERS,
 } from "../../../constants/CommonConstants";
 import {cloneDeep} from "lodash";
+import {transformSdp} from "../../../helper/SdpTransformHelper";
 
 const iceServers= [
     {
@@ -45,6 +46,31 @@ const iceServers= [
     },
 ];
 
+// const iceServers= [
+//     {
+//         urls: "stun:stun.relay.metered.ca:80",
+//     },
+//     {
+//         urls: "turn:a.relay.metered.ca:80",
+//         username: "81a9bd437713718412339ca3",
+//         credential: "pwsLYC29rmjea4oo",
+//     },
+//     {
+//         urls: "turn:a.relay.metered.ca:80?transport=tcp",
+//         username: "81a9bd437713718412339ca3",
+//         credential: "pwsLYC29rmjea4oo",
+//     },
+//     {
+//         urls: "turn:a.relay.metered.ca:443",
+//         username: "81a9bd437713718412339ca3",
+//         credential: "pwsLYC29rmjea4oo",
+//     },
+//     {
+//         urls: "turn:a.relay.metered.ca:443?transport=tcp",
+//         username: "81a9bd437713718412339ca3",
+//         credential: "pwsLYC29rmjea4oo",
+//     },
+// ];
 
 let currentClassId = null;
 let currentClassAssignedId = null;
@@ -104,10 +130,10 @@ function TeacherMainDesktopDashboardComponentFunction(){
                             memberData.isTeacher = true;
 
                             let myPeer = new Peer(memberData.peer_connection_id, {
-                                // host: '121tuition.in',
-                                //secure: true,
+                                host: '121tuition.in',
+                                secure: true,
                                 config: {'iceServers': iceServers},
-                                // path: '/peerApp',
+                                path: '/peerApp',
                             });
 
                             setMyPeerConnectionId(memberData.peer_connection_id);
@@ -118,6 +144,26 @@ function TeacherMainDesktopDashboardComponentFunction(){
 
                             dispatch(actionToSetCurrentCallDataGroupData(classGroupData));
                             console.log('[ PEER JS CONNECTION INSTANCE ]', myPeer,memberData.peer_connection_id);
+
+                           myPeer?.on('candidate', e => {
+                               console.log('icecandidate ------- ',e);
+                                if (!e.candidate) return;
+
+                                // Display candidate string e.g
+                                // candidate:842163049 1 udp 1677729535 XXX.XXX.XX.XXXX 58481 typ srflx raddr 0.0.0.0 rport 0 generation 0 ufrag sXP5 network-cost 999
+                                console.log(e.candidate.candidate);
+
+                                // If a srflx candidate was found, notify that the STUN server works!
+                                if(e.candidate.type === "srflx"){
+                                    console.log("The STUN server is reachable!");
+                                    console.log(`   Your Public IP Address is: ${e.candidate.address}`);
+                                }
+
+                                // If a relay candidate was found, notify that the TURN server works!
+                                if(e.candidate.type === "relay"){
+                                    console.log("The TURN server is reachable !");
+                                }
+                            })
 
                             myPeer?.on('open', id => {
                                 console.log('[PEER CONNECTION OPEN IN ID]', id);
@@ -172,7 +218,7 @@ function TeacherMainDesktopDashboardComponentFunction(){
 
                                         myPeer.on('call', call => {
                                             console.log('[PEER JS INCOMMING CALL]', call);
-                                            call.answer(stream);
+                                            call.answer(stream,{ sdpTransform: transformSdp });
                                             addCallSubscriptionEvents(call);
                                         })
                                     })

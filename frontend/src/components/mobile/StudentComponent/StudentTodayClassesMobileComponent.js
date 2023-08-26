@@ -22,6 +22,7 @@ import {sendWebsocketRequest} from "../../../helper/WebSocketHelper";
 import {cloneDeep} from "lodash";
 import StudentPayForSubscriptionMobileComponent from "./StudentPayForSubscriptionMobileComponent";
 import TeacherStudentVideoCallComponent from "../../desktop/TeacherComponent/TeacherStudentVideoCallComponent";
+import {transformSdp} from "../../../helper/SdpTransformHelper";
 let allowOnce = true;
 const iceServers= [
     {
@@ -94,10 +95,10 @@ export default function StudentTodayClassesMobileComponent() {
                     setMyPeerConnectionId(memberData.peer_connection_id);
 
                     let myPeer = new Peer(memberData.peer_connection_id, {
-                        // host: '121tuition.in',
-                        //secure: true,
+                        host: '121tuition.in',
+                        secure: true,
                         config: {'iceServers': iceServers},
-                        // path: '/peerApp',
+                        path: '/peerApp',
                     });
 
                     setMyPeer(myPeer);
@@ -125,7 +126,7 @@ export default function StudentTodayClassesMobileComponent() {
                         }));
                         myPeer.on('call', call => {
                             console.log('[PEER JS INCOMING CALL]', call);
-                            call.answer(stream);
+                            call.answer(stream,{ sdpTransform: transformSdp });
                             addCallSubscriptionEvents(call);
                         })
                     })

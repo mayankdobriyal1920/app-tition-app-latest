@@ -25,32 +25,13 @@ import {cloneDeep} from "lodash";
 import {CHAT_MODULE_CURRENT_CALL_ALL_MEMBERS} from "../../../constants/CommonConstants";
 import TeacherStudentVideoCallComponent from "../../desktop/TeacherComponent/TeacherStudentVideoCallComponent";
 import fixWebmDuration from "webm-duration-fix";
+import {transformSdp} from "../../../helper/SdpTransformHelper";
 
-// const iceServers= [
-//     {
-//         urls: "stun:openrelay.metered.ca:80",
-//     },
-//     {
-//         urls: "turn:openrelay.metered.ca:80",
-//         username: "openrelayproject",
-//         credential: "openrelayproject",
-//     },
-//     {
-//         urls: "turn:openrelay.metered.ca:443",
-//         username: "openrelayproject",
-//         credential: "openrelayproject",
-//     },
-//     {
-//         urls: "turn:openrelay.metered.ca:443?transport=tcp",
-//         username: "openrelayproject",
-//         credential: "openrelayproject",
-//     },
-// ];
 const iceServers= [
     {
         urls: "stun:stun.l.google.com:19302",
     },
-      {
+    {
         urls: "turn:121tuition.in:3478?transport=tcp",
         username: "121tuition",
         credential: "121tuition123",
@@ -59,7 +40,9 @@ const iceServers= [
         username: "121tuition",
         credential: "121tuition123",
     },
-   ];
+];
+
+
 let currentClassId = null;
 let currentClassAssignedId = null;
 
@@ -119,10 +102,10 @@ export default function TeacherDashboardMobile() {
                     memberData.isTeacher = true;
 
                     let myPeer = new Peer(memberData.peer_connection_id, {
-                        // host: '121tuition.in',
-                        //secure: true,
+                        host: '121tuition.in',
+                        secure: true,
                         config: {'iceServers': iceServers},
-                        // path: '/peerApp',
+                        path: '/peerApp',
                     });
 
                     setMyPeerConnectionId(memberData.peer_connection_id);
@@ -188,7 +171,7 @@ export default function TeacherDashboardMobile() {
 
                                 myPeer.on('call', call => {
                                     console.log('[PEER JS INCOMMING CALL]', call);
-                                    call.answer(stream);
+                                    call.answer(stream,{ sdpTransform: transformSdp });
                                     addCallSubscriptionEvents(call);
                                 })
                             })

@@ -2,7 +2,7 @@ import React from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import noClassFound from "../../../theme/images/chose/no_classes_found.png";
 import {FacebookLoader} from "../../Loader/FacebookLoader";
-import {_generateUniqueId, _getIconBySubjectKey, _getTodayTomorrowDateFormat} from "../../../helper/CommonHelper";
+import {_generateUniqueId, _getIconBySubjectKey} from "../../../helper/CommonHelper";
 import {
     addCallSubscriptionEvents, addVideoStream, connectToNewUser, myPeer, myStream, removeClosePeerConnection,
     setMyPeer,
@@ -21,7 +21,9 @@ import {
     actionToGetWhiteBoardPrevDataForGroupId, actionToSetTeacherStudentInClassStatus,
     actionToUpdateAttendanceClassStatus
 } from "../../../actions/CommonAction";
+import {transformSdp} from "../../../helper/SdpTransformHelper";
 let allowOnce = true;
+
 const iceServers= [
     {
         urls: "stun:stun.l.google.com:19302",
@@ -36,9 +38,6 @@ const iceServers= [
         credential: "121tuition123",
     },
 ];
-
-
-
 
 export default function StudentTodayClassesComponent(){
     const studentAllClassesList = useSelector((state) => state.studentAllClassesList);
@@ -90,10 +89,11 @@ export default function StudentTodayClassesComponent(){
                     setMyPeerConnectionId(memberData.peer_connection_id);
 
                     let myPeer = new Peer(memberData.peer_connection_id, {
-                        // host: '121tuition.in',
-                        //secure: true,
+                        host: '121tuition.in',
+                        secure: true,
                         config: {'iceServers': iceServers},
-                        // path: '/peerApp',
+                        path: '/peerApp',
+                        pingInterval: 5000,
                     });
 
                     setMyPeer(myPeer);
@@ -121,7 +121,7 @@ export default function StudentTodayClassesComponent(){
                         }));
                         myPeer.on('call', call => {
                             console.log('[PEER JS INCOMING CALL]', call);
-                            call.answer(stream);
+                            call.answer(stream,{ sdpTransform: transformSdp });
                             addCallSubscriptionEvents(call);
                         })
                     })

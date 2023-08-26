@@ -57,7 +57,7 @@ export default function TeacherStudentVideoCallComponent({isTeacher}){
             });
         }
         if(myPeer != null){
-            myPeer.disconnect();
+            myPeer.destroy();
         }
         if($('#main_user_video_call_video_section')?.length)
             $('#main_user_video_call_video_section').html('');

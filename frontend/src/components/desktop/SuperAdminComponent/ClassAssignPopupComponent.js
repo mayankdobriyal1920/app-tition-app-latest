@@ -435,10 +435,8 @@ export default function ClassAssignPopupComponent(){
                                                   }
                                               </div>
                                           )))}
-
-
                                           {allRemainingClassDate?.length ?
-                                          <div><b>Not assigned dates</b></div>:''
+                                            <div><b>Not assigned dates</b></div>:''
                                           }
 
                                           {allRemainingClassDate?.map((data,key)=>(

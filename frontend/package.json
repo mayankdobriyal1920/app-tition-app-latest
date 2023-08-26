@@ -58,6 +58,7 @@
     "react-video-recorder": "^3.19.4",
     "redux": "^4.2.0",
     "redux-thunk": "^2.4.1",
+    "sdp-transform": "^2.14.1",
     "socket.io-client": "^4.6.1",
     "styled-components": "^5.3.6",
     "typescript": "^4.1.3",
