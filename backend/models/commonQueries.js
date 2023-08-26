@@ -583,8 +583,7 @@ export const actionToGetAllClassAssignmentDataWithClassAttendQuery = (userId,wee
                                           INNER JOIN student_profile ON profile_subject_with_batch.profile_id = student_profile.id
                                  GROUP BY profile_subject_with_batch.class_assigned_teacher_batch_id) profile_subject_with_batch
                                 ON profile_subject_with_batch.class_assigned_teacher_batch_id = class_assigned_teacher_batch.id
-            WHERE class_assigned_teacher_batch.teacher_id = '${userId}'
-              AND (DATE(class_timetable_with_class_batch_assigned.start_from_date_time) >= '${weekStartDate}' AND DATE(class_timetable_with_class_batch_assigned.start_from_date_time) <= '${weekEndDate}')`;
+            WHERE class_assigned_teacher_batch.teacher_id = '${userId}'`;
 }
 export const actionToGetStudentClassAssignmentDataWithClassAttendQuery = (userId,weekStartDate,weekEndDate)=>{
     return `SELECT JSON_OBJECT('id',class_timetable_with_class_batch_assigned.class_assigned_teacher_batch_id,
@@ -661,7 +660,7 @@ export const actionToGetStudentClassAssignmentDataWithClassAttendQuery = (userId
                                           INNER JOIN student_profile ON profile_subject_with_batch.profile_id = student_profile.id
                                  GROUP BY profile_subject_with_batch.class_assigned_teacher_batch_id) profile_subject_with_batch
                                 ON profile_subject_with_batch.class_assigned_teacher_batch_id = class_assigned_teacher_batch.id
-            WHERE (DATE(class_timetable_with_class_batch_assigned.start_from_date_time) >= '${weekStartDate}' AND DATE(class_timetable_with_class_batch_assigned.start_from_date_time) <= '${weekEndDate}')`;
+           `;
 }
 
 export const actionToGetTeacherAllTimetableClassesQuery = (userId)=>{

@@ -60,11 +60,11 @@ const DesktopHeaderContainerComponent=({scrollBodyValue}) => {
                                 <div className="right-btn mr-25 mr-xs-15">
                                     <ul className="d-flex align-items-center">
                                         <li>
-                                            <a onClick={callFunctionToOpenSighupPopup} className="theme_btn free_btn">Try Free Now</a>
+                                            <a onClick={callFunctionToOpenSighupPopup} className="theme_btn free_btn">Signup</a>
                                         </li>
                                         <li>
-                                            <a  onClick={callFunctionToOpenLoginPopup}  className="sign-in ml-20">
-                                                <img src={userLogoSvg} alt=""/>
+                                            <a onClick={callFunctionToOpenLoginPopup}  className="theme_btn free_btn">
+                                                Login
                                             </a>
                                         </li>
                                     </ul>
