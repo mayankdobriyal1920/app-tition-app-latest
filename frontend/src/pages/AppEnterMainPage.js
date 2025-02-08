@@ -20,7 +20,7 @@ export const AppEnterMainPage = ()=>{
                     <Route render={() => <Redirect to="/dashboard" />} />
                 </IonRouterOutlet>
             </IonReactRouter>
-        );
+        )
     }
     const SuperAdminPrivateRoutes = () => {
         return (
@@ -31,7 +31,7 @@ export const AppEnterMainPage = ()=>{
                     <Route render={() => <Redirect to="/dashboard" />} />
                 </IonRouterOutlet>
             </IonReactRouter>
-        );
+        )
     }
     const TeacherPrivateRoutes = () => {
         return (
@@ -42,7 +42,7 @@ export const AppEnterMainPage = ()=>{
                     <Route render={() => <Redirect to="/dashboard" />} />
                 </IonRouterOutlet>
             </IonReactRouter>
-        );
+        )
     }
 
     return(

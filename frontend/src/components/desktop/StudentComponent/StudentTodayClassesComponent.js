@@ -1,43 +1,20 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import noClassFound from "../../../theme/images/chose/no_classes_found.png";
 import {FacebookLoader} from "../../Loader/FacebookLoader";
-import {_generateUniqueId, _getIconBySubjectKey} from "../../../helper/CommonHelper";
-import {
-    addCallSubscriptionEvents, addVideoStream, connectToNewUser, myPeer, myStream, removeClosePeerConnection,
-    setMyPeer,
-    setMyPeerConnectionId,
-    setMyStream
-} from "../../../helper/CallModuleHelper";
-import {sendWebsocketRequest} from "../../../helper/WebSocketHelper";
-import Peer from 'peerjs';
+import {_getIconBySubjectKey} from "../../../helper/CommonHelper";
 import TeacherStudentVideoCallComponent from "../TeacherComponent/TeacherStudentVideoCallComponent";
 import StudentPayForSubscriptionComponent from "./StudentPayForSubscriptionComponent";
 import moment from "moment";
-import {cloneDeep} from "lodash";
 import StarRatingOnEndCallComponent from "./StarRatingOnEndCallComponent";
 import {
     actionToGetPrevCallOnGroupClass,
-    actionToGetWhiteBoardPrevDataForGroupId, actionToSetTeacherStudentInClassStatus,
+    actionToGetWhiteBoardPrevDataForGroupId,
+    actionToSetTeacherStudentInClassStatus,
     actionToUpdateAttendanceClassStatus
 } from "../../../actions/CommonAction";
-import {transformSdp} from "../../../helper/SdpTransformHelper";
 let allowOnce = true;
 
-const iceServers= [
-    {
-        urls: "stun:stun.l.google.com:19302",
-    },
-    {
-        urls: "turn:121tuition.in:3478?transport=tcp",
-        username: "121tuition",
-        credential: "121tuition123",
-    }, {
-        urls: "turn:121tuition.in:3478",
-        username: "121tuition",
-        credential: "121tuition123",
-    },
-];
 
 export default function StudentTodayClassesComponent(){
     const studentAllClassesList = useSelector((state) => state.studentAllClassesList);
@@ -47,103 +24,23 @@ export default function StudentTodayClassesComponent(){
     const openCloseTeacherRatingPopup = useSelector((state) => state.openCloseTeacherRatingPopup);
     const [callLoading,setCallLoading] = React.useState(null);
     const chatModuleCurrentCallGroupData = useSelector((state) => state.chatModuleCurrentCallGroupData);
-    const chatModuleNewUserAddedInCurrentCall = useSelector((state) => state.chatModuleNewUserAddedInCurrentCall);
-    const chatModuleNewUserLeaveUserInCallData = useSelector((state) => state.chatModuleNewUserLeaveUserInCallData);
     const dispatch = useDispatch();
     const inClassStatusTeacherStudent = useSelector((state) => state.inClassStatusTeacherStudent);
-    const ignoreIncomingCall = ()=>{
-        //dispatch(actionToRemoveDataFromIncomingCall({}));
-    }
+    const [usersInCall, setUsersInCall] = useState([]);
 
-    const pickCallInGroup = (e,myClasses,demoClass)=>{
+    const pickCallInGroupAgora = (e,myClasses,demoClass)=>{
         e.preventDefault();
 
         if (callLoading) return false;
         setCallLoading(myClasses?.id);
-        let getUserMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia).bind(navigator);
-        if(getUserMedia) {
-            getUserMedia({
-                    audio: {
-                        echoCancellation: true,
-                        noiseSuppression: true,
-                        autoGainControl: true,
-                    },
-                    video: {
-                        width:320,
-                        height:240,
-                        frameRate:30,
-                    }
-                },
-                function(stream){
-                    dispatch(actionToSetTeacherStudentInClassStatus('JOINING'));
 
-                    let memberData = cloneDeep(myClasses);
-
-                    memberData.id = myClasses?.id;
-                    //// Member profile name
-                    memberData.name = studentAllClassesList?.classData?.name;
-                    /// Student profile id
-                    memberData.peer_connection_id = 'student_'+_generateUniqueId()+'_'+studentAllClassesList?.classData?.id;
-                    memberData.mute = true;
-
-                    setMyPeerConnectionId(memberData.peer_connection_id);
-
-                    let myPeer = new Peer(memberData.peer_connection_id, {
-                        host: '121tuition.in',
-                        secure: true,
-                        config: {'iceServers': iceServers},
-                        path: '/peerApp',
-                        pingInterval: 5000,
-                    });
-
-                    setMyPeer(myPeer);
-                    console.log('[PEER CONNECTION USER STREAM]', stream);
-                    setTimeout(function() {
-                        addVideoStream(memberData.peer_connection_id, stream,true)
-                    })
-
-                    console.log('[ PEER JS CONNECTION INSTANCE ]',myPeer)
-
-                    myPeer?.on('open', id => {
-                        console.log('[PEER CONNECTION OPEN IN ID]', id);
-                        setMyStream(stream);
-                        dispatch(actionToSetTeacherStudentInClassStatus('INCALL'));
-                        dispatch(actionToUpdateAttendanceClassStatus(studentAllClassesList?.classData,myClasses,demoClass))
-                        setTimeout(function(){
-                            setCallLoading(null);
-                            dispatch(actionToGetWhiteBoardPrevDataForGroupId(myClasses?.id))
-                        },1000)
-                        sendWebsocketRequest(JSON.stringify({
-                            clientId: localStorage.getItem('clientId'),
-                            groupId: myClasses?.id,
-                            memberData: memberData,
-                            type: "addNewMemberDataInGroup"
-                        }));
-                        myPeer.on('call', call => {
-                            console.log('[PEER JS INCOMING CALL]', call);
-                            call.answer(stream,{ sdpTransform: transformSdp });
-                            addCallSubscriptionEvents(call);
-                        })
-                    })
-                },function(er){
-                    console.log(er);
-                })
-        }else {
-            alert('Media Not Supported In Insecure Url');
-        }
+        dispatch(actionToSetTeacherStudentInClassStatus('JOINING'));
+        dispatch(actionToUpdateAttendanceClassStatus(studentAllClassesList?.classData,myClasses,demoClass))
+        setTimeout(function(){
+            dispatch(actionToGetWhiteBoardPrevDataForGroupId(myClasses?.id))
+        },1000)
     }
 
-    React.useEffect(()=>{
-        if(chatModuleNewUserAddedInCurrentCall?.id){
-            connectToNewUser(chatModuleNewUserAddedInCurrentCall,myStream,myPeer);
-        }
-    },[chatModuleNewUserAddedInCurrentCall]);
-
-    React.useEffect(()=>{
-        if(chatModuleNewUserLeaveUserInCallData?.id){
-            removeClosePeerConnection(chatModuleNewUserLeaveUserInCallData?.peer_connection_id);
-        }
-    },[chatModuleNewUserLeaveUserInCallData]);
 
     React.useEffect(()=>{
         if(studentAllClassesList?.classData.id && allowOnce){
@@ -151,6 +48,8 @@ export default function StudentTodayClassesComponent(){
             allowOnce = false;
         }
     },[studentAllClassesList?.classData]);
+
+    console.log('allStudentTodayDataList?.classData',allStudentTodayDataList?.classData);
 
     return(
         <>
@@ -229,7 +128,7 @@ export default function StudentTodayClassesComponent(){
                                                                     <div data-id={myClasses?.id} data-cur-class={chatModuleCurrentCallGroupData?.id}>
                                                                         {(chatModuleCurrentCallGroupData?.id === myClasses?.id) ?
                                                                             <div
-                                                                                onClick={(e) => pickCallInGroup(e,myClasses,false)}
+                                                                                onClick={(e) => pickCallInGroupAgora(e,myClasses,false)}
                                                                                 className={"take_demo_button"}>
                                                                                 <button className={"theme_btn"}>
                                                                                     {callLoading === myClasses?.id ? 'Joining class...' :
@@ -313,7 +212,7 @@ export default function StudentTodayClassesComponent(){
                                                                     <div data-id={myClasses?.id} data-cur-class={chatModuleCurrentCallGroupData?.id}>
                                                                         {(chatModuleCurrentCallGroupData?.id === myClasses?.id) ?
                                                                             <div
-                                                                                onClick={(e) => pickCallInGroup(e,myClasses,true)}
+                                                                                onClick={(e) => pickCallInGroupAgora(e,myClasses,true)}
                                                                                 className={"take_demo_button"}>
                                                                                 <button className={"theme_btn"}>
                                                                                     {callLoading === myClasses?.id ? 'Joining class...' :
@@ -385,7 +284,8 @@ export default function StudentTodayClassesComponent(){
                                     </div>
                                 </>
                                 :
-                                <TeacherStudentVideoCallComponent/>
+                                <TeacherStudentVideoCallComponent isTeacher={false} classId={callLoading} users={usersInCall} setUsers={setUsersInCall}/>
+
                             }
                         </>
                 }

@@ -1,40 +1,145 @@
 import React,{useState,useEffect} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import WhiteboardComponent from "../WhiteboardComponent";
+import { AgoraVideoPlayer } from "agora-rtc-react";
 import moment from "moment";
-import {_readableTimeFromSeconds} from "../../../helper/CommonHelper";
+import {_generateUniqueId, _readableTimeFromSeconds} from "../../../helper/CommonHelper";
 import SpinnerLoader from "../../Loader/SpinnerLoader";
-import {myStream, myShareScreenStream, myPeer, myMediaRecorder} from "../../../helper/CallModuleHelper.js";
 import jsPDF from "jspdf";
+import AgoraRTM from 'agora-rtm-sdk';
 import {
     actionToEndCurrentCurrentCall,
     actionToMuteUnmuteUserCall, actionToSetTeacherStudentInClassStatus,
     actionToSetTeacherZoomInOut,
     actionToStoreAssignmentDataForTeacher,
 } from "../../../actions/CommonAction";
-import $ from 'jquery';
 import {useEffectOnce} from "../../../helper/UseEffectOnce";
 import axios from "axios";
 import {isTeacherMasterLogin} from "../../../middlewear/auth";
 import {IonAlert} from "@ionic/react";
 
+import {
+    config,
+    useClient,
+    useMicrophoneAndCameraTracks,
+} from "../../../helper/settings";
+
 let loadOnce = false;
 let canvasReservedJson = [];
 let allImagesUrlArray = [];
 let maxTimeInterval = 3600;
-export default function TeacherStudentVideoCallComponent({isTeacher}){
+let myUid = null;
+let channel = null;
+let userAudio = [];
+
+function generateRandom6DigitString() {
+    // Generate a random integer between 0 and 999999
+    const randomInteger = Math.floor(Math.random() * 1000000);
+
+    // Convert the integer to a string and pad it with leading zeros if necessary
+    return randomInteger.toString().padStart(6, '0');
+}
+let myUserIdRTM = generateRandom6DigitString();
+export default function TeacherStudentVideoCallComponent({isTeacher,classId,users,setUsers}){
     const chatModuleCurrentCallGroupData = useSelector((state) => state.chatModuleCurrentCallGroupData);
     const inClassStatusTeacherStudent = useSelector((state) => state.inClassStatusTeacherStudent);
     const zoomInZoomOutTeacherVideo = useSelector((state) => state.zoomInZoomOutTeacherVideo);
-    const chatModuleCurrentCallGroupMembers = useSelector((state) => state.chatModuleCurrentCallGroupMembers);
     const studentAllClassesList = useSelector((state) => state.studentAllClassesList);
     const userInfo = useSelector((state) => state.userSignin.userInfo);
     let [timerTimeInterval,setTimerTimeInterval] = useState(0);
     let [isPortraitMode,setIsPortraitMode] = useState(false);
     let [showExtendClassAlert,setShowExtendClassAlert] = useState(false);
     const dispatch = useDispatch();
-    let [isMutedCall,setIsMutedCall] = useState(!isTeacher);
-    //const [isRenegotiating, setIsRenegotiating] = useState(false);
+    let [isMutedCall,setIsMutedCall] = useState(false);
+    const rtmClient = AgoraRTM.createInstance(config.appId);
+
+    const client = useClient();
+    const { ready, tracks } = useMicrophoneAndCameraTracks();
+
+    useEffect(() => {
+        let init = async (name) => {
+            let uid = `${isTeacher ? 'teacher' : 'student'}_${_generateUniqueId()}_${userInfo.id}`;
+            myUid = uid;
+
+            rtmClient.login({ uid: myUserIdRTM })
+                .then(async () => {
+                    channel = rtmClient.createChannel('mute_channel');
+                    await channel.join();
+                    channel.on('ChannelMessage', async ({text}) => {
+                        let jsDataM = JSON.parse(text);
+                        let {action,id} = jsDataM;
+                        let senderId = id;
+                        if (senderId !== uid) {
+                            if(action === 'mute_audio'){
+                                userAudio?.map((user)=>{
+                                    console.log(user);
+                                    if(user.uid === senderId)
+                                        user.audioTrack.stop();
+                                })
+                            }else if(action === 'unmute_audio'){
+                                userAudio?.map((user)=>{
+                                    if(user.uid === senderId)
+                                        user.audioTrack.play();
+                                })
+                            }
+                        }
+                    })
+                })
+                .catch((error) => {
+                    console.error('RTM login error:', error);
+                });
+
+
+            client.on("user-published", async (user, mediaType) => {
+                await client.subscribe(user, mediaType);
+                if (mediaType === "video") {
+                    setUsers((prevUsers) => {
+                        return [...prevUsers, user];
+                    });
+                }
+                if (mediaType === "audio") {
+                    user.audioTrack.play();
+                    userAudio.push(user);
+                }
+            });
+
+            client.on("user-unpublished", (user, mediaType) => {
+                if (mediaType === "audio") {
+                    if (user.audioTrack) user.audioTrack.stop();
+                }
+                if (mediaType === "video") {
+                    setUsers((prevUsers) => {
+                        return prevUsers.filter((User) => User.uid !== user.uid);
+                    });
+                }
+            });
+
+            client.on("user-left", (user) => {
+                setUsers((prevUsers) => {
+                    return prevUsers.filter((User) => User.uid !== user.uid);
+                });
+            });
+
+            try {
+                await client.join(config.appId, name, config.token, uid);
+            } catch (error) {
+                console.log("error");
+            }
+
+            console.log('tracks -------------------------- ',tracks);
+            if (tracks) await client.publish([tracks[0], tracks[1]]);
+            dispatch(actionToSetTeacherStudentInClassStatus('INCALL'));
+        };
+
+        if (ready && tracks) {
+            try {
+                init(classId.toLowerCase().split('-')[0]);
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }, [classId, client, ready, tracks]);
+
 
     useEffect(()=>{
         if(isTeacher) {
@@ -45,34 +150,33 @@ export default function TeacherStudentVideoCallComponent({isTeacher}){
     },[timerTimeInterval])
 
 
-    const endMyStreamTrackOnEndCall = ()=>{
-        if(myStream != null) {
-            myStream.getTracks().forEach(function (track) {
-                track.stop();
-            });
-        }
-        if(myShareScreenStream != null) {
-            myShareScreenStream.getTracks().forEach(function (track) {
-                track.stop();
-            });
-        }
-        if(myPeer != null){
-            myPeer.destroy();
-        }
-        if($('#main_user_video_call_video_section')?.length)
-            $('#main_user_video_call_video_section').html('');
-
-        if($('#student_all_class_group_data_videos_section')?.length)
-            $('#student_all_class_group_data_videos_section').html('');
-
+    const endMyStreamTrackOnEndCall = async ()=>{
         dispatch(actionToSetTeacherStudentInClassStatus('PREJOIN'));
+        await client.leave();
+        client.removeAllListeners();
+        tracks[0].close();
+        tracks[1].close();
+        tracks[0].stop();
+        tracks[1].stop();
 
-
-        if(myMediaRecorder)
-            myMediaRecorder?.stop();
-
+        if(channel) {
+            channel.leave();
+        }
+        if(rtmClient) {
+            rtmClient.logout()
+                .then(() => {
+                    console.log('Logged out of Agora RTM');
+                })
+                .catch((error) => {
+                    console.error('RTM logout error:', error);
+                });
+        }
     }
-    const handleMuteUnmuteInCall = ()=>{
+    const handleMuteUnmuteInCall = async ()=>{
+        if(!isMutedCall)
+            await channel.sendMessage({ text: JSON.stringify({action:'mute_audio',id:myUid}), target: myUid});
+        else
+            await channel.sendMessage({ text: JSON.stringify({action:'unmute_audio',id:myUid}), target: myUid});
         if(isTeacher){
             dispatch(actionToMuteUnmuteUserCall(chatModuleCurrentCallGroupData?.id,chatModuleCurrentCallGroupData?.id));
         }else{
@@ -201,96 +305,6 @@ export default function TeacherStudentVideoCallComponent({isTeacher}){
     },[])
 
 
-    // Function to monitor network conditions and trigger re-negotiation
-    // useEffect(() => {
-    //     const monitorNetworkConditions = () => {
-    //         // Use the Network Information API or a third-party library to get network conditions
-    //         // For this example, we'll use a simulated function "getNetworkConditions" that returns an object with network information
-    //         const networkConditions = getNetworkConditions();
-    //
-    //         // Check if the network conditions meet your re-negotiation criteria
-    //         const shouldRenegotiate = checkRenegotiationCriteria(networkConditions);
-    //
-    //         // Trigger re-negotiation if the conditions are met and not already re-negotiating
-    //         if (shouldRenegotiate && !isRenegotiating) {
-    //             setIsRenegotiating(true);
-    //             renegotiate();
-    //         }
-    //     };
-    //
-    //     // Start monitoring network conditions at an interval (e.g., every 5 seconds)
-    //     const monitoringInterval = setInterval(monitorNetworkConditions, 5000);
-    //
-    //     // Cleanup the interval when the component is unmounted
-    //     return () => clearInterval(monitoringInterval);
-    // }, [isRenegotiating]);
-
-    // Function to perform re-negotiation
-   // const renegotiate = async () => {
-        // // Get the local media stream with new constraints
-        // const newVideoConstraints = {
-        //     frameRate: 30,
-        // };
-        // let getUserMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia).bind(navigator);
-        // const newLocalStream = await getUserMedia.getUserMedia({
-        //     video: {
-        //         width:320,
-        //         height:240,
-        //         frameRate: 30,
-        //     },
-        //     audio: {
-        //         echoCancellation: true,
-        //         noiseSuppression: true,
-        //         autoGainControl: true,
-        //     },
-        // });
-        //
-        // // Replace the existing video track with the new one
-        // myStream.getVideoTracks().forEach((track) => track.stop());
-        // myStream.removeTrack(myStream.getVideoTracks()[0]);
-        // myStream.addTrack(newLocalStream.getVideoTracks()[0]);
-        //
-        // // Get all connections and create offers to update the remote peers
-        // Object.values(myPeer.connections).forEach((connections) => {
-        //     connections.forEach((connection) => {
-        //         connection.peerConnection.createOffer(
-        //             { offerToReceiveVideo: true, offerToReceiveAudio: true },
-        //             (offer) => {
-        //                 connection.peerConnection.setLocalDescription(offer);
-        //                 connection.send({
-        //                     type: 'offer',
-        //                     offer: offer,
-        //                 });
-        //             },
-        //             (error) => {
-        //                 console.error('Error creating offer:', error);
-        //             }
-        //         );
-        //     });
-        // });
-
-
-        // After re-negotiation is done, set the state to indicate that re-negotiation is complete
-        //setIsRenegotiating(false);
-   // };
-
-    // // Simulated function to get network conditions
-    // const getNetworkConditions = () => {
-    //     // For this example, we'll simulate network conditions with random values
-    //     const bandwidth = Math.random() * 1000; // Replace this with actual bandwidth measurement
-    //     const latency = Math.random() * 100; // Replace this with actual latency measurement
-    //
-    //     return { bandwidth, latency };
-    // };
-    //
-    // // Simulated function to check re-negotiation criteria
-    // const checkRenegotiationCriteria = (networkConditions) => {
-    //     // Define your re-negotiation criteria based on network conditions
-    //     // For this example, we'll re-negotiate if bandwidth is below 200 kbps
-    //     return networkConditions.bandwidth < 200;
-    // };
-
-
     return(
         <div id={"teacher_video_class_container"} className={"video_call_white_board_main_container"}>
             <div style={{display:isPortraitMode ? 'flex' : 'none'}} className={"isPortraitMode_mode_popup"}>
@@ -301,39 +315,55 @@ export default function TeacherStudentVideoCallComponent({isTeacher}){
             <div style={{display:inClassStatusTeacherStudent === 'INCALL' ? 'flex' : 'none'}} className={"row teacher_video_class_container_inner_row"}>
                 <div className={"col-3 side_my_video_with_details"}>
                     {/*Important div for call*/}
-                    <div id={"main_user_video_call_video_section"} className="main_user_video_call_video_section">
-                        {(chatModuleCurrentCallGroupMembers?.map((groupMembers,key)=>(
-                            (groupMembers?.isTeacher) ?
-                                <video key={key} loop={true} playsInline={true}
-                                       onClick={()=>zoomInZoomOutVideoPanel()}
-                                       style={{}}
-                                       id={groupMembers?.id}
-                                       data-user-id={userInfo?.id}
-                                       data-teacher-id={chatModuleCurrentCallGroupData?.teacher_id}
-                                       muted={(userInfo?.id === chatModuleCurrentCallGroupData?.teacher_id) ? true : groupMembers?.mute}
-                                       data-muted={(userInfo?.id === chatModuleCurrentCallGroupData?.teacher_id) ? true : groupMembers?.mute}
-                                       autoPlay={true} className={'my_video_peer_connection '+(zoomInZoomOutTeacherVideo ? 'zoom' : '')}></video>
-                                :''
-                        )))}
-                        {(isTeacher) ?
-                            <div className={"call_ent_button_section"}>
-                                {isMutedCall ?
-                                    <button onClick={()=>handleMuteUnmuteInCall()} className={"mute_call_button  mr-10"}>
-                                        <svg fill={"#fff"} width={"24"} viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" className="bi bi-mic-mute-fill"><path d="M13 8c0 .564-.094 1.107-.266 1.613l-.814-.814A4.02 4.02 0 0 0 12 8V7a.5.5 0 0 1 1 0v1zm-5 4c.818 0 1.578-.245 2.212-.667l.718.719a4.973 4.973 0 0 1-2.43.923V15h3a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1h3v-2.025A5 5 0 0 1 3 8V7a.5.5 0 0 1 1 0v1a4 4 0 0 0 4 4zm3-9v4.879L5.158 2.037A3.001 3.001 0 0 1 11 3z"/><path d="M9.486 10.607 5 6.12V8a3 3 0 0 0 4.486 2.607zm-7.84-9.253 12 12 .708-.708-12-12-.708.708z"/></svg>
+                    {(isTeacher) ?
+                        <div id={"main_user_video_call_video_section"} className="main_user_video_call_video_section">
+                            {(tracks?.length) ?
+                            <AgoraVideoPlayer
+                                videoTrack={tracks[1]}
+                                onClick={()=>zoomInZoomOutVideoPanel()}
+                                style={{ height: "100%", width: "100%" }}
+                                className={'my_video_peer_connection '+(zoomInZoomOutTeacherVideo ? 'zoom' : '')}
+                            />:''
+                            }
+                            {(isTeacher) ?
+                                <div className={"call_ent_button_section"}>
+                                    {isMutedCall ?
+                                        <button onClick={()=>handleMuteUnmuteInCall()} className={"mute_call_button  mr-10"}>
+                                            <svg fill={"#fff"} width={"24"} viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" className="bi bi-mic-mute-fill"><path d="M13 8c0 .564-.094 1.107-.266 1.613l-.814-.814A4.02 4.02 0 0 0 12 8V7a.5.5 0 0 1 1 0v1zm-5 4c.818 0 1.578-.245 2.212-.667l.718.719a4.973 4.973 0 0 1-2.43.923V15h3a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1h3v-2.025A5 5 0 0 1 3 8V7a.5.5 0 0 1 1 0v1a4 4 0 0 0 4 4zm3-9v4.879L5.158 2.037A3.001 3.001 0 0 1 11 3z"/><path d="M9.486 10.607 5 6.12V8a3 3 0 0 0 4.486 2.607zm-7.84-9.253 12 12 .708-.708-12-12-.708.708z"/></svg>
+                                        </button>
+                                        :
+                                        <button onClick={()=>handleMuteUnmuteInCall()} className={"mute_call_button  mr-10"}>
+                                            <svg  fill={"#fff"} width={"24"} viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18v-1.06A8 8 0 0 1 2 9h2a6 6 0 1 0 12 0h2a8 8 0 0 1-7 7.94V18h3v2H6v-2h3zM6 4a4 4 0 1 1 8 0v5a4 4 0 1 1-8 0V4z"/></svg>
+                                        </button>
+                                    }
+                                    <button onClick={()=>endCallFunctionCall(chatModuleCurrentCallGroupData?.id,chatModuleCurrentCallGroupData?.class_id,chatModuleCurrentCallGroupData?.start_from_date_time)} className={"end_call_button"}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill={"#fff"} width={"24"} viewBox="0 0 511.632 511.632"><path d="M504.965 376.246c-19.435-36.715-81.472-73.813-88.704-78.059-14.421-8.192-29.739-10.731-42.987-6.997-10.432 2.88-18.965 9.301-24.789 18.624-8.128 9.664-18.176 21.056-20.288 22.912-16.384 11.115-27.179 9.963-41.323-4.181-4.629-4.651-11.136-6.997-17.749-6.08-6.507.811-12.309 4.608-15.68 10.261l-42.389 71.509c-4.971 8.384-3.627 19.093 3.264 25.963 61.141 61.141 113.301 81.429 155.627 81.429 46.059 0 80.448-24.043 102.037-45.632l22.912-22.912c17.77-17.771 21.824-44.608 10.069-66.837zM96.506 303.559a21.22 21.22 0 0 0 10.88-2.987l71.488-42.411c5.675-3.349 9.493-9.152 10.304-15.68s-1.429-13.099-6.08-17.749c-14.336-14.336-15.403-24.747-4.757-40.533 2.411-2.859 13.803-12.949 23.488-21.056 9.301-5.824 15.723-14.357 18.624-24.789 3.669-13.312 1.195-28.587-7.147-43.2-4.117-7.019-41.216-69.056-77.931-88.491-22.186-11.734-49.087-7.702-66.837 10.069L45.626 39.644C4.197 81.073-46.235 169.649 81.424 297.308c4.096 4.117 9.557 6.251 15.082 6.251zm344.813-233.25c-8.341-8.341-21.824-8.341-30.165 0l-384 384c-8.341 8.341-8.341 21.824 0 30.165 4.16 4.16 9.621 6.251 15.083 6.251s10.923-2.091 15.083-6.251l384-384c8.34-8.341 8.34-21.824-.001-30.165z"/></svg>
                                     </button>
-                                    :
-                                    <button onClick={()=>handleMuteUnmuteInCall()} className={"mute_call_button  mr-10"}>
-                                        <svg  fill={"#fff"} width={"24"} viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18v-1.06A8 8 0 0 1 2 9h2a6 6 0 1 0 12 0h2a8 8 0 0 1-7 7.94V18h3v2H6v-2h3zM6 4a4 4 0 1 1 8 0v5a4 4 0 1 1-8 0V4z"/></svg>
-                                    </button>
-                                }
-                                <button onClick={()=>endCallFunctionCall(chatModuleCurrentCallGroupData?.id,chatModuleCurrentCallGroupData?.class_id,chatModuleCurrentCallGroupData?.start_from_date_time)} className={"end_call_button"}>
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill={"#fff"} width={"24"} viewBox="0 0 511.632 511.632"><path d="M504.965 376.246c-19.435-36.715-81.472-73.813-88.704-78.059-14.421-8.192-29.739-10.731-42.987-6.997-10.432 2.88-18.965 9.301-24.789 18.624-8.128 9.664-18.176 21.056-20.288 22.912-16.384 11.115-27.179 9.963-41.323-4.181-4.629-4.651-11.136-6.997-17.749-6.08-6.507.811-12.309 4.608-15.68 10.261l-42.389 71.509c-4.971 8.384-3.627 19.093 3.264 25.963 61.141 61.141 113.301 81.429 155.627 81.429 46.059 0 80.448-24.043 102.037-45.632l22.912-22.912c17.77-17.771 21.824-44.608 10.069-66.837zM96.506 303.559a21.22 21.22 0 0 0 10.88-2.987l71.488-42.411c5.675-3.349 9.493-9.152 10.304-15.68s-1.429-13.099-6.08-17.749c-14.336-14.336-15.403-24.747-4.757-40.533 2.411-2.859 13.803-12.949 23.488-21.056 9.301-5.824 15.723-14.357 18.624-24.789 3.669-13.312 1.195-28.587-7.147-43.2-4.117-7.019-41.216-69.056-77.931-88.491-22.186-11.734-49.087-7.702-66.837 10.069L45.626 39.644C4.197 81.073-46.235 169.649 81.424 297.308c4.096 4.117 9.557 6.251 15.082 6.251zm344.813-233.25c-8.341-8.341-21.824-8.341-30.165 0l-384 384c-8.341 8.341-8.341 21.824 0 30.165 4.16 4.16 9.621 6.251 15.083 6.251s10.923-2.091 15.083-6.251l384-384c8.34-8.341 8.34-21.824-.001-30.165z"/></svg>
-                                </button>
-                            </div>
-                            :
-                            ''
-                        }
-                    </div>
+                                </div>
+                                :
+                                ''
+                            }
+                        </div>
+                        :
+                        <>
+                        {users.length > 0 &&
+                                users.map((user) => {
+                                    if (user.videoTrack && user.uid.indexOf('teacher') >= 0) {
+                                        return (
+                                            <div key={user.uid} id={"main_user_video_call_video_section"} className="main_user_video_call_video_section">
+                                                <AgoraVideoPlayer
+                                                    videoTrack={user.videoTrack}
+                                                    id={user.uid}
+                                                    onClick={()=>zoomInZoomOutVideoPanel()}
+                                                    style={{ height: "100%", width: "100%" }}
+                                                    className={'my_video_peer_connection '+(zoomInZoomOutTeacherVideo ? 'zoom' : '')}
+                                                />
+                                            </div>
+                                        );
+                                    } else return null;
+                                })}
+                        </>
+                    }
                     {/*Important div for call*/}
                     <div className={"video_class_description mt-15"}>
                         <div className={"video_class_description_details"}>
@@ -351,19 +381,6 @@ export default function TeacherStudentVideoCallComponent({isTeacher}){
                                     </div>
                                 </div>
                             </div>
-                            {/*<div className={"video_class_description_details_all_students mt-30"}>*/}
-                            {/*    <div className={"video_class_description_details_first_col"}>*/}
-                            {/*        <h1>All Students :- </h1>*/}
-                            {/*        <div className={"mt-15"}>*/}
-                            {/*            {(chatModuleCurrentCallGroupData?.profile_subject_with_batch?.map((memberData,key)=>(*/}
-                            {/*                <div key={key} className={"video_class_all_students_loop"}>*/}
-                            {/*                    <div className={"name_initial"}>{_getFirstLatterOfName(memberData?.student_name)}</div>*/}
-                            {/*                    <div className={"student_name"}>{memberData?.student_name}</div>*/}
-                            {/*                </div>*/}
-                            {/*            )))}*/}
-                            {/*        </div>*/}
-                            {/*    </div>*/}
-                            {/*</div>*/}
                         </div>
                     </div>
                 </div>
@@ -374,35 +391,51 @@ export default function TeacherStudentVideoCallComponent({isTeacher}){
                     }
                 </div>
                 <div className={"col-2 side_other_video_with_details"} id={"student_all_class_group_data_videos_section"}>
-                    {(chatModuleCurrentCallGroupMembers?.map((groupMembers,key)=>(
-                        (!groupMembers?.isTeacher) ?
-                            <span key={key} data-obj={JSON.stringify(groupMembers)}>
-                                        <video key={key}
-                                               muted={(studentAllClassesList?.classData?.id === groupMembers?.id) ? true : groupMembers?.mute}
-                                               data-muted={(studentAllClassesList?.classData?.id === groupMembers?.id) ? true : groupMembers?.mute}
-                                               playsInline={true}
-                                               autoPlay={true}
-                                               id={groupMembers?.id}
-                                               className={'other_video_peer_connection'}></video>
-                                        <div className={"member_name_section"}>{groupMembers?.name}</div>
-                                {(studentAllClassesList?.classData?.id === groupMembers?.id) ?
-                                    <div className={"call_ent_button_section"}>
-                                        {isMutedCall ?
-                                            <button onClick={()=>handleMuteUnmuteInCall()} className={"tap_to_speak_button  mr-10"}>
-                                                <svg fill={"#fff"} width={"24"} viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" className="bi bi-mic-mute-fill"><path d="M13 8c0 .564-.094 1.107-.266 1.613l-.814-.814A4.02 4.02 0 0 0 12 8V7a.5.5 0 0 1 1 0v1zm-5 4c.818 0 1.578-.245 2.212-.667l.718.719a4.973 4.973 0 0 1-2.43.923V15h3a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1h3v-2.025A5 5 0 0 1 3 8V7a.5.5 0 0 1 1 0v1a4 4 0 0 0 4 4zm3-9v4.879L5.158 2.037A3.001 3.001 0 0 1 11 3z"/><path d="M9.486 10.607 5 6.12V8a3 3 0 0 0 4.486 2.607zm-7.84-9.253 12 12 .708-.708-12-12-.708.708z"/></svg>
-                                            </button>
-                                            :
-                                            <button onClick={()=>handleMuteUnmuteInCall()} className={"tap_to_speak_button  mr-10 tap"}>
-                                                <svg  fill={"#fff"} width={"24"} viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18v-1.06A8 8 0 0 1 2 9h2a6 6 0 1 0 12 0h2a8 8 0 0 1-7 7.94V18h3v2H6v-2h3zM6 4a4 4 0 1 1 8 0v5a4 4 0 1 1-8 0V4z"/></svg>
-                                            </button>
-                                        }
-                                    </div>
-                                    :''
+                    {(!isTeacher) ?
+                    <>
+                    {(tracks?.length) ?
+                        <div>
+                            <AgoraVideoPlayer
+                                videoTrack={tracks[1]}
+                                style={{ height: "100%", width: "100%" }}
+                                className={'my_video_peer_connection'}
+                            />
+                           <div className={"member_name_section"}>{userInfo?.name}</div>
+                            <div className={"call_ent_button_section"}>
+                                {isMutedCall ?
+                                    <button onClick={()=>handleMuteUnmuteInCall()} className={"tap_to_speak_button  mr-10"}>
+                                        <svg fill={"#fff"} width={"24"} viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" className="bi bi-mic-mute-fill"><path d="M13 8c0 .564-.094 1.107-.266 1.613l-.814-.814A4.02 4.02 0 0 0 12 8V7a.5.5 0 0 1 1 0v1zm-5 4c.818 0 1.578-.245 2.212-.667l.718.719a4.973 4.973 0 0 1-2.43.923V15h3a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1h3v-2.025A5 5 0 0 1 3 8V7a.5.5 0 0 1 1 0v1a4 4 0 0 0 4 4zm3-9v4.879L5.158 2.037A3.001 3.001 0 0 1 11 3z"/><path d="M9.486 10.607 5 6.12V8a3 3 0 0 0 4.486 2.607zm-7.84-9.253 12 12 .708-.708-12-12-.708.708z"/></svg>
+                                    </button>
+                                    :
+                                    <button onClick={()=>handleMuteUnmuteInCall()} className={"tap_to_speak_button  mr-10 tap"}>
+                                        <svg  fill={"#fff"} width={"24"} viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18v-1.06A8 8 0 0 1 2 9h2a6 6 0 1 0 12 0h2a8 8 0 0 1-7 7.94V18h3v2H6v-2h3zM6 4a4 4 0 1 1 8 0v5a4 4 0 1 1-8 0V4z"/></svg>
+                                    </button>
                                 }
-                                    </span>:''
-                    )))}
+                            </div>
+                        </div>
+                            :''
+                    }
+                    </>:''
+                    }
+                    {users.length > 0 &&
+                        users.map((user) => {
+                            if (user.videoTrack && user.uid.indexOf('student') >= 0) {
+                                return (
+                                    <div key={user.uid}>
+                                           <AgoraVideoPlayer
+                                               videoTrack={user.videoTrack}
+                                               id={user.uid}
+                                               style={{ height: "100%", width: "100%" }}
+                                               className={'my_video_peer_connection'}
+                                           />
+                                    </div>
+                                );
+                            } else return null;
+                     })}
+
                 </div>
             </div>
+
             {inClassStatusTeacherStudent === 'JOINING' ?
                 <div className={"call_pre_loader_section"}>
                     <SpinnerLoader/>

@@ -48,7 +48,7 @@ import {
 import {allChanelWhiteBoardEditingData,canvasReservedJsonActiveIndex} from "../server.js";
 const commonRouter = express.Router();
 
-const stripe = Stripe('sk_test_51ME77cSIFtW1VSPuJqLQWVmK1vmdptG6j457wJlQv98NeRnB2eAdwkbQYWwlNfVIrtuRbNFPZsbKyafCQwdZuT1300SgcSS7AB');
+const stripe = Stripe('sk_test_51N2mQmSJ2gkRHOPdcIrbvLMj7M2NcA3If5PdsrlsyJ4WFR6RU76NnFy1onMXhhiFkj0T5ODZJzuhhAmDrlFEs3Qq004TLPiEMU');
 
 commonRouter.post(
     '/insertCommonApiCall',
@@ -293,8 +293,20 @@ commonRouter.post(
             const paymentIntent = await stripe.paymentIntents.create({
                 currency: "INR",
                 amount: amount,
+                description: 'Fee payment of student',
+                shipping: {
+                    name: 'Jenny Rosen',
+                    address: {
+                        line1: '510 Townsend St',
+                        postal_code: '98140',
+                        city: 'San Francisco',
+                        state: 'CA',
+                        country: 'US',
+                    },
+                },
                 automatic_payment_methods: { enabled: true },
             });
+
             // Send publishable key and PaymentIntent details to client
             res.send({
                 clientSecret: paymentIntent.client_secret,
@@ -312,7 +324,7 @@ commonRouter.post(
     '/actionToConfigStripeSetupApiCall',
     expressAsyncHandler(async (req, res) => {
         res.send({
-            publishableKey: 'pk_test_51ME77cSIFtW1VSPuewmIrcC2SSgHZi0ad2OuqicbcRiVpBRkRyVByCFEaIyb067eFhQL0GXaWVakkkZt5TuLFo6J005HlqBOck',
+            publishableKey: 'pk_test_51N2mQmSJ2gkRHOPdJ4iUTP0gIC0FyY8mNysFM4759W79jXTeMIa10BmxlOllCKJRwToKLKwtrJs5KzQ6DQWJayMQ00EQDKPqDe',
         });
     })
 );
@@ -460,8 +472,11 @@ commonRouter.post(
         actionToGetUserAllClassesApiCall(req.body).then((data) => {
             let finalData = {};
             if(data && data?.length){
-                finalData = JSON.parse(data[0].profile_data)
-                if(finalData.profile_subject_with_batch)
+                if(typeof data[0].profile_data === 'string')
+                  finalData = JSON.parse(data[0].profile_data)
+                else
+                  finalData = data[0].profile_data;
+                if(typeof finalData.profile_subject_with_batch === 'string')
                   finalData.profile_subject_with_batch = JSON.parse(finalData.profile_subject_with_batch)
             }
             res.status(200).send({
@@ -479,7 +494,11 @@ commonRouter.post(
             let finalData = [];
             if(data && data?.length){
                 data?.map((resData)=>{
-                    let classData = JSON.parse(resData.teacher_classes_data);
+                    let classData = [];
+                    if(typeof resData.teacher_classes_data === 'string')
+                        classData = JSON.parse(resData.teacher_classes_data);
+                    else
+                        classData = resData.teacher_classes_data;
                     if(classData) {
                         finalData.push(classData);
                     }
@@ -500,9 +519,10 @@ commonRouter.post(
             let finalData = [];
             if(data && data?.length){
                 data?.map((resData)=>{
-                    let classData = JSON.parse(resData.classes_data);
-                    if(classData) {
-                        finalData.push(classData);
+                    if(typeof resData?.classes_data === 'string') {
+                        finalData.push(JSON.parse(resData?.classes_data));
+                    }else{
+                        finalData.push(resData?.classes_data);
                     }
                 })
             }
@@ -521,9 +541,10 @@ commonRouter.post(
             let finalData = [];
             if(data && data?.length){ 
                 data?.map((resData)=>{
-                    let classData = JSON.parse(resData.classes_data);
-                    if(classData) {
-                        finalData.push(classData);
+                    if(typeof resData?.classes_data === 'string') {
+                        finalData.push(JSON.parse(resData?.classes_data));
+                    }else{
+                        finalData.push(resData?.classes_data);
                     }
                 })
             }
@@ -542,10 +563,19 @@ commonRouter.post(
             let finalData = [];
             if(data && data?.length){
                 data?.map((resData)=>{
-                    let classData = JSON.parse(resData.teacher_classes_data);
+                    let classData = [];
+                    if(typeof resData.teacher_classes_data === 'string')
+                     classData = JSON.parse(resData.teacher_classes_data);
+                    else
+                     classData = JresData.teacher_classes_data;
                     if(classData) {
                         if (classData?.profile_subject_with_batch) {
-                            let allProfileData = JSON.parse(classData.profile_subject_with_batch)
+                            let allProfileData = [];
+                            if(typeof classData.profile_subject_with_batch === 'string')
+                                 allProfileData = JSON.parse(classData.profile_subject_with_batch);
+                            else
+                                 allProfileData = classData.profile_subject_with_batch;
+
                             allProfileData?.map((profileData,profileDataKey)=>{
                                 if(profileData?.id){
                                     allProfileData[profileDataKey] = profileData;
@@ -556,23 +586,30 @@ commonRouter.post(
                             classData.profile_subject_with_batch = allProfileData;
                         }
                         if (classData?.student_class_attend) {
-                            let allClassAttendData = JSON.parse(classData.student_class_attend)
+                            let allClassAttendData = []
+                            if(typeof classData.student_class_attend === 'string')
+                             allClassAttendData = JSON.parse(classData.student_class_attend)
+                            else
+                             allClassAttendData = classData.student_class_attend;
                             allClassAttendData?.map((classAttendData,classAttendDataKey)=>{
                                 if(!classAttendData?.id) {
                                     allClassAttendData[classAttendDataKey] = JSON.parse(classAttendData);
                                     if (allClassAttendData[classAttendDataKey]?.student_class_attend_assignment) {
-                                        allClassAttendData[classAttendDataKey].student_class_attend_assignment = JSON.parse(allClassAttendData[classAttendDataKey].student_class_attend_assignment);
+                                        if(typeof allClassAttendData[classAttendDataKey].student_class_attend_assignment === 'string')
+                                           allClassAttendData[classAttendDataKey].student_class_attend_assignment = JSON.parse(allClassAttendData[classAttendDataKey].student_class_attend_assignment);
                                     }
                                 }else{
                                     if (allClassAttendData[classAttendDataKey]?.student_class_attend_assignment) {
-                                        allClassAttendData[classAttendDataKey].student_class_attend_assignment = JSON.parse(allClassAttendData[classAttendDataKey].student_class_attend_assignment);
+                                        if(typeof allClassAttendData[classAttendDataKey]?.student_class_attend_assignment === 'string')
+                                           allClassAttendData[classAttendDataKey].student_class_attend_assignment = JSON.parse(allClassAttendData[classAttendDataKey].student_class_attend_assignment);
                                     }
                                 }
                             })
                             classData.student_class_attend = allClassAttendData;
                         }
                         if (classData?.teacher_class_attend_assignment) {
-                            classData.teacher_class_attend_assignment = JSON.parse(classData.teacher_class_attend_assignment);
+                            if(typeof classData?.teacher_class_attend_assignment === 'string')
+                               classData.teacher_class_attend_assignment = JSON.parse(classData.teacher_class_attend_assignment);
                         }
                         finalData.push(classData);
                     }
@@ -596,7 +633,13 @@ commonRouter.post(
                     let classData = JSON.parse(resData.teacher_classes_data);
                     if(classData) {
                         if (classData?.profile_subject_with_batch) {
-                            let allProfileData = JSON.parse(classData.profile_subject_with_batch)
+                            let allProfileData = [];
+                            if(typeof classData?.profile_subject_with_batch === 'string') {
+                                allProfileData = JSON.parse(classData.profile_subject_with_batch)
+                            }else{
+                                allProfileData = classData.profile_subject_with_batch;
+                            }
+
                             allProfileData?.map((profileData,profileDataKey)=>{
                                 if(profileData?.id){
                                     allProfileData[profileDataKey] = profileData;
@@ -607,15 +650,29 @@ commonRouter.post(
                             classData.profile_subject_with_batch = allProfileData;
                         }
                         if (classData?.student_class_attend) {
-                            let allClassAttendData = JSON.parse(classData.student_class_attend)
+
+                            let allClassAttendData = [];
+                            if(typeof classData?.student_class_attend === 'string') {
+                                allClassAttendData = JSON.parse(classData.student_class_attend);
+                            }else{
+                                allClassAttendData = classData.student_class_attend;
+                            }
+
+
+
                             allClassAttendData?.map((classAttendData,classAttendDataKey)=>{
                                 if(!classAttendData?.id) {
-                                    allClassAttendData[classAttendDataKey] = JSON.parse(classAttendData);
+                                    if(typeof classAttendData === 'string')
+                                      allClassAttendData[classAttendDataKey] = JSON.parse(classAttendData);
+                                    else
+                                      allClassAttendData[classAttendDataKey] = classAttendData;
                                     if (allClassAttendData[classAttendDataKey]?.student_class_attend_assignment) {
-                                        allClassAttendData[classAttendDataKey].student_class_attend_assignment = JSON.parse(allClassAttendData[classAttendDataKey].student_class_attend_assignment);
+                                        if(typeof  allClassAttendData[classAttendDataKey]?.student_class_attend_assignment === 'string')
+                                          allClassAttendData[classAttendDataKey].student_class_attend_assignment = JSON.parse(allClassAttendData[classAttendDataKey].student_class_attend_assignment);
                                     }
                                 }else{
                                     if (allClassAttendData[classAttendDataKey]?.student_class_attend_assignment) {
+                                        if(typeof allClassAttendData[classAttendDataKey]?.student_class_attend_assignment === 'string')
                                         allClassAttendData[classAttendDataKey].student_class_attend_assignment = JSON.parse(allClassAttendData[classAttendDataKey].student_class_attend_assignment);
                                     }
                                 }
@@ -623,7 +680,8 @@ commonRouter.post(
                             classData.student_class_attend = allClassAttendData;
                         }
                         if (classData?.teacher_class_attend_assignment) {
-                            classData.teacher_class_attend_assignment = JSON.parse(classData.teacher_class_attend_assignment);
+                            if(typeof classData.teacher_class_attend_assignment === 'string')
+                                classData.teacher_class_attend_assignment = JSON.parse(classData.teacher_class_attend_assignment);
                         }
                         finalData.push(classData);
                     }
@@ -644,24 +702,24 @@ commonRouter.post(
             let finalData = [];
             if(data && data?.length){
                 data?.map((resData)=>{
-                    let classData = JSON.parse(resData.teacher_classes_data);
+                    let classData = [];
+                    if(typeof resData.teacher_classes_data === 'string')
+                     classData = JSON.parse(resData.teacher_classes_data);
+                    else
+                     classData =  resData.teacher_classes_data;
                     if(classData) {
-                        if (classData.profile_subject_with_batch) {
+                        if (typeof classData.profile_subject_with_batch === 'string') {
                             let allProfileData = JSON.parse(classData.profile_subject_with_batch);
-                            if(allProfileData?.length && allProfileData[0]?.id){
-                                console.log('ok');
-                            }else {
-                                allProfileData?.map((profileData, profileDataKey) => {
-                                    allProfileData[profileDataKey] = JSON.parse(profileData);
-                                })
-                            }
+                            allProfileData?.map((profileData, profileDataKey) => {
+                                if(typeof profileData === 'string')
+                                   allProfileData[profileDataKey] = JSON.parse(profileData);
+                            })
                             classData.profile_subject_with_batch = allProfileData;
                         }
                         finalData.push(classData);
                     }
                 })
             }
-            //console.log('finalData',finalData);
             res.status(200).send({
                 response: finalData,
             });
@@ -676,8 +734,12 @@ commonRouter.post(
         actionToGetStudentAllTodayClassesApiCall(req.body).then((data) => {
             let finalData = [];
             if(data && data?.length){
-                data?.map((resData)=>{
-                    finalData.push(JSON.parse(resData.classes_data));
+                data?.map((resData) => {
+                    if(typeof resData.classes_data === 'string') {
+                        finalData.push(JSON.parse(resData.classes_data));
+                    }else{
+                        finalData.push(resData.classes_data);
+                    }
                 })
             }
             res.status(200).send({
@@ -694,8 +756,12 @@ commonRouter.post(
         actionToGetStudentAllDemoClassesApiCall(req.body).then((data) => {
             let finalData = [];
             if(data && data?.length){
-                data?.map((resData)=>{
-                    finalData.push(JSON.parse(resData.classes_data));
+                data?.map((resData) => {
+                    if(typeof resData.classes_data === 'string') {
+                        finalData.push(JSON.parse(resData.classes_data));
+                    }else{
+                        finalData.push(resData.classes_data);
+                    }
                 })
             }
             res.status(200).send({
@@ -713,17 +779,22 @@ commonRouter.post(
             let finalData = [];
             if(data && data?.length){
                 data?.map((resData)=>{
-                    let classData = JSON.parse(resData.teacher_classes_data);
+                    let classData = [];
+                    if(typeof resData.teacher_classes_data === 'string')
+                     classData = JSON.parse(resData.teacher_classes_data);
+                    else
+                     classData = resData.teacher_classes_data;
                     if(classData) {
                         if (classData.profile_subject_with_batch) {
-                            let allProfileData = JSON.parse(classData.profile_subject_with_batch)
-                            if(allProfileData?.length && allProfileData[0]?.id){
-                                console.log('ok');
-                            }else {
-                                allProfileData?.map((profileData, profileDataKey) => {
-                                    allProfileData[profileDataKey] = JSON.parse(profileData);
-                                })
-                            }
+                            let allProfileData = [];
+                            if(typeof classData.profile_subject_with_batch === 'string')
+                             allProfileData = JSON.parse(classData.profile_subject_with_batch)
+                            else
+                             allProfileData = classData.profile_subject_with_batch;
+                            allProfileData?.map((profileData, profileDataKey) => {
+                                if(typeof profileData === 'string')
+                                  allProfileData[profileDataKey] = JSON.parse(profileData);
+                            })
                             classData.profile_subject_with_batch = allProfileData;
                         }
                         finalData.push(classData);

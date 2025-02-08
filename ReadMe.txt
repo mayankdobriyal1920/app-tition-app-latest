@@ -13,6 +13,17 @@ root
 Pa$$W0rd
 /var/www/vhosts/121tuition.in/httpdocs/tuition
 
+68.178.169.224
+root
+Pa$$W0rd
+/var/www/vhosts/121tuition.in/httpdocs/tuition
+
+name = MariaDB
+baseurl = http://yum.mariadb.org/10.5/centos7-amd64
+gpgkey = https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
+gpgcheck = 1
+
+
 tuition
 MndN26!%ks1q
 
@@ -48,4 +59,4 @@ location /api-call-tutor {
        proxy_set_header X-NginX-Proxy true;
    }
 
-   121Tuition@2022
+turnutils_uclient -p 68.178.169.224 -c -u 121tuition:121tuition123

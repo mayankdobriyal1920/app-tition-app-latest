@@ -56,7 +56,7 @@ const DesktopHeaderContainerComponent=({scrollBodyValue}) => {
                             </nav>
                         </div>
                         <div className="col-xl-3 col-lg-2 col-7">
-                            <div className="right-nav d-flex align-items-center justify-content-end">
+                            <div className="right-nav d-flex align-items-center">
                                 <div className="right-btn mr-25 mr-xs-15">
                                     <ul className="d-flex align-items-center">
                                         <li>

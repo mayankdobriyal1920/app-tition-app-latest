@@ -31,7 +31,7 @@ export default function StudentDesktopScheduledClasses({isMobile}){
                                 :
                                 <FacebookLoader type={"facebookStyle"} item={2}/>
                             : (classData?.length) ?
-                                <div className={""}>
+                                <div className={"full_calender_container"}>
                                     <FullCalendar
                                         plugins={[ dayGridPlugin ]}
                                         initialView="dayGridMonth"

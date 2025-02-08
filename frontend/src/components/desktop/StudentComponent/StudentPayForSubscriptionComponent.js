@@ -23,7 +23,7 @@ export default function StudentPayForSubscriptionComponent({isEnd}){
                 <p className={"mb-10"}>Please purchase subscription to continue.</p>
             }
             <h2 className={"mb-10"}>Subscription details :-</h2>
-            <h3 className={"mb-10"}>Total Classes(3)</h3>
+            <h3 className={"mb-10"}>Total Classes({classData?.profile_subject_with_batch?.length})</h3>
             <div className={"classes_section"}>
                 {(classData?.profile_subject_with_batch?.map((userSubjectData,key)=>(
                     <div key={key} className={"classes_section_loop"}>

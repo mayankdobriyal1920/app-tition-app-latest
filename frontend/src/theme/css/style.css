@@ -1,15 +1,36 @@
 
-body {
-    font-family: "Manrope", sans-serif;
-    font-size: 16px;
-    line-height: 25px;
-    font-weight: 400;
-    font-style: normal;
-    color: #707070;
+/* Slim scrollbar width */
+::-webkit-scrollbar {
+    width: 6px;
 }
+
+/* Background of the scrollbar track */
+::-webkit-scrollbar-track {
+    background: #f0f0f0; /* Light grey */
+    border-radius: 10px;
+}
+
+/* Scrollbar handle */
+::-webkit-scrollbar-thumb {
+    background: #a0a0a0; /* Medium grey */
+    border-radius: 10px;
+}
+
+/* Scrollbar handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #888888; /* Darker grey */
+}
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #a0a0a0 #f0f0f0;
+}
+
 
 #theme-menu-one {
     border-bottom: 2px solid rgba(255, 114, 58, 0.1);
+}
+.my_video_peer_connection video {
+    position: relative!important;
 }
 .main-header-area {
     position: absolute;
@@ -376,7 +397,7 @@ span.sapater_otp {
 }
 .contact-form-wrapper .message_btn {
     border: 0;
-    font-size: 2.3vh;
+    font-size: 1rem;
     font-weight: 700;
     text-transform: uppercase;
     padding: 16px 4px;
@@ -441,9 +462,13 @@ span.sapater_otp {
     text-align: center;
 }
 
+.student_dash_header_inner_section .main_heading {
+    font-size: 1.3rem;
+}
+
 .menu_loop_section .menu_loop_section_inner_section .left_menu_item .left_menu_item_2 {
-    font-size: 2vh;
     line-height: 38px;
+    font-size: 0.8rem;
     color: #979797;
 }
 .header_main_page .logo_section {
@@ -461,7 +486,7 @@ span.sapater_otp {
 .main_container_app_section .name_tite_section {
     text-align: center;
     padding: 31px;
-    font-size: 21px;
+    font-size: 0.9rem;
     font-weight: 700;
     font-family: monospace;
 }
@@ -476,7 +501,7 @@ span.sapater_otp {
 .main_container_app_section .name_tite_section {
     text-align: center;
     padding: 31px;
-    font-size: 21px;
+    font-size: 0.75rem;
     font-weight: 700;
     font-family: monospace;
 }
@@ -493,7 +518,7 @@ span.sapater_otp {
 }
 
 .main_subject_section_today_classes h3 {
-    font-size: 16px;
+    font-size: 0.8rem;
     color: #000;
     margin-bottom: 10px;
 }
@@ -517,7 +542,7 @@ span.sapater_otp {
 }
 
 .header_main_page .logo_section h2 {
-    font-size: 18px;
+    font-size: 0.9rem;
     margin: auto;
     color: #3c3c3c;
 }
@@ -582,13 +607,13 @@ span.sapater_otp {
 }
 
 .student_dash_header_inner_section .main_heading {
-    font-size: 3.4vh;
     color: #1a2435;
     line-height: 44px;
 }
 
 .student_dash_header_inner_section .main_heading span {
     font-weight: 600;
+    font-size: 1.5rem;
 }
 
 .student_dash_header_section {
@@ -613,11 +638,11 @@ span.sapater_otp {
 
 .student_dash_header_section .sub_heading {
     line-height: 2.5vh;
-    font-size: 2.4vh;
+    font-size: 0.75rem;
 }
 
 .student_demo_classes_main_page h2{
-    font-size: 2.5vh;
+    font-size: 0.8rem;
 }
 .class_star_rating_component {
     position: fixed;
@@ -681,7 +706,7 @@ span.sapater_otp {
     opacity: 0!important;
 }
 .fc .fc-toolbar-title{
-    font-size: 2.8vh!important;
+    font-size: 0.32!important;
 }
 .fc .fc-col-header-cell-cushion {
     font-size: 2.1vh;
@@ -721,7 +746,7 @@ span.sapater_otp {
 
 .no_demo_classes_div_section {
     text-align: center;
-    font-size: 21px;
+    font-size: 0.9rem;
     line-height: 53px;
     color: #ff500a;
 }
@@ -750,17 +775,18 @@ span.sapater_otp {
     line-height: 48px;
     color: #f7931e;
     font-weight: 600;
-    font-size: 2vh;
+    font-size: 0.9rem;
 }
 .icon_main_col .name_section {
-    font-size: 2.2vh;
+    font-size: 0.8rem;
     margin-top: auto;
     margin-bottom: auto;
 }
 .class_data_main_table_section .body {
-    font-size: 2vh;
+    font-size: 0.8rem;
     margin-top: auto;
     margin-bottom: auto;
+    text-align: left;
 }
 .class_data_main_table_section {
     background: #fff;
@@ -1033,6 +1059,7 @@ p.title_enhanced_desktop {
 }
 .demo_classes_section_subject_icon_name .name_section {
     width: 80%;
+    margin: auto;
 }
 .demo_classes_main_section_div .demo_classes_section_loop .class_time_date_demo {
     font-size: 14px;
@@ -1040,12 +1067,12 @@ p.title_enhanced_desktop {
 .demo_classes_section_teacher_icon_name {
     margin-top: 5px;
     padding: 0px;
-    padding-left: 3px;
+    padding-left: 32px;
 }
 
 .demo_classes_section_subject_icon_name .name_section .name_section1 {
     font-weight: 600;
-    font-size: 1.9vh;
+    font-size: 0.8rem;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -1062,7 +1089,7 @@ p.title_enhanced_desktop {
 }
 
 .demo_classes_main_section_div .demo_classes_section_loop .class_time_date_demo {
-    font-size: 1.9vh;
+    font-size: 0.8rem;
     font-weight: 600;
     padding-left: 13px;
     color: #f7931e;
@@ -1079,7 +1106,7 @@ p.title_enhanced_desktop {
 }
 
 .demo_classes_section_teacher_icon_name .teacher_detail_section .teacher_name_section {
-    font-size: 1.8vh;
+    font-size: 0.71rem;
     margin-left: 14px;
 }
 
@@ -1146,7 +1173,7 @@ p.title_enhanced_desktop {
 }
 
 .user_profile_fixed_section_main_container .user_profile_main_section .user_icon_profile_name {
-    font-size: 2.5vh;
+    font-size: 0.8rem;
     font-weight: 600;
     color: #444;
 }
@@ -1154,7 +1181,7 @@ p.title_enhanced_desktop {
     padding: 10px;
     border-radius: 10px;
     background: #ffffff96;
-    font-size: 2vh;
+    font-size: 0.71rem;
     color: #ff4800;
     margin-left: 19px;
 }
@@ -1164,10 +1191,10 @@ p.title_enhanced_desktop {
 }
 .user_profile_personal_detail_heading {
     color: #444;
-    font-size: 2.1vh;
+    font-size: 0.8rem;
 }
 .user_profile_personal_detail .user_profile_personal_detail_text {
-    font-size: 1.9vh;
+    font-size: 0.71rem;
     margin-left: 24px;
 }
 .teacher_video_class_container_inner_row {
@@ -1819,8 +1846,9 @@ a.nav-item.nav-link.active {
 .footer-log a.logo img {
     width: 87px;
 }
-.accordion-item:first-of-type .accordion-button{
-    font-size: 2.4vh;
+.accordion-item .accordion-button{
+    font-size: 0.8rem;
+    padding: 12px!important;
 }
 .user_profile_edit_main_container_inner_section {
     width: 100%;
@@ -2355,4 +2383,8 @@ section.page-title-area {
     position: relative;
     margin: 0 37px;
     padding: 30px 0;
+}
+
+.full_calender_container .fc-theme-standard td, .fc-theme-standard th{
+ width: inherit!important;
 }

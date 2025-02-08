@@ -1,3 +1,5 @@
+
+
 .main_container_app_section {
     .demo_classes_main_section {
         width: 100% !important;
@@ -7,7 +9,7 @@
     .class_data_main_table_section .body {
         margin-top: 0px !important;
         text-align: center;
-        font-size: 11px!important;
+        font-size: 0.32rem!important;
     }
     .student_pay_for_subscription_main_page {
         width: 100%!important;
@@ -50,7 +52,7 @@
     }
     .no_demo_classes_div_section {
         text-align: center;
-        font-size: 15px;
+        font-size: 0.8rem;
         line-height: 24px;
         color: #ff500a;
     }
@@ -68,7 +70,7 @@
     }
 
     .demo_classes_main_section_div .demo_classes_section_loop .class_time_date_demo {
-        font-size: 11px !important;
+        font-size: 0.3rem !important;
     }
 
     .demo_classes_section_subject_icon_name .name_section .name_section1 {
@@ -96,12 +98,12 @@
     }
 
     .demo_classes_section_teacher_icon_name .teacher_detail_section .teacher_name_section {
-        font-size: 12px !important;
+        font-size: 0.32rem !important;
         margin-left: 14px !important;
     }
 
     .demo_classes_section_teacher_icon_name .teacher_detail_section .teacher_font_icon {
-        font-size: 13px !important;
+        font-size: 0.32rem !important;
     }
 
     .demo_classes_section_teacher_icon_name .teacher_detail_section {
@@ -121,7 +123,7 @@
         box-shadow: 0px 0px 20px 3px rgb(197 197 197 / 22%)!important;
     }
     .class_list_table.header_row {
-        font-size: 13px!important;
+        font-size: 0.32rem!important;
     }
     .class_list_table.header_row {
         border-bottom: 1px solid #ccc!important;
@@ -141,7 +143,7 @@
     .icon_main_col .name_section {
         margin: 0px !important;
         text-align: center;
-        font-size: 13px;
+        font-size: 0.75rem;
     }
     .class_list_table .icon_setion {
         width: 40px !important;
@@ -180,7 +182,7 @@
     .tab_bottom_section {
         text-align: center;
         display: block;
-        font-size: 11px;
+        font-size: 0.75rem;
     }
 
     .tab_bottom_section svg {
@@ -283,7 +285,6 @@
         font-size: 13px;
     }
     .contact-form-wrapper .message_btn {
-        font-size: 14px;
         padding: 15px 84px;
         border-radius: 20px;
         margin-top: 12px;
@@ -435,10 +436,6 @@
     margin: 0px!important;
     padding: 36px!important;
 
-    .accordion-header button {
-        font-size: 15px!important;
-    }
-
     .accordion-collapse p {
         font-size: 14px;
     }
@@ -498,18 +495,18 @@
     .user_profile_edit_main_container_inner_section .personal_prof_form_2 input::placeholder,
     .user_profile_edit_main_container_inner_section .personal_prof_form_2 select::placeholder
     {
-        font-size: 14px!important;
+        font-size: 0.75rem;
         padding: 8px 8px!important;
         border-radius: 0px!important;
     }
 
     .user_profile_edit_main_container_inner_section .personal_prof_form_2 label {
-        font-size: 15px!important;
+        font-size: 0.33rem!important;
     }
     .user_create_profile_main_row button {
         margin: 26px 13px;
         padding: 10px;
-        font-size: 15px;
+        font-size: 0.75rem;
         width: 94%;
         border-radius: 0px!important;
     }

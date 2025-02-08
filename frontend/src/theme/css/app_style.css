@@ -1,5 +1,6 @@
+
 .main_header_section button.login_button {
-    font-size: 1rem;
+    font-size: 0.8rem;
     padding: 12px 19px;
     background: #f7931e;
     color: #fff;
@@ -23,9 +24,7 @@
 .student_video_call_section_container .canvas_editor_tools_main_section button.canvas_tool {
     margin-right: 28px!important;
 }
-.main_header_section .image_col {
-    padding: 1px 20px;
-}
+
 .main_body_content_login_mobile .slider__img__box {
     margin: auto;
     padding: 28px;

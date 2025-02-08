@@ -27,7 +27,7 @@ export default function CheckoutFormComponent({totalMonths}) {
                 return_url: `${window.location.origin}/dashboard/subscription-confirm/${totalMonths}`,
             },
         });
-
+        console.log(error)
         if (error.type === "card_error" || error.type === "validation_error") {
             setMessage(error.message);
         } else {

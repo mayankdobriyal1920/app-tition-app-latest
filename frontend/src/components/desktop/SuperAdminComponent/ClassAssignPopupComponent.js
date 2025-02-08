@@ -8,6 +8,7 @@ import {
 import moment from "moment";
 import {cloneDeep} from "lodash";
 import {_generateUniqueId} from "../../../helper/CommonHelper";
+import {IonCol, IonRow} from "@ionic/react";
 
 let weekDatesArray = [];
 let weekStartDate = moment().startOf('week').format('YYYY-MM-DD');
@@ -363,15 +364,19 @@ export default function ClassAssignPopupComponent(){
                                                            placeholder="Class date time" required/>
                                                     <label htmlFor="floatingSelect">Class Batch Name</label>
                                                 </div>
-                                                {(weekDatesArray?.map((date,key)=>(
-                                                    <div key={key} className="form-floating">
-                                                        <input type="time"
-                                                        onBlur={(e) => callFunctionToSetClassDateTime(date,e.target.value)}
-                                                        className="form-control" id="floatingClassTime"
-                                                        placeholder="Class date time" required/>
-                                                        <label htmlFor="floatingClassTime">{moment(date).format('dddd ,Do MMMM')}</label>
-                                                    </div>
-                                                )))}
+                                                <IonRow>
+                                                    {(weekDatesArray?.map((date,key)=>(
+                                                        <IonCol key={key}>
+                                                            <div key={key} className="form-floating">
+                                                                <input type="time"
+                                                                onBlur={(e) => callFunctionToSetClassDateTime(date,e.target.value)}
+                                                                className="form-control" id="floatingClassTime"
+                                                                placeholder="Class date time" required/>
+                                                                <label htmlFor="floatingClassTime">{moment(date).format('Do, ddd')}</label>
+                                                            </div>
+                                                        </IonCol>
+                                                    )))}
+                                                </IonRow>
                                                 <button type="button" onClick={callFunctionToAssignClassData}
                                                         disabled={!validateAssignPopupForm()}
                                                         className="btn btn-primary mt-30">

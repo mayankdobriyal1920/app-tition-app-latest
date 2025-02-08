@@ -1,282 +1,70 @@
-import React from "react";
+import React, {useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {FacebookLoader} from "../../Loader/FacebookLoader";
-import {_generateUniqueId, _getIconBySubjectKey} from "../../../helper/CommonHelper";
+import {_getIconBySubjectKey} from "../../../helper/CommonHelper";
 import noClassFound from "../../../theme/images/chose/no_classes_found.png";
 import {StudentDashHeaderComponent} from "../StudentComponent/StudentDashHeaderComponent";
 import moment from "moment";
-import fixWebmDuration from 'webm-duration-fix';
 import {
-    addCallSubscriptionEvents,
-    addVideoStream,
-    connectToNewUser,
-    myPeer,
-    myStream,
-    setMyMediaRecorder,
-    setMyPeer,
-    setMyPeerConnectionId, setMyShareScreenStream,
-    setMyStream
-} from "../../../helper/CallModuleHelper.js";
-import {sendWebsocketRequest} from "../../../helper/WebSocketHelper";
-import Peer from 'peerjs';
-import {
-    actionToRemoveCurrentGroupCallData,
-    actionToSendVideoChunkDataToServerFinishProcess,
     actionToSetCurrentCallDataGroupData, actionToSetTeacherStudentInClassStatus
 } from "../../../actions/CommonAction";
 import TeacherStudentVideoCallComponent from "./TeacherStudentVideoCallComponent";
-import {
-    CHAT_MODULE_CURRENT_CALL_ALL_MEMBERS,
-} from "../../../constants/CommonConstants";
 import {cloneDeep} from "lodash";
-import {transformSdp} from "../../../helper/SdpTransformHelper";
-
-const iceServers= [
-    {
-        urls: "stun:stun.l.google.com:19302",
-    },
-    {
-        urls: "turn:121tuition.in:3478?transport=tcp",
-        username: "121tuition",
-        credential: "121tuition123",
-    }, {
-        urls: "turn:121tuition.in:3478",
-        username: "121tuition",
-        credential: "121tuition123",
-    },
-];
-
-// const iceServers= [
-//     {
-//         urls: "stun:stun.relay.metered.ca:80",
-//     },
-//     {
-//         urls: "turn:a.relay.metered.ca:80",
-//         username: "81a9bd437713718412339ca3",
-//         credential: "pwsLYC29rmjea4oo",
-//     },
-//     {
-//         urls: "turn:a.relay.metered.ca:80?transport=tcp",
-//         username: "81a9bd437713718412339ca3",
-//         credential: "pwsLYC29rmjea4oo",
-//     },
-//     {
-//         urls: "turn:a.relay.metered.ca:443",
-//         username: "81a9bd437713718412339ca3",
-//         credential: "pwsLYC29rmjea4oo",
-//     },
-//     {
-//         urls: "turn:a.relay.metered.ca:443?transport=tcp",
-//         username: "81a9bd437713718412339ca3",
-//         credential: "pwsLYC29rmjea4oo",
-//     },
-// ];
-
+import {CHAT_MODULE_CURRENT_CALL_ALL_MEMBERS} from "../../../constants/CommonConstants";
+import {sendWebsocketRequest} from "../../../helper/WebSocketHelper";
 let currentClassId = null;
 let currentClassAssignedId = null;
 function TeacherMainDesktopDashboardComponentFunction(){
-    const chatModuleNewUserAddedInCurrentCall = useSelector((state) => state.chatModuleNewUserAddedInCurrentCall);
     const teacherAllClassesList = useSelector((state) => state.teacherAllClassesList);
     const teacherAllTodayClassesList = useSelector((state) => state.teacherAllTodayClassesList);
     const teacherAllDemoClassesList = useSelector((state) => state.teacherAllDemoClassesList);
     const inClassStatusTeacherStudent = useSelector((state) => state.inClassStatusTeacherStudent);
-    const {userInfo} = useSelector((state) => state.userSignin);
     const [callLoading,setCallLoading] = React.useState(null);
     const dispatch = useDispatch();
+    const [usersInCall, setUsersInCall] = useState([]);
+    const userInfo = useSelector((state) => state.userSignin.userInfo);
 
-    const callFunctionToExportRecordedVideo = async (chunks)=>{
-
-        // const mimeType = 'video/webm;codecs=vp9';
-        // const fixBlob = await fixWebmDuration(new Blob([...chunks], { type: mimeType }));
-        //
-        // const reader = new FileReader();
-        // reader.readAsDataURL(fixBlob);
-        // reader.onload = () => {
-        //     const base64String = reader.result.split(',')[1];
-        //     //dispatch(actionToSendVideoChunkDataToServerFinishProcess(currentClassAssignedId,base64String));
-        // };
-        dispatch(actionToRemoveCurrentGroupCallData());
-    }
-
-    const startCallInGroup = (e,classGroupData)=>{
+    const startCallInGroupAgora = (e,classGroupData)=>{
         e.preventDefault();
 
         if (callLoading) return false;
         setCallLoading(classGroupData?.id);
 
-        let getUserMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia).bind(navigator);
-        if(getUserMedia) {
-            getUserMedia({
-                    audio: {
-                        echoCancellation: true,
-                        noiseSuppression: true,
-                        autoGainControl: true,
-                    },
-                    video: {
-                        width:320,
-                        height:240,
-                        frameRate:30,
-                    }
-                },
-                function(stream){
-                    // navigator.mediaDevices.getDisplayMedia({preferCurrentTab:true})
-                    //     .then(recordStream => {
-                            dispatch(actionToSetTeacherStudentInClassStatus('JOINING'));
+        dispatch(actionToSetTeacherStudentInClassStatus('JOINING'));
 
-                            let memberData = cloneDeep(userInfo);
-                            memberData.id = classGroupData?.id;
-                            memberData.peer_connection_id = 'teacher_' + _generateUniqueId()+'_'+classGroupData?.id;
-                            memberData.mute = false;
-                            memberData.isTeacher = true;
+        currentClassId = cloneDeep(classGroupData?.id);
+        currentClassAssignedId = cloneDeep(classGroupData?.class_id);
+        dispatch(actionToSetCurrentCallDataGroupData(classGroupData));
 
-                            let myPeer = new Peer(memberData.peer_connection_id, {
-                                host: '121tuition.in',
-                                secure: true,
-                                config: {'iceServers': iceServers},
-                                path: '/peerApp',
-                            });
+        let allMembersInCall = [];
+        classGroupData?.profile_subject_with_batch?.map((studentProfile) => {
+            allMembersInCall.push({
+                id: studentProfile.student_id,
+                name: studentProfile.student_name,
+                mute:true,
+                isTeacher:false
+            });
+        })
 
-                            setMyPeerConnectionId(memberData.peer_connection_id);
-                            setMyPeer(myPeer);
-                            currentClassId = cloneDeep(classGroupData?.id);
-                            currentClassAssignedId = cloneDeep(classGroupData?.class_id);
-                            console.log('classGroupData',classGroupData);
+        dispatch(actionToSetCurrentCallDataGroupData(classGroupData));
+        dispatch({type: CHAT_MODULE_CURRENT_CALL_ALL_MEMBERS, payload: [...allMembersInCall]});
 
-                            dispatch(actionToSetCurrentCallDataGroupData(classGroupData));
-                            console.log('[ PEER JS CONNECTION INSTANCE ]', myPeer,memberData.peer_connection_id);
 
-                           myPeer?.on('candidate', e => {
-                               console.log('icecandidate ------- ',e);
-                                if (!e.candidate) return;
+        let finalClassGroupData = classGroupData;
+        finalClassGroupData.started_at = new Date().toISOString();
+        finalClassGroupData.allMembers = allMembersInCall;
 
-                                // Display candidate string e.g
-                                // candidate:842163049 1 udp 1677729535 XXX.XXX.XX.XXXX 58481 typ srflx raddr 0.0.0.0 rport 0 generation 0 ufrag sXP5 network-cost 999
-                                console.log(e.candidate.candidate);
-
-                                // If a srflx candidate was found, notify that the STUN server works!
-                                if(e.candidate.type === "srflx"){
-                                    console.log("The STUN server is reachable!");
-                                    console.log(`   Your Public IP Address is: ${e.candidate.address}`);
-                                }
-
-                                // If a relay candidate was found, notify that the TURN server works!
-                                if(e.candidate.type === "relay"){
-                                    console.log("The TURN server is reachable !");
-                                }
-                            })
-
-                            myPeer?.on('open', id => {
-                                console.log('[PEER CONNECTION OPEN IN ID]', id);
-                                console.log('[PEER CONNECTION USER MEDIA]', getUserMedia);
-                                navigator.mediaDevices.enumerateDevices()
-                                    .then(sourceInfos => {
-                                        let audioSource = null;
-                                        let videoSource = null;
-
-                                        for (let i = 0; i !== sourceInfos.length; ++i) {
-                                            let sourceInfo = sourceInfos[i];
-                                            if (sourceInfo?.kind === 'audioinput') {
-                                                audioSource = sourceInfo.deviceId;
-                                            } else if (sourceInfo?.kind === 'videoinput') {
-                                                videoSource = sourceInfo.deviceId;
-                                                console.log(sourceInfo)
-                                            }
-                                        }
-                                        setMyStream(stream);
-
-                                        console.log('[PEER CONNECTION USER STREAM]', stream);
-                                        let finalClassGroupData = classGroupData;
-                                        finalClassGroupData.started_at = new Date().toISOString();
-                                        let allMembersInCall = [memberData];
-                                        finalClassGroupData.allMembers = allMembersInCall;
-                                        classGroupData?.profile_subject_with_batch?.map((studentProfile) => {
-                                            allMembersInCall.push({
-                                                id: studentProfile.student_id,
-                                                name: studentProfile.student_name,
-                                                mute:true,
-                                                isTeacher:false
-                                            });
-                                        })
-
-                                        dispatch(actionToSetCurrentCallDataGroupData(classGroupData));
-                                        dispatch({type: CHAT_MODULE_CURRENT_CALL_ALL_MEMBERS, payload: [...allMembersInCall]});
-
-                                        sendWebsocketRequest(JSON.stringify({
-                                            clientId: localStorage.getItem('clientId'),
-                                            groupId: classGroupData?.id,
-                                            classGroupData: finalClassGroupData,
-                                            members: allMembersInCall,
-                                            memberData: memberData,
-                                            type: "startNewCallInGroupChannel"
-                                        }));
-
-                                        setTimeout(function(){
-                                            addVideoStream(memberData.peer_connection_id, stream,true);
-                                            setCallLoading(null);
-                                            dispatch(actionToSetTeacherStudentInClassStatus('INCALL'));
-                                        },1000)
-
-                                        myPeer.on('call', call => {
-                                            console.log('[PEER JS INCOMMING CALL]', call);
-                                            call.answer(stream,{ sdpTransform: transformSdp });
-                                            addCallSubscriptionEvents(call);
-                                        })
-                                    })
-                            })
-
-                            if(!classGroupData?.is_demo_class) {
-                                ////// record current call //////////
-
-                                try {
-                                    const chunks = [];
-                                    const mimeType = 'video/webm;codecs=vp9';
-
-                                    const displayMediaStreamConstraints = {
-                                        video: {
-                                            displaySurface: 'monitor', // monitor, window, application, browser
-                                            logicalSurface: true,
-                                            cursor: 'always' // never, always, motion
-                                        }
-                                    }
-
-                                    //////// RECORDING SCREEN ///////////
-                                    let audioTrack, videoTrack, mediaStream;
-                                    navigator.mediaDevices.getDisplayMedia(displayMediaStreamConstraints)
-                                        .then(async displayStream => {
-                                            [videoTrack] = displayStream.getVideoTracks();
-                                            [audioTrack] = stream.getAudioTracks();
-                                            mediaStream = new MediaStream([videoTrack, audioTrack]); // do stuff
-                                            const recorder = new MediaRecorder(mediaStream, {mimeType});
-                                            recorder.ondataavailable = (e) => {
-                                                chunks.push(e.data);
-                                            }
-                                            recorder.onstop = e => callFunctionToExportRecordedVideo(chunks);
-                                            recorder.start(1000);
-                                            setMyMediaRecorder(recorder);
-                                            setMyShareScreenStream(mediaStream);
-                                    }).catch(console.error);
-                                    //////// RECORDING SCREEN ///////////
-                                } catch (e) {
-                                    alert('SCREEN RECORDING NOT SUPPORTED BY YOUR BROWSER');
-                                }
-                            }
-                        // }, error => {
-                        //     console.log("Unable to acquire screen capture", error);
-                        // });
-                },function(er){
-                  console.log(er);
-                })
-        }else{
-            alert('Media Not Supported In Insecure Url');
-        }
+        setTimeout(()=>{
+            sendWebsocketRequest(JSON.stringify({
+                clientId: localStorage.getItem('clientId'),
+                groupId: classGroupData?.id,
+                classGroupData: finalClassGroupData,
+                members: allMembersInCall,
+                memberData: userInfo,
+                type: "startNewCallInGroupChannel"
+            }));
+        },4000)
     }
-
-
-    React.useEffect(()=>{
-        if(chatModuleNewUserAddedInCurrentCall?.id){
-            connectToNewUser(chatModuleNewUserAddedInCurrentCall,myStream,myPeer);
-        }
-    },[chatModuleNewUserAddedInCurrentCall]);
 
     return (
         <div className={"main_body_content_section all_student_subject_main_container teacher"}>
@@ -338,7 +126,7 @@ function TeacherMainDesktopDashboardComponentFunction(){
                                                     <div className={"col demo_classes_section_teacher_icon_name"}>
                                                         <div>
                                                             {(!myClasses?.class_end_date_time) ?
-                                                                <div onClick={(e)=>startCallInGroup(e,myClasses)} className={"take_demo_button"}>
+                                                                <div onClick={(e)=>startCallInGroupAgora(e,myClasses)} className={"take_demo_button"}>
                                                                     <button className={"theme_btn"}>
                                                                         {callLoading === myClasses?.id ? 'Starting class...' :
                                                                             'Start Class'}
@@ -413,7 +201,7 @@ function TeacherMainDesktopDashboardComponentFunction(){
                                                     <div className={"col demo_classes_section_teacher_icon_name"}>
                                                         <div>
                                                             {(!myClasses?.class_end_time) ?
-                                                                <div onClick={(e)=>startCallInGroup(e,myClasses)} className={"take_demo_button"}>
+                                                                <div onClick={(e)=>startCallInGroupAgora(e,myClasses)} className={"take_demo_button"}>
                                                                     <button className={"theme_btn"}>
                                                                         {callLoading === myClasses?.id ? 'Starting class...' :
                                                                        'Start Class'}
@@ -482,7 +270,7 @@ function TeacherMainDesktopDashboardComponentFunction(){
                 </div>
                 </>
                 :
-                <TeacherStudentVideoCallComponent isTeacher={true}/>
+                <TeacherStudentVideoCallComponent isTeacher={true} classId={callLoading} users={usersInCall} setUsers={setUsersInCall}/>
            }
         </div>
     )

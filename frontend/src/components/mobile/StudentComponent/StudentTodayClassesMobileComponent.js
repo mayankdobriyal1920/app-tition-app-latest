@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {FacebookLoader} from "../../Loader/FacebookLoader";
 import {_generateUniqueId, _getIconBySubjectKey} from "../../../helper/CommonHelper";
@@ -24,21 +24,6 @@ import StudentPayForSubscriptionMobileComponent from "./StudentPayForSubscriptio
 import TeacherStudentVideoCallComponent from "../../desktop/TeacherComponent/TeacherStudentVideoCallComponent";
 import {transformSdp} from "../../../helper/SdpTransformHelper";
 let allowOnce = true;
-const iceServers= [
-    {
-        urls: "stun:stun.l.google.com:19302",
-    },
-    {
-        urls: "turn:121tuition.in:3478?transport=tcp",
-        username: "121tuition",
-        credential: "121tuition123",
-    }, {
-        urls: "turn:121tuition.in:3478",
-        username: "121tuition",
-        credential: "121tuition123",
-    },
-];
-
 
 
 export default function StudentTodayClassesMobileComponent() {
@@ -52,103 +37,25 @@ export default function StudentTodayClassesMobileComponent() {
     const chatModuleNewUserLeaveUserInCallData = useSelector((state) => state.chatModuleNewUserLeaveUserInCallData);
     const dispatch = useDispatch();
     const inClassStatusTeacherStudent = useSelector((state) => state.inClassStatusTeacherStudent);
-
+    const [usersInCall, setUsersInCall] = useState([]);
 
     const splitFrontName = (name)=>{
         let nameArray = name.trim().split(' ');
         return nameArray[0];
     }
 
-    const ignoreIncomingCall = ()=>{
-        //dispatch(actionToRemoveDataFromIncomingCall({}));
-    }
-
-    const pickCallInGroup = (e,myClasses)=>{
+    const pickCallInGroupAgora = (e,myClasses,demoClass)=>{
         e.preventDefault();
 
         if (callLoading) return false;
         setCallLoading(myClasses?.id);
-        let getUserMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia).bind(navigator);
-        if(getUserMedia) {
-            getUserMedia({
-                    audio: {
-                        echoCancellation: true,
-                        noiseSuppression: true,
-                        autoGainControl: true,
-                    },
-                    video: {
-                        width:320,
-                        height:240,
-                        frameRate:30,
-                    }
-                },
-                function(stream){
-                    dispatch(actionToSetTeacherStudentInClassStatus('JOINING'));
-                    let memberData = cloneDeep(myClasses);
-                    memberData.id = myClasses?.id;
-                    //// Member profile name
-                    memberData.name = studentAllClassesList?.classData?.name;
-                    /// Student profile id
-                    memberData.peer_connection_id = 'student_'+_generateUniqueId()+'_'+studentAllClassesList?.classData?.id;
-                    memberData.mute = true;
 
-                    setMyPeerConnectionId(memberData.peer_connection_id);
-
-                    let myPeer = new Peer(memberData.peer_connection_id, {
-                        host: '121tuition.in',
-                        secure: true,
-                        config: {'iceServers': iceServers},
-                        path: '/peerApp',
-                    });
-
-                    setMyPeer(myPeer);
-                    console.log('[PEER CONNECTION USER STREAM]', stream);
-                    setTimeout(function() {
-                        addVideoStream(memberData.peer_connection_id, stream,true)
-                    })
-
-                    console.log('[ PEER JS CONNECTION INSTANCE ]',myPeer)
-
-                    myPeer?.on('open', id => {
-                        console.log('[PEER CONNECTION OPEN IN ID]', id);
-                        setMyStream(stream);
-                        dispatch(actionToSetTeacherStudentInClassStatus('INCALL'));
-                        dispatch(actionToUpdateAttendanceClassStatus(studentAllClassesList?.classData,myClasses))
-                        setTimeout(function(){
-                            setCallLoading(null);
-                            dispatch(actionToGetWhiteBoardPrevDataForGroupId(myClasses?.id))
-                        },1000)
-                        sendWebsocketRequest(JSON.stringify({
-                            clientId: localStorage.getItem('clientId'),
-                            groupId: myClasses?.id,
-                            memberData: memberData,
-                            type: "addNewMemberDataInGroup"
-                        }));
-                        myPeer.on('call', call => {
-                            console.log('[PEER JS INCOMING CALL]', call);
-                            call.answer(stream,{ sdpTransform: transformSdp });
-                            addCallSubscriptionEvents(call);
-                        })
-                    })
-                },function(er){
-                    console.log(er);
-                })
-        }else {
-            alert('Media Not Supported In Insecure Url');
-        }
+        dispatch(actionToSetTeacherStudentInClassStatus('JOINING'));
+        dispatch(actionToUpdateAttendanceClassStatus(studentAllClassesList?.classData,myClasses,demoClass))
+        setTimeout(function(){
+            dispatch(actionToGetWhiteBoardPrevDataForGroupId(myClasses?.id))
+        },1000)
     }
-
-    React.useEffect(()=>{
-        if(chatModuleNewUserAddedInCurrentCall?.id){
-            connectToNewUser(chatModuleNewUserAddedInCurrentCall,myStream,myPeer);
-        }
-    },[chatModuleNewUserAddedInCurrentCall]);
-
-    React.useEffect(()=>{
-        if(chatModuleNewUserLeaveUserInCallData?.id){
-            removeClosePeerConnection(chatModuleNewUserLeaveUserInCallData?.peer_connection_id);
-        }
-    },[chatModuleNewUserLeaveUserInCallData]);
 
     React.useEffect(()=>{
         if(studentAllClassesList?.classData.id && allowOnce){
@@ -236,7 +143,7 @@ export default function StudentTodayClassesMobileComponent() {
                                                                     <div data-id={myClasses?.id} data-cur-class={chatModuleCurrentCallGroupData?.id} className={"col-5"}>
                                                                         {(chatModuleCurrentCallGroupData?.id === myClasses?.id) ?
                                                                             <div
-                                                                                onClick={(e) => pickCallInGroup(e,myClasses)}
+                                                                                onClick={(e) => pickCallInGroupAgora(e,myClasses)}
                                                                                 className={"take_demo_button"}>
                                                                                 <button className={"theme_btn"}>
                                                                                     {callLoading === myClasses?.id ? 'Joining class...' :
@@ -316,7 +223,7 @@ export default function StudentTodayClassesMobileComponent() {
                                                                     <div data-id={myClasses?.id} data-cur-class={chatModuleCurrentCallGroupData?.id} className={"col-5"}>
                                                                         {(chatModuleCurrentCallGroupData?.id === myClasses?.id) ?
                                                                             <div
-                                                                                onClick={(e) => pickCallInGroup(e,myClasses, chatModuleCurrentCallGroupData)}
+                                                                                onClick={(e) => pickCallInGroupAgora(e,myClasses, chatModuleCurrentCallGroupData)}
                                                                                 className={"take_demo_button"}>
                                                                                 <button className={"theme_btn"}>
                                                                                     {callLoading === myClasses?.id ? 'Joining class...' :
@@ -389,7 +296,7 @@ export default function StudentTodayClassesMobileComponent() {
                                 </div>
                             </div>
                             :
-                            <TeacherStudentVideoCallComponent/>
+                            <TeacherStudentVideoCallComponent isTeacher={false} classId={callLoading} users={usersInCall} setUsers={setUsersInCall}/>
                         }
                     </>
             }
