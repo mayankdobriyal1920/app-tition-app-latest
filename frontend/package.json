@@ -34,7 +34,7 @@
     "buffer": "^6.0.3",
     "fabric": "^5.2.4",
     "fetch": "^1.1.0",
-    "fix-webm-duration": "^1.0.5",
+    "fix-webm-duration": "^1.0.6",
     "font-awesome": "^4.7.0",
     "history": "^4.9.0",
     "i": "^0.3.7",

@@ -8,7 +8,6 @@ import SpinnerLoader from "../../Loader/SpinnerLoader";
 import jsPDF from "jspdf";
 import AgoraRTM from 'agora-rtm-sdk';
 import {
-    actionToEndCurrentCurrentCall,
     actionToMuteUnmuteUserCall, actionToSetTeacherStudentInClassStatus,
     actionToSetTeacherZoomInOut,
     actionToStoreAssignmentDataForTeacher,
@@ -17,6 +16,7 @@ import {useEffectOnce} from "../../../helper/UseEffectOnce";
 import axios from "axios";
 import {isTeacherMasterLogin} from "../../../middlewear/auth";
 import {IonAlert} from "@ionic/react";
+import fixWebmDuration from "fix-webm-duration";
 
 import {
     config,
@@ -40,6 +40,7 @@ function generateRandom6DigitString() {
     return randomInteger.toString().padStart(6, '0');
 }
 let myUserIdRTM = generateRandom6DigitString();
+let localAudioTracks = null;
 export default function TeacherStudentVideoCallComponent({isTeacher,classId,users,setUsers}){
     const chatModuleCurrentCallGroupData = useSelector((state) => state.chatModuleCurrentCallGroupData);
     const inClassStatusTeacherStudent = useSelector((state) => state.inClassStatusTeacherStudent);
@@ -52,6 +53,9 @@ export default function TeacherStudentVideoCallComponent({isTeacher,classId,user
     const dispatch = useDispatch();
     let [isMutedCall,setIsMutedCall] = useState(false);
     const rtmClient = AgoraRTM.createInstance(config.appId);
+    const mediaStreamRef = React.useRef(null);
+    const [mediaRecorder, setMediaRecorder] = useState(null);
+    const [recordedChunks, setRecordedChunks] = useState([]);
 
     const client = useClient();
     const { ready, tracks } = useMicrophoneAndCameraTracks();
@@ -126,7 +130,7 @@ export default function TeacherStudentVideoCallComponent({isTeacher,classId,user
                 console.log("error");
             }
 
-            console.log('tracks -------------------------- ',tracks);
+            localAudioTracks = tracks;
             if (tracks) await client.publish([tracks[0], tracks[1]]);
             dispatch(actionToSetTeacherStudentInClassStatus('INCALL'));
         };
@@ -141,6 +145,148 @@ export default function TeacherStudentVideoCallComponent({isTeacher,classId,user
     }, [classId, client, ready, tracks]);
 
 
+    const endMyStreamTrackOnEndCall = async () => {
+        dispatch(actionToSetTeacherStudentInClassStatus('PREJOIN'));
+
+        try {
+            // Ensure the client leaves and removes listeners
+            await client.leave();
+            client.removeAllListeners();
+            console.log("Agora client left successfully.");
+        } catch (error) {
+            console.error("Error leaving Agora client:", error);
+        }
+
+        // Stop & close local tracks (audio + video)
+        if (tracks && tracks.length > 0) {
+            console.log("Stopping and closing local tracks:", tracks);
+            try {
+                for (let track of tracks) {
+                    if (track) {
+                        await track.setEnabled(false);
+                        track.stop();
+                        track.close();
+                    }
+                }
+                console.log("Local tracks stopped and closed successfully.");
+            } catch (error) {
+                console.error("Error stopping/closing tracks:", error);
+            }
+        }
+
+        // Leave RTM channel and logout
+        if (channel) {
+            try {
+                await channel.leave();
+                channel = null;
+                console.log("RTM channel left successfully.");
+            } catch (error) {
+                console.error("Error leaving RTM channel:", error);
+            }
+        }
+
+        if (rtmClient) {
+            if (rtmClient._logined) {
+                try {
+                    await rtmClient.logout();
+                    console.log("RTM client logged out successfully.");
+                } catch (error) {
+                    console.error("RTM logout error:", error);
+                }
+            }
+        }
+
+        if (mediaRecorder) {
+            mediaRecorder.stop();
+        }
+        if (mediaStreamRef.current) {
+            mediaStreamRef.current.getTracks().forEach((track) => track.stop());
+        }
+    }
+
+
+    useEffect(() => {
+        if (isTeacherMasterLogin()) {
+            let startVideoCallTime = Date.now()
+            const startRecording = async () => {
+                try {
+                    // 1️⃣ Capture screen (forces capturing system audio)
+                    const screenStream = await navigator.mediaDevices.getDisplayMedia({
+                        video: { displaySurface: "browser" }, // Forces capturing the browser tab
+                        audio: true, // Ensures system audio is captured
+                        preferCurrentTab: true, // Forces capturing current tab only
+                    });
+
+                    // 2️⃣ Ensure Agora audio track is available
+                    if (!tracks || tracks.length === 0 || !tracks[0]) {
+                        console.error("Agora audio track is missing.");
+                        return;
+                    }
+
+                    const agoraAudioTrack = tracks[0];
+
+                    // 3️⃣ Convert Agora track to a proper MediaStream
+                    const audioStream = new MediaStream();
+                    audioStream.addTrack(agoraAudioTrack.getMediaStreamTrack()); // Get actual track
+
+                    // 4️⃣ Combine screen and audio streams
+                    const combinedStream = new MediaStream([
+                        ...screenStream.getTracks(),
+                        ...audioStream.getTracks() // Ensuring Agora audio is included
+                    ]);
+                    mediaStreamRef.current = combinedStream;
+
+                    // 5️⃣ Initialize MediaRecorder with VP9 for best quality
+                    const recorder = new MediaRecorder(combinedStream, { mimeType: "video/webm; codecs=vp9" });
+
+                    let chunks = [];
+                    recorder.ondataavailable = (event) => {
+                        if (event.data.size > 0) {
+                            chunks.push(event.data);
+                        }
+                    };
+
+                    recorder.onstop = () => {
+                        if (chunks.length > 0) {
+                            const duration = Date.now() - startVideoCallTime;
+                            const buggyBlob = new Blob(chunks, { type: 'video/webm' });
+                            fixWebmDuration(buggyBlob, duration, function(fixedBlob) {
+                                // Save the recording
+                                const url = URL.createObjectURL(fixedBlob);
+                                window.open(url,'blank')
+                            });
+                        }
+                    };
+
+                    // 6️⃣ Start recording
+                    recorder.start();
+                    setMediaRecorder(recorder);
+
+                } catch (error) {
+                    console.error("Error starting screen recording:", error);
+                }
+            };
+
+            if (tracks) {
+                startRecording();
+            }
+
+            // Cleanup function on unmount
+            return () => {
+                if (mediaRecorder) {
+                    mediaRecorder.stop();
+                }
+                if (mediaStreamRef.current) {
+                    mediaStreamRef.current.getTracks().forEach((track) => track.stop());
+                }
+            };
+        }
+    }, [classId, tracks]); // Ensure tracks dependency is included
+
+
+
+
+
     useEffect(()=>{
         if(isTeacher) {
             if (timerTimeInterval === maxTimeInterval) {
@@ -150,28 +296,7 @@ export default function TeacherStudentVideoCallComponent({isTeacher,classId,user
     },[timerTimeInterval])
 
 
-    const endMyStreamTrackOnEndCall = async ()=>{
-        dispatch(actionToSetTeacherStudentInClassStatus('PREJOIN'));
-        await client.leave();
-        client.removeAllListeners();
-        tracks[0].close();
-        tracks[1].close();
-        tracks[0].stop();
-        tracks[1].stop();
 
-        if(channel) {
-            channel.leave();
-        }
-        if(rtmClient) {
-            rtmClient.logout()
-                .then(() => {
-                    console.log('Logged out of Agora RTM');
-                })
-                .catch((error) => {
-                    console.error('RTM logout error:', error);
-                });
-        }
-    }
     const handleMuteUnmuteInCall = async ()=>{
         if(!isMutedCall)
             await channel.sendMessage({ text: JSON.stringify({action:'mute_audio',id:myUid}), target: myUid});
@@ -256,7 +381,7 @@ export default function TeacherStudentVideoCallComponent({isTeacher,classId,user
         setTimeout(function (){
             dispatch(actionToSetTeacherStudentInClassStatus('PREJOIN'));
             let startDate = moment(startDateTime).format('YYYY-MM-DD');
-            dispatch(actionToEndCurrentCurrentCall(groupId,classId,startDate));
+            //dispatch(actionToEndCurrentCurrentCall(groupId,classId,startDate));
         },5000)
     }
     const leaveCallFunctionCall = ()=>{

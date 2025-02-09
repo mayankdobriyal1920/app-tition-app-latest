@@ -63,6 +63,22 @@ export function _getClassWisePaymentData(unit,batch){
             case 10:
                 return 2500;
         }
+    }else if(batch === 4){
+        switch (unit) {
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+                return 1200;
+            case 5:
+            case 6:
+            case 7:
+            case 8:
+                return 1700;
+            case 9:
+            case 10:
+                return 2000;
+        }
     }
 }
 export function _getIconBySubjectKey(name){

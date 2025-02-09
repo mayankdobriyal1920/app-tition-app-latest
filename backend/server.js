@@ -5,6 +5,7 @@ import cors from 'cors';
 import dotenv  from 'dotenv';
 import commonRouter from "./routers/commonRouter.js";
 import { PeerServer }  from 'peer';
+import {fixWebmDuration} from "fix-webm-duration";
 
 dotenv.config();
 const app = express();
@@ -188,37 +189,66 @@ app.use('/api-call-tutor/common', commonRouter);
 ///////// USER API GET ////////////////
 const uploadPath = "/var/www/vhosts/121tuition.in/httpdocs/tuition/recording-upload-data";
 let chunks = [];
+// Handle video chunks
 app.post('/api-call-tutor/recording-video-chuncks', (req, res) => {
-    const dataBuffer = new Buffer(req.body.data, 'base64');
-    let chunkBuff = Buffer.from(dataBuffer) // This code throwing Error
-    if(!chunks[req.body.groupId]){
-        chunks[req.body.groupId] = [];
+    try {
+        const { groupId } = req.body;
+
+        if (!req.body.data) {
+            return res.status(400).send({ message: "No video data received" });
+        }
+
+        // Convert base64 to buffer
+        const chunkBuffer = Buffer.from(req.body.data, 'base64');
+
+        // Store chunk in memory
+        if (!chunks[groupId]) {
+            chunks[groupId] = [];
+        }
+        chunks[groupId].push(chunkBuffer);
+
+        res.status(200).send({ message: `Chunk received for group ${groupId}` });
+    } catch (error) {
+        console.error("Error processing chunk:", error);
+        res.status(500).send({ message: "Internal Server Error" });
     }
-    chunks[req.body.groupId].push(chunkBuff);
-    res.status(200).send({message:`success ${port}`});
 });
-app.post('/api-call-tutor/recording-video-finish', (req, res) => {
 
+// Merge and save the video file
+app.post('/api-call-tutor/recording-video-finish', async (req, res) => {
+    try {
+        const { groupId, duration } = req.body;
 
-    const base64String = req.body.base64String;
-    const binaryData = Buffer.from(base64String, 'base64');
+        if (!chunks[groupId] || chunks[groupId].length === 0) {
+            return res.status(400).send({ message: "No recorded chunks found" });
+        }
 
-    const name = `RecordingVideo_new_12322_${new Date().getTime()}.webm`;
-    fs.writeFile(`${uploadPath}/${name}`, binaryData, (err) => {
-        if (err) throw err;
-        console.log('Video file created successfully');
-    });
-    res.send({save: true, name: name})
+        // Merge all chunks into a single buffer
+        const videoBuffer = Buffer.concat(chunks[groupId]);
 
-    // if(chunks[req.body.groupId]) {
-    //     let buffer = Buffer.concat(chunks[req.body.groupId]);
-    //     console.log(chunks[req.body.groupId]);
-    //     const name = `RecordingVideo_new_123_${new Date().getTime()}.webm`;
-    //     fs.writeFileSync(`${uploadPath}/${name}`, buffer, (err) => {});
-    //     res.send({save: true, name: name})
-    //     delete chunks[req.body.groupId];
-    // }else
-    //   res.send({save: true, name: ''})
+        // Fix WebM duration
+        const finalBlob = await fixWebmDuration(videoBuffer, duration);
+
+        // Convert Blob to Buffer
+        const arrayBuffer = await finalBlob.arrayBuffer(); // Convert Blob to ArrayBuffer
+        const finalBuffer = Buffer.from(arrayBuffer); // Convert ArrayBuffer to Buffer
+
+        // Generate file name
+        const fileName = `RecordingVideo_${groupId}_${Date.now()}.webm`;
+        const filePath = `${uploadPath}/${fileName}`;
+
+        // Save file
+        fs.writeFileSync(filePath, finalBuffer);
+
+        // Clear chunks from memory
+        delete chunks[groupId];
+
+        console.log(`Video saved successfully: ${filePath}`);
+        res.send({ save: true, name: fileName });
+    } catch (error) {
+        console.error("Error saving video:", error);
+        res.status(500).send({ message: "Internal Server Error" });
+    }
 });
 app.get('/api-call-tutor/getFineByName', function(req, res){
     const file = `${uploadPath}/${req.query.name}`;

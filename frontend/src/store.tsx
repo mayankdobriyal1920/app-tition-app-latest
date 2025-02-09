@@ -76,7 +76,7 @@ const initialState = {
     teacherAllTodayClassesList:{prevId:'',loading:true,classData:[]},
     allDemoClasses:{prevId:'',loading:true,classData:[]},
     allRecordedClasses:{prevId:'',loading:true,classData:[]},
-    studentAllTimeClassList:{prevId:'',loading:true,classData:[]},
+    studentAllTimeClassList:{prevId:'',loading:true,classData:{}},
     chatModuleAllGroupStartedCall:[],
     chatModuleCurrentCallGroupData:{},
     chatModuleIncomingCallGroupData:{},

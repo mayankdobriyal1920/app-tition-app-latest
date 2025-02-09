@@ -582,31 +582,25 @@ export const actionToGetStudentTimetableData = (isLoaderDisable = false) => asyn
     if(isTeacherMasterLogin()) {
         const {data} = await api.post(`common/actionToGetTeacherAllTimetableClassesApiCall`, {userId: userInfo?.id});
         data?.response?.map((allUserClasses) => {
-            eventData.push({
-                    title: JSON.stringify({
-                        subject_name: allUserClasses?.subject_name,
-                        teacher_name: allUserClasses?.teacher_name,
-                        time: moment(allUserClasses?.start_from_date_time).format('hh:mm a')
-                    }),
-                    date: moment(allUserClasses?.start_from_date_time).format('YYYY-MM-DD'),
-                }
-            )
+            eventData[moment(allUserClasses?.start_from_date_time).format('YYYY-MM-DD')] = []
+            eventData[moment(allUserClasses?.start_from_date_time).format('YYYY-MM-DD')].push({
+                subject: allUserClasses?.subject_name,
+                instructor: allUserClasses?.teacher_name,
+                time: moment(allUserClasses?.start_from_date_time).format('hh:mm a')
+            })
         })
     }else{
         const {data} = await api.post(`common/actionToGetStudentAllTimetableClassesApiCall`, {userId: userInfo?.id});
-        data?.response?.map((allUserClasses,key) => {
-            eventData.push({
-                    title: JSON.stringify({
-                        subject_name: allUserClasses?.subject_name,
-                        teacher_name: allUserClasses?.teacher_name,
-                        time: moment(allUserClasses?.start_from_date_time).format('hh:mm a')
-                    }),
-                    date: moment(allUserClasses?.start_from_date_time).format('YYYY-MM-DD'),
-                }
-            )
+        data?.response?.map((allUserClasses) => {
+            eventData[moment(allUserClasses?.start_from_date_time).format('YYYY-MM-DD')] = []
+            eventData[moment(allUserClasses?.start_from_date_time).format('YYYY-MM-DD')].push({
+                subject: allUserClasses?.subject_name,
+                instructor: allUserClasses?.teacher_name,
+                time: moment(allUserClasses?.start_from_date_time).format('hh:mm a')
+            })
         })
     }
-    dispatch({type: STUDENT_ALL_TIME_CLASS_LIST_SUCCESS, payload: [...eventData]});
+    dispatch({type: STUDENT_ALL_TIME_CLASS_LIST_SUCCESS, payload: eventData});
 }
 export const actionToSendFabricDataToOtherUser = (jsonObject) => async ()=> {
     sendWebsocketRequest(JSON.stringify({
@@ -749,8 +743,8 @@ export const actionToSendVideoChunkDataToServer = (videoData) => async () => {
         }
     });
 }
-export const actionToSendVideoChunkDataToServerFinishProcess = (classId,base64String) => async (dispatch) => {
-    const {data} = await api.post(`recording-video-finish`,{base64String});
+export const actionToSendVideoChunkDataToServerFinishProcess = (classId,duration) => async (dispatch) => {
+    const {data} = await api.post(`recording-video-finish`,{classId,duration});
     if(data?.name) {
         const aliasArray = ['?', '?', '?'];
         const columnArray = ['id', 'name', 'class_timetable_with_class_batch_assigned_id'];

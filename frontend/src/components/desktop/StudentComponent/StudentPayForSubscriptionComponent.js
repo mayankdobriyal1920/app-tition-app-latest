@@ -35,10 +35,10 @@ export default function StudentPayForSubscriptionComponent({isEnd}){
             </div>
             <div className={"classes_section_total_payable month"}>
                 <div className={"row"}>
-                    <div className={"col-4"}>
+                    <div className={"col"}>
                         <h3>Total month : </h3>
                     </div>
-                    <div className={"col-4"}>
+                    <div className={"col"}>
                         <select onChange={(e)=>setTotalMonths(Number(e.target.value))} className={"total_month_input_select"}>
                             <option value={1}>1 Month</option>
                             <option value={3}>3 Months</option>
@@ -50,10 +50,10 @@ export default function StudentPayForSubscriptionComponent({isEnd}){
             </div>
             <div className={"classes_section_total_payable"}>
                 <div className={"row"}>
-                    <div className={"col-4"}>
+                    <div className={"col"}>
                         <h3>Total amount : Rs {_getClassWisePaymentData(classData?.student_class,classData?.batch) * classData?.profile_subject_with_batch?.length * totalMonths}</h3>
                     </div>
-                    <div className={"col-4"}>
+                    <div className={"col"}>
                         <button onClick={()=>setAmountAndOpenPaymentPopup(_getClassWisePaymentData(classData?.student_class,classData?.batch) * classData?.profile_subject_with_batch?.length * totalMonths,totalMonths)} className={"theme_btn pay_button"}>
                             Make Payment
                         </button>

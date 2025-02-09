@@ -24,7 +24,7 @@ export default function StudentPayForSubscriptionMobileComponent({isEnd}){
                 <p className={"mb-10"}>Please purchase subscription to continue.</p>
             }
             <h2 className={"mb-10"}>Subscription details :-</h2>
-            <h3 className={"mb-10"}>Total Classes(3)</h3>
+            <h3 className={"mb-10"}>Total Classes({classData?.profile_subject_with_batch?.length})</h3>
             <div className={"classes_section"}>
                 {(classData?.profile_subject_with_batch?.map((userSubjectData,key)=>(
                     <div style={{width:'100%'}} key={key} className={"classes_section_loop"}>
@@ -36,10 +36,10 @@ export default function StudentPayForSubscriptionMobileComponent({isEnd}){
             </div>
             <div className={"classes_section_total_payable month"}>
                 <div className={"row"}>
-                    <div className={"col-4"}>
+                    <div className={"col"}>
                         <h3>Total month </h3>
                     </div>
-                    <div className={"col-4"}>
+                    <div className={"col"}>
                         <select onChange={(e)=>setTotalMonths(Number(e.target.value))} className={"total_month_input_select"}>
                             <option value={1}>1 Month</option>
                             <option value={3}>3 Months</option>
@@ -52,10 +52,10 @@ export default function StudentPayForSubscriptionMobileComponent({isEnd}){
             <div className={"classes_section_total_payable"}>
                 <div className={"row"}>
                     <div className={"col"}>
-                        <h3>Total: Rs 12000</h3>
+                        <h3>Total: Rs {_getClassWisePaymentData(classData?.student_class,classData?.batch) * classData?.profile_subject_with_batch?.length * totalMonths}</h3>
                     </div>
                     <div className={"col"}>
-                        <button onClick={()=>setAmountAndOpenPaymentPopup(1000)} className={"theme_btn pay_button"}>
+                        <button onClick={()=>setAmountAndOpenPaymentPopup(_getClassWisePaymentData(classData?.student_class,classData?.batch) * classData?.profile_subject_with_batch?.length * totalMonths,totalMonths)} className={"theme_btn pay_button"}>
                             Pay
                         </button>
                     </div>

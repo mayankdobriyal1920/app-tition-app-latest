@@ -74,6 +74,9 @@
     line-height: 44px;
     display: inline-block;
 }
+h2.heading_sch {
+    font-size: 0.92rem;
+}
 .main-header-area .navbar-nav .nav-item .nav-link:hover {
     color: #2878EB;
 }
@@ -492,7 +495,7 @@ span.sapater_otp {
 }
 
 .main_container_app_section .name_tite_section div {
-    font-size: 14px;
+    font-size: 0.91rem;
     font-weight: 100;
     margin-top: 9px;
     font-family: unset;
@@ -501,13 +504,13 @@ span.sapater_otp {
 .main_container_app_section .name_tite_section {
     text-align: center;
     padding: 31px;
-    font-size: 0.75rem;
+    font-size: 0.91rem;
     font-weight: 700;
     font-family: monospace;
 }
 
 .main_container_app_section .name_tite_section div {
-    font-size: 14px;
+    font-size: 0.91rem;
     font-weight: 100;
     margin-top: 9px;
     font-family: unset;
@@ -518,7 +521,7 @@ span.sapater_otp {
 }
 
 .main_subject_section_today_classes h3 {
-    font-size: 0.8rem;
+    font-size: 0.91rem;
     color: #000;
     margin-bottom: 10px;
 }
@@ -542,7 +545,7 @@ span.sapater_otp {
 }
 
 .header_main_page .logo_section h2 {
-    font-size: 0.9rem;
+    font-size: 0.92rem;
     margin: auto;
     color: #3c3c3c;
 }
@@ -638,7 +641,7 @@ span.sapater_otp {
 
 .student_dash_header_section .sub_heading {
     line-height: 2.5vh;
-    font-size: 0.75rem;
+    font-size: 0.8rem;
 }
 
 .student_demo_classes_main_page h2{
@@ -1067,7 +1070,7 @@ p.title_enhanced_desktop {
 .demo_classes_section_teacher_icon_name {
     margin-top: 5px;
     padding: 0px;
-    padding-left: 32px;
+    padding-left: 8px;
 }
 
 .demo_classes_section_subject_icon_name .name_section .name_section1 {
@@ -1449,7 +1452,7 @@ div#main_user_video_call_video_section video.my_video_peer_connection {
     flex-flow: wrap;
 }
 .student_pay_for_subscription_main_page .classes_section_loop p {
-    font-size: 2.3vh;
+    font-size: 0.84rem;
 }
 .student_pay_for_subscription_main_page .classes_section {
     overflow: auto;
@@ -1469,7 +1472,7 @@ div#main_user_video_call_video_section video.my_video_peer_connection {
     background: #cf0000;
 }
 .scheduled_classes_main_section {
-    width: 100%;
+    width: max-content;
     background: #ffffff;
     border-radius: 8px;
     padding: 18px;
@@ -1507,10 +1510,10 @@ div#main_user_video_call_video_section video.my_video_peer_connection {
     background: #8d8d8d;
 }
 .student_pay_for_subscription_main_page h1 {
-    font-size: 3.4vh;
+    font-size: 0.93rem;
 }
 .student_pay_for_subscription_main_page h3 {
-    font-size: 2.7vh;
+    font-size: 0.85rem;
 }
 .user_profile_fixed_section_main_container .facebook_style_loader_container {
     padding: 47px;
@@ -1518,9 +1521,6 @@ div#main_user_video_call_video_section video.my_video_peer_connection {
 }
 .classes_section_total_payable.month {
     margin-bottom: 10px;
-}
-.student_pay_for_subscription_main_page .classes_section_loop p {
-    font-size: 2.3vh;
 }
 
 .classes_section_total_payable.month {
@@ -1531,10 +1531,11 @@ div#main_user_video_call_video_section video.my_video_peer_connection {
     border: 0px;
     border-radius: 5px;
     padding: 8px 17px;
+    font-size: 0.83rem;
 }
 
 .classes_section_total_payable.month select.total_month_input_select option {
-    font-size: 2.3vh;
+    font-size: 0.83rem;
 }
 .canvas_editor_tools_main_section {
      padding: 3px;
