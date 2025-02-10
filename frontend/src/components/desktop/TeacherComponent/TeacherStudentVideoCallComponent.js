@@ -8,7 +8,10 @@ import SpinnerLoader from "../../Loader/SpinnerLoader";
 import jsPDF from "jspdf";
 import AgoraRTM from 'agora-rtm-sdk';
 import {
-    actionToMuteUnmuteUserCall, actionToSetTeacherStudentInClassStatus,
+    actionToMuteUnmuteUserCall,
+    actionToSendVideoChunkDataToServer,
+    actionToSendVideoChunkDataToServerFinishProcess,
+    actionToSetTeacherStudentInClassStatus,
     actionToSetTeacherZoomInOut,
     actionToStoreAssignmentDataForTeacher,
 } from "../../../actions/CommonAction";
@@ -16,7 +19,6 @@ import {useEffectOnce} from "../../../helper/UseEffectOnce";
 import axios from "axios";
 import {isTeacherMasterLogin} from "../../../middlewear/auth";
 import {IonAlert} from "@ionic/react";
-import fixWebmDuration from "fix-webm-duration";
 
 import {
     config,
@@ -207,61 +209,72 @@ export default function TeacherStudentVideoCallComponent({isTeacher,classId,user
 
     useEffect(() => {
         if (isTeacherMasterLogin()) {
-            let startVideoCallTime = Date.now()
+            let startVideoCallTime = Date.now();
+
             const startRecording = async () => {
                 try {
-                    // 1️⃣ Capture screen (forces capturing system audio)
+                    // Capture screen (forces capturing system audio)
                     const screenStream = await navigator.mediaDevices.getDisplayMedia({
-                        video: { displaySurface: "browser" }, // Forces capturing the browser tab
-                        audio: true, // Ensures system audio is captured
-                        preferCurrentTab: true, // Forces capturing current tab only
+                        video: { displaySurface: "browser" },
+                        audio: true,
+                        preferCurrentTab: true,
                     });
 
-                    // 2️⃣ Ensure Agora audio track is available
                     if (!tracks || tracks.length === 0 || !tracks[0]) {
                         console.error("Agora audio track is missing.");
                         return;
                     }
 
                     const agoraAudioTrack = tracks[0];
-
-                    // 3️⃣ Convert Agora track to a proper MediaStream
                     const audioStream = new MediaStream();
-                    audioStream.addTrack(agoraAudioTrack.getMediaStreamTrack()); // Get actual track
+                    audioStream.addTrack(agoraAudioTrack.getMediaStreamTrack());
 
-                    // 4️⃣ Combine screen and audio streams
+                    // Combine screen and audio streams
                     const combinedStream = new MediaStream([
                         ...screenStream.getTracks(),
-                        ...audioStream.getTracks() // Ensuring Agora audio is included
+                        ...audioStream.getTracks(),
                     ]);
                     mediaStreamRef.current = combinedStream;
 
-                    // 5️⃣ Initialize MediaRecorder with VP9 for best quality
-                    const recorder = new MediaRecorder(combinedStream, { mimeType: "video/webm; codecs=vp9" });
+                    // Initialize MediaRecorder
+                    const recorder = new MediaRecorder(combinedStream, { mimeType: "video/webm; codecs=vp8" });
 
                     let chunks = [];
                     recorder.ondataavailable = (event) => {
                         if (event.data.size > 0) {
                             chunks.push(event.data);
+                            // Convert Blob to Base64
+                            const reader = new FileReader();
+                            reader.addEventListener('load',()=>{
+                                const result = reader.result;
+                                if (result.startsWith("data:video/webm")) {
+                                    // Find the last occurrence of ","
+                                    const lastCommaIndex = result.lastIndexOf(",");
+                                    // Extract only the base64 data
+                                    const base64Data = result.substring(lastCommaIndex + 1);
+                                    console.log("Extracted Base64:", base64Data);
+                                    dispatch(actionToSendVideoChunkDataToServer({
+                                        groupId: classId,
+                                        data: base64Data,
+                                    }));
+                                } else {
+                                    console.error("Invalid Base64 MIME Type!", result.substring(0, 50));
+                                }
+                            })
+                            reader.readAsDataURL(event.data);
                         }
-                    };
+                    }
 
-                    recorder.onstop = () => {
+
+                    recorder.onstop = async () => {
                         if (chunks.length > 0) {
                             const duration = Date.now() - startVideoCallTime;
-                            const buggyBlob = new Blob(chunks, { type: 'video/webm' });
-                            fixWebmDuration(buggyBlob, duration, function(fixedBlob) {
-                                // Save the recording
-                                const url = URL.createObjectURL(fixedBlob);
-                                window.open(url,'blank')
-                            });
+                            dispatch(actionToSendVideoChunkDataToServerFinishProcess(classId, duration));
                         }
                     };
 
-                    // 6️⃣ Start recording
-                    recorder.start();
+                    recorder.start(1000);
                     setMediaRecorder(recorder);
-
                 } catch (error) {
                     console.error("Error starting screen recording:", error);
                 }
@@ -271,7 +284,6 @@ export default function TeacherStudentVideoCallComponent({isTeacher,classId,user
                 startRecording();
             }
 
-            // Cleanup function on unmount
             return () => {
                 if (mediaRecorder) {
                     mediaRecorder.stop();
@@ -281,10 +293,7 @@ export default function TeacherStudentVideoCallComponent({isTeacher,classId,user
                 }
             };
         }
-    }, [classId, tracks]); // Ensure tracks dependency is included
-
-
-
+    }, [classId, tracks]); // Dependency array ensures updates when `classId` or `tracks` change
 
 
     useEffect(()=>{

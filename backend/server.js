@@ -3,10 +3,12 @@ import http from 'http';
 import WebSocket from 'ws';
 import cors from 'cors';
 import dotenv  from 'dotenv';
+import path  from 'path';
 import commonRouter from "./routers/commonRouter.js";
 import { PeerServer }  from 'peer';
-import {fixWebmDuration} from "fix-webm-duration";
-
+import fixWebmDuration from 'webm-duration-fix';
+import ffmpeg from 'fluent-ffmpeg';
+import { Blob } from "node:buffer";
 dotenv.config();
 const app = express();
 const host = 'localhost'
@@ -188,18 +190,19 @@ app.use(express.json({limit: '250mb'}));
 app.use('/api-call-tutor/common', commonRouter);
 ///////// USER API GET ////////////////
 const uploadPath = "/var/www/vhosts/121tuition.in/httpdocs/tuition/recording-upload-data";
-let chunks = [];
-// Handle video chunks
-app.post('/api-call-tutor/recording-video-chuncks', (req, res) => {
-    try {
-        const { groupId } = req.body;
+let chunks = {}; // Initialize as an object to store chunks per groupId
 
-        if (!req.body.data) {
-            return res.status(400).send({ message: "No video data received" });
+// Handle video chunks
+app.post("/api-call-tutor/recording-video-chuncks", (req, res) => {
+    try {
+        const { groupId, data } = req.body;
+
+        if (!groupId || !data) {
+            return res.status(400).json({ message: "Invalid request. Missing groupId or data." });
         }
 
         // Convert base64 to buffer
-        const chunkBuffer = Buffer.from(req.body.data, 'base64');
+        const chunkBuffer = Buffer.from(data, "base64");
 
         // Store chunk in memory
         if (!chunks[groupId]) {
@@ -207,49 +210,76 @@ app.post('/api-call-tutor/recording-video-chuncks', (req, res) => {
         }
         chunks[groupId].push(chunkBuffer);
 
-        res.status(200).send({ message: `Chunk received for group ${groupId}` });
+        res.status(200).json({ message: `Chunk received for group ${groupId}` });
     } catch (error) {
         console.error("Error processing chunk:", error);
-        res.status(500).send({ message: "Internal Server Error" });
+        res.status(500).json({ message: "Internal Server Error" });
     }
 });
 
-// Merge and save the video file
-app.post('/api-call-tutor/recording-video-finish', async (req, res) => {
+// Merge and save video file
+app.post("/api-call-tutor/recording-video-finish", async (req, res) => {
     try {
         const { groupId, duration } = req.body;
 
-        if (!chunks[groupId] || chunks[groupId].length === 0) {
-            return res.status(400).send({ message: "No recorded chunks found" });
+        if (!groupId || !duration || !chunks[groupId] || chunks[groupId].length === 0) {
+            return res.status(400).json({ message: "No recorded chunks found or invalid request." });
         }
 
-        // Merge all chunks into a single buffer
-        const videoBuffer = Buffer.concat(chunks[groupId]);
+        // Merge all chunks into a single Blob
+        const videoBlob = new Blob(chunks[groupId], { type: "video/webm" });
 
-        // Fix WebM duration
-        const finalBlob = await fixWebmDuration(videoBuffer, duration);
+        // Convert Blob to ArrayBuffer
+        const arrayBuffer = await videoBlob.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
 
-        // Convert Blob to Buffer
-        const arrayBuffer = await finalBlob.arrayBuffer(); // Convert Blob to ArrayBuffer
-        const finalBuffer = Buffer.from(arrayBuffer); // Convert ArrayBuffer to Buffer
+        // Generate file names and paths
+        const rawFileName = `RawRecording_${groupId}_${Date.now()}.webm`;
+        const fixedFileName = `RecordingVideo_${groupId}_${Date.now()}.webm`
+        const rawFilePath = path.join(uploadPath, rawFileName);
+        const fixedFilePath = path.join(uploadPath, fixedFileName);
 
-        // Generate file name
-        const fileName = `RecordingVideo_${groupId}_${Date.now()}.webm`;
-        const filePath = `${uploadPath}/${fileName}`;
+        // Save the raw video
+        await fs.promises.writeFile(rawFilePath, buffer);
+        console.log(`✅ Raw video saved: ${rawFilePath}`);
 
-        // Save file
-        fs.writeFileSync(filePath, finalBuffer);
+        // Fix WebM duration using FFmpeg
+        ffmpeg(rawFilePath)
+            .outputOptions([
+                "-c:v copy",        // Copy video codec (no re-encoding)
+                "-c:a copy",        // Copy audio codec
+                `-t ${duration / 1000}`,   // Set correct duration
+                "-movflags +faststart" // Optimize for streaming
+            ])
+            .output(fixedFilePath)
+            .on("end", async () => {
+                console.log(`✅ Fixed video saved: ${fixedFilePath}`);
 
-        // Clear chunks from memory
-        delete chunks[groupId];
+                // Delete raw file to save space
+                try {
+                    await fs.promises.unlink(rawFilePath);
+                    console.log(`🗑️ Deleted raw video: ${rawFilePath}`);
+                } catch (unlinkError) {
+                    console.error("❌ Error deleting raw video:", unlinkError);
+                }
 
-        console.log(`Video saved successfully: ${filePath}`);
-        res.send({ save: true, name: fileName });
+                // Clear stored chunks
+                delete chunks[groupId];
+
+                res.json({ save: true, name: fixedFileName });
+            })
+            .on("error", (err) => {
+                console.error("❌ FFmpeg processing error:", err);
+                res.status(500).json({ message: "FFmpeg processing failed" });
+            })
+            .run(); // Execute FFmpeg
+
     } catch (error) {
-        console.error("Error saving video:", error);
-        res.status(500).send({ message: "Internal Server Error" });
+        console.error("❌ Error processing video:", error);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 });
+
 app.get('/api-call-tutor/getFineByName', function(req, res){
     const file = `${uploadPath}/${req.query.name}`;
     res.download(file); // Set disposition and send it.
@@ -268,6 +298,7 @@ app.get('/api-call-tutor', (req, res) => {
 });
 
 server.listen(port,host, function() {
+    console.log('fixWebmDuration ',fixWebmDuration  )
     console.log('[ SOCKET SERVER CONNECTED TO PORT ]',port);
     PeerServer({ port: peerServerPort, path: '/peerApp' });
     console.log('[Peer Js server connected on port ]',peerServerPort);

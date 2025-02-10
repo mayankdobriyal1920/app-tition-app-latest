@@ -744,7 +744,7 @@ export const actionToSendVideoChunkDataToServer = (videoData) => async () => {
     });
 }
 export const actionToSendVideoChunkDataToServerFinishProcess = (classId,duration) => async (dispatch) => {
-    const {data} = await api.post(`recording-video-finish`,{classId,duration});
+    const {data} = await api.post(`recording-video-finish`,{groupId:classId,duration});
     if(data?.name) {
         const aliasArray = ['?', '?', '?'];
         const columnArray = ['id', 'name', 'class_timetable_with_class_batch_assigned_id'];
