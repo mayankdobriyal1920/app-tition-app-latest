@@ -1,14 +1,15 @@
 import React from '@ionic/react';
 import {useDispatch, useSelector} from "react-redux";
 import {
-    actionToCreateUserSignupRequest,
-    actionToGetUserByMobileNumber, actionToLoginUserByUserData,
-    actionToOpenCloseSignupPopup, actionToSendOtpInMobileNumber, actionToVerifyUserOtpByMobileNumber
+    actionToGetUserByMobileNumber,
+    actionToLoginUserByUserData,
+    actionToOpenCloseSignupPopup,
+    actionToSendOtpInMobileNumber,
+    actionToVerifyUserSignUpOtpByMobileNumber
 } from "../../actions/CommonAction";
 import {useEffect, useRef, useState} from "react";
 import OTPInput from "react-otp-input";
 import {_generateUniqueId} from "../../helper/CommonHelper";
-let userOtp = 123456;
 const DesktopSignUpComponent=() => {
     const {isOpen} = useSelector((state) => state.openCloseSignupPopup);
     const dispatch = useDispatch();
@@ -60,21 +61,21 @@ const DesktopSignUpComponent=() => {
         setOtpError(false);
         if(!verifyData) {
             if (OTP.length === 6) {
-                dispatch(actionToVerifyUserOtpByMobileNumber(mobile, OTP)).then((data) => {
+                let payload = {
+                    id: _generateUniqueId(),
+                    name,
+                    email,
+                    address,
+                    mobile,
+                    password,
+                    role:1,
+                    has_profile:0,
+                }
+                dispatch(actionToVerifyUserSignUpOtpByMobileNumber(payload,mobile, OTP)).then((data) => {
                     if (Number(data.status) === 1) {
                         setVerifyData(true);
                         setVerifyData(true);
-                        let payload = {
-                            id: _generateUniqueId(),
-                            name,
-                            email,
-                            address,
-                            mobile,
-                            password,
-                            role:1,
-                            has_profile:0,
-                        }
-                        dispatch(actionToCreateUserSignupRequest(payload));
+                        dispatch(actionToLoginUserByUserData(data));
                     } else {
                         setOtpError(true);
                     }

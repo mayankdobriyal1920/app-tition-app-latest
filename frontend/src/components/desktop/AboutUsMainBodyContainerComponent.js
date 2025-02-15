@@ -177,7 +177,7 @@ const AboutUsMainBodyContainerComponent=() => {
             <div className="row justify-content-center">
                 <div className="col-lg-8">
                     <div className="section-title text-center">
-                        <h2>Attendance & Assignment</h2>
+                        <h2>Attendance, Assignment and Class Recording</h2>
                     </div>
                 </div>
             </div>
@@ -186,7 +186,7 @@ const AboutUsMainBodyContainerComponent=() => {
                     <div className="row">
                         <div className="col-lg-4">
                             <div className="blog-details-box mb-45">
-                                <h3 className="mb-30">Attendance and Assignment</h3>
+                                <h3 className="mb-30">Attendance, Assignment and Class Recordings</h3>
                                 <p>There are many variations of passages of Lorem Ipsum available, but the majority have
                                     suffered alteration in some form, by injected humour, or randomised words which don't
                                     look even slightly believable.There are many variations of passages of Lorem Ipsum

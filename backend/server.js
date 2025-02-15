@@ -5,25 +5,30 @@ import cors from 'cors';
 import dotenv  from 'dotenv';
 import path  from 'path';
 import commonRouter from "./routers/commonRouter.js";
-import { PeerServer }  from 'peer';
-import fixWebmDuration from 'webm-duration-fix';
 import ffmpeg from 'fluent-ffmpeg';
 import { Blob } from "node:buffer";
-dotenv.config();
-const app = express();
-const host = 'localhost'
-const port = 4001;
-const peerServerPort = 4002;
-const server = http.createServer(app);
 import fs from 'fs';
 import upload from "./models/upload.js";
 import {updateCommonApiCall} from "./models/commonModel.js";
+import cookieParser from 'cookie-parser';
+import session from 'express-session';
+import MySQLStore from 'express-mysql-session';
+import pool from "./models/connection.js";
+
+dotenv.config();
+const app = express();
+const host = 'localhost'
+//const port = 4001;
+const port = 5000;
+const server = http.createServer(app);
 export let allChannelsInGroupCall = [];
 export let allChannelsInGroupCallData = {};
 export let allChanelWhiteBoardEditingData = {};
 export let membersInChannelWithDetails = {};
 export let canvasReservedJsonActiveIndex = {};
 let currentUserIdInGroupCall = {};
+//let alias = 'api-call-tutor';
+let alias = 'api-call-tutor-temp';
 
 const clients = {};
 
@@ -172,28 +177,93 @@ function setupWebSocket() {
     })
 }
 
+// Define allowed origins from environment variables or default to localhost
+const allowedOrigins = [
+    'http://localhost:3000', // Allow your frontend origin
+    'https://121tuition.in', // Allow your production frontend origin
+];
+
+// Middleware to parse the request body
+app.use(express.urlencoded({ extended: true, limit: '250mb' }));
+app.use(express.json({ limit: '250mb' }));
+app.use(cookieParser());
+
+// MySQL Session Store Configuration
+const MySQLSessionStore = MySQLStore(session);
+const sessionStore = new MySQLSessionStore(
+    {
+        clearExpired: true,
+        checkExpirationInterval: 900000, // Clear expired sessions every 15 mins
+        expiration: 86400000, // Sessions expire after 1 day (24 hours)
+    },
+    pool
+);
+
+// Trust proxy for secure cookies
+app.set('trust proxy', 1);
+
+// Session Middleware
+app.use(
+    session({
+        store: sessionStore,
+        secret: '121-tuition-session-store', // Use environment variable for secret
+        resave: false,
+        saveUninitialized: false,
+        name: '121-tuition-app-session', // Use dynamic session name
+        cookie: {
+            expires: new Date(Date.now() + 31536000000), // 1 year expiration
+            httpOnly: true,
+            secure: false, // Set to `true` only for HTTPS
+            sameSite: 'None', // `None` required for cross-origin
+            maxAge: 31536000000, // 1 year max age
+        },
+    })
+);
 
 
-app.use(cors());
-app.use(function (req, res, next) {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-    res.setHeader('Access-Control-Allow-Credentials', true);
-    next();
-});
-app.use(express.urlencoded({ extended: true,limit: '250mb' }));
+// CORS Middleware
+app.use(
+    cors({
+        origin: (origin, callback) => {
+            // Allow requests with no origin (like mobile apps or curl requests)
+            if (!origin) return callback(null, true);
 
-app.use(express.json({limit: '250mb'}));
+            // Check if the origin is in the allowedOrigins array
+            if (allowedOrigins.includes(origin)) {
+                return callback(null, origin); // Explicitly allow the origin
+            } else {
+                return callback(new Error('Not allowed by CORS')); // Block other origins
+            }
+        },
+        credentials: true, // Allow cookies to be sent for allowed origins only
+        methods: 'GET, POST, OPTIONS, PUT, PATCH, DELETE', // Allowed methods
+        allowedHeaders: 'X-Requested-With, content-type, Accept', // Allowed headers
+    })
+);
+
+// app.use((req, res, next) => {
+//     res.header('Access-Control-Allow-Origin', 'http://localhost:3000'); // No '*'
+//     res.header('Access-Control-Allow-Credentials', 'true');
+//     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+//     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+//
+//     if (req.method === 'OPTIONS') {
+//         return res.sendStatus(200); // Handle preflight requests
+//     }
+//
+//     next();
+// });
 
 ///////// USER API GET ////////////////
-app.use('/api-call-tutor/common', commonRouter);
+app.use(`/${alias}/common`, commonRouter);
 ///////// USER API GET ////////////////
+
+
 const uploadPath = "/var/www/vhosts/121tuition.in/httpdocs/tuition/recording-upload-data";
 let chunks = {}; // Initialize as an object to store chunks per groupId
 
 // Handle video chunks
-app.post("/api-call-tutor/recording-video-chuncks", (req, res) => {
+app.post(`/${alias}/recording-video-chuncks`, (req, res) => {
     try {
         const { groupId, data } = req.body;
 
@@ -218,7 +288,7 @@ app.post("/api-call-tutor/recording-video-chuncks", (req, res) => {
 });
 
 // Merge and save video file
-app.post("/api-call-tutor/recording-video-finish", async (req, res) => {
+app.post(`/${alias}/recording-video-finish`, async (req, res) => {
     try {
         const { groupId, duration } = req.body;
 
@@ -280,11 +350,11 @@ app.post("/api-call-tutor/recording-video-finish", async (req, res) => {
     }
 });
 
-app.get('/api-call-tutor/getFineByName', function(req, res){
+app.get(`/${alias}/getFineByName`, function(req, res){
     const file = `${uploadPath}/${req.query.name}`;
     res.download(file); // Set disposition and send it.
 });
-app.post("/api-call-tutor/uploadAssignmentApiCall", upload.single("file"), function (req, res) {
+app.post(`/${alias}/uploadAssignmentApiCall`, upload.single("file"), function (req, res) {
     if (!req.file) {
         //If the file is not uploaded, then throw custom error with message: FILE_MISSING
         throw Error("FILE_MISSING")
@@ -293,14 +363,11 @@ app.post("/api-call-tutor/uploadAssignmentApiCall", upload.single("file"), funct
         res.send({ status: "success" })
     }
 })
-app.get('/api-call-tutor', (req, res) => {
+app.get(`/${alias}`, (req, res) => {
     res?.status(200).send({message:`Node Server is ready port ${port}`});
 });
 
 server.listen(port,host, function() {
-    console.log('fixWebmDuration ',fixWebmDuration  )
     console.log('[ SOCKET SERVER CONNECTED TO PORT ]',port);
-    PeerServer({ port: peerServerPort, path: '/peerApp' });
-    console.log('[Peer Js server connected on port ]',peerServerPort);
 })
 

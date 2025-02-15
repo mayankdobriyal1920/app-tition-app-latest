@@ -102,7 +102,7 @@ function LeftSideBarComponentFunction({isTeacherLeftSideBar}){
                                     </svg>
                                 </div>
                                 <div className={"left_menu_item_2"}>
-                                    Attendance
+                                    Class Record
                                 </div>
                             </div>
                         </NavLink>

@@ -83,7 +83,7 @@ export default function AllStudentAttendanceAndAssignmentComponent(){
     return(
         <div className={"student_attendance_assignment_main_container"}>
             <div className="section-title text-center mb-45 mt-60">
-                <h2 className="mb-25">Attendance class with assignment</h2>
+                <h2 className="mb-25">Attendance, Assignments and Class Recordings</h2>
             </div>
             {(loading) ?
                 <FacebookLoader type={"facebookStyle"} item={5}/>

@@ -2,8 +2,8 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 
-import React from 'react';
-import {IonApp, setupIonicReact} from '@ionic/react';
+import React, {useEffect} from 'react';
+import {IonApp, IonLoading, setupIonicReact} from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import { Redirect, Route } from 'react-router-dom';
 
@@ -32,10 +32,10 @@ import './theme/css/responsive.css';
 import './theme/css/app_style_common.scss';
 /* Theme variables */
 import './theme/variables.css';
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import MainAppHomePageWithLogin from "./pages/MainAppHomePageWithLogin/MainAppHomePageWithLogin";
 import $ from "jquery";
-import {actionToSetWindowSizeCount} from "./actions/CommonAction";
+import {actionToGetUserSessionData, actionToSetWindowSizeCount} from "./actions/CommonAction";
 import {isStudentLogin, isSuperAdminLogin, isTeacherMasterLogin} from "./middlewear/auth";
 import {AppEnterMainPage} from "./pages/AppEnterMainPage";
 import {useEffectOnce} from "./helper/UseEffectOnce";
@@ -61,19 +61,30 @@ const PublicRoutes = () => {
 
 const App = () => {
    const dispatch = useDispatch();
-  useEffectOnce(() => {
-    dispatch(actionToSetWindowSizeCount($(window).width()));
-    window.addEventListener('resize', function() {
-      dispatch(actionToSetWindowSizeCount($(window).width()));
-    });
-  }, []);
+   const userSession = useSelector((state) => state.userSession);
+   const {userInfo} = useSelector((state) => state.userSignin);
+
+    useEffect(() => {
+        dispatch(actionToSetWindowSizeCount($(window).width()));
+        window.addEventListener('resize', function() {
+          dispatch(actionToSetWindowSizeCount($(window).width()));
+        });
+    }, []);
+
+    useEffect(() => {
+        dispatch(actionToGetUserSessionData());
+    }, []);
+
 
   return (
       <IonApp>
-          {(isStudentLogin() || isTeacherMasterLogin() || isSuperAdminLogin()) ?
-              <AppEnterMainPage/>
+
+          {(!userSession?.loading) ?
+              <React.Fragment>
+                  {userInfo?.id ? <AppEnterMainPage/> : <PublicRoutes/>}
+              </React.Fragment>
               :
-              <PublicRoutes/>
+              <IonLoading className={"loading_loader_spinner_container"} isOpen={userSession?.loading} message={"Loading..."}/>
           }
       </IonApp>
   )

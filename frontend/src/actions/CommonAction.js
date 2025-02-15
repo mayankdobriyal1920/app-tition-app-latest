@@ -69,7 +69,7 @@ import {
     EDITOR_ACTIVE_EDITOR_JSON,
     TEACHER_CLASS_ATTEND_WITH_ASSIGNMENT_DATA_REQUEST,
     STUDENT_ALL_TIME_CLASS_LIST_REQUEST,
-    ZOOM_IN_ZOOM_OUT_TEACHER_VIDEO, IN_CLASS_STATUS_TEACHER_STUDENT
+    ZOOM_IN_ZOOM_OUT_TEACHER_VIDEO, IN_CLASS_STATUS_TEACHER_STUDENT, USER_SESSION_REQUEST, USER_SESSION_SUCCESS
 } from "../constants/CommonConstants";
 
 import Axios from "axios";
@@ -80,9 +80,14 @@ import {_generateUniqueId} from "../helper/CommonHelper";
 import moment from "moment";
 import { loadStripe } from "@stripe/stripe-js";
 import {isTeacherMasterLogin} from "../middlewear/auth";
+import {s} from "sdp-transform/lib/grammar";
+
+let prodUrl = `https://121tuition.in/api-call-tutor/`;
+let devUrl = `https://121tuition.in/api-call-tutor-temp/`;
 
 const api = Axios.create({
-    baseURL: `https://121tuition.in/api-call-tutor/`
+    baseURL: devUrl,
+    withCredentials:true
 })
 export const callInsertDataFunction = (payload) => async () => {
     try {
@@ -267,15 +272,19 @@ export const actionToGetUserByMobileNumber = (mobileNumber) => async () => {
     const {data} = await api.post(`common/actionToValidateMobileNumberApiCall`,{mobileNumber});
     return data.response;
 };
-export const actionToVerifyUserOtpByMobileNumber = (mobileNumber,otp) => async () => {
-    const {data} = await api.post(`common/actionToVerifyUserOtpByMobileNumberApiCall`,{mobileNumber,otp});
+export const actionToVerifyUserLoginOtpByMobileNumber = (mobileNumber,otp) => async () => {
+    const {data} = await api.post(`common/actionToVerifyUserLoginOtpByMobileNumberApiCall`,{mobileNumber,otp});
+    return data.response;
+};
+export const actionToVerifyUserSignUpOtpByMobileNumber = (mobileNumber,otp) => async () => {
+    const {data} = await api.post(`common/actionToVerifyUserSignUpOtpByMobileNumberApiCall`,{mobileNumber,otp});
     return data.response;
 };
 export const actionToSigninWithPassword = (mobileNumber,password,setVerifyDataLoader,setPasswordValidationError) => async (dispatch) => {
     const {data} = await api.post(`common/actionToSigninWithPasswordApiCall`,{mobileNumber,password});
 
     if(data.response?.status){
-        dispatch(actionToLoginUserByUserData(data.response));
+        dispatch(actionToLoginUserByUserData(data.response.userData));
     }else{
         setPasswordValidationError('Sorry password you have entered is wrong!!')
     }
@@ -397,7 +406,6 @@ export const actionToLoginUserByUserData = (payload) => async (dispatch) => {
     dispatch({ type: USER_SIGNIN_SUCCESS, payload: payload});
     localStorage.setItem('userInfo',JSON.stringify(payload));
     setAuthSignInByRole(payload);
-    window.location.reload();
 }
 export const actionToGetAllSubjectDataList = () => async (dispatch) => {
     dispatch({type: ALL_SUBJECT_DATA_LIST_REQUEST});
@@ -744,6 +752,7 @@ export const actionToSendVideoChunkDataToServer = (videoData) => async () => {
     });
 }
 export const actionToSendVideoChunkDataToServerFinishProcess = (classId,duration) => async (dispatch) => {
+    console.log('classId',classId)
     const {data} = await api.post(`recording-video-finish`,{groupId:classId,duration});
     if(data?.name) {
         const aliasArray = ['?', '?', '?'];
@@ -777,6 +786,27 @@ export const actionToEndCurrentCurrentCallLocally = (groupId) => async (dispatch
                 dispatch(actionToGetTeacherAllDemoClasses(false));
             }
         },2000)
+    }
+}
+
+export const actionToGetUserSessionData = () => async (dispatch) => {
+    dispatch({type: USER_SESSION_REQUEST});
+    try {
+        api.post(`common/actionToGetCurrentUserSessionDataApiCall`, {}).then(responseData => {
+            if(responseData?.data?.success){
+                dispatch({type: USER_SESSION_SUCCESS, payload:1});
+                dispatch(actionToLoginUserByUserData({...responseData?.data.userData}))
+            }else{
+                dispatch({ type: USER_SIGNIN_SUCCESS, payload: {}});
+                localStorage.removeItem('userInfo');
+                localStorage.removeItem('superAdminAuthentication');
+                localStorage.removeItem('studentAuthentication');
+                localStorage.removeItem('teacherAuthentication');
+                dispatch({type: USER_SESSION_SUCCESS, payload:0});
+            }
+        })
+    } catch (error) {
+        dispatch({type: USER_SESSION_SUCCESS, payload:0,});
     }
 }
 
@@ -831,25 +861,21 @@ export const actionToSetMemberInGroupCall = (groupId,allMembersArray,memberData)
         dispatch({type: CHAT_MODULE_NEW_USER_ADDED_IN_CURRENT_CALL, payload: cloneDeep(memberData)});
     }
 }
-export const actionToCreateUserSignupRequest = (payload) => async (dispatch) => {
-    const aliasArray = ['?','?','?','?','?','?','?','?'];
-    const columnArray = ['id','name','email','address','mobile','password','role','has_profile'];
-    const valuesArray = [payload?.id,payload?.name,payload?.email,payload?.address,payload?.mobile,payload?.password,payload?.role,payload?.has_profile];
-    const insertData = {alias:aliasArray,column:columnArray,values:valuesArray,tableName:'app_user'};
-    await dispatch(callInsertDataFunction(insertData));
-    dispatch({ type: USER_SIGNIN_SUCCESS, payload: payload});
-    localStorage.setItem('userInfo',JSON.stringify(payload));
-    setAuthSignInByRole(payload);
-    window.location.reload();
-}
 
 export const signout = () => (dispatch) => {
-    document.location.href = '/';
-    localStorage.removeItem('userInfo');
-    localStorage.removeItem('superAdminAuthentication');
-    localStorage.removeItem('studentAuthentication');
-    localStorage.removeItem('teacherAuthentication');
-    setTimeout(function(){
-        dispatch({ type: USER_SIGNOUT });
-    },1000)
+    try {
+        api.post(`common/actionToLogoutUserSessionApiCall`, {}).then(() => {
+            dispatch({ type: USER_SIGNIN_SUCCESS, payload: {}});
+            document.location.href = '/';
+            localStorage.removeItem('userInfo');
+            localStorage.removeItem('superAdminAuthentication');
+            localStorage.removeItem('studentAuthentication');
+            localStorage.removeItem('teacherAuthentication');
+            setTimeout(function(){
+                dispatch({ type: USER_SIGNOUT });
+            },1000)
+        })
+    } catch (error) {
+        console.log('error',error)
+    }
 };

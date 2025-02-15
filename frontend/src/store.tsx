@@ -45,7 +45,7 @@ import {
     allStudentTodayDataListReducer,
     editorActiveEditorJsonReducer,
     teacherClassAttendWithAssignmentDataReducer,
-    zoomInZoomOutTeacherVideoReducer, inClassStatusTeacherStudentReducer,
+    zoomInZoomOutTeacherVideoReducer, inClassStatusTeacherStudentReducer, userSessionReducer,
 } from "./reducers/CommonReducers";
 
 const initialState = {
@@ -54,6 +54,7 @@ const initialState = {
             ? JSON.parse(localStorage.getItem('userInfo') || `{}`)
             : null,
     },
+    userSession: {loading: true, status:0},
     openCloseSignupPopup: {isOpen:false},
     openCloseLoginPopup: {isOpen:false},
     openCloseTeacherRatingPopup: {isOpen:false,dropdownData:{}},
@@ -101,6 +102,7 @@ const initialState = {
     inClassStatusTeacherStudent:'PREJOIN',
 };
 export const rootReducer = combineReducers({
+    userSession: userSessionReducer,
     inClassStatusTeacherStudent: inClassStatusTeacherStudentReducer,
     zoomInZoomOutTeacherVideo: zoomInZoomOutTeacherVideoReducer,
     editorActiveEditorJson: editorActiveEditorJsonReducer,

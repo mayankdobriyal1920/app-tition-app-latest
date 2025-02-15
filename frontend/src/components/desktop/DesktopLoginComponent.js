@@ -3,7 +3,10 @@ import {useDispatch, useSelector} from "react-redux";
 import {
     actionToGetUserByMobileNumber,
     actionToLoginUserByUserData,
-    actionToOpenCloseLoginPopup, actionToSendOtpInMobileNumber, actionToSigninWithPassword,
+    actionToOpenCloseLoginPopup,
+    actionToSendOtpInMobileNumber,
+    actionToSigninWithPassword,
+    actionToVerifyUserLoginOtpByMobileNumber,
     actionToVerifyUserOtpByMobileNumber,
 } from "../../actions/CommonAction";
 import {useEffect, useRef, useState} from "react";
@@ -70,7 +73,7 @@ const DesktopLoginComponent=() => {
         setOtpError(false);
         if(!verifyData) {
             if (OTP.length === 6) {
-                dispatch(actionToVerifyUserOtpByMobileNumber(mobile,OTP)).then((data) => {
+                dispatch(actionToVerifyUserLoginOtpByMobileNumber(mobile,OTP)).then((data) => {
                     if(Number(data.status) === 1){
                         setVerifyData(true);
                         dispatch(actionToLoginUserByUserData(userDataForLogin));

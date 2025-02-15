@@ -40,10 +40,13 @@ import {
     actionToGetStudentClassAssignmentDataWithClassAttendApiCall,
     actionToGetTeacherAllTimetableClassesApiCall,
     actionToGetStudentAllTimetableClassesApiCall,
-    actionToVerifyUserOtpByMobileNumberApiCall,
     actionToSendOtpInMobileNumberApiCall,
     actionToSigninWithPasswordApiCall,
-    actionToGetStudyMaterialByHeadingTabAndSubTabApiCall
+    actionToGetStudyMaterialByHeadingTabAndSubTabApiCall,
+    actionToGetCurrentUserProfileDataApiCall,
+    createNewSessionWithUserDataAndRole,
+    actionToVerifyUserLoginOtpByMobileNumberApiCall,
+    actionToVerifyUserSignUpOtpByMobileNumberApiCall, deleteOldSessionFileFromSessionStore
 } from "../models/commonModel.js";
 import {allChanelWhiteBoardEditingData,canvasReservedJsonActiveIndex} from "../server.js";
 const commonRouter = express.Router();
@@ -87,6 +90,118 @@ commonRouter.post(
         })
     })
 );
+
+
+commonRouter.post(
+    '/actionToValidateMobileNumberApiCall',
+    expressAsyncHandler(async (req, res) => {
+        actionToValidateMobileNumberApiCall(req.body).then((data) => {
+            res.status(200).send({
+                response: data,
+            });
+        }).catch(error => {
+            res.status(500).send(error);
+        })
+    })
+);
+commonRouter.post(
+    '/actionToVerifyUserLoginOtpByMobileNumberApiCall',
+    expressAsyncHandler(async (req, res) => {
+        actionToVerifyUserLoginOtpByMobileNumberApiCall(req.body).then((data) => {
+            if(data?.id) {
+                createNewSessionWithUserDataAndRole(req, data).then(() => {
+                    res.status(200).send({response:{
+                        status: 1,
+                        userData: data,
+                        message: 'Session data retrieved successfully',
+                    }});
+                })
+            }else {
+                res.status(200).send({
+                    response: {status:0},
+                });
+            }
+        }).catch(error => {
+            res.status(500).send(error);
+        })
+    })
+);
+commonRouter.post(
+    '/actionToVerifyUserSignUpOtpByMobileNumberApiCall',
+    expressAsyncHandler(async (req, res) => {
+        actionToVerifyUserSignUpOtpByMobileNumberApiCall(req.body).then((data) => {
+            if(data?.status) {
+                createNewSessionWithUserDataAndRole(req, data).then(() => {
+                    res.status(200).send({response:{
+                       status: 1,
+                    }});
+                })
+            }else {
+                res.status(200).send({
+                    response: {status:0},
+                });
+            }
+        }).catch(error => {
+            res.status(500).send(error);
+        })
+    })
+);
+commonRouter.post(
+    '/actionToSigninWithPasswordApiCall',
+    expressAsyncHandler(async (req, res) => {
+        actionToSigninWithPasswordApiCall(req.body).then((data) => {
+            if(data?.id) {
+                createNewSessionWithUserDataAndRole(req, data).then(() => {
+                    res.status(200).send({response: {
+                            status: 1,
+                            userData: data,
+                            message: 'Session data retrieved successfully',
+                    }});
+                })
+            }else {
+                res.status(200).send({
+                    response: {status:0},
+                });
+            }
+        }).catch(error => {
+            res.status(500).send(error);
+        })
+    })
+);
+commonRouter.post(
+    '/actionToSendOtpInMobileNumberApiCall',
+    expressAsyncHandler(async (req, res) => {
+        actionToSendOtpInMobileNumberApiCall(req.body).then((data) => {
+            res.status(200).send({
+                response: data,
+            });
+        }).catch(error => {
+            res.status(500).send(error);
+        })
+    })
+);
+
+commonRouter.post(
+    '/actionToGetCurrentUserSessionDataApiCall',
+    expressAsyncHandler(async (req, res) => {
+        if (req?.session?.userSessionData?.id) {
+            actionToGetCurrentUserProfileDataApiCall(req?.session?.userSessionData?.id).then(responseData => {
+                res.status(200).send({
+                    success: true,
+                    userData:responseData,
+                    message: 'Session data retrieved successfully',
+                });
+            })
+        } else {
+            // If no session found, return unauthorized response
+            res.status(200).send({
+                success: false,
+                message: 'No active session found. User is not logged in.',
+            });
+        }
+    })
+);
+
 commonRouter.post(
     '/actionToGetAllSubjectDataListApiCall',
     expressAsyncHandler(async (req, res) => {
@@ -99,6 +214,7 @@ commonRouter.post(
         })
     })
 );
+
 commonRouter.post(
     '/actionToGetStudyMaterialByHeadingTabAndSubTabApiCall',
     expressAsyncHandler(async (req, res) => {
@@ -628,64 +744,35 @@ commonRouter.post(
     expressAsyncHandler(async (req, res) => {
         actionToGetStudentClassAssignmentDataWithClassAttendApiCall(req.body).then((data) => {
             let finalData = [];
-            if(data && data?.length){
-                data?.map((resData)=>{
+            if (data && data.length) {
+                data.forEach((resData) => {
                     let classData = JSON.parse(resData.teacher_classes_data);
-                    if(classData) {
-                        if (classData?.profile_subject_with_batch) {
-                            let allProfileData = [];
-                            if(typeof classData?.profile_subject_with_batch === 'string') {
-                                allProfileData = JSON.parse(classData.profile_subject_with_batch)
-                            }else{
-                                allProfileData = classData.profile_subject_with_batch;
-                            }
+                    if (classData) {
+                        const parseIfString = (value) => (typeof value === 'string' ? JSON.parse(value) : value);
 
-                            allProfileData?.map((profileData,profileDataKey)=>{
-                                if(profileData?.id){
-                                    allProfileData[profileDataKey] = profileData;
-                                }else{
-                                    allProfileData[profileDataKey] = JSON.parse(profileData);
+                        if (classData.profile_subject_with_batch) {
+                            classData.profile_subject_with_batch = parseIfString(classData.profile_subject_with_batch);
+                            classData.profile_subject_with_batch = classData.profile_subject_with_batch.map(profileData => parseIfString(profileData));
+                        }
+
+                        if (classData.student_class_attend) {
+                            classData.student_class_attend = parseIfString(classData.student_class_attend);
+                            classData.student_class_attend = classData.student_class_attend.map(classAttendData => {
+                                classAttendData = parseIfString(classAttendData);
+                                if (classAttendData.student_class_attend_assignment) {
+                                    classAttendData.student_class_attend_assignment = parseIfString(classAttendData.student_class_attend_assignment);
                                 }
-                            })
-                            classData.profile_subject_with_batch = allProfileData;
+                                return classAttendData;
+                            });
                         }
-                        if (classData?.student_class_attend) {
 
-                            let allClassAttendData = [];
-                            if(typeof classData?.student_class_attend === 'string') {
-                                allClassAttendData = JSON.parse(classData.student_class_attend);
-                            }else{
-                                allClassAttendData = classData.student_class_attend;
-                            }
-
-
-
-                            allClassAttendData?.map((classAttendData,classAttendDataKey)=>{
-                                if(!classAttendData?.id) {
-                                    if(typeof classAttendData === 'string')
-                                      allClassAttendData[classAttendDataKey] = JSON.parse(classAttendData);
-                                    else
-                                      allClassAttendData[classAttendDataKey] = classAttendData;
-                                    if (allClassAttendData[classAttendDataKey]?.student_class_attend_assignment) {
-                                        if(typeof  allClassAttendData[classAttendDataKey]?.student_class_attend_assignment === 'string')
-                                          allClassAttendData[classAttendDataKey].student_class_attend_assignment = JSON.parse(allClassAttendData[classAttendDataKey].student_class_attend_assignment);
-                                    }
-                                }else{
-                                    if (allClassAttendData[classAttendDataKey]?.student_class_attend_assignment) {
-                                        if(typeof allClassAttendData[classAttendDataKey]?.student_class_attend_assignment === 'string')
-                                        allClassAttendData[classAttendDataKey].student_class_attend_assignment = JSON.parse(allClassAttendData[classAttendDataKey].student_class_attend_assignment);
-                                    }
-                                }
-                            })
-                            classData.student_class_attend = allClassAttendData;
+                        if (classData.teacher_class_attend_assignment) {
+                            classData.teacher_class_attend_assignment = parseIfString(classData.teacher_class_attend_assignment);
                         }
-                        if (classData?.teacher_class_attend_assignment) {
-                            if(typeof classData.teacher_class_attend_assignment === 'string')
-                                classData.teacher_class_attend_assignment = JSON.parse(classData.teacher_class_attend_assignment);
-                        }
+
                         finalData.push(classData);
                     }
-                })
+                });
             }
             res.status(200).send({
                 response: finalData,
@@ -822,90 +909,18 @@ commonRouter.post(
     })
 );
 
-/////////// UPLOAD FILE ///////////////
-const uploadPath = "/var/www/vhosts/121tuition.in/httpdocs/tuition/recording-upload-data";
-// const storage = multer.diskStorage({
-//     destination: function(req, file, cb) {
-//         cb(null, uploadPath);
-//     },
-//     filename: function (req, file, cb) {
-//         const randomNumber = (Math.floor(Math.random() * 9000000000) + 1000000000).toString();
-//         let filename = randomNumber;
-//         cb(null, filename);
-//         console.log(file);
-//     }
-//
-// });
-// let upload = multer({ storage: storage });
-/////////// UPLOAD FILE ///////////////
-
 commonRouter.post(
-    '/actionToSendVideoChunkDataToServerApiCall',
+    '/actionToLogoutUserSessionApiCall',
     expressAsyncHandler(async (req, res) => {
-        //let file = req.files;
-        console.log(req.body)
-        fs.createWriteStream(`${uploadPath}/RecordingVideo.webm`, { flags: 'a' }).write(req.body);
-        res.sendStatus(200);
-        // upload.single('logFile'),
-        //     (req, res) => {
-        //         const data = {
-        //             filename: req.file.filename,
-        //             downloadPath: `${ req.protocol}:${req.get('host')}/api/capture/download-log-file/${req.file.filename}`
-        //         }
-        //         res.status(200).send({
-        //             response: data,
-        //         });
-        //     }
-    })
-);
-
-
-commonRouter.post(
-    '/actionToValidateMobileNumberApiCall',
-    expressAsyncHandler(async (req, res) => {
-        actionToValidateMobileNumberApiCall(req.body).then((data) => {
+        // Check if the session exists and the user is logged in
+        const oldSessionId = req?.session?.id;
+        deleteOldSessionFileFromSessionStore(oldSessionId).then(() => {
+            req?.session?.destroy();
             res.status(200).send({
-                response: data,
+                success: true,
+                message: 'User logged out',
             });
-        }).catch(error => {
-            res.status(500).send(error);
-        })
-    })
-);
-commonRouter.post(
-    '/actionToVerifyUserOtpByMobileNumberApiCall',
-    expressAsyncHandler(async (req, res) => {
-        actionToVerifyUserOtpByMobileNumberApiCall(req.body).then((data) => {
-            res.status(200).send({
-                response: data,
-            });
-        }).catch(error => {
-            res.status(500).send(error);
-        })
-    })
-);
-commonRouter.post(
-    '/actionToSigninWithPasswordApiCall',
-    expressAsyncHandler(async (req, res) => {
-        actionToSigninWithPasswordApiCall(req.body).then((data) => {
-            res.status(200).send({
-                response: data,
-            });
-        }).catch(error => {
-            res.status(500).send(error);
-        })
-    })
-);
-commonRouter.post(
-    '/actionToSendOtpInMobileNumberApiCall',
-    expressAsyncHandler(async (req, res) => {
-        actionToSendOtpInMobileNumberApiCall(req.body).then((data) => {
-            res.status(200).send({
-                response: data,
-            });
-        }).catch(error => {
-            res.status(500).send(error);
-        })
+        });
     })
 );
 
