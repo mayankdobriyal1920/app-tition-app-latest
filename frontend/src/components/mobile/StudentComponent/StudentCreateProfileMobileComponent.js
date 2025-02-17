@@ -279,6 +279,15 @@ function StudentCreateProfileMobileComponentFunction(){
                                         </label>
                                     </div>
                                 </div>
+                                <div className="col-lg-12 col-md-12 mt-10">
+                                    <div className="form-check">
+                                        <input
+                                            value={4} className="form-check-input" type="radio" name="batch" required/>
+                                        <label className="form-check-label" htmlFor="flexRadioDefault1">
+                                            1 teacher 100 student (group teaching)
+                                        </label>
+                                    </div>
+                                </div>
                             </div>
                             <button type="submit" className="theme_btn mt-30 mb-30">Submit</button>
                         </div>

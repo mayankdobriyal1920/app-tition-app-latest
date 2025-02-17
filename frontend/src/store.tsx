@@ -72,7 +72,7 @@ const initialState = {
     latestSubscriptionDataList:{prevId:'',loading:true,subscriptionData:[]},
     latestDemoClassDataList:{prevId:'',loading:true,classData:[]},
     allSchoolBoardDataList:{prevId:'',loading:true,boardData:[]},
-    studentAllClassesList:{prevId:'',loading:true,classData:[]},
+    studentAllClassesList:{prevId:'',loading:true,classData:{}},
     teacherAllClassesList:{prevId:'',loading:true,classData:[]},
     teacherAllTodayClassesList:{prevId:'',loading:true,classData:[]},
     allDemoClasses:{prevId:'',loading:true,classData:[]},

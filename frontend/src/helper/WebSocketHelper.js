@@ -156,10 +156,10 @@ export function handleWebSocketEvent(dispatch,state,data){
             break;
         }
         case 'actionToEndCurrentCurrentCall':
-            if(chatModuleCurrentCallGroupData?.id === data?.groupId) {
+            if(chatModuleCurrentCallGroupData?.id === data?.classId) {
                 if(!chatModuleCurrentCallGroupData?.is_demo_class)
                     dispatch(actionToOpenRatingModalPopup(true,cloneDeep(chatModuleCurrentCallGroupData)));
-                dispatch(actionToEndCurrentCurrentCallLocally(data?.groupId));
+                dispatch(actionToEndCurrentCurrentCallLocally(data?.classId));
             }
             break;
         case 'actionToSetTeacherZoomInOutLocally':

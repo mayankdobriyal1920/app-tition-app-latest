@@ -83,7 +83,7 @@ import {isTeacherMasterLogin} from "../middlewear/auth";
 import {s} from "sdp-transform/lib/grammar";
 
 let prodUrl = `https://121tuition.in/api-call-tutor/`;
-let devUrl = `https://121tuition.in/api-call-tutor-temp/`;
+let devUrl = `https://121tuition.in/api-call-tutor/`;
 
 const api = Axios.create({
     baseURL: devUrl,
@@ -317,7 +317,7 @@ export const actionToUpdateAttendanceClassStatus = (profileData,classData,demoCl
     }else{
         let aliasArray = ['?','?','?','?'];
         let columnArray = ['id','class_timetable_with_class_batch_assigned_id','student_profile_id','profile_subject_with_batch_id'];
-        let valuesArray = [_generateUniqueId(),classData?.class_id,profileData?.id,classData?.profile_subject_with_batch_id];
+        let valuesArray = [_generateUniqueId(),classData?.id,profileData?.id,classData?.profile_subject_with_batch_id];
         let insertData = {alias:aliasArray,column:columnArray,values:valuesArray,tableName:'student_class_attend'};
         await dispatch(callInsertDataFunction(insertData));
     }
@@ -821,7 +821,7 @@ export const actionToRateCurrentClass = (rating,classData) => async (dispatch,ge
     let userInfo = getState().userSignin.userInfo;
     const aliasArray = ['?','?','?','?'];
     const columnArray = ['id','rating','user_id','class_timetable_with_class_batch_assigned_id'];
-    const valuesArray = [_generateUniqueId(),rating,userInfo?.id,classData?.class_id];
+    const valuesArray = [_generateUniqueId(),rating,userInfo?.id,classData?.id];
     const insertData = {alias:aliasArray,column:columnArray,values:valuesArray,tableName:'classes_rating'};
     await dispatch(callInsertDataFunction(insertData));
     dispatch(actionToOpenRatingModalPopup(false,{}));
@@ -844,7 +844,7 @@ export const actionToStoreAssignmentData = (fileName,pathName,id) => async (disp
     dispatch(actionToGetTeacherClassAttendWithAssignmentData(false))
 }
 export const actionToEndCurrentCurrentCall = (groupId,classId,startDate) => async (dispatch) => {
-    dispatch(actionToEndCurrentCurrentCallLocally(groupId));
+    dispatch(actionToEndCurrentCurrentCallLocally(classId));
     sendWebsocketRequest(JSON.stringify({
         clientId: localStorage.getItem('clientId'),
         type: 'actionToEndCurrentCurrentCall',

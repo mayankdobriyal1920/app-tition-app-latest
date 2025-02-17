@@ -585,7 +585,6 @@ span.sapater_otp {
     overflow: auto;
     width: 100%;
     margin: 0px 6px;
-    padding: 2.3vh;
 }
 .user_create_profile_main_row .personal_prof_form3 {
     height: calc(100vh - 43vh);
@@ -598,7 +597,7 @@ span.sapater_otp {
 }
 .user_create_profile_main_row .profile_form_header {
     color: #fff;
-    font-size: 26px;
+    font-size: 1.2rem;
     text-align: center;
     width: 100%;
 }

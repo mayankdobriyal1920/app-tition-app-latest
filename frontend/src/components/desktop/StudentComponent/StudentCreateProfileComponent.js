@@ -97,10 +97,10 @@ function StudentCreateProfileComponentFunction(){
                     <img alt={"studentReadingImg"} src={studentReadingImg}/>
                 </div>
                 <div className={"col personal_prof_form_2"}>
-                    <div className={"profile_form_header mt-15"}>
+                    <div className={"profile_form_header mt-10"}>
                         Personal Information
                     </div>
-                    <div className={"profile_form_main_inner_body mt-30"}>
+                    <div className={"profile_form_main_inner_body mt-10"}>
                         <div className="row">
                             <div className="col-lg-6 col-md-6 mt-10">
                                 <div className="form-group">
@@ -223,10 +223,10 @@ function StudentCreateProfileComponentFunction(){
                     </div>
                 </div>
                 <div className={"col personal_prof_form3"}>
-                    <div style={{color:'rgb(120 119 118)'}} className={"profile_form_header mt-15"}>
+                    <div style={{color:'rgb(120 119 118)'}} className={"profile_form_header"}>
                         Class Information
                     </div>
-                    <div className={"profile_form_main_inner_body2 mt-15"}>
+                    <div className={"profile_form_main_inner_body2 mt-10"}>
                         <div className={"row"}>
                             <div className="col-lg-12 col-md-12 mt-10">
                                 <div className="form-group">
@@ -263,10 +263,11 @@ function StudentCreateProfileComponentFunction(){
                                     />
                                 </div>
                             </div>
-                            <div  onChange={(e)=>setBatchFunction(e.target.value)}>
+                            <div onChange={(e) => setBatchFunction(e.target.value)}>
                                 <div className="col-lg-12 col-md-12 mt-10">
                                     <div className="form-group mb-10">
-                                        <label htmlFor="exampleInputEmail1">Select Batch <span className={"error"}>*</span></label>
+                                        <label htmlFor="exampleInputEmail1">Select Batch <span
+                                            className={"error"}>*</span></label>
                                     </div>
                                     <div className="form-check">
                                         <input
@@ -295,11 +296,20 @@ function StudentCreateProfileComponentFunction(){
                                         </label>
                                     </div>
                                 </div>
+                                <div className="col-lg-12 col-md-12 mt-10">
+                                    <div className="form-check">
+                                        <input
+                                            value={4} className="form-check-input" type="radio" name="batch" required/>
+                                        <label className="form-check-label" htmlFor="flexRadioDefault1">
+                                            1 teacher 100 student (group teaching)
+                                        </label>
+                                    </div>
+                                </div>
                             </div>
-                           <button type="submit" className="theme_btn mt-30 mb-30">Submit</button>
+                            <button type="submit" className="theme_btn mt-30 mb-30">Submit</button>
+                        </div>
                     </div>
                 </div>
-              </div>
             </div>
             </form>
             {(createProfileLoader) ?
@@ -309,4 +319,5 @@ function StudentCreateProfileComponentFunction(){
         </div>
     )
 }
+
 export const StudentCreateProfileComponent = React.memo(StudentCreateProfileComponentFunction);

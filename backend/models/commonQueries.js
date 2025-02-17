@@ -351,6 +351,7 @@ export const actionToGetStudentAllTodayClassesQuery = ()=>{
 }
 export const actionToGetStudentAllDemoClassesQuery = ()=>{
     return `SELECT JSON_OBJECT('id', class_assigned_teacher_batch.id,
+                               'class_id', class_assigned_teacher_batch.id,
                                'subject_id', class_assigned_teacher_batch.subject_id,
                                'batch', class_assigned_teacher_batch.batch,
                                'profile_subject_with_batch_id', profile_subject_with_batch.id,

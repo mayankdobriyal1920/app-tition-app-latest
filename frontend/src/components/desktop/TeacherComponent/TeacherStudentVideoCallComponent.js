@@ -9,9 +9,7 @@ import jsPDF from "jspdf";
 import AgoraRTM from 'agora-rtm-sdk';
 import {
     actionToEndCurrentCurrentCall,
-    actionToMuteUnmuteUserCall,
-    actionToSendVideoChunkDataToServer,
-    actionToSendVideoChunkDataToServerFinishProcess,
+    actionToMuteUnmuteUserCall, actionToSendVideoChunkDataToServer, actionToSendVideoChunkDataToServerFinishProcess,
     actionToSetTeacherStudentInClassStatus,
     actionToSetTeacherZoomInOut,
     actionToStoreAssignmentDataForTeacher,
@@ -57,6 +55,7 @@ export default function TeacherStudentVideoCallComponent({isTeacher,classId,user
     const rtmClient = AgoraRTM.createInstance(config.appId);
     const mediaStreamRef = React.useRef(null);
     const [mediaRecorder, setMediaRecorder] = useState(null);
+    const [recordedChunks, setRecordedChunks] = useState([]);
 
     const client = useClient();
     const { ready, tracks } = useMicrophoneAndCameraTracks();
@@ -143,6 +142,101 @@ export default function TeacherStudentVideoCallComponent({isTeacher,classId,user
         }
     }, [classId, client, ready, tracks]);
 
+    useEffect(() => {
+        if (isTeacherMasterLogin()) {
+            const startRecording = async () => {
+                try {
+                    let startVideoCallTime = Date.now();
+
+                    // Step 1: Capture screen (includes system audio)
+                    const screenStream = await navigator.mediaDevices.getDisplayMedia({
+                        video: { displaySurface: "browser" },
+                        audio: false,
+                        preferCurrentTab: true,
+                    });
+
+                    // Step 2: Capture mic audio (🔴 Ensure it's recorded but not played)
+                    const micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+                    // Step 3: Capture Agora's audio track (Remote Users)
+                    if (!tracks || tracks.length === 0 || !tracks[0]) {
+                        console.error("Agora audio track is missing.");
+                        return;
+                    }
+                    const agoraAudioTrack = tracks[0]; // Remote users' audio
+                    const agoraStream = new MediaStream();
+                    agoraStream.addTrack(agoraAudioTrack.getMediaStreamTrack());
+
+                    // Step 4: **Combine All Streams (Screen + Mic + Agora Audio)**
+                    const combinedStream = new MediaStream([
+                        ...screenStream.getTracks(), // Screen + System Audio
+                        ...micStream.getTracks(), // ✅ Mic (User's Voice)
+                        ...agoraStream.getTracks(), // ✅ Agora (Remote Users' Voices)
+                    ]);
+                    mediaStreamRef.current = combinedStream;
+
+                    // Step 5: Initialize MediaRecorder
+                    const recorder = new MediaRecorder(combinedStream, { mimeType: "video/webm; codecs=vp8" });
+
+                    let chunks = [];
+                    recorder.ondataavailable = (event) => {
+                        if (event.data.size > 0) {
+                            chunks.push(event.data);
+                            setRecordedChunks((prev) => [...prev, event.data]);
+
+                            // Convert Blob to Base64
+                            const reader = new FileReader();
+                            reader.addEventListener('load', () => {
+                                const result = reader.result;
+                                if (result.startsWith("data:video/webm")) {
+                                    const lastCommaIndex = result.lastIndexOf(",");
+                                    const base64Data = result.substring(lastCommaIndex + 1);
+                                    dispatch(actionToSendVideoChunkDataToServer({
+                                        groupId: classId,
+                                        data: base64Data,
+                                    }));
+                                } else {
+                                    console.error("Invalid Base64 MIME Type!", result.substring(0, 50));
+                                }
+                            });
+                            reader.readAsDataURL(event.data);
+                        }
+                    };
+
+                    recorder.onstop = async () => {
+                        if (chunks.length > 0) {
+                            const blob = new Blob(chunks, { type: "video/webm" });
+                            const url = URL.createObjectURL(blob);
+                            window.open(url, '_blank');
+
+                            const duration = Date.now() - startVideoCallTime;
+                            dispatch(actionToSendVideoChunkDataToServerFinishProcess(classId, duration));
+                        }
+                    };
+
+                    recorder.start(1000);
+                    setMediaRecorder(recorder);
+                } catch (error) {
+                    console.error("Error starting screen recording:", error);
+                }
+            };
+
+
+            if (tracks) {
+                startRecording();
+            }
+
+            return () => {
+                if (mediaRecorder) {
+                    mediaRecorder.stop();
+                }
+                if (mediaStreamRef.current) {
+                    mediaStreamRef.current.getTracks().forEach((track) => track.stop());
+                }
+            };
+        }
+    }, [classId, tracks]);
+
 
     const endMyStreamTrackOnEndCall = async () => {
         dispatch(actionToSetTeacherStudentInClassStatus('PREJOIN'));
@@ -202,96 +296,6 @@ export default function TeacherStudentVideoCallComponent({isTeacher,classId,user
             mediaStreamRef.current.getTracks().forEach((track) => track.stop());
         }
     }
-
-
-    useEffect(() => {
-        if (isTeacherMasterLogin()) {
-            let startVideoCallTime = Date.now();
-
-            const startRecording = async () => {
-                try {
-                    // Capture screen (forces capturing system audio)
-                    const screenStream = await navigator.mediaDevices.getDisplayMedia({
-                        video: { displaySurface: "browser" },
-                        audio: true,
-                        preferCurrentTab: true,
-                    });
-
-                    if (!tracks || tracks.length === 0 || !tracks[0]) {
-                        console.error("Agora audio track is missing.");
-                        return;
-                    }
-
-                    const agoraAudioTrack = tracks[0];
-                    const audioStream = new MediaStream();
-                    audioStream.addTrack(agoraAudioTrack.getMediaStreamTrack());
-
-                    // Combine screen and audio streams
-                    const combinedStream = new MediaStream([
-                        ...screenStream.getTracks(),
-                        ...audioStream.getTracks(),
-                    ]);
-                    mediaStreamRef.current = combinedStream;
-
-                    // Initialize MediaRecorder
-                    const recorder = new MediaRecorder(combinedStream, { mimeType: "video/webm; codecs=vp8" });
-
-                    let chunks = [];
-                    recorder.ondataavailable = (event) => {
-                        if (event.data.size > 0) {
-                            chunks.push(event.data);
-                            // Convert Blob to Base64
-                            const reader = new FileReader();
-                            reader.addEventListener('load',()=>{
-                                const result = reader.result;
-                                if (result.startsWith("data:video/webm")) {
-                                    // Find the last occurrence of ","
-                                    const lastCommaIndex = result.lastIndexOf(",");
-                                    // Extract only the base64 data
-                                    const base64Data = result.substring(lastCommaIndex + 1);
-                                    console.log("Extracted Base64:", base64Data);
-                                    dispatch(actionToSendVideoChunkDataToServer({
-                                        groupId: classId,
-                                        data: base64Data,
-                                    }));
-                                } else {
-                                    console.error("Invalid Base64 MIME Type!", result.substring(0, 50));
-                                }
-                            })
-                            reader.readAsDataURL(event.data);
-                        }
-                    }
-
-
-                    recorder.onstop = async () => {
-                        if (chunks.length > 0) {
-                            const duration = Date.now() - startVideoCallTime;
-                            dispatch(actionToSendVideoChunkDataToServerFinishProcess(classId, duration));
-                        }
-                    };
-
-                    recorder.start(1000);
-                    setMediaRecorder(recorder);
-                } catch (error) {
-                    console.error("Error starting screen recording:", error);
-                }
-            };
-
-            if (tracks) {
-                startRecording();
-            }
-
-            return () => {
-                if (mediaRecorder) {
-                    mediaRecorder.stop();
-                }
-                if (mediaStreamRef.current) {
-                    mediaStreamRef.current.getTracks().forEach((track) => track.stop());
-                }
-            };
-        }
-    }, [classId, tracks]); // Dependency array ensures updates when `classId` or `tracks` change
-
 
     useEffect(()=>{
         if(isTeacher) {
@@ -396,7 +400,7 @@ export default function TeacherStudentVideoCallComponent({isTeacher,classId,user
     }
 
     const closeConfirmPopupAndEndClass = ()=>{
-        endCallFunctionCall(chatModuleCurrentCallGroupData?.id,chatModuleCurrentCallGroupData?.class_id,chatModuleCurrentCallGroupData?.start_from_date_time);
+        endCallFunctionCall(chatModuleCurrentCallGroupData?.batch_id,chatModuleCurrentCallGroupData?.id,chatModuleCurrentCallGroupData?.start_from_date_time);
         setShowExtendClassAlert(false);
     }
 
@@ -480,7 +484,7 @@ export default function TeacherStudentVideoCallComponent({isTeacher,classId,user
                                     </button>
                                 }
                                 <button
-                                    onClick={() => endCallFunctionCall(chatModuleCurrentCallGroupData?.id, chatModuleCurrentCallGroupData?.class_id, chatModuleCurrentCallGroupData?.start_from_date_time)}
+                                    onClick={() => endCallFunctionCall(chatModuleCurrentCallGroupData?.batch_id, chatModuleCurrentCallGroupData?.id, chatModuleCurrentCallGroupData?.start_from_date_time)}
                                     className={"end_call_button"}>
                                     <svg xmlns="http://www.w3.org/2000/svg" fill={"#fff"} width={"24"}
                                          viewBox="0 0 511.632 511.632">

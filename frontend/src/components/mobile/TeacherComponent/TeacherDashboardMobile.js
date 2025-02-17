@@ -54,7 +54,8 @@ export default function TeacherDashboardMobile() {
         setTimeout(()=>{
             sendWebsocketRequest(JSON.stringify({
                 clientId: localStorage.getItem('clientId'),
-                groupId: classGroupData?.id,
+                groupId: classGroupData?.batch_id,
+                classId: classGroupData?.id,
                 classGroupData: finalClassGroupData,
                 members: allMembersInCall,
                 memberData: userInfo,

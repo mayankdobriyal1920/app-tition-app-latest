@@ -333,7 +333,7 @@ export const allClassToAssignClassReducer = (state = {}, action) => {
 export const studentAllClassesListReducer = (state = {}, action) => {
     switch (action.type) {
         case STUDENT_ALL_CLASS_LIST_REQUEST:
-            return { loading: true,classData:[] ,prevId:action.payload};
+            return { loading: true,classData:{} ,prevId:action.payload};
         case STUDENT_ALL_CLASS_LIST_SUCCESS:
             return { loading: false,classData:action.payload ,prevId:state.prevId};
         default:

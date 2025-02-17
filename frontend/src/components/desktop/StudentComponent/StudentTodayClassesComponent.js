@@ -43,13 +43,11 @@ export default function StudentTodayClassesComponent(){
 
 
     React.useEffect(()=>{
-        if(studentAllClassesList?.classData.id && allowOnce){
+        if(studentAllClassesList?.classData?.id && allowOnce){
             dispatch(actionToGetPrevCallOnGroupClass(studentAllClassesList?.classData))
             allowOnce = false;
         }
     },[studentAllClassesList?.classData]);
-
-    console.log('allStudentTodayDataList?.classData',allStudentTodayDataList?.classData);
 
     return(
         <>

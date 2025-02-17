@@ -12,8 +12,7 @@ import TeacherStudentVideoCallComponent from "./TeacherStudentVideoCallComponent
 import {cloneDeep} from "lodash";
 import {CHAT_MODULE_CURRENT_CALL_ALL_MEMBERS} from "../../../constants/CommonConstants";
 import {sendWebsocketRequest} from "../../../helper/WebSocketHelper";
-let currentClassId = null;
-let currentClassAssignedId = null;
+
 function TeacherMainDesktopDashboardComponentFunction(){
     const teacherAllClassesList = useSelector((state) => state.teacherAllClassesList);
     const teacherAllTodayClassesList = useSelector((state) => state.teacherAllTodayClassesList);
@@ -31,9 +30,6 @@ function TeacherMainDesktopDashboardComponentFunction(){
         setCallLoading(classGroupData?.id);
 
         dispatch(actionToSetTeacherStudentInClassStatus('JOINING'));
-
-        currentClassId = cloneDeep(classGroupData?.id);
-        currentClassAssignedId = cloneDeep(classGroupData?.class_id);
         dispatch(actionToSetCurrentCallDataGroupData(classGroupData));
 
         let allMembersInCall = [];
@@ -57,7 +53,8 @@ function TeacherMainDesktopDashboardComponentFunction(){
         setTimeout(()=>{
             sendWebsocketRequest(JSON.stringify({
                 clientId: localStorage.getItem('clientId'),
-                groupId: classGroupData?.id,
+                groupId: classGroupData?.batch_id,
+                classId: classGroupData?.id,
                 classGroupData: finalClassGroupData,
                 members: allMembersInCall,
                 memberData: userInfo,

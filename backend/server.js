@@ -19,7 +19,7 @@ dotenv.config();
 const app = express();
 const host = 'localhost'
 //const port = 4001;
-const port = 5000;
+const port = 4001;
 const server = http.createServer(app);
 export let allChannelsInGroupCall = [];
 export let allChannelsInGroupCallData = {};
@@ -28,7 +28,7 @@ export let membersInChannelWithDetails = {};
 export let canvasReservedJsonActiveIndex = {};
 let currentUserIdInGroupCall = {};
 //let alias = 'api-call-tutor';
-let alias = 'api-call-tutor-temp';
+let alias = 'api-call-tutor';
 
 const clients = {};
 
@@ -150,18 +150,18 @@ function setupWebSocket() {
 
                             if(!dataToSend.classId) {
                                 let setData = `class_end_time = ?`;
-                                let whereCondition = `id = '${dataToSend.groupId}'`;
+                                let whereCondition = `id = ?`;
                                 let updateData = {
                                     column: setData,
-                                    value: [dataToSend?.classEndTime],
+                                    value: [dataToSend?.classEndTime,dataToSend.groupId],
                                     whereCondition: whereCondition,
                                     tableName: 'class_assigned_teacher_batch'
                                 };
                                 updateCommonApiCall(updateData);
                             }else{
                                 let setData = `class_end_date_time = ?`;
-                                let whereCondition = `class_assigned_teacher_batch_id = '${dataToSend.groupId}' AND DATE(start_from_date_time) = '${dataToSend?.startDate}'`;
-                                let updateData = {column: setData, value: [dataToSend?.classEndTime], whereCondition: whereCondition, tableName: 'class_timetable_with_class_batch_assigned'};
+                                let whereCondition = `id = ?`;
+                                let updateData = {column: setData, value: [dataToSend?.classEndTime,dataToSend.classId], whereCondition: whereCondition, tableName: 'class_timetable_with_class_batch_assigned'};
                                 updateCommonApiCall(updateData);
                             }
                         }
@@ -212,11 +212,11 @@ app.use(
         name: '121-tuition-app-session', // Use dynamic session name
         cookie: {
             expires: new Date(Date.now() + 31536000000), // 1 year expiration
-            httpOnly: true,
-            secure: false, // Set to `true` only for HTTPS
-            sameSite: 'None', // `None` required for cross-origin
-            maxAge: 31536000000, // 1 year max age
-        },
+            httpOnly: true,  // Prevents client-side access (security best practice)
+            secure: true, // Set to `true` only for HTTPS
+            sameSite: 'Lax', // `None` required for cross-origin
+            maxAge: 31536000000, // 1 year in milliseconds
+        }
     })
 );
 
@@ -240,19 +240,6 @@ app.use(
         allowedHeaders: 'X-Requested-With, content-type, Accept', // Allowed headers
     })
 );
-
-// app.use((req, res, next) => {
-//     res.header('Access-Control-Allow-Origin', 'http://localhost:3000'); // No '*'
-//     res.header('Access-Control-Allow-Credentials', 'true');
-//     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-//     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-//
-//     if (req.method === 'OPTIONS') {
-//         return res.sendStatus(200); // Handle preflight requests
-//     }
-//
-//     next();
-// });
 
 ///////// USER API GET ////////////////
 app.use(`/${alias}/common`, commonRouter);

@@ -89,7 +89,7 @@ export default function UserProfileEditComponent({isMobile}){
                                     Personal Information
                                 </div>
                             }
-                            <div className={"profile_form_main_inner_body mt-30"}>
+                            <div className={"profile_form_main_inner_body mt-10"}>
                                 <div className="row">
                                     <div className="col-lg-6 col-md-6 mt-10">
                                         <div className="form-group">

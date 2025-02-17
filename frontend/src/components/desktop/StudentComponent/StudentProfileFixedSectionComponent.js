@@ -72,17 +72,27 @@ function StudentProfileFixedSectionComponentFunction(){
                         <div className={"user_profile_personal_detail_batch_section mb-10 row mt-10"}>
                             <div className={"col"}>
                                 {
-                                 (classData?.batch === 1) ?
-                                     <div className={"batch_text_info"}>
-                                         Your selected batch is “One to One” where we will provide you opportunity to learn with one teacher and one student batch.
-                                     </div>
-                                 :(classData?.batch === 2) ?
-                                     <div className={"batch_text_info"}>
-                                         Your selected batch is “One to Three” where we will provide you opportunity to learn with one teacher and three student batch.
-                                     </div>
-                                 :<div className={"batch_text_info"}>
-                                         Your selected batch is “One to Five” where we will provide you opportunity to learn with one teacher and five student batch.
-                                  </div>
+                                    (classData?.batch === 1) ?
+                                        <div className={"batch_text_info"}>
+                                            Your selected batch is “One to One” where we will provide you opportunity to
+                                            learn with one teacher and one student batch.
+                                        </div>
+                                        : (classData?.batch === 2) ?
+                                            <div className={"batch_text_info"}>
+                                                Your selected batch is “One to Three” where we will provide you opportunity
+                                                to learn with one teacher and three student batch.
+                                            </div>
+                                            : (classData?.batch === 3) ?
+                                                <div className={"batch_text_info"}>
+                                                    Your selected batch is “One to Five” where we will provide you
+                                                    opportunity
+                                                    to learn with one teacher and five student batch.
+                                                </div>
+                                                : <div className={"batch_text_info"}>
+                                                    Your selected batch is “One to Hundred” where we will provide you
+                                                    opportunity
+                                                    to learn with one teacher and hundred student batch.
+                                                </div>
                                 }
                             </div>
                         </div>
@@ -93,4 +103,5 @@ function StudentProfileFixedSectionComponentFunction(){
         </div>
     )
 }
+
 export const StudentProfileFixedSectionComponent = React.memo(StudentProfileFixedSectionComponentFunction);
