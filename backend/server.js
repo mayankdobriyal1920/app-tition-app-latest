@@ -245,9 +245,7 @@ app.use(
 app.use(`/${alias}/common`, commonRouter);
 ///////// USER API GET ////////////////
 
-
 const uploadPath = "/var/www/vhosts/121tuition.in/httpdocs/tuition/recording-upload-data";
-let chunks = {}; // Initialize as an object to store chunks per groupId
 
 // Handle video chunks
 app.post(`/${alias}/recording-video-chuncks`, (req, res) => {
@@ -261,11 +259,8 @@ app.post(`/${alias}/recording-video-chuncks`, (req, res) => {
         // Convert base64 to buffer
         const chunkBuffer = Buffer.from(data, "base64");
 
-        // Store chunk in memory
-        if (!chunks[groupId]) {
-            chunks[groupId] = [];
-        }
-        chunks[groupId].push(chunkBuffer);
+        const tempFilePath = path.join(uploadPath, `TempRecording_${groupId}.webm`);
+        fs.appendFileSync(tempFilePath, chunkBuffer);
 
         res.status(200).json({ message: `Chunk received for group ${groupId}` });
     } catch (error) {
@@ -279,51 +274,34 @@ app.post(`/${alias}/recording-video-finish`, async (req, res) => {
     try {
         const { groupId, duration } = req.body;
 
-        if (!groupId || !duration || !chunks[groupId] || chunks[groupId].length === 0) {
+        const tempFilePath = path.join(uploadPath, `TempRecording_${groupId}.webm`);
+        const originalFilePath = path.join(uploadPath, `RecordingVideo_${groupId}.webm`);
+
+        if (!groupId || !duration || !fs.existsSync(tempFilePath)) {
             return res.status(400).json({ message: "No recorded chunks found or invalid request." });
         }
 
-        // Merge all chunks into a single Blob
-        const videoBlob = new Blob(chunks[groupId], { type: "video/webm" });
-
-        // Convert Blob to ArrayBuffer
-        const arrayBuffer = await videoBlob.arrayBuffer();
-        const buffer = Buffer.from(arrayBuffer);
-
-        // Generate file names and paths
-        const rawFileName = `RawRecording_${groupId}_${Date.now()}.webm`;
-        const fixedFileName = `RecordingVideo_${groupId}_${Date.now()}.webm`
-        const rawFilePath = path.join(uploadPath, rawFileName);
-        const fixedFilePath = path.join(uploadPath, fixedFileName);
-
-        // Save the raw video
-        await fs.promises.writeFile(rawFilePath, buffer);
-        console.log(`✅ Raw video saved: ${rawFilePath}`);
-
         // Fix WebM duration using FFmpeg
-        ffmpeg(rawFilePath)
+        ffmpeg(tempFilePath)
             .outputOptions([
                 "-c:v copy",        // Copy video codec (no re-encoding)
                 "-c:a copy",        // Copy audio codec
-                `-t ${duration / 1000}`,   // Set correct duration
+                `-t ${duration}`,   // Set correct duration
                 "-movflags +faststart" // Optimize for streaming
             ])
-            .output(fixedFilePath)
+            .output(originalFilePath)
             .on("end", async () => {
-                console.log(`✅ Fixed video saved: ${fixedFilePath}`);
+                console.log(`✅ Fixed video saved: ${originalFilePath}`);
 
-                // Delete raw file to save space
+                // Delete temp file to save space
                 try {
-                    await fs.promises.unlink(rawFilePath);
-                    console.log(`🗑️ Deleted raw video: ${rawFilePath}`);
+                    await fs.promises.unlink(tempFilePath);
+                    console.log(`🗑️ Deleted temp video: ${tempFilePath}`);
                 } catch (unlinkError) {
-                    console.error("❌ Error deleting raw video:", unlinkError);
+                    console.error("❌ Error deleting temp video:", unlinkError);
                 }
 
-                // Clear stored chunks
-                delete chunks[groupId];
-
-                res.json({ save: true, name: fixedFileName });
+                res.json({ save: true, name: `RecordingVideo_${groupId}.webm` });
             })
             .on("error", (err) => {
                 console.error("❌ FFmpeg processing error:", err);
