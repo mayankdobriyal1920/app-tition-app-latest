@@ -123,8 +123,9 @@ export default function StudentAttendanceAndAssignmentComponent({isMobile}){
                                                    <div className={"assignment_file_pdf_section"}>
                                                        {(classData?.profile_subject_with_batch?.map((studentData, index) => (
                                                            <div key={index}>
-                                                               <p>{studentData?.student_name} <span
-                                                                   className={'student_statur ' + (studentData?.student_class_attend ? 'present' : 'absent')}>{studentData?.student_class_attend ? '(PRESENT)' : '(ABSENT)'}</span>
+                                                               <p>
+                                                                   {studentData?.student_name}
+                                                                   <span className={'student_statur ' + (classData?.student_class_attend ? 'present' : 'absent')}>{classData?.student_class_attend ? '(PRESENT)' : '(ABSENT)'}</span>
                                                                </p>
                                                            </div>
                                                        )))}

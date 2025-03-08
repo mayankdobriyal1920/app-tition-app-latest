@@ -676,63 +676,8 @@ commonRouter.post(
     '/actionToGetAllClassAssignmentDataWithClassAttendApiCall',
     expressAsyncHandler(async (req, res) => {
         actionToGetAllClassAssignmentDataWithClassAttendApiCall(req.body).then((data) => {
-            let finalData = [];
-            if(data && data?.length){
-                data?.map((resData)=>{
-                    let classData = [];
-                    if(typeof resData.teacher_classes_data === 'string')
-                     classData = JSON.parse(resData.teacher_classes_data);
-                    else
-                     classData = JresData.teacher_classes_data;
-                    if(classData) {
-                        if (classData?.profile_subject_with_batch) {
-                            let allProfileData = [];
-                            if(typeof classData.profile_subject_with_batch === 'string')
-                                 allProfileData = JSON.parse(classData.profile_subject_with_batch);
-                            else
-                                 allProfileData = classData.profile_subject_with_batch;
-
-                            allProfileData?.map((profileData,profileDataKey)=>{
-                                if(profileData?.id){
-                                    allProfileData[profileDataKey] = profileData;
-                                }else{
-                                    allProfileData[profileDataKey] = JSON.parse(profileData);
-                                }
-                            })
-                            classData.profile_subject_with_batch = allProfileData;
-                        }
-                        if (classData?.student_class_attend) {
-                            let allClassAttendData = []
-                            if(typeof classData.student_class_attend === 'string')
-                             allClassAttendData = JSON.parse(classData.student_class_attend)
-                            else
-                             allClassAttendData = classData.student_class_attend;
-                            allClassAttendData?.map((classAttendData,classAttendDataKey)=>{
-                                if(!classAttendData?.id) {
-                                    allClassAttendData[classAttendDataKey] = JSON.parse(classAttendData);
-                                    if (allClassAttendData[classAttendDataKey]?.student_class_attend_assignment) {
-                                        if(typeof allClassAttendData[classAttendDataKey].student_class_attend_assignment === 'string')
-                                           allClassAttendData[classAttendDataKey].student_class_attend_assignment = JSON.parse(allClassAttendData[classAttendDataKey].student_class_attend_assignment);
-                                    }
-                                }else{
-                                    if (allClassAttendData[classAttendDataKey]?.student_class_attend_assignment) {
-                                        if(typeof allClassAttendData[classAttendDataKey]?.student_class_attend_assignment === 'string')
-                                           allClassAttendData[classAttendDataKey].student_class_attend_assignment = JSON.parse(allClassAttendData[classAttendDataKey].student_class_attend_assignment);
-                                    }
-                                }
-                            })
-                            classData.student_class_attend = allClassAttendData;
-                        }
-                        if (classData?.teacher_class_attend_assignment) {
-                            if(typeof classData?.teacher_class_attend_assignment === 'string')
-                               classData.teacher_class_attend_assignment = JSON.parse(classData.teacher_class_attend_assignment);
-                        }
-                        finalData.push(classData);
-                    }
-                })
-            }
             res.status(200).send({
-                response: finalData,
+                response: data,
             });
         }).catch(error => {
             res.status(500).send(error);
@@ -744,36 +689,57 @@ commonRouter.post(
     expressAsyncHandler(async (req, res) => {
         actionToGetStudentClassAssignmentDataWithClassAttendApiCall(req.body).then((data) => {
             let finalData = [];
-            if (data && data.length) {
+            if (data && Array.isArray(data) && data.length) {
                 data.forEach((resData) => {
-                    let classData = JSON.parse(resData.teacher_classes_data);
-                    if (classData) {
-                        const parseIfString = (value) => (typeof value === 'string' ? JSON.parse(value) : value);
+                    try {
+                        let classData = safeParseJSON(resData.teacher_classes_data);
+                        if (classData) {
+                            const parseIfString = (value) => safeParseJSON(value);
 
-                        if (classData.profile_subject_with_batch) {
-                            classData.profile_subject_with_batch = parseIfString(classData.profile_subject_with_batch);
-                            classData.profile_subject_with_batch = classData.profile_subject_with_batch.map(profileData => parseIfString(profileData));
-                        }
-
-                        if (classData.student_class_attend) {
-                            classData.student_class_attend = parseIfString(classData.student_class_attend);
-                            classData.student_class_attend = classData.student_class_attend.map(classAttendData => {
-                                classAttendData = parseIfString(classAttendData);
-                                if (classAttendData.student_class_attend_assignment) {
-                                    classAttendData.student_class_attend_assignment = parseIfString(classAttendData.student_class_attend_assignment);
+                            if (classData.profile_subject_with_batch) {
+                                classData.profile_subject_with_batch = parseIfString(classData.profile_subject_with_batch);
+                                if (Array.isArray(classData.profile_subject_with_batch)) {
+                                    classData.profile_subject_with_batch = classData.profile_subject_with_batch.map(profileData => parseIfString(profileData));
                                 }
-                                return classAttendData;
-                            });
-                        }
+                            }
 
-                        if (classData.teacher_class_attend_assignment) {
-                            classData.teacher_class_attend_assignment = parseIfString(classData.teacher_class_attend_assignment);
-                        }
+                            if (classData.student_class_attend) {
+                                classData.student_class_attend = parseIfString(classData.student_class_attend);
+                                if (Array.isArray(classData.student_class_attend)) {
+                                    classData.student_class_attend = classData.student_class_attend.map(classAttendData => {
+                                        classAttendData = parseIfString(classAttendData);
+                                        if (classAttendData?.student_class_attend_assignment) {
+                                            classAttendData.student_class_attend_assignment = parseIfString(classAttendData.student_class_attend_assignment);
+                                        }
+                                        return classAttendData;
+                                    });
+                                }
+                            }
 
-                        finalData.push(classData);
+                            if (classData.teacher_class_attend_assignment) {
+                                classData.teacher_class_attend_assignment = parseIfString(classData.teacher_class_attend_assignment);
+                            }
+
+                            finalData.push(classData);
+                        }
+                    } catch (error) {
+                        console.error("Error processing teacher_classes_data:", error);
                     }
                 });
             }
+
+            /**
+             * Safe JSON parser to prevent errors.
+             */
+            function safeParseJSON(value) {
+                try {
+                    return (typeof value === 'string') ? JSON.parse(value) : value;
+                } catch (error) {
+                    console.error("Invalid JSON:", value);
+                    return null;
+                }
+            }
+
             res.status(200).send({
                 response: finalData,
             });

@@ -459,7 +459,7 @@ export const actionToGetAllClassAssignmentDataWithClassAttendApiCall = (body) =>
         const query = actionToGetAllClassAssignmentDataWithClassAttendQuery(userId,weekStartDate,weekEndDate);
         pool.query(query,[userId], (error, results) => {
             if (error) {
-                reject(query)
+                reject(error)
             }
             resolve(results);
         })

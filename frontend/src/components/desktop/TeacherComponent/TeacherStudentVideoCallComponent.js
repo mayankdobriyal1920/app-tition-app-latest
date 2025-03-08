@@ -55,7 +55,6 @@ export default function TeacherStudentVideoCallComponent({isTeacher,classId,user
     const rtmClient = AgoraRTM.createInstance(config.appId);
     const mediaStreamRef = React.useRef(null);
     const [mediaRecorder, setMediaRecorder] = useState(null);
-    const [recordedChunks, setRecordedChunks] = useState([]);
 
     const client = useClient();
     const { ready, tracks } = useMicrophoneAndCameraTracks();
@@ -182,7 +181,6 @@ export default function TeacherStudentVideoCallComponent({isTeacher,classId,user
                     recorder.ondataavailable = (event) => {
                         if (event.data.size > 0) {
                             chunks.push(event.data);
-                            setRecordedChunks((prev) => [...prev, event.data]);
 
                             // Convert Blob to Base64
                             const reader = new FileReader();
@@ -205,10 +203,6 @@ export default function TeacherStudentVideoCallComponent({isTeacher,classId,user
 
                     recorder.onstop = async () => {
                         if (chunks.length > 0) {
-                            const blob = new Blob(chunks, { type: "video/webm" });
-                            const url = URL.createObjectURL(blob);
-                            window.open(url, '_blank');
-
                             const duration = Date.now() - startVideoCallTime;
                             dispatch(actionToSendVideoChunkDataToServerFinishProcess(classId, duration));
                         }

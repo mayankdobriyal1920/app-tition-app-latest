@@ -91,6 +91,7 @@ function LeftSideBarComponentFunction({isTeacherLeftSideBar}){
                             </div>
                         </NavLink>
                     </div>:''}
+                  {(!isTeacherLeftSideBar) ?
                    <div className={"menu_loop_section"}>
                         <NavLink to={`${path}/student-attendance-assignment`} activeClassName={"active"}
                                  className={"menu_loop_section_inner_section"}>
@@ -106,7 +107,7 @@ function LeftSideBarComponentFunction({isTeacherLeftSideBar}){
                                 </div>
                             </div>
                         </NavLink>
-                    </div>
+                    </div>:''}
                     <div className={"menu_loop_section"}>
                         <div className={"menu_loop_section_inner_section"}>
                                 <div onClick={() => setShowAlert(true)} className={"left_menu_item"}>

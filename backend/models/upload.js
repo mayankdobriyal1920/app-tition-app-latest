@@ -1,5 +1,5 @@
 import multer from "multer";
-const uploadPath = "/var/www/vhosts/121tuition.in/httpdocs/tuition/recording-upload-data";
+const uploadPath = "/var/www/html/tuition/recording-upload-data";
 const storage = multer.diskStorage({
     //Specify the destination directory where the file needs to be saved
     destination: function (req, file, cb) {

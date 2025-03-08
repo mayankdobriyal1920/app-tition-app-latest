@@ -437,9 +437,9 @@ export const actionToAlreadyCreatedClassAccordingToTheCondition = (payload) => a
     let finalData = [];
     if(data?.response){
         data?.response?.map((classData)=>{
-            if(classData?.class_timetable_with_class_batch_assigned){
-                classData.class_timetable_with_class_batch_assigned = JSON.parse(classData.class_timetable_with_class_batch_assigned);
-            }
+            // if(classData?.class_timetable_with_class_batch_assigned){
+            //     classData.class_timetable_with_class_batch_assigned = JSON.parse(classData.class_timetable_with_class_batch_assigned);
+            // }
             if(classData?.batch === 2 && classData?.class_count < 3){
                 finalData.push(classData);
             }else if(classData?.batch === 3 && classData?.class_count < 5) {
@@ -555,9 +555,9 @@ export const actionToGetAllClassesDataList = (idLoaderDisable = false) => async 
     const {data} = await api.post(`common/actionToGetAllClassesDataListApiCall`,{weekStartDate,weekEndDate});
     let finalDataArray = [];
     data?.response?.map((dataClass)=>{
-        if(dataClass?.class_timetable_with_class_batch_assigned){
-            dataClass.class_timetable_with_class_batch_assigned = JSON.parse(dataClass.class_timetable_with_class_batch_assigned);
-        }
+        // if(dataClass?.class_timetable_with_class_batch_assigned){
+        //     dataClass.class_timetable_with_class_batch_assigned = JSON.parse(dataClass.class_timetable_with_class_batch_assigned);
+        // }
         finalDataArray.push(dataClass);
     })
 

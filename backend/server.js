@@ -6,7 +6,6 @@ import dotenv  from 'dotenv';
 import path  from 'path';
 import commonRouter from "./routers/commonRouter.js";
 import ffmpeg from 'fluent-ffmpeg';
-import { Blob } from "node:buffer";
 import fs from 'fs';
 import upload from "./models/upload.js";
 import {updateCommonApiCall} from "./models/commonModel.js";
@@ -39,14 +38,6 @@ function setupWebSocket() {
         return s4() + s4() + '-' + s4();
     };
     const wsServer = new WebSocket.Server({server});
-    const sendMessage = (jsonData,connection) => {
-        // We are sending the current data to all connected clients
-        Object.keys(clients).map((client) => {
-            if(clients[client] !== connection){
-                clients[client].send(JSON.stringify(jsonData));
-            }
-        });
-    }
 
     wsServer.on('connection', function(connection) {
         const userID = getUniqueID();
@@ -214,7 +205,7 @@ app.use(
             expires: new Date(Date.now() + 31536000000), // 1 year expiration
             httpOnly: true,  // Prevents client-side access (security best practice)
             secure: true, // Set to `true` only for HTTPS
-            sameSite: 'Lax', // `None` required for cross-origin
+            sameSite: 'None', // `None` required for cross-origin
             maxAge: 31536000000, // 1 year in milliseconds
         }
     })
@@ -245,7 +236,7 @@ app.use(
 app.use(`/${alias}/common`, commonRouter);
 ///////// USER API GET ////////////////
 
-const uploadPath = "/var/www/vhosts/121tuition.in/httpdocs/tuition/recording-upload-data";
+const uploadPath = "/var/www/html/tuition/recording-upload-data";
 
 // Handle video chunks
 app.post(`/${alias}/recording-video-chuncks`, (req, res) => {
@@ -259,7 +250,7 @@ app.post(`/${alias}/recording-video-chuncks`, (req, res) => {
         // Convert base64 to buffer
         const chunkBuffer = Buffer.from(data, "base64");
 
-        const tempFilePath = path.join(uploadPath, `TempRecording_${groupId}.webm`);
+        const tempFilePath = path.join(uploadPath, `TempRecording_${groupId}.webm.part`);
         fs.appendFileSync(tempFilePath, chunkBuffer);
 
         res.status(200).json({ message: `Chunk received for group ${groupId}` });
@@ -274,7 +265,7 @@ app.post(`/${alias}/recording-video-finish`, async (req, res) => {
     try {
         const { groupId, duration } = req.body;
 
-        const tempFilePath = path.join(uploadPath, `TempRecording_${groupId}.webm`);
+        const tempFilePath = path.join(uploadPath, `TempRecording_${groupId}.webm.part`);
         const originalFilePath = path.join(uploadPath, `RecordingVideo_${groupId}.webm`);
 
         if (!groupId || !duration || !fs.existsSync(tempFilePath)) {
